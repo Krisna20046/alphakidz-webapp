@@ -7,6 +7,8 @@ use App\Http\Controllers\FcmController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\AnakController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\MajikanController;
+use App\Http\Controllers\NannyController;
 
 
 // ─── Guest Routes ─────────────────────────────────────────────────────────────
@@ -65,6 +67,27 @@ Route::middleware('auth.api')->group(function () {
         // Dropdown AJAX
         Route::get('/provinsi',       [ProfileController::class, 'getProvinsi'])->name('provinsi');
         Route::get('/kota/{id}',      [ProfileController::class, 'getKota']    )->name('kota');
+    });
+
+    Route::prefix('majikan')->group(function () {
+        Route::get('/nanny',    [MajikanController::class, 'indexNanny'])->name('majikan-nanny-list');
+        Route::get('/nanny/{id}', [MajikanController::class, 'showNanny'])->name('majikan-nanny-detail');
+        Route::get('/konsultan',    [MajikanController::class, 'indexKonsultan'])->name('majikan-konsultan-list');
+        Route::get('/konsultan/{id}', [MajikanController::class, 'showKonsultan'])->name('majikan-konsultan-detail');
+        Route::get('/nanny-anda',      [MajikanController::class, 'indexNannyAnda'])->name('majikan-nanny');
+        Route::get('/nanny-anda/{id}', [MajikanController::class, 'showNannyAnda'] )->name('majikan-nanny-anda-detail');
+        Route::get('/diary',        [MajikanController::class, 'chooseDiary'])->name('majikan-diary-choose');
+        Route::get('/diary/{id}',   [MajikanController::class, 'showDiary']  )->name('majikan-diary');
+    });
+
+    Route::prefix('nanny')->group(function () {
+        Route::get('/diary', [NannyController::class, 'chooseDiary'])->name('nanny-diary-choose');
+        Route::get('/diary/{id_anak}', [NannyController::class, 'showDiary'])->name('nanny-diary');
+        Route::get('/diary/{id_anak}/tambah', [NannyController::class, 'showAdd'])->name('nanny-diary-add');
+        Route::post('/diary/store', [NannyController::class, 'store'])->name('nanny-diary-store');
+        Route::get('/data-anak',  [NannyController::class, 'dataAnak'])->name('nanny-anak-list');
+        Route::get('/konsultan',  [NannyController::class, 'konsultan'])->name('nanny-konsultan');
+        Route::get('/majikan',    [NannyController::class, 'majikan'])->name('nanny-majikan');
     });
 });
 
