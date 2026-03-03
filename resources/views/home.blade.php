@@ -245,7 +245,7 @@
         </div>
 
         <!-- ── MENU SECTION ──────────────────────────────────────────────── -->
-        <div class="px-4 pt-6 pb-6 anim-up delay-3">
+        <div class="px-4 pt-6 pb-16 anim-up delay-3">
 
             <!-- Section header -->
             <div class="flex items-center justify-between mb-4">

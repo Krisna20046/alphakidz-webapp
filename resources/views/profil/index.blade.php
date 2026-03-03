@@ -114,7 +114,7 @@
     </div>
 
     <!-- SCROLLABLE BODY -->
-    <div class="flex-1 overflow-y-auto no-scrollbar -mt-6 px-4 pb-2">
+    <div class="flex-1 overflow-y-auto no-scrollbar -mt-6 px-4 pb-16">
 
         <!-- Pengaturan Card -->
         <div class="anim-up delay-2 bg-white rounded-3xl shadow-sm shadow-plum/10 overflow-hidden mb-4">

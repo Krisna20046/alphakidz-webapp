@@ -118,7 +118,7 @@
     </div>
 
     <!-- CONTENT -->
-    <div class="flex-1 overflow-y-auto no-scrollbar anim-up d4" style="padding:0 20px;">
+    <div class="flex-1 overflow-y-auto no-scrollbar anim-up d4 pb-16" style="padding-right: 20px; padding-left: 20px;">
         @if(isset($aktivitas) && count($aktivitas) > 0)
         @foreach($aktivitas as $i => $item)
         @php
