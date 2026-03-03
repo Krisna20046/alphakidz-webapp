@@ -72,7 +72,7 @@
     @if($assignmentData && count($anak) > 0)
 
     <!-- SCROLLABLE -->
-    <div class="flex-1 overflow-y-auto no-scrollbar" style="padding:0 20px;">
+    <div class="flex-1 overflow-y-auto no-scrollbar pb-16" style="padding-right:20px; padding-left:20px;">
 
         {{-- Assignment info --}}
         <div class="anim-up d2" style="padding-top:20px;margin-bottom:20px;">

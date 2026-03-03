@@ -139,7 +139,7 @@
     </div>
 
     <!-- SCROLL — listContent: padding:20, paddingTop:8 -->
-    <div class="flex-1 overflow-y-auto no-scrollbar" style="padding:8px 20px 0;">
+    <div class="flex-1 overflow-y-auto no-scrollbar pb-16" style="padding-right:20px; padding-left:20px;">
 
         @foreach($assignments as $i => $item)
         <!-- CARD

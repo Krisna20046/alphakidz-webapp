@@ -74,7 +74,7 @@
 
     @if($data)
     <!-- SCROLLABLE -->
-    <div class="flex-1 overflow-y-auto no-scrollbar" style="padding:20px;">
+    <div class="flex-1 overflow-y-auto no-scrollbar pb-16" style="padding-right:20px; padding-left:20px; padding-top:20px;">
 
         {{-- Profile card --}}
         <div class="sec anim-up d2" style="text-align:center;padding:28px 20px;">
