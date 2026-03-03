@@ -9,6 +9,7 @@ use App\Http\Controllers\AnakController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MajikanController;
 use App\Http\Controllers\NannyController;
+use App\Http\Controllers\AdminController;
 
 
 // ─── Guest Routes ─────────────────────────────────────────────────────────────
@@ -88,6 +89,17 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/data-anak',  [NannyController::class, 'dataAnak'])->name('nanny-anak-list');
         Route::get('/konsultan',  [NannyController::class, 'konsultan'])->name('nanny-konsultan');
         Route::get('/majikan',    [NannyController::class, 'majikan'])->name('nanny-majikan');
+    });
+
+    Route::prefix('admin/kelola-akun')->group(function () {
+        Route::get('/',            [AdminController::class, 'index']        )->name('admin-kelola-akun');
+        Route::get('/create',      [AdminController::class, 'create']       )->name('admin-kelola-akun.create');
+        Route::post('/',           [AdminController::class, 'store']        )->name('admin-kelola-akun.store');
+        Route::get('/{id}',        [AdminController::class, 'show']         )->name('admin-kelola-akun.show');
+        Route::get('/{id}/edit',   [AdminController::class, 'edit']         )->name('admin-kelola-akun.edit');
+        Route::put('/{id}',        [AdminController::class, 'update']       )->name('admin-kelola-akun.update');
+        Route::post('/{id}/status',[AdminController::class, 'updateStatus'] )->name('admin-kelola-akun.status');
+        Route::delete('/{id}',     [AdminController::class, 'destroy']      )->name('admin-kelola-akun.destroy');
     });
 });
 

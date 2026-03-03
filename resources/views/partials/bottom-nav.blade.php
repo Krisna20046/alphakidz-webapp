@@ -6,7 +6,7 @@
 
 @php $active = $active ?? 'home'; @endphp
 
-<nav class="bottom-nav shrink-0 bg-white border-t border-plum-soft/60 px-2 pb-safe">
+<nav class="fixed bottom-0 left-0 right-0 z-30 bg-white border-t border-plum-soft/60 px-2">
     <div class="flex items-center justify-around h-[62px]">
 
         {{-- Beranda --}}
