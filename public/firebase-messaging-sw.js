@@ -32,10 +32,11 @@ messaging.onBackgroundMessage(function (payload) {
         body   : body,
         icon   : '/icons/icon-192x192.png',
         badge  : '/icons/icon-192x192.png',
-        tag    : 'chat-notification',    // tag sama = notif lama diganti (tidak numpuk)
-        renotify: true,
+        tag    : 'chat-' + (senderId || 'msg'),
+        renotify           : true,
+        requireInteraction : true,
         data   : { url: chatUrl },
-        vibrate: [100, 50, 100],
+        vibrate: [200, 100, 200],
         actions: [
             { action: 'open',    title: 'Buka Chat' },
             { action: 'dismiss', title: 'Tutup'     },
@@ -49,24 +50,20 @@ self.addEventListener('notificationclick', function (event) {
 
     if (event.action === 'dismiss') return;
 
-    const data      = event.notification.data || {};
-    const targetUrl = data.type === 'chat'
-        ? `/chat/${data.sender_id}`
-        : '/dashboard';
+    const targetUrl = event.notification.data?.url || '/chat';
+    const fullUrl   = self.location.origin + targetUrl;
 
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (list) {
-            // Fokus tab yang sudah buka app jika ada
-            const existing = list.find(function (c) {
-                return c.url.includes(self.location.origin);
-            });
-            if (existing) {
-                existing.focus();
-                existing.navigate(targetUrl);
-                return;
+            // Cari tab yang sudah buka app — fokus dan navigate
+            for (const client of list) {
+                if (client.url.startsWith(self.location.origin) && 'focus' in client) {
+                    client.focus();
+                    return client.navigate(fullUrl);
+                }
             }
-            // Tidak ada tab — buka tab baru
-            return clients.openWindow(targetUrl);
+            // Tidak ada tab — buka baru
+            return clients.openWindow(fullUrl);
         })
     );
 });
