@@ -1,53 +1,53 @@
-/**
- * firebase-messaging-sw.js
- * Letakkan di: public/firebase-messaging-sw.js  (ROOT public folder!)
- *
- * Service worker ini wajib ada di root domain agar Firebase bisa menangani
- * push notification saat tab browser sedang tertutup / background.
- *
- * File ini TIDAK bisa pakai ES module import — harus pakai importScripts()
- */
+// public/firebase-messaging-sw.js
+// Service Worker khusus Firebase Messaging (background push)
+// File ini TERPISAH dari sw.js dan harus ada di public/
 
-importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js');
+// ── Import Firebase SW scripts ─────────────────────────────────────────────
+importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
+importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
 
-// ─── Firebase config (sama persis dengan fcmService.js) ──────────────────────
-// Nilai ini di-hardcode di sini karena service worker tidak bisa akses DOM/window
+// ── Firebase config (SAMA persis dengan yang di pwa-head.blade.php) ────────
 firebase.initializeApp({
-    apiKey:            'YOUR_API_KEY',
-    authDomain:        'YOUR_AUTH_DOMAIN',
-    projectId:         'YOUR_PROJECT_ID',
-    storageBucket:     'YOUR_STORAGE_BUCKET',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    appId:             'YOUR_APP_ID',
+    apiKey           : "AIzaSyCOdUtA0YLnwxWARVT0GCpZb70SsMmNgis",
+    authDomain       : "alphakidz-a98b3.firebaseapp.com",
+    projectId        : "alphakidz-a98b3",
+    storageBucket    : "alphakidz-a98b3.firebasestorage.app",
+    messagingSenderId: "63843037965",
+    appId            : "1:63843037965:web:c4df4b57f8f9a23795f644"
 });
 
 const messaging = firebase.messaging();
 
-// ─── Background message handler ───────────────────────────────────────────────
-// Dipanggil saat app BACKGROUND (tab tidak aktif atau browser minimize)
-messaging.onBackgroundMessage((payload) => {
-    console.log('[SW] Background message:', payload);
+// ── Background push handler ────────────────────────────────────────────────
+// Dipanggil saat app TIDAK terbuka / di background
+messaging.onBackgroundMessage(function (payload) {
+    const notification = payload.notification || {};
+    const data         = payload.data         || {};
 
-    const title = payload.data?.title || payload.notification?.title || 'Pesan Baru';
-    const body  = payload.data?.body  || payload.notification?.body  || '';
-    const data  = payload.data || {};
+    const title   = notification.title || 'Pesan Baru - AlphaKidz';
+    const body    = notification.body  || 'Anda memiliki pesan baru';
+    const chatUrl = data.url           || '/chat';
 
-    const options = {
-        body,
-        icon:  '/images/icon.png',   // sesuaikan
-        badge: '/images/badge.png',  // sesuaikan
-        data,
-        // Klik notifikasi akan membuka / focus tab app
-        actions: [{ action: 'open', title: 'Buka' }],
-    };
-
-    self.registration.showNotification(title, options);
+    return self.registration.showNotification(title, {
+        body   : body,
+        icon   : '/icons/icon-192x192.png',
+        badge  : '/icons/icon-192x192.png',
+        tag    : 'chat-notification',    // tag sama = notif lama diganti (tidak numpuk)
+        renotify: true,
+        data   : { url: chatUrl },
+        vibrate: [100, 50, 100],
+        actions: [
+            { action: 'open',    title: 'Buka Chat' },
+            { action: 'dismiss', title: 'Tutup'     },
+        ],
+    });
 });
 
-// ─── Handle klik notifikasi (background) ─────────────────────────────────────
-self.addEventListener('notificationclick', (event) => {
+// ── Notification click handler ─────────────────────────────────────────────
+self.addEventListener('notificationclick', function (event) {
     event.notification.close();
+
+    if (event.action === 'dismiss') return;
 
     const data      = event.notification.data || {};
     const targetUrl = data.type === 'chat'
@@ -55,18 +55,18 @@ self.addEventListener('notificationclick', (event) => {
         : '/dashboard';
 
     event.waitUntil(
-        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
-            // Kalau sudah ada tab yang buka app, fokus ke sana
-            for (const client of windowClients) {
-                if (client.url.includes(self.location.origin) && 'focus' in client) {
-                    client.navigate(targetUrl);
-                    return client.focus();
-                }
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (list) {
+            // Fokus tab yang sudah buka app jika ada
+            const existing = list.find(function (c) {
+                return c.url.includes(self.location.origin);
+            });
+            if (existing) {
+                existing.focus();
+                existing.navigate(targetUrl);
+                return;
             }
-            // Kalau tidak ada, buka tab baru
-            if (clients.openWindow) {
-                return clients.openWindow(targetUrl);
-            }
+            // Tidak ada tab — buka tab baru
+            return clients.openWindow(targetUrl);
         })
     );
 });
