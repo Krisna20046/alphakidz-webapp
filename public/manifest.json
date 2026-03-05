@@ -1,6 +1,6 @@
 {
-    "name": "NannyApp",
-    "short_name": "NannyApp",
+    "name": "AlphaKidz",
+    "short_name": "AlphaKidz",
     "description": "Aplikasi manajemen nanny, konsultan, dan majikan",
     "start_url": "/dashboard",
     "scope": "/",
