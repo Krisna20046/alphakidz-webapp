@@ -1,10 +1,10 @@
-{{-- resources/views/majikan/nanny-list.blade.php --}}
+{{-- resources/views/konsultan/nanny-list.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Daftar Nanny</title>
+    <title>Daftar Nanny — Konsultan</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -63,7 +63,6 @@
             background: linear-gradient(135deg, #7B1E5A 0%, #9B2E72 100%);
         }
 
-        /* Slide-up animation */
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(20px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -73,31 +72,17 @@
         .anim-up.delay-2    { animation-delay: 0.12s; opacity: 0; }
         .anim-up.delay-3    { animation-delay: 0.20s; opacity: 0; }
 
-        /* Card hover — matches RN activeOpacity:0.7 */
         .nanny-card {
-            transition: transform 0.15s ease, opacity 0.15s ease;
+            transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
         }
-        .nanny-card:hover  { opacity: 0.85; }
+        .nanny-card:hover  { opacity: 0.88; box-shadow: 0 6px 20px rgba(123,30,90,0.15); }
         .nanny-card:active { transform: scale(0.95); opacity: 0.7; }
 
-        /* Float animation for empty state */
         @keyframes floatEmpty {
             0%,100% { transform: translateY(0); }
             50%     { transform: translateY(-6px); }
         }
         .float-anim { animation: floatEmpty 3s ease-in-out infinite; }
-
-        /* Skeleton shimmer */
-        @keyframes shimmer {
-            0%   { background-position: -400px 0; }
-            100% { background-position: 400px 0; }
-        }
-        .skeleton {
-            background: linear-gradient(90deg, #f0dcea 25%, #fce8f5 50%, #f0dcea 75%);
-            background-size: 400px 100%;
-            animation: shimmer 1.4s infinite;
-            border-radius: 12px;
-        }
 
         /* Scrollbar hide */
         .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -110,14 +95,8 @@
             box-shadow: 0 0 0 3px rgba(123,30,90,0.12);
         }
 
-        /* Avatar placeholder */
-        .avatar-placeholder {
-            background: linear-gradient(135deg, #F3E6FA, #E8D5EE);
-        }
-
-        /* Status badge */
-        .badge-available { background: #DCFCE7; color: #166534; }
-        .badge-busy      { background: #FEE2E2; color: #991B1B; }
+        /* Badge added */
+        .badge-mine { background: #DCFCE7; color: #166534; }
     </style>
 </head>
 <body>
@@ -137,7 +116,6 @@
 
     <!-- ─── HEADER ────────────────────────────────────────────────────────── -->
     <div class="header-bg rounded-b-[30px] px-5 pt-10 pb-8 relative shrink-0">
-        <!-- Decorative circles -->
         <div class="absolute top-0 right-0 w-36 h-36 rounded-full bg-white/5 -translate-y-8 translate-x-8 pointer-events-none"></div>
         <div class="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-white/5 translate-y-5 -translate-x-5 pointer-events-none"></div>
 
@@ -153,9 +131,7 @@
                 <ion-icon name="people" style="font-size:30px;color:#7B1E5A;"></ion-icon>
             </div>
             <h1 class="text-white text-2xl font-extrabold tracking-wide mb-1">Daftar Nanny</h1>
-            <p class="text-white/60 text-xs font-medium">
-                <span id="nannyCount">{{ count($nannies ?? []) }}</span> nanny tersedia
-            </p>
+            <p class="text-white/60 text-xs font-medium">Cari dan temukan nanny yang sesuai</p>
         </div>
     </div>
 
@@ -163,19 +139,19 @@
     <div class="flex-1 overflow-y-auto no-scrollbar px-4 pt-5" id="mainScroll">
 
         <!-- ── SEARCH BAR ─────────────────────────────────────────────────── -->
-        <div class="flex gap-2 mb-5 anim-up delay-2">
-            <form action="{{ route('majikan-nanny-list') }}" method="GET" class="flex gap-2 w-full">
+        <div class="flex gap-2 mb-4 anim-up delay-2">
+            <form action="{{ route('konsultan-nanny-list') }}" method="GET" class="flex gap-2 w-full">
                 <div class="search-wrapper flex-1 flex items-center bg-white rounded-2xl px-4 py-3 border-2 border-plum-soft gap-3 transition-all">
                     <ion-icon name="search" style="font-size:18px;color:#7B1E5A;flex-shrink:0;"></ion-icon>
                     <input
                         type="text"
                         name="search"
                         value="{{ request('search') }}"
-                        placeholder="Cari nanny..."
+                        placeholder="Cari nanny berdasarkan nama..."
                         class="search-input flex-1 text-sm font-medium text-plum-dark placeholder-plum-accent bg-transparent"
                     >
                     @if(request('search'))
-                    <a href="{{ route('majikan-nanny-list') }}" class="text-plum-accent hover:text-plum-muted">
+                    <a href="{{ route('konsultan-nanny-list') }}" class="text-plum-accent hover:text-plum-muted">
                         <ion-icon name="close-circle" style="font-size:18px;"></ion-icon>
                     </a>
                     @endif
@@ -187,31 +163,35 @@
             </form>
         </div>
 
-        <!-- ── NANNY GRID — mirrors GridCard component (3 cols, circular avatar) ── -->
+        <!-- ── RESULT INFO ────────────────────────────────────────────────── -->
+        @if(isset($nannies) && count($nannies) > 0)
+        <div class="mb-3 anim-up delay-2">
+            <p class="text-plum-muted text-xs font-semibold">
+                Menampilkan {{ count($nannies) }} nanny
+            </p>
+        </div>
+        @endif
+
+        <!-- ── NANNY GRID ─────────────────────────────────────────────────── -->
         <div class="anim-up delay-3">
             @if(isset($nannies) && count($nannies) > 0)
 
-            {{--
-                RN GridCard mapping:
-                gridContainer  → flex flex-wrap justify-between pb-10
-                card           → w-[31%] bg-white rounded-2xl py-4 px-2 items-center mb-4 border-2 border-[#F3E6FA]
-                avatarContainer → mb-3
-                avatar/placeholder → w-16 h-16 rounded-full bg-[#F3E6FA] border-3 border-[#F3E6FA]
-                name           → text-sm font-bold text-[#4A0E35] text-center mb-1.5 px-1
-                roleContainer  → flex items-center gap-1 px-1
-                role icon      → briefcase-outline 12px #A2397B
-                role text      → text-xs text-[#A2397B] font-medium text-center
-            --}}
             <div class="flex flex-wrap justify-between pb-10">
                 @foreach($nannies as $i => $nanny)
-                <a href="{{ route('majikan-nanny-detail', $nanny['id']) }}"
-                   class="nanny-card bg-white rounded-2xl py-4 px-2 flex flex-col items-center mb-4"
+                <a href="{{ route('konsultan-nanny-detail', $nanny['id']) }}"
+                   class="nanny-card bg-white rounded-2xl py-4 px-2 flex flex-col items-center mb-4 relative"
                    style="width:31%; border: 2px solid #F3E6FA; animation: slideUp 0.3s ease {{ $i * 0.05 }}s both; opacity:0;"
                 >
-                    <!-- avatarContainer: mb-3 -->
+                    {{-- Badge jika sudah jadi nanny konsultan ini --}}
+                    @if(!empty($nanny['is_mine']))
+                    <span class="absolute top-2 right-2 text-[9px] font-bold px-1.5 py-0.5 rounded-full badge-mine leading-tight">
+                        Saya
+                    </span>
+                    @endif
+
+                    <!-- Avatar -->
                     <div class="mb-3">
                         @if(!empty($nanny['foto']))
-                        {{-- avatar: w-16 h-16 rounded-full bg-[#F3E6FA] border-3 --}}
                         <img src="{{ $nanny['foto'] }}"
                              alt="{{ $nanny['name'] }}"
                              class="w-16 h-16 rounded-full object-cover"
@@ -223,7 +203,6 @@
                             <ion-icon name="person" style="font-size:28px;color:#7B1E5A;"></ion-icon>
                         </div>
                         @else
-                        {{-- avatarPlaceholder --}}
                         <div class="w-16 h-16 rounded-full flex items-center justify-center"
                              style="background:#F3E6FA; border: 3px solid #F3E6FA;">
                             <ion-icon name="person" style="font-size:28px;color:#7B1E5A;"></ion-icon>
@@ -231,13 +210,13 @@
                         @endif
                     </div>
 
-                    <!-- name: fontSize:14, fontWeight:700, color:#4A0E35, textAlign:center, mb:6, px:4 -->
+                    <!-- Name -->
                     <p class="text-sm font-bold text-center mb-1.5 px-1 line-clamp-1 w-full"
                        style="color:#4A0E35;">
                         {{ $nanny['name'] }}
                     </p>
 
-                    <!-- roleContainer: flex, items-center, gap:4, px:4 -->
+                    <!-- Role -->
                     @if(!empty($nanny['role']))
                     <div class="flex items-center px-1" style="gap:4px;">
                         <ion-icon name="briefcase-outline" style="font-size:12px;color:#A2397B;flex-shrink:0;"></ion-icon>
@@ -261,7 +240,7 @@
                     Tidak ada nanny yang sesuai dengan pencarian
                     "<span class="font-semibold text-plum">{{ request('search') }}</span>"
                 </p>
-                <a href="{{ route('majikan-nanny-list') }}"
+                <a href="{{ route('konsultan-nanny-list') }}"
                    class="mt-6 bg-plum text-white text-sm font-bold px-6 py-3 rounded-2xl hover:bg-plum-light transition-colors shadow-md shadow-plum/30">
                     Lihat Semua Nanny
                 </a>
@@ -291,7 +270,6 @@
 </div>
 
 <script>
-    // Status bar clock
     function updateClock() {
         const now = new Date();
         const h = String(now.getHours()).padStart(2, '0');

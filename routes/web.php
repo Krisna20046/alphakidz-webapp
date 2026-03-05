@@ -10,6 +10,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MajikanController;
 use App\Http\Controllers\NannyController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\KonsultanController;
+use App\Http\Controllers\KonsultanTugaskanController;
 
 
 // ─── Guest Routes ─────────────────────────────────────────────────────────────
@@ -20,6 +22,26 @@ Route::middleware('guest.api')->group(function () {
     Route::get( '/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']    )->name('register.post');
 });
+
+Route::post('/auth/store-token', [AuthController::class, 'storeToken'])->name('auth.store-token');
+
+Route::get('/sw.js', function () {
+    return response()->file(public_path('sw.js'), [
+        'Content-Type' => 'application/javascript',
+        'Cache-Control' => 'no-cache, no-store, must-revalidate', // SW selalu fresh
+        'Service-Worker-Allowed' => '/',
+    ]);
+})->name('sw');
+
+Route::get('/manifest.json', function () {
+    return response()->file(public_path('manifest.json'), [
+        'Content-Type' => 'application/manifest+json',
+    ]);
+})->name('manifest');
+
+Route::get('/offline', function () {
+    return view('offline');
+})->name('offline');
 
 // ─── Protected Routes ─────────────────────────────────────────────────────────
 
@@ -100,6 +122,23 @@ Route::middleware('auth.api')->group(function () {
         Route::put('/{id}',        [AdminController::class, 'update']       )->name('admin-kelola-akun.update');
         Route::post('/{id}/status',[AdminController::class, 'updateStatus'] )->name('admin-kelola-akun.status');
         Route::delete('/{id}',     [AdminController::class, 'destroy']      )->name('admin-kelola-akun.destroy');
+    });
+
+    Route::prefix('konsultan')->group(function () {
+        Route::get('/nanny',        [KonsultanController::class, 'indexNanny'])->name('konsultan-nanny-list');
+        Route::get('/nanny/{id}',   [KonsultanController::class, 'showNanny']) ->name('konsultan-nanny-detail');
+        Route::post('/nanny/add',   [KonsultanController::class, 'addNanny'])  ->name('konsultan-nanny-add');
+        Route::get('/nanny-anda',                [KonsultanController::class, 'indexNannyAnda']    )->name('konsultan-nanny-anda');
+        Route::get('/nanny-anda/{id}',           [KonsultanController::class, 'showNannyAnda']     )->name('konsultan-nanny-anda-detail');
+        Route::post('/nanny-anda/update-status', [KonsultanController::class, 'updateStatusNanny'] )->name('konsultan-nanny-update-status');
+        Route::get('/majikan-nanny',        [KonsultanController::class, 'indexMajikanNanny'])->name('konsultan-majikan-nanny');
+        Route::get('/majikan-nanny/{id}',   [KonsultanController::class, 'showMajikanNanny']) ->name('konsultan-majikan-nanny-detail');
+
+        // Tugaskan Nanny
+        Route::get('/tugaskan-nanny',                      fn()=>view('konsultan.tugaskan-nanny'))->name('konsultan-tugaskan-nanny');
+        Route::get('/tugaskan-nanny/{id}/tambah',          fn()=>view('konsultan.tugaskan-nanny-tambah'));
+        Route::get('/tugaskan-nanny/assignment/{id}/ubah', fn()=>view('konsultan.tugaskan-nanny-ubah'));
+        Route::get('/rekap-diary',               fn()=>view('konsultan.rekap-diary'))->name('konsultan-rekap-diary-nanny-list');
     });
 });
 

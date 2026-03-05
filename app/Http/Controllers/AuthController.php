@@ -214,4 +214,15 @@ class AuthController extends Controller
 
         return redirect()->route('login');
     }
+
+    public function storeToken(Request $request)
+    {
+        $request->validate([
+            'token' => 'required|string|min:10',
+        ]);
+
+        session(['token' => $request->token]);
+
+        return response()->json(['ok' => true]);
+    }
 }

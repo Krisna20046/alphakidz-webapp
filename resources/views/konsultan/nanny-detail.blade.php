@@ -1,4 +1,4 @@
-{{-- resources/views/majikan/nanny-detail.blade.php --}}
+{{-- resources/views/konsultan/nanny-detail.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -59,60 +59,61 @@
             .phone-frame   { min-height: 100vh; }
         }
 
-        .header-bg {
-            background: linear-gradient(135deg, #7B1E5A 0%, #9B2E72 100%);
-        }
+        .header-bg { background: linear-gradient(135deg, #7B1E5A 0%, #9B2E72 100%); }
 
-        /* Slide-up animation */
         @keyframes slideUp {
             from { opacity: 0; transform: translateY(18px); }
             to   { opacity: 1; transform: translateY(0); }
         }
-        .anim-up            { animation: slideUp 0.35s ease forwards; }
-        .anim-up.d1         { animation-delay: 0.05s; opacity: 0; }
-        .anim-up.d2         { animation-delay: 0.12s; opacity: 0; }
-        .anim-up.d3         { animation-delay: 0.19s; opacity: 0; }
-        .anim-up.d4         { animation-delay: 0.26s; opacity: 0; }
-        .anim-up.d5         { animation-delay: 0.33s; opacity: 0; }
-        .anim-up.d6         { animation-delay: 0.40s; opacity: 0; }
+        .anim-up      { animation: slideUp 0.35s ease forwards; }
+        .anim-up.d1   { animation-delay: 0.05s; opacity: 0; }
+        .anim-up.d2   { animation-delay: 0.12s; opacity: 0; }
+        .anim-up.d3   { animation-delay: 0.19s; opacity: 0; }
+        .anim-up.d4   { animation-delay: 0.26s; opacity: 0; }
+        .anim-up.d5   { animation-delay: 0.33s; opacity: 0; }
+        .anim-up.d6   { animation-delay: 0.40s; opacity: 0; }
 
-        /* Scrollbar hide */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Info card hover */
-        .info-card {
-            transition: box-shadow 0.2s ease;
-        }
-        .info-card:hover {
-            box-shadow: 0 4px 16px rgba(123,30,90,0.10);
-        }
+        .info-card { transition: box-shadow 0.2s ease; }
+        .info-card:hover { box-shadow: 0 4px 16px rgba(123,30,90,0.10); }
 
-        /* Button */
         .btn-primary {
             background: linear-gradient(135deg, #7B1E5A, #9B2E72);
             transition: opacity 0.2s, transform 0.15s;
         }
         .btn-primary:hover:not(:disabled)  { opacity: 0.92; }
         .btn-primary:active:not(:disabled) { transform: scale(0.97); }
-        .btn-primary:disabled {
-            background: #E2C8D8;
-            cursor: not-allowed;
-        }
+        .btn-primary:disabled { background: #E2C8D8; cursor: not-allowed; }
 
-        /* Float empty */
+        .btn-danger {
+            background: linear-gradient(135deg, #DC2626, #EF4444);
+            transition: opacity 0.2s, transform 0.15s;
+        }
+        .btn-danger:hover  { opacity: 0.92; }
+        .btn-danger:active { transform: scale(0.97); }
+
         @keyframes floatEmpty {
             0%,100% { transform: translateY(0); }
             50%     { transform: translateY(-6px); }
         }
         .float-anim { animation: floatEmpty 3s ease-in-out infinite; }
 
-        /* Avatar ring animation */
         @keyframes avatarRing {
             0%,100% { box-shadow: 0 0 0 0 rgba(123,30,90,0.3); }
             50%     { box-shadow: 0 0 0 8px rgba(123,30,90,0); }
         }
         .avatar-ring { animation: avatarRing 2.5s ease-in-out 0.5s infinite; }
+
+        /* Modal */
+        .modal-overlay {
+            background: rgba(74, 14, 53, 0.5);
+            backdrop-filter: blur(4px);
+        }
+        .modal-card {
+            animation: slideUp 0.25s ease forwards;
+        }
     </style>
 </head>
 <body>
@@ -131,10 +132,10 @@
     </div>
 
     @if(!isset($nanny))
-    {{-- ── NOT FOUND STATE ───────────────────────────────────────────────── --}}
+    {{-- ── NOT FOUND STATE ──────────────────────────────────────────────── --}}
     <div class="header-bg rounded-b-[30px] px-5 pt-10 pb-8 relative shrink-0">
         <div class="absolute top-0 right-0 w-36 h-36 rounded-full bg-white/5 -translate-y-8 translate-x-8 pointer-events-none"></div>
-        <a href="{{ route('majikan-nanny-list') }}"
+        <a href="{{ route('konsultan-nanny-list') }}"
            class="absolute top-[54px] left-5 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center z-10 hover:bg-white/30 transition-colors">
             <ion-icon name="arrow-back" style="font-size:20px;color:#fff;"></ion-icon>
         </a>
@@ -152,7 +153,7 @@
         </div>
         <h2 class="text-plum-dark font-bold text-xl mb-2">Data tidak ditemukan</h2>
         <p class="text-plum-muted text-sm text-center leading-relaxed mb-6">Data yang Anda cari tidak tersedia</p>
-        <a href="{{ route('majikan-nanny-list') }}"
+        <a href="{{ route('konsultan-nanny-list') }}"
            class="btn-primary text-white text-sm font-bold px-8 py-3 rounded-2xl shadow-md shadow-plum/30">
             Kembali ke Daftar
         </a>
@@ -164,7 +165,7 @@
         <div class="absolute top-0 right-0 w-36 h-36 rounded-full bg-white/5 -translate-y-8 translate-x-8 pointer-events-none"></div>
         <div class="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-white/5 translate-y-5 -translate-x-5 pointer-events-none"></div>
 
-        <a href="{{ route('majikan-nanny-list') }}"
+        <a href="{{ route('konsultan-nanny-list') }}"
            class="absolute top-[54px] left-5 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center z-10 hover:bg-white/30 transition-colors">
             <ion-icon name="arrow-back" style="font-size:20px;color:#fff;"></ion-icon>
         </a>
@@ -178,10 +179,26 @@
         </div>
     </div>
 
+    {{-- Flash messages --}}
+    @if(session('success'))
+    <div id="flash-success"
+         class="mx-4 mt-3 bg-green-50 border border-green-200 text-green-700 text-xs font-semibold px-4 py-3 rounded-2xl flex items-center gap-2">
+        <ion-icon name="checkmark-circle" style="font-size:16px;color:#16A34A;flex-shrink:0;"></ion-icon>
+        {{ session('success') }}
+    </div>
+    @endif
+    @if(session('error'))
+    <div id="flash-error"
+         class="mx-4 mt-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold px-4 py-3 rounded-2xl flex items-center gap-2">
+        <ion-icon name="alert-circle" style="font-size:16px;color:#DC2626;flex-shrink:0;"></ion-icon>
+        {{ session('error') }}
+    </div>
+    @endif
+
     {{-- ── SCROLLABLE BODY ──────────────────────────────────────────────── --}}
     <div class="flex-1 overflow-y-auto no-scrollbar px-4 py-5 space-y-4">
 
-        {{-- ── PROFILE CARD ────────────────────────────────────────────── --}}
+        {{-- ── PROFILE CARD ─────────────────────────────────────────────── --}}
         <div class="info-card bg-white rounded-3xl border-2 border-plum-soft p-6 flex flex-col items-center anim-up d2">
             @if(!empty($nanny['foto']))
             <img src="{{ $nanny['foto'] }}"
@@ -219,7 +236,7 @@
         </div>
         @endif
 
-        {{-- ── CONTACT ──────────────────────────────────────────────────── --}}
+        {{-- ── KONTAK ───────────────────────────────────────────────────── --}}
         <div class="info-card bg-white rounded-3xl border-2 border-plum-soft p-5 anim-up d3">
             <div class="flex items-center gap-2 mb-4">
                 <div class="w-8 h-8 rounded-xl bg-plum-soft flex items-center justify-center">
@@ -227,9 +244,7 @@
                 </div>
                 <h3 class="text-plum-dark font-bold text-sm">Informasi Kontak</h3>
             </div>
-
             <div class="space-y-3">
-                <!-- Email -->
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-plum-soft flex items-center justify-center flex-shrink-0">
                         <ion-icon name="mail" style="font-size:16px;color:#7B1E5A;"></ion-icon>
@@ -239,7 +254,6 @@
                         <p class="text-plum-dark text-sm font-semibold truncate">{{ $nanny['email'] ?? '-' }}</p>
                     </div>
                 </div>
-                <!-- No HP -->
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-plum-soft flex items-center justify-center flex-shrink-0">
                         <ion-icon name="call" style="font-size:16px;color:#7B1E5A;"></ion-icon>
@@ -252,7 +266,7 @@
             </div>
         </div>
 
-        {{-- ── PERSONAL INFO ────────────────────────────────────────────── --}}
+        {{-- ── INFORMASI PRIBADI ────────────────────────────────────────── --}}
         <div class="info-card bg-white rounded-3xl border-2 border-plum-soft p-5 anim-up d4">
             <div class="flex items-center gap-2 mb-4">
                 <div class="w-8 h-8 rounded-xl bg-plum-soft flex items-center justify-center">
@@ -260,9 +274,7 @@
                 </div>
                 <h3 class="text-plum-dark font-bold text-sm">Informasi Pribadi</h3>
             </div>
-
             <div class="space-y-3">
-                <!-- Tanggal Lahir -->
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-plum-soft flex items-center justify-center flex-shrink-0">
                         <ion-icon name="calendar" style="font-size:16px;color:#7B1E5A;"></ion-icon>
@@ -272,7 +284,6 @@
                         <p class="text-plum-dark text-sm font-semibold">{{ $nanny['tanggal_lahir'] ?? '-' }}</p>
                     </div>
                 </div>
-                <!-- Gender -->
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-plum-soft flex items-center justify-center flex-shrink-0">
                         @php $isMale = ($nanny['gender'] ?? '') === 'L'; @endphp
@@ -288,7 +299,6 @@
                         </p>
                     </div>
                 </div>
-                <!-- Lokasi -->
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-xl bg-plum-soft flex items-center justify-center flex-shrink-0">
                         <ion-icon name="location" style="font-size:16px;color:#7B1E5A;"></ion-icon>
@@ -304,7 +314,6 @@
                         </p>
                     </div>
                 </div>
-                <!-- Alamat -->
                 @if(!empty($nanny['alamat']))
                 <div class="flex items-start gap-3">
                     <div class="w-10 h-10 rounded-xl bg-plum-soft flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -319,7 +328,7 @@
             </div>
         </div>
 
-        {{-- ── PROFESSIONAL INFO ────────────────────────────────────────── --}}
+        {{-- ── INFORMASI PROFESIONAL ────────────────────────────────────── --}}
         @if(!empty($nanny['skill']) || !empty($nanny['pengalaman']) || !empty($nanny['sertifikasi']))
         <div class="info-card bg-white rounded-3xl border-2 border-plum-soft p-5 anim-up d5">
             <div class="flex items-center gap-2 mb-4">
@@ -328,7 +337,6 @@
                 </div>
                 <h3 class="text-plum-dark font-bold text-sm">Informasi Profesional</h3>
             </div>
-
             <div class="space-y-3">
                 @if(!empty($nanny['skill']))
                 <div class="flex items-start gap-3">
@@ -397,24 +405,64 @@
             </div>
         </div>
 
-        {{-- ── BUTTON ───────────────────────────────────────────────────── --}}
-        <div class="anim-up d6 pb-2">
-            @if(!empty($nanny['konsultan']))
-            <a href="{{ route('chat.room', $nanny['konsultan']['id']) }}"
-               class="btn-primary w-full flex items-center justify-center gap-2 text-white font-bold text-sm py-4 rounded-2xl shadow-lg shadow-plum/30">
-                <ion-icon name="chatbubble-ellipses" style="font-size:18px;"></ion-icon>
-                Hubungi Konsultan
-            </a>
+        {{-- ── ACTION BUTTONS ───────────────────────────────────────────── --}}
+        <div class="anim-up d6 space-y-3 pb-2">
+            {{-- Tambahkan Nanny (hanya jika belum ada konsultan) --}}
+            @if(empty($nanny['konsultan']))
+            <button onclick="openConfirmModal()"
+                    class="btn-primary w-full flex items-center justify-center gap-2 text-white font-bold text-sm py-4 rounded-2xl shadow-lg shadow-plum/30">
+                <ion-icon name="person-add" style="font-size:18px;"></ion-icon>
+                Tambahkan Nanny
+            </button>
             @else
-            <button disabled
-                    class="btn-primary w-full flex items-center justify-center gap-2 text-white/70 font-bold text-sm py-4 rounded-2xl">
-                <ion-icon name="chatbubble-ellipses" style="font-size:18px;"></ion-icon>
-                Hubungi Konsultan
+            {{-- Jika konsultan adalah diri sendiri, tampilkan tombol aksi --}}
+            <button onclick="openConfirmModal()"
+                    class="btn-primary w-full flex items-center justify-center gap-2 text-white font-bold text-sm py-4 rounded-2xl shadow-lg shadow-plum/30">
+                <ion-icon name="person-add" style="font-size:18px;"></ion-icon>
+                Tambahkan Nanny
             </button>
             @endif
         </div>
 
         <div class="h-6"></div>
+    </div>
+
+    {{-- ── CONFIRM MODAL ────────────────────────────────────────────────── --}}
+    <div id="confirmModal"
+         class="hidden fixed inset-0 z-50 flex items-end justify-center sm:items-center"
+         style="padding: 0 0 80px 0;"
+    >
+        {{-- Overlay --}}
+        <div class="modal-overlay absolute inset-0" onclick="closeConfirmModal()"></div>
+
+        {{-- Modal card --}}
+        <div class="modal-card relative bg-white rounded-3xl mx-4 p-6 w-full max-w-sm shadow-2xl z-10">
+            <div class="flex flex-col items-center text-center mb-6">
+                <div class="w-16 h-16 rounded-full bg-plum-soft flex items-center justify-center mb-4">
+                    <ion-icon name="person-add" style="font-size:32px;color:#7B1E5A;"></ion-icon>
+                </div>
+                <h3 class="text-plum-dark font-extrabold text-lg mb-2">Tambahkan Nanny?</h3>
+                <p class="text-plum-muted text-sm leading-relaxed">
+                    Anda akan menambahkan <span class="font-bold text-plum-dark">{{ $nanny['name'] }}</span>
+                    ke daftar nanny yang Anda awasi.
+                </p>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="closeConfirmModal()"
+                        class="flex-1 py-3.5 rounded-2xl border-2 border-plum-soft text-plum-muted font-bold text-sm hover:bg-plum-soft transition-colors">
+                    Batal
+                </button>
+                <form action="{{ route('konsultan-nanny-add') }}" method="POST" class="flex-1">
+                    @csrf
+                    <input type="hidden" name="id_nanny" value="{{ $nanny['id'] }}">
+                    <button type="submit"
+                            class="btn-primary w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-md shadow-plum/30">
+                        Ya, Tambahkan
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 
     @endif
@@ -435,6 +483,23 @@
     }
     updateClock();
     setInterval(updateClock, 30000);
+
+    function openConfirmModal() {
+        document.getElementById('confirmModal').classList.remove('hidden');
+        document.getElementById('confirmModal').classList.add('flex');
+    }
+    function closeConfirmModal() {
+        document.getElementById('confirmModal').classList.add('hidden');
+        document.getElementById('confirmModal').classList.remove('flex');
+    }
+
+    // Auto-dismiss flash messages
+    setTimeout(() => {
+        ['flash-success','flash-error'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'none';
+        });
+    }, 4000);
 </script>
 @include('partials.auth-guard')
 </body>
