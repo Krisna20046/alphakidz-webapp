@@ -50,7 +50,7 @@
     </div>
 
     <!-- HEADER PLUM -->
-    <div class="bg-gradient-to-br from-plum to-plum-light px-5 pt-10 pb-14 relative shrink-0"
+    <div class="bg-gradient-to-br from-plum to-plum-light px-5 pt-10 pb-14 relative shrink-0 overflow-hidden"
          style="border-radius:0 0 28px 28px;">
         <div class="absolute top-0 right-0 w-36 h-36 rounded-full bg-white/5 -translate-y-8 translate-x-8"></div>
         <a href="{{ route('profil.index') }}"
@@ -67,7 +67,7 @@
     </div>
 
     <!-- BODY -->
-    <div class="flex-1 overflow-y-auto no-scrollbar -mt-6 px-4 pb-24 relative">
+    <div class="flex-1 overflow-y-auto no-scrollbar px-4 pb-24 relative">
 
         @if(count($anakList) > 0)
         <!-- Count header -->

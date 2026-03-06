@@ -51,7 +51,7 @@ class AnakController extends Controller
 
         try {
             $response = Http::withToken($token)->acceptJson()->timeout(10)
-                ->post("{$this->apiBaseUrl}/anak-detail-by-majikan", ['id_anak' => $id]);
+                ->post("{$this->apiBaseUrl}/user-anak-detail-by-majikan", ['id_anak' => $id]);
 
             $data = $response->json();
 
@@ -100,7 +100,7 @@ class AnakController extends Controller
                 $http = $http->attach('foto', file_get_contents($file->getRealPath()), $file->getClientOriginalName(), ['Content-Type' => $file->getMimeType()]);
             }
 
-            $response = $http->post("{$this->apiBaseUrl}/anak", $request->except(['_token', 'foto']));
+            $response = $http->post("{$this->apiBaseUrl}/user-anak", $request->except(['_token', 'foto']));
             $data     = $response->json();
 
             if ($response->successful() && ($data['status'] ?? '') === 'success') {
@@ -134,7 +134,7 @@ class AnakController extends Controller
 
         try {
             $response = Http::withToken($token)->acceptJson()->timeout(10)
-                ->post("{$this->apiBaseUrl}/anak-detail-by-majikan", ['id_anak' => $id]);
+                ->post("{$this->apiBaseUrl}/user-anak-detail-by-majikan", ['id_anak' => $id]);
 
             $data = $response->json();
 
@@ -173,7 +173,7 @@ class AnakController extends Controller
                 $http = $http->attach('foto', file_get_contents($file->getRealPath()), $file->getClientOriginalName(), ['Content-Type' => $file->getMimeType()]);
             }
 
-            $response = $http->post("{$this->apiBaseUrl}/anak-update", $request->except(['_token', 'foto']));
+            $response = $http->post("{$this->apiBaseUrl}/user-anak-update", $request->except(['_token', 'foto']));
             $data     = $response->json();
 
             if ($response->successful() && ($data['status'] ?? '') === 'success') {
@@ -209,7 +209,7 @@ class AnakController extends Controller
 
         try {
             $response = Http::withToken($token)->acceptJson()->timeout(10)
-                ->post("{$this->apiBaseUrl}/anak-delete", ['id' => $id]);
+                ->post("{$this->apiBaseUrl}/user-anak-delete", ['id' => $id]);
 
             $data = $response->json();
 

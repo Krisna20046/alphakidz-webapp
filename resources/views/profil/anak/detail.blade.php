@@ -47,7 +47,7 @@
     </div>
 
     <!-- HEADER -->
-    <div class="bg-gradient-to-br from-plum to-plum-light px-5 pt-10 pb-14 relative shrink-0" style="border-radius:0 0 28px 28px;">
+    <div class="bg-gradient-to-br from-plum to-plum-light px-5 pt-10 pb-14 relative shrink-0 overflow-hidden" style="border-radius:0 0 28px 28px;">
         <div class="absolute top-0 right-0 w-36 h-36 rounded-full bg-white/5 -translate-y-8 translate-x-8"></div>
         <a href="{{ route('profil.data-anak') }}"
            class="absolute top-10 left-5 w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">

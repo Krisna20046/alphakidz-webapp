@@ -103,7 +103,7 @@
     </div>
 
     {{-- Header --}}
-    <div class="header-bg header-wave px-5 pt-10 pb-8 relative shrink-0">
+    <div class="header-bg header-wave px-5 pt-10 pb-8 relative shrink-0 overflow-hidden">
         <div class="absolute top-0 right-0 w-40 h-40 rounded-full bg-white/5 -translate-y-10 translate-x-10"></div>
         <div class="relative flex items-center gap-3 anim-up delay-1">
             <a href="{{ route('admin-kelola-akun') }}"

@@ -83,7 +83,7 @@
     </div>
 
     <!-- HEADER -->
-    <div class="header-bg header-wave px-5 pt-10 pb-14 relative shrink-0">
+    <div class="header-bg header-wave px-5 pt-10 pb-14 relative shrink-0 overflow-hidden">
         <div class="absolute top-0 right-0 w-40 h-40 rounded-full bg-white/5 -translate-y-10 translate-x-10"></div>
         <div class="absolute bottom-0 left-0 w-24 h-24 rounded-full bg-white/5 translate-y-8 -translate-x-6"></div>
 

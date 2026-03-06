@@ -6,6 +6,9 @@
     <title>{{ $isEdit ? 'Ubah Data Anak' : 'Tambah Data Anak' }}</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tambahkan SweetAlert2 CSS dan JS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
@@ -28,11 +31,36 @@
         .input-field:focus { outline:none; border-color:#7B1E5A; box-shadow:0 0 0 3px rgba(123,30,90,0.1); }
         .no-scrollbar::-webkit-scrollbar { display:none; }
         .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
-        #toast { transition:all .3s ease; transform:translateY(-100%); opacity:0; }
-        #toast.show { transform:translateY(0); opacity:1; }
         @keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
         .anim-up{animation:slideUp .4s ease forwards;}
         .d1{animation-delay:.05s;opacity:0} .d2{animation-delay:.12s;opacity:0} .d3{animation-delay:.19s;opacity:0} .d4{animation-delay:.26s;opacity:0}
+        
+        /* Custom SweetAlert2 styling */
+        .swal2-popup {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            border-radius: 24px !important;
+            padding: 20px !important;
+        }
+        .swal2-title {
+            color: #4A0E35 !important;
+            font-weight: 800 !important;
+            font-size: 1.25rem !important;
+        }
+        .swal2-html-container {
+            color: #A2397B !important;
+            font-weight: 500 !important;
+        }
+        .swal2-confirm {
+            background: linear-gradient(to right, #7B1E5A, #9B2E72) !important;
+            border-radius: 16px !important;
+            font-weight: 700 !important;
+            padding: 12px 24px !important;
+        }
+        .swal2-cancel {
+            border-radius: 16px !important;
+            font-weight: 600 !important;
+            padding: 12px 24px !important;
+        }
     </style>
 </head>
 <body>
@@ -59,13 +87,6 @@
         </h1>
     </div>
 
-    <!-- TOAST -->
-    <div id="toast" class="absolute top-14 left-0 right-0 z-50 px-4">
-        <div id="toastInner" class="bg-red-500 text-white text-sm font-semibold px-4 py-3 rounded-2xl shadow-lg flex items-center gap-2">
-            <ion-icon name="alert-circle-outline" style="font-size:16px;flex-shrink:0;"></ion-icon>
-            <span id="toastMsg"></span>
-        </div>
-    </div>
 
     <!-- SCROLL BODY -->
     <div class="flex-1 overflow-y-auto no-scrollbar px-4 py-4 space-y-4">
@@ -238,13 +259,41 @@ document.getElementById('fotoInput').addEventListener('change', function() {
     reader.readAsDataURL(file);
 });
 
-// Toast
-function showToast(msg, type='error') {
-    const t = document.getElementById('toast');
-    const inner = document.getElementById('toastInner');
-    document.getElementById('toastMsg').textContent = msg;
-    inner.className = `${type==='success'?'bg-green-500':'bg-red-500'} text-white text-sm font-semibold px-4 py-3 rounded-2xl shadow-lg flex items-center gap-2`;
-    t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3500);
+// SweetAlert2 functions
+function showAlert(msg, type = 'error') {
+    Swal.fire({
+        text: msg,
+        icon: type,
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#7B1E5A',
+        timer: type === 'success' ? 2000 : undefined,
+        timerProgressBar: type === 'success',
+        showClass: {
+            popup: 'animate__animated animate__fadeInUp animate__faster'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutDown animate__faster'
+        }
+    });
+}
+
+function showSuccessAlert(msg, redirectUrl) {
+    Swal.fire({
+        text: msg,
+        icon: 'success',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#7B1E5A',
+        timer: 2000,
+        timerProgressBar: true,
+        showClass: {
+            popup: 'animate__animated animate__fadeInUp animate__faster'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutDown animate__faster'
+        }
+    }).then(() => {
+        window.location.href = redirectUrl;
+    });
 }
 
 function setLoading(v) {
@@ -265,12 +314,12 @@ document.getElementById('anakForm').addEventListener('submit', async (e) => {
     const gender    = document.getElementById('genderInput').value;
     const tgl       = document.getElementById('tanggalLahir').value;
 
-    if (!nama)   return showToast('Nama anak wajib diisi!');
-    if (!gender) return showToast('Gender wajib dipilih!');
-    if (!tgl)    return showToast('Tanggal lahir wajib diisi!');
+    if (!nama)   return showAlert('Nama anak wajib diisi!');
+    if (!gender) return showAlert('Gender wajib dipilih!');
+    if (!tgl)    return showAlert('Tanggal lahir wajib diisi!');
 
     // Validasi tanggal tidak lebih dari hari ini
-    if (new Date(tgl) > new Date()) return showToast('Tanggal lahir tidak boleh melebihi hari ini!');
+    if (new Date(tgl) > new Date()) return showAlert('Tanggal lahir tidak boleh melebihi hari ini!');
 
     setLoading(true);
     try {
@@ -283,15 +332,17 @@ document.getElementById('anakForm').addEventListener('submit', async (e) => {
         const data = await res.json();
 
         if (data.success) {
-            showToast(data.message || 'Data berhasil disimpan!', 'success');
-            setTimeout(() => {
-                window.location.href = data.redirect || '{{ route("profil.data-anak") }}';
-            }, 1200);
+            showSuccessAlert(
+                data.message || 'Data berhasil disimpan!',
+                data.redirect || '{{ route("profil.data-anak") }}'
+            );
         } else {
             const err = data.errors ? Object.values(data.errors)[0] : data.message;
-            showToast(Array.isArray(err) ? err[0] : (err||'Gagal menyimpan.'));
+            showAlert(Array.isArray(err) ? err[0] : (err||'Gagal menyimpan.'));
         }
-    } catch(err) { showToast('Terjadi kesalahan. Coba lagi.'); }
+    } catch(err) { 
+        showAlert('Terjadi kesalahan. Coba lagi.'); 
+    }
     finally { setLoading(false); }
 });
 </script>

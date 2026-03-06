@@ -102,7 +102,7 @@
     </div>
 
     <!-- HEADER -->
-    <div class="header-bg rounded-b-[30px] px-5 pt-10 pb-8 relative shrink-0" style="margin-bottom:20px;">
+    <div class="header-bg rounded-b-[30px] px-5 pt-10 pb-8 relative shrink-0 overflow-hidden" style="margin-bottom:20px;">
         <div class="absolute top-0 right-0 w-36 h-36 rounded-full bg-white/5 -translate-y-8 translate-x-8 pointer-events-none"></div>
         <div class="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-white/5 translate-y-5 -translate-x-5 pointer-events-none"></div>
 
@@ -130,7 +130,7 @@
     </div>
 
     <!-- SCROLLABLE BODY — scrollView: flex:1, paddingHorizontal:20 -->
-    <div class="flex-1 overflow-y-auto no-scrollbar" style="padding: 0 20px;">
+    <div class="flex-1 overflow-y-auto no-scrollbar px-4 pb-16">
 
         <!-- SEARCH BAR — searchContainer: flexDirection:row, mb:20, gap:10 -->
         <div class="flex anim-up delay-2" style="gap:10px; margin-bottom:20px;">

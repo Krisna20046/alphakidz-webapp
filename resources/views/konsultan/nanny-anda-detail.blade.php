@@ -131,7 +131,7 @@
 
     @if(!isset($nanny))
     <!-- NOT FOUND -->
-    <div class="header-bg rounded-b-[30px] px-5 pt-10 pb-8 relative shrink-0">
+    <div class="header-bg rounded-b-[30px] px-5 pt-10 pb-8 relative shrink-0 overflow-hidden">
         <div class="absolute top-0 right-0 w-36 h-36 rounded-full bg-white/5 -translate-y-8 translate-x-8 pointer-events-none"></div>
         <a href="{{ route('konsultan-nanny-anda') }}"
            class="absolute top-[54px] left-5 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center z-10 hover:bg-white/30 transition-colors">
@@ -159,7 +159,7 @@
 
     @else
     <!-- HEADER -->
-    <div class="header-bg rounded-b-[30px] px-5 pt-10 pb-8 relative shrink-0">
+    <div class="header-bg rounded-b-[30px] px-5 pt-10 pb-8 relative shrink-0 overflow-hidden">
         <div class="absolute top-0 right-0 w-36 h-36 rounded-full bg-white/5 -translate-y-8 translate-x-8 pointer-events-none"></div>
         <div class="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-white/5 translate-y-5 -translate-x-5 pointer-events-none"></div>
 

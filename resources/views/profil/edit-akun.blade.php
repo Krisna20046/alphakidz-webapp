@@ -6,6 +6,9 @@
     <title>Edit Akun</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tambahkan SweetAlert2 CSS dan JS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
@@ -31,29 +34,31 @@
         .no-scrollbar::-webkit-scrollbar { display:none; }
         .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
         
-        /* Toast styles */
-        #toast { 
-            transition: all .3s ease; 
-            transform: translateY(-100%); 
-            opacity: 0;
-            z-index: 40; /* Default lebih rendah */
-            pointer-events: none; /* Biarkan klik tembus saat hidden */
+        /* Custom SweetAlert2 styling */
+        .swal2-popup {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            border-radius: 24px !important;
+            padding: 20px !important;
         }
-        #toast.show { 
-            transform: translateY(0); 
-            opacity: 1;
-            z-index: 60 !important; /* Tinggi saat muncul */
-            pointer-events: none; /* Tetap biarkan area toast tidak bisa diklik */
+        .swal2-title {
+            color: #4A0E35 !important;
+            font-weight: 800 !important;
+            font-size: 1.25rem !important;
         }
-        #toast.show #toastInner {
-            pointer-events: none; /* Isi toast juga tidak bisa diklik */
+        .swal2-html-container {
+            color: #A2397B !important;
+            font-weight: 500 !important;
         }
-        
-        /* Top bar z-index management */
-        #topBar {
-            transition: z-index 0.2s ease;
-            z-index: 50; /* Default tinggi */
-            position: relative;
+        .swal2-confirm {
+            background: linear-gradient(to right, #7B1E5A, #9B2E72) !important;
+            border-radius: 16px !important;
+            font-weight: 700 !important;
+            padding: 12px 24px !important;
+        }
+        .swal2-cancel {
+            border-radius: 16px !important;
+            font-weight: 600 !important;
+            padding: 12px 24px !important;
         }
         
         /* Animasi */
@@ -81,14 +86,6 @@
             <ion-icon name="arrow-back" style="font-size:20px;color:#7B1E5A;"></ion-icon>
         </a>
         <h1 class="text-plum-dark font-extrabold text-base flex-1">Edit Akun</h1>
-    </div>
-
-    <!-- TOAST -->
-    <div id="toast" class="absolute top-14 left-0 right-0 px-4">
-        <div id="toastInner" class="bg-red-500 text-white text-sm font-semibold px-4 py-3 rounded-2xl shadow-lg flex items-center gap-2">
-            <ion-icon name="alert-circle-outline" style="font-size:16px;flex-shrink:0;"></ion-icon>
-            <span id="toastMsg"></span>
-        </div>
     </div>
 
     <!-- BODY -->
@@ -184,6 +181,43 @@
 function updateClock(){const el=document.getElementById('statusTime');if(el){const n=new Date();el.textContent=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;}}
 updateClock();setInterval(updateClock,30000);
 
+// ── SweetAlert Functions ─────────────────────────────────────────────────────
+function showAlert(msg, type = 'error') {
+    Swal.fire({
+        text: msg,
+        icon: type,
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#7B1E5A',
+        timer: type === 'success' ? 2000 : undefined,
+        timerProgressBar: type === 'success',
+        showClass: {
+            popup: 'animate__animated animate__fadeInUp animate__faster'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutDown animate__faster'
+        }
+    });
+}
+
+function showSuccessAlert(msg, redirectUrl) {
+    Swal.fire({
+        text: msg,
+        icon: 'success',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#7B1E5A',
+        timer: 2000,
+        timerProgressBar: true,
+        showClass: {
+            popup: 'animate__animated animate__fadeInUp animate__faster'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutDown animate__faster'
+        }
+    }).then(() => {
+        window.location.href = redirectUrl;
+    });
+}
+
 // Eye toggle
 document.querySelectorAll('.eye-toggle').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -211,69 +245,6 @@ function checkMatch() {
 pwBaru.addEventListener('input', checkMatch);
 pwConfirm.addEventListener('input', checkMatch);
 
-// Fungsi untuk mengatur z-index berdasarkan visibility toast
-function updateZIndexBasedOnToast() {
-    const topBar = document.getElementById('topBar');
-    const toast = document.getElementById('toast');
-    
-    if (!topBar || !toast) return;
-    
-    // Cek apakah toast sedang muncul
-    const isToastVisible = toast.classList.contains('show');
-    
-    if (isToastVisible) {
-        // Toast muncul: prioritas toast lebih tinggi
-        topBar.style.zIndex = '40';
-        toast.style.zIndex = '60';
-    } else {
-        // Toast tidak muncul: top bar lebih tinggi
-        topBar.style.zIndex = '50';
-        toast.style.zIndex = '40';
-    }
-}
-
-// Modifikasi fungsi showToast
-function showToast(msg, type='error') {
-    const t = document.getElementById('toast');
-    const inner = document.getElementById('toastInner');
-    
-    // Set pesan dan warna
-    document.getElementById('toastMsg').textContent = msg;
-    inner.className = `${type==='success'?'bg-green-500':'bg-red-500'} text-white text-sm font-semibold px-4 py-3 rounded-2xl shadow-lg flex items-center gap-2`;
-    
-    // Tampilkan toast
-    t.classList.add('show');
-    
-    // Update z-index - toast muncul
-    updateZIndexBasedOnToast();
-    
-    // Hapus toast setelah 3.5 detik
-    setTimeout(() => {
-        t.classList.remove('show');
-        // Update z-index - toast hilang
-        updateZIndexBasedOnToast();
-    }, 3500);
-}
-
-// Panggil saat halaman dimuat untuk memastikan z-index awal benar
-document.addEventListener('DOMContentLoaded', function() {
-    updateZIndexBasedOnToast();
-});
-
-// Observer untuk mendeteksi perubahan class pada toast secara real-time
-const toastElement = document.getElementById('toast');
-if (toastElement) {
-    const toastObserver = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.attributeName === 'class') {
-                updateZIndexBasedOnToast();
-            }
-        });
-    });
-    
-    toastObserver.observe(toastElement, { attributes: true });
-}
-
 function setLoading(v) {
     document.getElementById('submitBtn').disabled = v;
     document.getElementById('btnText').textContent = v ? 'Menyimpan...' : 'Simpan Perubahan';
@@ -288,13 +259,13 @@ document.getElementById('editAkunForm').addEventListener('submit', async (e) => 
     const baru    = document.getElementById('passwordBaru').value;
     const confirm = document.getElementById('passwordConfirm').value;
 
-    if (!email) return showToast('Email wajib diisi.');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast('Format email tidak valid.');
+    if (!email) return showAlert('Email wajib diisi.');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showAlert('Format email tidak valid.');
     if (baru || confirm || lama) {
-        if (!lama)            return showToast('Password lama wajib diisi untuk mengubah password.');
-        if (!baru)            return showToast('Password baru wajib diisi.');
-        if (baru.length < 6) return showToast('Password baru minimal 6 karakter.');
-        if (baru !== confirm) return showToast('Konfirmasi password tidak cocok.');
+        if (!lama)            return showAlert('Password lama wajib diisi untuk mengubah password.');
+        if (!baru)            return showAlert('Password baru wajib diisi.');
+        if (baru.length < 6) return showAlert('Password baru minimal 6 karakter.');
+        if (baru !== confirm) return showAlert('Konfirmasi password tidak cocok.');
     }
 
     setLoading(true);
@@ -307,13 +278,17 @@ document.getElementById('editAkunForm').addEventListener('submit', async (e) => 
         });
         const data = await res.json();
         if (data.success) {
-            showToast(data.message || 'Akun berhasil diperbarui!', 'success');
-            setTimeout(() => window.location.href = '{{ route("profil.index") }}', 1500);
+            showSuccessAlert(
+                data.message || 'Akun berhasil diperbarui!',
+                '{{ route("profil.index") }}'
+            );
         } else {
             const err = data.errors ? Object.values(data.errors)[0] : data.message;
-            showToast(Array.isArray(err) ? err[0] : (err || 'Gagal menyimpan.'));
+            showAlert(Array.isArray(err) ? err[0] : (err || 'Gagal menyimpan.'));
         }
-    } catch(e) { showToast('Terjadi kesalahan. Coba lagi.'); }
+    } catch(e) { 
+        showAlert('Terjadi kesalahan. Coba lagi.'); 
+    }
     finally { setLoading(false); }
 });
 </script>

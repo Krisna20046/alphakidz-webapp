@@ -6,6 +6,9 @@
     <title>{{ $isEditing ? 'Edit Profil' : 'Detail Profil' }}</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tambahkan SweetAlert2 CSS dan JS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
@@ -42,9 +45,32 @@
         .sheet.open { transform: translateY(0); }
         .sheet-backdrop { transition: opacity 0.3s ease; }
 
-        /* Toast */
-        #toast { transition: all 0.3s ease; transform: translateY(-100%); opacity: 0; }
-        #toast.show { transform: translateY(0); opacity: 1; }
+        /* Custom SweetAlert2 styling */
+        .swal2-popup {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            border-radius: 24px !important;
+            padding: 20px !important;
+        }
+        .swal2-title {
+            color: #4A0E35 !important;
+            font-weight: 800 !important;
+            font-size: 1.25rem !important;
+        }
+        .swal2-html-container {
+            color: #A2397B !important;
+            font-weight: 500 !important;
+        }
+        .swal2-confirm {
+            background: linear-gradient(to right, #7B1E5A, #9B2E72) !important;
+            border-radius: 16px !important;
+            font-weight: 700 !important;
+            padding: 12px 24px !important;
+        }
+        .swal2-cancel {
+            border-radius: 16px !important;
+            font-weight: 600 !important;
+            padding: 12px 24px !important;
+        }
 
         @keyframes slideUp {
             from { opacity:0; transform:translateY(16px); }
@@ -89,13 +115,6 @@
         @endif
     </div>
 
-    <!-- TOAST -->
-    <div id="toast" class="absolute top-14 left-0 right-0 z-50 px-4">
-        <div id="toastInner" class="bg-red-500 text-white text-sm font-semibold px-4 py-3 rounded-2xl shadow-lg flex items-center gap-2">
-            <ion-icon name="alert-circle-outline" style="font-size:16px;flex-shrink:0;"></ion-icon>
-            <span id="toastMsg"></span>
-        </div>
-    </div>
 
     <!-- SCROLLABLE -->
     <div class="flex-1 overflow-y-auto no-scrollbar px-4 py-4 pb-6">
@@ -472,14 +491,41 @@ function updateClock() {
 }
 updateClock(); setInterval(updateClock, 30000);
 
-// ── Toast ─────────────────────────────────────────────────────────────────────
-function showToast(msg, type = 'error') {
-    const t = document.getElementById('toast');
-    const inner = document.getElementById('toastInner');
-    document.getElementById('toastMsg').textContent = msg;
-    inner.className = `${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white text-sm font-semibold px-4 py-3 rounded-2xl shadow-lg flex items-center gap-2`;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3500);
+// ── SweetAlert Functions ─────────────────────────────────────────────────────
+function showAlert(msg, type = 'error') {
+    Swal.fire({
+        text: msg,
+        icon: type,
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#7B1E5A',
+        timer: type === 'success' ? 2000 : undefined,
+        timerProgressBar: type === 'success',
+        showClass: {
+            popup: 'animate__animated animate__fadeInUp animate__faster'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutDown animate__faster'
+        }
+    });
+}
+
+function showSuccessAlert(msg, redirectUrl) {
+    Swal.fire({
+        text: msg,
+        icon: 'success',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#7B1E5A',
+        timer: 2000,
+        timerProgressBar: true,
+        showClass: {
+            popup: 'animate__animated animate__fadeInUp animate__faster'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutDown animate__faster'
+        }
+    }).then(() => {
+        window.location.href = redirectUrl;
+    });
 }
 
 // ── Gender toggle ─────────────────────────────────────────────────────────────
@@ -535,7 +581,7 @@ async function openSheet(type) {
     }
     if (type === 'kota') {
         const idProvinsi = document.getElementById('idProvinsi').value;
-        if (!idProvinsi) { closeSheet(); showToast('Pilih provinsi terlebih dahulu!'); return; }
+        if (!idProvinsi) { closeSheet(); showAlert('Pilih provinsi terlebih dahulu!'); return; }
         await loadKota(idProvinsi);
     }
 }
@@ -557,7 +603,7 @@ async function loadProvinsi() {
             provinsiData = data.data;
             renderList('provinsi', provinsiData);
         }
-    } catch (e) { showToast('Gagal memuat data provinsi.'); }
+    } catch (e) { showAlert('Gagal memuat data provinsi.'); }
 }
 
 async function loadKota(idProvinsi) {
@@ -570,7 +616,7 @@ async function loadKota(idProvinsi) {
             kotaData = data.data;
             renderList('kota', kotaData);
         }
-    } catch (e) { showToast('Gagal memuat data kota.'); }
+    } catch (e) { showAlert('Gagal memuat data kota.'); }
 }
 
 function renderListLoading(type) {
@@ -638,13 +684,13 @@ if (form) {
         const kota    = document.getElementById('idKota')?.value;
         const alamat  = document.getElementById('alamat')?.value.trim();
 
-        if (!name)   return showToast('Nama wajib diisi!');
-        if (!noHp)   return showToast('Nomor HP wajib diisi!');
-        if (!tgl)    return showToast('Tanggal lahir wajib diisi!');
-        if (!gender) return showToast('Gender wajib dipilih!');
-        if (!prov)   return showToast('Provinsi wajib dipilih!');
-        if (!kota)   return showToast('Kota wajib dipilih!');
-        if (!alamat) return showToast('Alamat wajib diisi!');
+        if (!name)   return showAlert('Nama wajib diisi!');
+        if (!noHp)   return showAlert('Nomor HP wajib diisi!');
+        if (!tgl)    return showAlert('Tanggal lahir wajib diisi!');
+        if (!gender) return showAlert('Gender wajib dipilih!');
+        if (!prov)   return showAlert('Provinsi wajib dipilih!');
+        if (!kota)   return showAlert('Kota wajib dipilih!');
+        if (!alamat) return showAlert('Alamat wajib diisi!');
 
         // Loading state
         document.getElementById('submitBtn').disabled  = true;
@@ -662,14 +708,16 @@ if (form) {
             const data = await res.json();
 
             if (data.success) {
-                showToast(data.message || 'Profil berhasil disimpan!', 'success');
-                setTimeout(() => { window.location.href = '{{ route("profil.detail") }}'; }, 1500);
+                showSuccessAlert(
+                    data.message || 'Profil berhasil disimpan!',
+                    '{{ route("profil.detail") }}'
+                );
             } else {
                 const errMsg = data.errors ? Object.values(data.errors)[0] : (data.message || 'Gagal menyimpan profil.');
-                showToast(Array.isArray(errMsg) ? errMsg[0] : errMsg);
+                showAlert(Array.isArray(errMsg) ? errMsg[0] : errMsg);
             }
         } catch (err) {
-            showToast('Terjadi kesalahan. Coba lagi.');
+            showAlert('Terjadi kesalahan. Coba lagi.');
         } finally {
             document.getElementById('submitBtn').disabled  = false;
             document.getElementById('btnText').textContent = 'Simpan Profil';

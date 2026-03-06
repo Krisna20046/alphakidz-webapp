@@ -108,7 +108,7 @@
     @if(!isset($konsultan))
     {{-- ── NOT FOUND ─────────────────────────────────────────────────────── --}}
     {{-- header --}}
-    <div class="header-bg rounded-b-[24px] relative shrink-0"
+    <div class="header-bg rounded-b-[24px] relative shrink-0 overflow-hidden"
          style="padding: 50px 20px 24px;">
         <a href="{{ route('majikan-konsultan-list') }}"
            class="absolute flex items-center justify-center bg-white/20 hover:bg-white/30 transition-colors rounded-full"
@@ -149,7 +149,7 @@
         header: bg:#7B1E5A, pt:50, pb:24, px:20,
                 borderBottomLeftRadius:24, borderBottomRightRadius:24
     --}}
-    <div class="header-bg relative shrink-0"
+    <div class="header-bg relative shrink-0 overflow-hidden"
          style="padding:50px 20px 24px; border-bottom-left-radius:24px; border-bottom-right-radius:24px;">
         <div class="absolute top-0 right-0 w-36 h-36 rounded-full bg-white/5 -translate-y-8 translate-x-8 pointer-events-none"></div>
         <div class="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-white/5 translate-y-5 -translate-x-5 pointer-events-none"></div>
@@ -176,7 +176,7 @@
     </div>
 
     {{-- ── SCROLLABLE — scrollContent: padding:20 ─────────────────────────── --}}
-    <div class="flex-1 overflow-y-auto no-scrollbar" style="padding:20px;">
+    <div class="flex-1 overflow-y-auto no-scrollbar p-4 pb-16">
 
         {{-- ── PROFILE CARD ──────────────────────────────────────────────────
              profileCard: bg:#fff, borderRadius:20, padding:24, mb:16, border:2 solid #F3E6FA

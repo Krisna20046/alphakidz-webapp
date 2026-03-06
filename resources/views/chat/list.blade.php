@@ -76,7 +76,7 @@
     </div>
 
     <!-- HEADER -->
-    <div class="bg-gradient-to-br from-plum to-plum-light shrink-0 px-5 pt-10 pb-14 relative" style="border-radius:0 0 28px 28px;">
+    <div class="bg-gradient-to-br from-plum to-plum-light shrink-0 px-5 pt-10 pb-14 relative overflow-hidden" style="border-radius:0 0 28px 28px;">
         <div class="absolute top-0 right-0 w-40 h-40 rounded-full bg-white/5 -translate-y-10 translate-x-10 pointer-events-none"></div>
         <a href="{{ route('dashboard') }}"
            class="absolute top-10 left-5 w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
