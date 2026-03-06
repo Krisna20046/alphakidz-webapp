@@ -70,7 +70,7 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/api/chat',      [ChatController::class, 'apiSendChat'])->name('api.chat.send');
 
     // Artikel (placeholder)
-    Route::get('/artikel', fn() => view('coming-soon'))->name('artikel.index');
+    Route::get('/artikel', fn() => view('artikel.index'))->name('artikel.index');
 
     // ── Profil ────────────────────────────────────────────────────────────────
     Route::prefix('profil')->name('profil.')->group(function () {
