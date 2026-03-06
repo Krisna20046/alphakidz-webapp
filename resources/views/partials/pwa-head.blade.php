@@ -217,7 +217,11 @@ function attachForegroundListener(messaging) {
         const title    = d.title     || n.title || 'Pesan Baru';
         const body     = d.body      || n.body  || '';
         const senderId = d.sender_id || 'msg';
-        const chatUrl  = d.url       || '/chat';
+        const chatUrl  = d.url
+            ? d.url
+            : (d.sender_id
+                ? '/chat/' + d.sender_id + '?nama=' + encodeURIComponent(d.sender_name || title)
+                : '/chat');
 
         if (Notification.permission === 'granted') {
             const notif = new Notification(title, {

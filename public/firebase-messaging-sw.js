@@ -1,12 +1,6 @@
-// public/firebase-messaging-sw.js
-// Service Worker khusus Firebase Messaging (background push)
-// File ini TERPISAH dari sw.js dan harus ada di public/
-
-// ── Import Firebase SW scripts ─────────────────────────────────────────────
 importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
 
-// ── Firebase config (SAMA persis dengan yang di pwa-head.blade.php) ────────
 firebase.initializeApp({
     apiKey           : "AIzaSyCOdUtA0YLnwxWARVT0GCpZb70SsMmNgis",
     authDomain       : "alphakidz-a98b3.firebaseapp.com",
@@ -18,33 +12,35 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-// ── Background push handler ────────────────────────────────────────────────
-// Dipanggil saat app TIDAK terbuka / di background
 messaging.onBackgroundMessage(function (payload) {
     const notification = payload.notification || {};
     const data         = payload.data         || {};
 
-    const title   = notification.title || 'Pesan Baru - AlphaKidz';
-    const body    = notification.body  || 'Anda memiliki pesan baru';
-    const chatUrl = data.url           || '/chat';
+    const title     = data.title     || notification.title || 'Pesan Baru - AlphaKidz';
+    const body      = data.body      || notification.body  || 'Anda memiliki pesan baru';
+    const senderId  = data.sender_id || '';
+    const chatUrl   = data.url
+        ? data.url
+        : (data.sender_id
+            ? '/chat/' + data.sender_id + '?nama=' + encodeURIComponent(data.sender_name || title)
+            : '/chat');
 
     return self.registration.showNotification(title, {
-        body   : body,
-        icon   : '/icons/icon-192x192.png',
-        badge  : '/icons/icon-192x192.png',
-        tag    : 'chat-' + (senderId || 'msg'),
+        body               : body,
+        icon               : '/icons/icon-192x192.png',
+        badge              : '/icons/icon-192x192.png',
+        tag                : 'chat-' + (senderId || 'msg'),
         renotify           : true,
         requireInteraction : true,
-        data   : { url: chatUrl },
-        vibrate: [200, 100, 200],
-        actions: [
+        vibrate            : [200, 100, 200],
+        data               : { url: chatUrl },
+        actions            : [
             { action: 'open',    title: 'Buka Chat' },
             { action: 'dismiss', title: 'Tutup'     },
         ],
     });
 });
 
-// ── Notification click handler ─────────────────────────────────────────────
 self.addEventListener('notificationclick', function (event) {
     event.notification.close();
 

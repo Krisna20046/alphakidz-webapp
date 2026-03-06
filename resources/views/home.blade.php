@@ -321,7 +321,6 @@ const PUSHER_KEY     = "{{ config('services.pusher.key') }}";
 const PUSHER_CLUSTER = "{{ config('services.pusher.options.cluster', 'ap1') }}";
 const PUSHER_AUTH_EP = "{{ url('/broadcasting/auth') }}";
 const UNREAD_API     = "{{ route('api.unread') }}";
-const CSRF_TOKEN     = "{{ csrf_token() }}";
 
 // ── Status bar clock ─────────────────────────────────────────────────────────
 function updateClock() {

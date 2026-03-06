@@ -267,14 +267,13 @@
 
 <script>
 // ── Config ────────────────────────────────────────────────────────────────────
-const USER_ID        = {{ session('user')['id'] ?? 'null' }};
+const USER_ID        = {{ session('user')['id_user'] ?? 'null' }};
 const ID_PENERIMA    = {{ $idPenerima ?? 'null' }};
 const NAMA_PENERIMA  = "{{ addslashes($namaPenerima ?? '') }}";
 const AUTH_TOKEN     = "{{ session('token') }}";
 const PUSHER_KEY     = "{{ config('services.pusher.key') }}";
 const PUSHER_CLUSTER = "{{ config('services.pusher.options.cluster', 'ap1') }}";
 const PUSHER_AUTH_EP = "{{ url('/broadcasting/auth') }}";
-const CSRF           = "{{ csrf_token() }}";
 const CHAT_API       = "{{ url('/api/chat') }}";
 
 // ── State (sejajar dengan React Native) ──────────────────────────────────────
@@ -557,7 +556,7 @@ async function sendMessage(){
                 'Content-Type':'application/json',
                 'Accept':'application/json',
                 'Authorization':`Bearer ${AUTH_TOKEN}`,
-                'X-CSRF-TOKEN': CSRF,
+                'X-CSRF-TOKEN': CSRF_TOKEN,
             },
             body: JSON.stringify({
                 id_pengirim: ensureNum(USER_ID),
@@ -609,7 +608,7 @@ async function sendMessage(){
         cluster:      PUSHER_CLUSTER,
         forceTLS:     true,
         authEndpoint: PUSHER_AUTH_EP,
-        auth: { headers:{'X-CSRF-TOKEN':CSRF,'Accept':'application/json'} }
+        auth: { headers:{'X-CSRF-TOKEN':CSRF_TOKEN,'Accept':'application/json'} }
     });
 
     const channel = pusher.subscribe(`private-chat.${USER_ID}`);
