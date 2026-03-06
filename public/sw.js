@@ -7,9 +7,9 @@
 //   - Gambar/icons                 → Cache First dengan batas ukuran
 
 const APP_VERSION   = 'v1.0.0';
-const SHELL_CACHE   = `nannyapp-shell-${APP_VERSION}`;
-const STATIC_CACHE  = `nannyapp-static-${APP_VERSION}`;
-const IMAGE_CACHE   = `nannyapp-images-${APP_VERSION}`;
+const SHELL_CACHE   = `alphakidz-shell-${APP_VERSION}`;
+const STATIC_CACHE  = `alphakidz-static-${APP_VERSION}`;
+const IMAGE_CACHE   = `alphakidz-images-${APP_VERSION}`;
 
 // ── App Shell: halaman-halaman utama yang di-precache ─────────────────────────
 const SHELL_URLS = [
@@ -253,6 +253,30 @@ self.addEventListener('notificationclick', event => {
             const existing = list.find(c => c.url.includes(targetUrl));
             if (existing) return existing.focus();
             return clients.openWindow(targetUrl);
+        })
+    );
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MESSAGE HANDLER — terima postMessage dari halaman (foreground notification)
+// Dipakai saat app terbuka di Android: new Notification() tidak bisa heads-up,
+// tapi SW showNotification() bisa. Halaman kirim ke sini via postMessage.
+// ─────────────────────────────────────────────────────────────────────────────
+self.addEventListener('message', event => {
+    if (!event.data || event.data.type !== 'SHOW_NOTIFICATION') return;
+
+    const { title, body, tag, url } = event.data;
+
+    event.waitUntil(
+        self.registration.showNotification(title || 'Pesan Baru', {
+            body               : body  || '',
+            icon               : '/icons/icon-192x192.png',
+            badge              : '/icons/icon-192x192.png',
+            tag                : tag   || 'chat-msg',
+            renotify           : true,
+            requireInteraction : true,
+            vibrate            : [200, 100, 200],
+            data               : { url: url || '/chat' },
         })
     );
 });

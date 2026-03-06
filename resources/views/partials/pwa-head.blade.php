@@ -209,7 +209,7 @@ async function getFcmTokenAndSend(messaging) {
     }
 }
 
-// ── Foreground: pakai Notification API langsung agar banner OS muncul ─────
+// ── Foreground: kirim ke SW agar tampil sebagai heads-up di Android ───────
 function attachForegroundListener(messaging) {
     messaging.onMessage(function (payload) {
         const n        = payload.notification || {};
@@ -223,24 +223,19 @@ function attachForegroundListener(messaging) {
                 ? '/chat/' + d.sender_id + '?nama=' + encodeURIComponent(d.sender_name || title)
                 : '/chat');
 
-        if (Notification.permission === 'granted') {
-            const notif = new Notification(title, {
-                body               : body,
-                icon               : '/icons/icon-192x192.png',
-                badge              : '/icons/icon-192x192.png',
-                tag                : 'chat-' + senderId,
-                renotify           : true,
-                requireInteraction : true,
-                vibrate            : [200, 100, 200],
+        // Kirim ke SW — SW pakai showNotification() yang bisa heads-up di Android
+        // new Notification() dari halaman tidak bisa heads-up di Android Chrome
+        if (navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+                type   : 'SHOW_NOTIFICATION',
+                title  : title,
+                body   : body,
+                tag    : 'chat-' + senderId,
+                url    : chatUrl,
             });
-            notif.onclick = function () {
-                window.focus();
-                window.location.href = chatUrl;
-                notif.close();
-            };
         }
 
-        // In-app banner sebagai fallback
+        // In-app banner tetap ada sebagai fallback visual di dalam app
         showInAppBanner(title, body, chatUrl);
     });
 }
