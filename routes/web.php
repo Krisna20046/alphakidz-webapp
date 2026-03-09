@@ -124,6 +124,20 @@ Route::middleware('auth.api')->group(function () {
         Route::delete('/{id}',     [AdminController::class, 'destroy']      )->name('admin-kelola-akun.destroy');
     });
 
+    Route::prefix('admin/diary')->group(function () {
+        // Step 1 – Pilih Nanny
+        Route::get('/', fn() => view('admin.diary-nanny-list'))
+            ->name('admin-diary-nanny-list');
+
+        // Step 2 – Pilih Anak (dari nanny yang dipilih)
+        Route::get('/{id_nanny}/anak', fn() => view('admin.diary-anak-list'))
+            ->name('admin-diary-anak-list');
+
+        // Step 3 – Tampilan Diary
+        Route::get('/{id_nanny}/anak/{id_anak}', fn() => view('admin.diary'))
+            ->name('admin-diary');
+    });
+
     Route::prefix('konsultan')->group(function () {
         Route::get('/nanny',        [KonsultanController::class, 'indexNanny'])->name('konsultan-nanny-list');
         Route::get('/nanny/{id}',   [KonsultanController::class, 'showNanny']) ->name('konsultan-nanny-detail');
