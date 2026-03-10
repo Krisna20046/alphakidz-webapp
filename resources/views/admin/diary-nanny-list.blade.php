@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Admin – Rekap Diary</title>
+    <title>Admin – Diary Nanny</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -92,7 +92,7 @@
             <div class="flex items-center justify-center bg-white rounded-full mb-3 shadow-lg" style="width:64px; height:64px;">
                 <ion-icon name="book" style="font-size:30px; color:#7B1E5A;"></ion-icon>
             </div>
-            <h1 class="font-extrabold text-white mb-1" style="font-size:22px; letter-spacing:.4px;">Rekap Diary</h1>
+            <h1 class="font-extrabold text-white mb-1" style="font-size:22px; letter-spacing:.4px;">Diary Nanny</h1>
             <p style="font-size:13px; color:#F3E6FA; font-weight:500;">Pilih nanny untuk melihat diary</p>
         </div>
 
