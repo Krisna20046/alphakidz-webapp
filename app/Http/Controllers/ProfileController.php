@@ -161,7 +161,7 @@ class ProfileController extends Controller
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // EDIT AKUN (UbahDataAkunScreen) — placeholder, buat blade-nya terpisah
+    // EDIT AKUN (UbahDataAkunScreen)
     // ─────────────────────────────────────────────────────────────────────────
 
     public function editAkun()
@@ -175,17 +175,9 @@ class ProfileController extends Controller
         if (!$token) return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
 
         try {
-            $formData = new \Illuminate\Http\Client\Request();
-
-            // Build multipart
             $http = Http::withToken($token)->acceptJson()->timeout(15);
 
-            if ($request->hasFile('foto')) {
-                $file = $request->file('foto');
-                $http = $http->attach('foto', file_get_contents($file->getRealPath()), $file->getClientOriginalName());
-            }
-
-            $response = $http->post("{$this->apiBaseUrl}/updateAccount", $request->except(['_token', 'foto']));
+            $response = $http->post("{$this->apiBaseUrl}/updateAccount", $request->except(['_token']));
             $data     = $response->json();
 
             if ($response->successful() && ($data['status'] ?? '') === 'success') {
@@ -193,7 +185,11 @@ class ProfileController extends Controller
                 return response()->json(['success' => true, 'message' => $data['message'] ?? 'Akun berhasil diperbarui.']);
             }
 
-            return response()->json(['success' => false, 'message' => $data['message'] ?? 'Gagal memperbarui akun.', 'errors' => $data['errors'] ?? null], 422);
+            return response()->json([
+                'success' => false,
+                'message' => $data['message'] ?? 'Gagal memperbarui akun.',
+                'errors'  => $data['errors'] ?? null,
+            ], 422);
 
         } catch (\Exception $e) {
             Log::error('ProfileController@updateAkun - ' . $e->getMessage());
