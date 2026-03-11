@@ -267,7 +267,7 @@
 
 <script>
 // ── Config ────────────────────────────────────────────────────────────────────
-const USER_ID        = {{ session('user')['id_user'] ?? 'null' }};
+const USER_ID        = {{ session('user')['id'] ?? 'null' }};
 const ID_PENERIMA    = {{ $idPenerima ?? 'null' }};
 const NAMA_PENERIMA  = "{{ addslashes($namaPenerima ?? '') }}";
 const AUTH_TOKEN     = "{{ session('token') }}";
