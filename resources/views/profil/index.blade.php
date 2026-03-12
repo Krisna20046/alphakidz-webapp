@@ -214,9 +214,10 @@
                     class="flex-1 py-3.5 rounded-2xl border-2 border-plum-soft text-plum font-bold text-sm active:bg-plum-soft transition-all">
                 Batal
             </button>
-            <form method="POST" action="{{ route('logout') }}" class="flex-1">
+            <form method="POST" action="{{ route('logout') }}" class="flex-1" id="logoutForm">
                 @csrf
-                <button type="submit"
+                <button type="button"
+                        onclick="doLogout()"
                         class="w-full py-3.5 rounded-2xl bg-red-500 text-white font-bold text-sm active:bg-red-600 transition-all">
                     Ya, Keluar
                 </button>
@@ -249,6 +250,10 @@ function hideLogoutModal() {
     modal.style.opacity = '0';
     modalBox.style.transform = 'scale(0.9)';
     setTimeout(() => modal.classList.add('hidden'), 200);
+}
+function doLogout() {
+    removeFcmTokenOnLogout(); // ← hapus FCM token dulu
+    document.getElementById('logoutForm').submit();
 }
 modal.addEventListener('click', (e) => { if (e.target === modal) hideLogoutModal(); });
 </script>
