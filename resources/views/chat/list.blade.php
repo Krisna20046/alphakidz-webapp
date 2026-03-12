@@ -143,7 +143,7 @@
 
 <script>
 // ── Config ────────────────────────────────────────────────────────────────────
-const USER_ID        = {{ session('user')['id_user'] ?? 'null' }};
+const USER_ID        = {{ session('user_id') ?? 'null' }};
 const AUTH_TOKEN     = "{{ session('token') }}";
 const PUSHER_KEY     = "{{ config('services.pusher.key') }}";
 const PUSHER_CLUSTER = "{{ config('services.pusher.options.cluster', 'ap1') }}";

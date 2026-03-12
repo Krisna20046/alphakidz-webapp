@@ -30,12 +30,12 @@
 
 <script>
 const FIREBASE_CONFIG = {
-    apiKey           : "AIzaSyCOdUtA0YLnwxWARVT0GCpZb70SsMmNgis",
-    authDomain       : "alphakidz-a98b3.firebaseapp.com",
-    projectId        : "alphakidz-a98b3",
-    storageBucket    : "alphakidz-a98b3.firebasestorage.app",
-    messagingSenderId: "63843037965",
-    appId            : "1:63843037965:web:c4df4b57f8f9a23795f644"
+    apiKey           : "{{ config('services.firebase.api_key') }}",
+    authDomain       : "{{ config('services.firebase.auth_domain') }}",
+    projectId        : "{{ config('services.firebase.project_id') }}",
+    storageBucket    : "{{ config('services.firebase.storage_bucket') }}",
+    messagingSenderId: "{{ config('services.firebase.messaging_sender_id') }}",
+    appId            : "{{ config('services.firebase.app_id') }}"
 };
 
 const VAPID_KEY  = "BLIPLi-whuk0HS_Afbafommm_oXpkhACm22IfFG6U1gusVhNCrTZ9IDcQZm-U77Gw76HnkeVziEnNB__cu7Nmus";

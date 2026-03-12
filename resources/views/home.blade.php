@@ -251,14 +251,15 @@
 
 <!-- JAVASCRIPT -->
 <script>
-const USER_ID        = {{ session('user')['id_user'] ?? 'null' }};
+// ── Config dari Laravel (passed via Blade) ──────────────────────────────────
+const USER_ID = {{ session('user_id') ?? 'null' }};
 const AUTH_TOKEN     = "{{ session('token') }}";
 const PUSHER_KEY     = "{{ config('services.pusher.key') }}";
 const PUSHER_CLUSTER = "{{ config('services.pusher.options.cluster', 'ap1') }}";
 const PUSHER_AUTH_EP = "{{ url('/broadcasting/auth') }}";
 const UNREAD_API     = "{{ route('api.unread') }}";
+const CSRF           = "{{ csrf_token() }}";
 
-console.log(USER_ID);
 
 // Status bar clock
 (function() {
@@ -363,12 +364,7 @@ document.addEventListener('visibilitychange', () => {
         cluster: PUSHER_CLUSTER,
         forceTLS: true,
         authEndpoint: PUSHER_AUTH_EP,
-        auth: {
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '',
-                'Authorization': `Bearer ${AUTH_TOKEN}`,
-            }
-        }
+        auth: { headers: { 'X-CSRF-TOKEN': CSRF, 'Authorization': `Bearer ${AUTH_TOKEN}` } }
     });
 
     const channel = pusher.subscribe(`private-chat.${USER_ID}`);
