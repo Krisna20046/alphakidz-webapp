@@ -6,150 +6,81 @@
 
 @php $active = $active ?? 'home'; @endphp
 
-<nav class="bottom-nav">
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-[#F0EAFF] flex items-center h-16 z-50 shadow-[0_-4px_20px_rgba(124,58,237,0.08)] pb-[env(safe-area-inset-bottom,0px)] sm:w-[390px] sm:left-1/2 sm:-translate-x-1/2 sm:rounded-b-[44px]">
 
     {{-- Home --}}
     <a href="{{ route('dashboard') }}"
-       class="nav-item {{ $active === 'home' ? 'nav-active' : '' }}">
+       class="flex-1 flex flex-col items-center justify-center gap-0.5 no-underline relative h-full cursor-pointer transition-opacity duration-150 ease-in-out active:opacity-70">
+        
         @if($active === 'home')
-            <div class="nav-icon-bg">
+            <div class="w-[60px] h-[60px] rounded-full bg-[#8B46D3] flex items-center justify-center absolute -top-6 animate-[navPop_0.25s_cubic-bezier(0.34,1.56,0.64,1)]" style="border: 5px solid white">
                 <ion-icon name="home" style="font-size:22px;color:white;"></ion-icon>
             </div>
-            <div class="nav-indicator"></div>
+            <div class="absolute bottom-0 w-6 h-[3px] bg-[#8B46D3] rounded-t-[3px]"></div>
+            <span class="font-['Nunito'] text-[10px] font-extrabold text-[#8B46D3] mt-[30px]">
+                Home
+            </span>
         @else
-            <div class="nav-icon-normal">
+            <div class="w-6 h-6 flex items-center justify-center">
                 <ion-icon name="home-outline" style="font-size:22px;color:#9CA3AF;"></ion-icon>
             </div>
+            <span class="font-['Nunito'] text-[10px] font-semibold text-[#9CA3AF]">
+                Home
+            </span>
         @endif
-        <span class="{{ $active === 'home' ? 'nav-label-active' : 'nav-label-normal' }}">
-            Home
-        </span>
     </a>
 
     {{-- Artikel --}}
     <a href="{{ route('artikel.index') }}"
-       class="nav-item {{ $active === 'artikel' ? 'nav-active' : '' }}">
+       class="flex-1 flex flex-col items-center justify-center gap-0.5 no-underline relative h-full cursor-pointer transition-opacity duration-150 ease-in-out active:opacity-70">
+        
         @if($active === 'artikel')
-            <div class="nav-icon-bg">
+            <div class="w-[60px] h-[60px] rounded-full bg-[#8B46D3] flex items-center justify-center absolute -top-6 animate-[navPop_0.25s_cubic-bezier(0.34,1.56,0.64,1)]" style="border: 5px solid white">
                 <ion-icon name="book" style="font-size:22px;color:white;"></ion-icon>
             </div>
-            <div class="nav-indicator"></div>
+            <div class="absolute bottom-0 w-6 h-[3px] bg-[#8B46D3] rounded-t-[3px]"></div>
+            <span class="font-['Nunito'] text-[10px] font-extrabold text-[#8B46D3] mt-[30px]">
+                Article
+            </span>
         @else
-            <div class="nav-icon-normal">
+            <div class="w-6 h-6 flex items-center justify-center">
                 <ion-icon name="book-outline" style="font-size:22px;color:#9CA3AF;"></ion-icon>
             </div>
+            <span class="font-['Nunito'] text-[10px] font-semibold text-[#9CA3AF]">
+                Article
+            </span>
         @endif
-        <span class="{{ $active === 'artikel' ? 'nav-label-active' : 'nav-label-normal' }}">
-            Article
-        </span>
     </a>
 
     {{-- Profil --}}
     <a href="{{ route('profil.index') }}"
-       class="nav-item {{ $active === 'profil' ? 'nav-active' : '' }}">
+       class="flex-1 flex flex-col items-center justify-center gap-0.5 no-underline relative h-full cursor-pointer transition-opacity duration-150 ease-in-out active:opacity-70">
+        
         @if($active === 'profil')
-            <div class="nav-icon-bg">
+            <div class="w-[60px] h-[60px] rounded-full bg-[#8B46D3] flex items-center justify-center absolute -top-6 animate-[navPop_0.25s_cubic-bezier(0.34,1.56,0.64,1)]" style="border: 5px solid white">
                 <ion-icon name="person" style="font-size:22px;color:white;"></ion-icon>
             </div>
-            <div class="nav-indicator"></div>
+            <div class="absolute bottom-0 w-6 h-[3px] bg-[#8B46D3] rounded-t-[3px]"></div>
+            <span class="font-['Nunito'] text-[10px] font-extrabold text-[#8B46D3] mt-[30px]">
+                Profile
+            </span>
         @else
-            <div class="nav-icon-normal">
+            <div class="w-6 h-6 flex items-center justify-center">
                 <ion-icon name="person-outline" style="font-size:22px;color:#9CA3AF;"></ion-icon>
             </div>
+            <span class="font-['Nunito'] text-[10px] font-semibold text-[#9CA3AF]">
+                Profile
+            </span>
         @endif
-        <span class="{{ $active === 'profil' ? 'nav-label-active' : 'nav-label-normal' }}">
-            Profile
-        </span>
     </a>
 
 </nav>
 
+{{-- Tambahkan keyframes untuk animasi navPop --}}
 <style>
-    .bottom-nav {
-        position: fixed;
-        bottom: 0;
-        left: 0; right: 0;
-        background: #FFFFFF;
-        border-top: 1px solid #F0EAFF;
-        display: flex;
-        align-items: center;
-        height: 64px;
-        z-index: 50;
-        box-shadow: 0 -4px 20px rgba(124, 58, 237, 0.08);
-        padding-bottom: env(safe-area-inset-bottom, 0px);
-    }
-
-    /* On desktop phone frame, constrain to frame width */
-    @media (min-width: 640px) {
-        .bottom-nav {
-            width: 390px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 0 0 44px 44px;
-        }
-    }
-
-    .nav-item {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 2px;
-        text-decoration: none;
-        position: relative;
-        height: 100%;
-        cursor: pointer;
-        transition: opacity 0.15s ease;
-    }
-    .nav-item:active { opacity: 0.7; }
-
-    /* Active floating circle */
-    .nav-icon-bg {
-        width: 52px; height: 52px;
-        border-radius: 50%;
-        background: #7C3AED;
-        display: flex; align-items: center; justify-content: center;
-        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.4);
-        position: absolute;
-        top: -16px;
-        animation: navPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
     @keyframes navPop {
-        0%   { transform: scale(0.8); }
-        60%  { transform: scale(1.1); }
+        0% { transform: scale(0.8); }
+        60% { transform: scale(1.1); }
         100% { transform: scale(1); }
-    }
-
-    /* Active underline indicator */
-    .nav-indicator {
-        position: absolute;
-        bottom: 0;
-        width: 24px; height: 3px;
-        background: #7C3AED;
-        border-radius: 3px 3px 0 0;
-    }
-
-    /* Inactive icon wrap */
-    .nav-icon-normal {
-        width: 24px; height: 24px;
-        display: flex; align-items: center; justify-content: center;
-    }
-
-    /* Labels */
-    .nav-label-active {
-        font-family: 'Nunito', sans-serif;
-        font-size: 10px;
-        font-weight: 800;
-        color: #7C3AED;
-        margin-top: 30px; /* push down below the floating circle */
-    }
-
-    .nav-label-normal {
-        font-family: 'Nunito', sans-serif;
-        font-size: 10px;
-        font-weight: 600;
-        color: #9CA3AF;
     }
 </style>
