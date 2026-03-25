@@ -102,9 +102,11 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            transition: background 0.15s;
+            transition: background 0.15s, opacity 0.15s;
+            position: relative;
         }
         .btn-google:active { background: #E4E2E2; }
+        .btn-google:disabled { opacity: 0.7; cursor: not-allowed; }
 
         /* ── Slide-up animation ── */
         @keyframes slideUp {
@@ -127,20 +129,19 @@
         }
         #toast.show { transform: translateY(0); opacity: 1; }
 
-        /* ── Checkbox custom ── */
-        .custom-checkbox {
+        /* ── Spinner for Google button ── */
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .google-spinner {
             width: 18px; height: 18px;
-            border: 2px solid #C4B5D8;
-            border-radius: 4px;
-            flex-shrink: 0;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
-            transition: border-color 0.2s, background 0.2s;
+            border: 2.5px solid #ccc;
+            border-top-color: #8B46D3;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: none;
         }
-        #rememberCheck:checked + .custom-checkbox {
-            background: #8B46D3;
-            border-color: #8B46D3;
-        }
+        .btn-google.loading .google-spinner { display: block; }
+        .btn-google.loading .google-logo    { display: none; }
+        .btn-google.loading .google-label   { color: #888; }
     </style>
 </head>
 <body class="bg-[#E5E2F5]">
@@ -171,7 +172,7 @@
 
     <!-- Toast -->
     <div id="toast" class="fixed sm:absolute top-0 left-0 right-0 z-50 mx-auto max-w-sm">
-        <div class="mx-4 mt-2 bg-red-500 text-white text-sm font-bold px-4 py-3 rounded-2xl shadow-lg flex items-center gap-2">
+        <div id="toast-inner" class="mx-4 mt-2 bg-red-500 text-white text-sm font-bold px-4 py-3 rounded-2xl shadow-lg flex items-center gap-2">
             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
@@ -260,7 +261,7 @@
                     </div>
                     <span class="text-sm font-semibold text-[#6B7280]">Remember Me</span>
                 </label>
-                <a href="#" class="text-sm font-bold text-[#8B46D3] hover:text-[#7C3AED] transition-colors">
+                <a href="{{ route('forgot.password') }}" class="text-sm font-bold text-[#8B46D3] hover:text-[#7C3AED] transition-colors">
                     Forgot Password
                 </a>
             </div>
@@ -299,15 +300,17 @@
 
         <!-- Google Button -->
         <div class="anim d6">
-            <button type="button" class="btn-google">
+            <button type="button" id="googleBtn" class="btn-google">
+                <!-- Spinner (shown when loading) -->
+                <div class="google-spinner"></div>
                 <!-- Google G logo -->
-                <svg class="w-5 h-5" viewBox="0 0 24 24">
+                <svg class="google-logo w-5 h-5" viewBox="0 0 24 24">
                     <path fill="#4285F4" d="M23.745 12.27c0-.79-.07-1.54-.19-2.27h-11.3v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z"/>
                     <path fill="#34A853" d="M12.255 24c3.24 0 5.95-1.08 7.93-2.91l-3.86-3c-1.08.72-2.45 1.16-4.07 1.16-3.13 0-5.78-2.11-6.73-4.96h-3.98v3.09C3.515 21.3 7.615 24 12.255 24z"/>
                     <path fill="#FBBC05" d="M5.525 14.29c-.25-.72-.38-1.49-.38-2.29s.14-1.57.38-2.29V6.62h-3.98a11.86 11.86 0 000 10.76l3.98-3.09z"/>
                     <path fill="#EA4335" d="M12.255 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C18.205 1.19 15.495 0 12.255 0c-4.64 0-8.74 2.7-10.71 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z"/>
                 </svg>
-                <span>Google</span>
+                <span class="google-label">Google</span>
             </button>
         </div>
 
@@ -331,7 +334,7 @@ toggleBtn.addEventListener('click', () => {
     eyeOffIcon.classList.toggle('hidden', !isHidden);
 });
 
-// Checkbox checked visual update (needed because peer- doesn't update dynamically without JS in some cases)
+// Checkbox checked visual update
 const chk = document.getElementById('rememberCheck');
 chk.addEventListener('change', () => {
     const box = chk.nextElementSibling;
@@ -346,14 +349,16 @@ chk.addEventListener('change', () => {
 });
 
 // Toast
-function showToast(msg) {
+function showToast(msg, type = 'error') {
     const toast = document.getElementById('toast');
+    const inner = document.getElementById('toast-inner');
     document.getElementById('toast-msg').textContent = msg;
+    inner.className = `mx-4 mt-2 text-white text-sm font-bold px-4 py-3 rounded-2xl shadow-lg flex items-center gap-2 ${type === 'error' ? 'bg-red-500' : 'bg-green-500'}`;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 3500);
 }
 
-// Loading state
+// Loading state (Sign In button)
 function setLoading(loading) {
     const btn        = document.getElementById('submitBtn');
     const btnText    = document.getElementById('btnText');
@@ -366,7 +371,7 @@ function setLoading(loading) {
     btn.style.opacity = loading ? '0.75' : '1';
 }
 
-// Form submit
+// Form submit (email/password)
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email    = document.getElementById('email').value.trim();
@@ -395,6 +400,38 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         showToast('Terjadi kesalahan. Coba lagi.');
     } finally {
         setLoading(false);
+    }
+});
+
+// ── Google OAuth Login ──
+document.getElementById('googleBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('googleBtn');
+    if (btn.disabled) return;
+
+    // Set loading state
+    btn.disabled = true;
+    btn.classList.add('loading');
+
+    try {
+        const res  = await fetch('https://alphakidz.valove.id/api/auth/google/redirect', {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' },
+        });
+
+        if (!res.ok) throw new Error('Gagal menghubungi server.');
+
+        const data = await res.json();
+
+        if (data.status === 'success' && data.url) {
+            // Redirect ke halaman Google OAuth
+            window.location.href = data.url;
+        } else {
+            throw new Error('URL redirect tidak ditemukan.');
+        }
+    } catch (err) {
+        showToast('Login Google gagal. Coba lagi.');
+        btn.disabled = false;
+        btn.classList.remove('loading');
     }
 });
 </script>

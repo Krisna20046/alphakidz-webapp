@@ -225,4 +225,15 @@ class AuthController extends Controller
 
         return response()->json(['ok' => true]);
     }
+
+    public function showForgotPassword()
+    {
+        return view('auth.forgot-password');
+    }
+
+    public function showResetPassword(Request $request)
+    {
+        // Token & email sudah dibaca dari URL oleh JS di blade
+        return view('auth.reset-password');
+    }
 }

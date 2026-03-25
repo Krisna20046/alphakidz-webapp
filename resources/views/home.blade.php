@@ -375,6 +375,7 @@ document.addEventListener('visibilitychange', () => {
 </script>
 
 @include('partials.auth-guard')
+@include('partials.permission-modals')
 
 </body>
 </html>

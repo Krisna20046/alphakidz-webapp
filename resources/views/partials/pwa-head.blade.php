@@ -102,73 +102,13 @@ async function initFcm() {
         if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
         const messaging = firebase.messaging();
 
-        if (Notification.permission === 'denied') return;
-
-        if (Notification.permission === 'default') {
-            showNotifPrompt(messaging);
-            return;
-        }
+        if (Notification.permission !== 'granted') return;
 
         await getFcmTokenAndSend(messaging);
 
     } catch (err) {
         console.warn('[FCM] Init error:', err);
     }
-}
-
-// ── Soft permission prompt ─────────────────────────────────────────────────
-function showNotifPrompt(messaging) {
-    const dismissed = localStorage.getItem('fcm_prompt_dismissed');
-    if (dismissed && Date.now() - parseInt(dismissed) < 7 * 24 * 60 * 60 * 1000) return;
-    if (document.getElementById('__fcmPrompt')) return;
-
-    const el = document.createElement('div');
-    el.id = '__fcmPrompt';
-    el.innerHTML = `
-        <div style="position:fixed;bottom:80px;left:12px;right:12px;background:#fff;
-                    border-radius:20px;padding:16px 18px;
-                    box-shadow:0 8px 32px rgba(123,30,90,0.18);
-                    border:2px solid #F3E6FA;z-index:9998;
-                    font-family:'Plus Jakarta Sans',sans-serif;
-                    display:flex;align-items:flex-start;gap:14px;">
-            <div style="width:44px;height:44px;border-radius:14px;background:#F3E6FA;
-                        display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                <img src="{{ asset('icons/icon-192x192.png') }}" alt="Logo AlphaKidz" style="width:22px;height:22px;">
-            </div>
-            <div style="flex:1;">
-                <p style="color:#4A0E35;font-weight:700;font-size:14px;margin:0 0 4px;">
-                    Aktifkan Notifikasi Chat
-                </p>
-                <p style="color:#A2397B;font-size:12px;margin:0 0 12px;line-height:1.5;">
-                    Dapatkan notifikasi pesan masuk meski app ditutup.
-                </p>
-                <div style="display:flex;gap:8px;">
-                    <button id="__fcmAllow"
-                        style="flex:1;background:#7B1E5A;color:#fff;border:none;
-                               border-radius:12px;padding:10px;font-size:13px;
-                               font-weight:700;cursor:pointer;font-family:inherit;">
-                        Aktifkan
-                    </button>
-                    <button id="__fcmLater"
-                        style="flex:1;background:#F3E6FA;color:#7B1E5A;border:none;
-                               border-radius:12px;padding:10px;font-size:13px;
-                               font-weight:600;cursor:pointer;font-family:inherit;">
-                        Nanti
-                    </button>
-                </div>
-            </div>
-        </div>`;
-    document.body.appendChild(el);
-
-    document.getElementById('__fcmAllow').onclick = async function () {
-        el.remove();
-        const permission = await Notification.requestPermission();
-        if (permission === 'granted') await getFcmTokenAndSend(messaging);
-    };
-    document.getElementById('__fcmLater').onclick = function () {
-        el.remove();
-        localStorage.setItem('fcm_prompt_dismissed', Date.now().toString());
-    };
 }
 
 // ── Ambil token & kirim ke backend ────────────────────────────────────────
