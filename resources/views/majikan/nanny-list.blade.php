@@ -7,300 +7,359 @@
     <title>Daftar Nanny</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        plum: {
-                            DEFAULT: '#7B1E5A',
-                            light:   '#9B2E72',
-                            dark:    '#4A0E35',
-                            pale:    '#FFF9FB',
-                            soft:    '#F3E6FA',
-                            muted:   '#A2397B',
-                            accent:  '#B895C8',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
         * { -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #FFF9FB; }
-
-        /* ── Desktop phone frame ── */
-        @media (min-width: 640px) {
-            .phone-wrapper {
-                display: flex; align-items: flex-start; justify-content: center;
-                min-height: 100vh; padding: 32px 0;
-                background: linear-gradient(135deg, #f8e8f3 0%, #ede0f0 60%, #e8d5ee 100%);
-            }
-            .phone-frame {
-                width: 390px; min-height: 844px;
-                border-radius: 44px;
-                box-shadow: 0 40px 80px rgba(123,30,90,0.25),
-                            0 0 0 8px #1a0d14, 0 0 0 10px #2d1020;
-                overflow: hidden;
-                position: relative;
-            }
-        }
-        @media (max-width: 639px) {
-            .phone-wrapper { min-height: 100vh; }
-            .phone-frame   { min-height: 100vh; }
-        }
-
-        .header-bg {
-            background: linear-gradient(135deg, #7B1E5A 0%, #9B2E72 100%);
-        }
-
-        /* Slide-up animation */
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .anim-up            { animation: slideUp 0.4s ease forwards; }
-        .anim-up.delay-1    { animation-delay: 0.05s; opacity: 0; }
-        .anim-up.delay-2    { animation-delay: 0.12s; opacity: 0; }
-        .anim-up.delay-3    { animation-delay: 0.20s; opacity: 0; }
+        .anim { animation: slideUp 0.4s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.13s; }
+        .delay-3 { animation-delay: 0.21s; }
 
-        /* Card hover — matches RN activeOpacity:0.7 */
-        .nanny-card {
-            transition: transform 0.15s ease, opacity 0.15s ease;
-        }
-        .nanny-card:hover  { opacity: 0.85; }
-        .nanny-card:active { transform: scale(0.95); opacity: 0.7; }
-
-        /* Float animation for empty state */
         @keyframes floatEmpty {
             0%,100% { transform: translateY(0); }
-            50%     { transform: translateY(-6px); }
+            50% { transform: translateY(-6px); }
         }
         .float-anim { animation: floatEmpty 3s ease-in-out infinite; }
 
-        /* Skeleton shimmer */
-        @keyframes shimmer {
-            0%   { background-position: -400px 0; }
-            100% { background-position: 400px 0; }
-        }
-        .skeleton {
-            background: linear-gradient(90deg, #f0dcea 25%, #fce8f5 50%, #f0dcea 75%);
-            background-size: 400px 100%;
-            animation: shimmer 1.4s infinite;
-            border-radius: 12px;
-        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .nanny-card { transition: transform .15s ease; }
+        .nanny-card:active { transform: scale(0.98); }
 
-        /* Scrollbar hide */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* Search focus ring */
-        .search-input:focus { outline: none; }
         .search-wrapper:focus-within {
-            border-color: #7B1E5A !important;
-            box-shadow: 0 0 0 3px rgba(123,30,90,0.12);
+            border-color: #8B46D3;
+            box-shadow: 0 0 0 3px rgba(139,70,211,0.14);
         }
+        .search-input:focus { outline: none; }
 
-        /* Avatar placeholder */
-        .avatar-placeholder {
-            background: linear-gradient(135deg, #F3E6FA, #E8D5EE);
-        }
-
-        /* Status badge */
         .badge-available { background: #DCFCE7; color: #166534; }
-        .badge-busy      { background: #FEE2E2; color: #991B1B; }
+        .badge-hired { background: #FEF3C7; color: #B45309; }
+
+        #filterModal { transition: opacity .22s ease; }
+        #filterSheet { transition: transform .28s cubic-bezier(0.22, 1, 0.36, 1); }
+        .filter-chip {
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: 800;
+            line-height: 1;
+            transition: all .15s ease;
+        }
+        .filter-chip[data-group="status"][data-value="all"].active,
+        .filter-chip[data-group="sort"][data-value="all"].active {
+            background: #8B46D3; color: #fff;
+        }
+        .filter-chip[data-group="status"][data-value="available"].active {
+            background: #E0E7FF; color: #4F46E5;
+        }
+        .filter-chip[data-group="status"][data-value="hired"].active {
+            background: #FEF3C7; color: #B45309;
+        }
+        .filter-chip[data-group="sort"][data-value="latest"].active {
+            background: #E0E7FF; color: #4F46E5;
+        }
+        .filter-chip[data-group="sort"][data-value="oldest"].active {
+            background: #FEF3C7; color: #B45309;
+        }
+        .filter-chip:not(.active) {
+            background: #F3F4F6;
+            color: #9CA3AF;
+        }
     </style>
 </head>
-<body>
+<body class="font-['Nunito'] bg-[#E5E2F5]">
+<div class="sm:flex sm:items-start sm:justify-center sm:min-h-screen sm:py-8 sm:pb-[60px]">
+<div class="sm:w-[390px] sm:min-h-[844px] sm:rounded-[44px] sm:shadow-[0_40px_80px_rgba(124,58,237,0.28),0_0_0_8px_#1a1030,0_0_0_10px_#2d1a50] sm:overflow-hidden bg-[#F0EDFB] min-h-screen flex flex-col relative">
 
-<div class="phone-wrapper">
-<div class="phone-frame bg-plum-pale flex flex-col">
-
-    <!-- ─── STATUS BAR ────────────────────────────────────────────────────── -->
-    <div class="hidden sm:flex items-center justify-between px-8 pt-4 pb-1 bg-plum">
-        <span class="text-xs font-semibold text-white/80" id="statusTime">9:41</span>
-        <div class="flex gap-1 items-center text-white">
-            <svg class="w-4 h-3" viewBox="0 0 17 12" fill="white" opacity="0.8"><rect x="0" y="3" width="3" height="9" rx="0.5"/><rect x="4.5" y="2" width="3" height="10" rx="0.5"/><rect x="9" y="0.5" width="3" height="11.5" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg>
-            <svg class="w-4 h-3" viewBox="0 0 16 12" fill="white" opacity="0.8"><path d="M8 2.4C5.6 2.4 3.4 3.4 1.8 5L0 3.2C2.2 1.2 5 0 8 0s5.8 1.2 8 3.2L14.2 5C12.6 3.4 10.4 2.4 8 2.4z"/><path d="M8 6c-1.4 0-2.6.6-3.6 1.4L2.6 5.6C4 4.4 5.8 3.6 8 3.6s4 .8 5.4 2L11.6 7.4C10.6 6.6 9.4 6 8 6z"/><circle cx="8" cy="10" r="2"/></svg>
-            <div class="flex items-center"><div class="w-6 h-3 border border-white/70 rounded-sm p-px flex items-stretch"><div class="bg-white rounded-xs flex-1"></div></div></div>
-        </div>
-    </div>
-
-    <!-- ─── HEADER ────────────────────────────────────────────────────────── -->
-    <div class="header-bg rounded-b-[30px] px-5 pt-10 pb-8 relative shrink-0 overflow-hidden">
-        <!-- Decorative circles -->
-        <div class="absolute top-0 right-0 w-36 h-36 rounded-full bg-white/5 -translate-y-8 translate-x-8 pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-white/5 translate-y-5 -translate-x-5 pointer-events-none"></div>
-
-        <!-- Back button -->
-        <a href="{{ route('dashboard') }}"
-           class="absolute top-[54px] left-5 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center z-10 hover:bg-white/30 transition-colors">
-            <ion-icon name="arrow-back" style="font-size:20px;color:#fff;"></ion-icon>
-        </a>
-
-        <!-- Header content -->
-        <div class="flex flex-col items-center anim-up delay-1">
-            <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-4 shadow-lg shadow-plum-dark/20">
-                <ion-icon name="people" style="font-size:30px;color:#7B1E5A;"></ion-icon>
+    <div class="hidden sm:flex sm:items-center sm:justify-between bg-[#8B46D3] px-6 pt-[14px] text-white text-xs font-bold">
+        <span id="statusTime">9:41</span>
+        <div class="flex items-center gap-1.5">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+                <rect x="0" y="4" width="3" height="7" rx="0.6" fill="white" opacity="0.5"/>
+                <rect x="4.5" y="2.5" width="3" height="8.5" rx="0.6" fill="white" opacity="0.7"/>
+                <rect x="9" y="0.5" width="3" height="10.5" rx="0.6" fill="white"/>
+            </svg>
+            <div class="flex items-center">
+                <div class="w-[22px] h-[11px] border-[1.5px] border-white/70 rounded-[3px] p-[1.5px]">
+                    <div class="bg-white rounded-[1.5px] h-full"></div>
+                </div>
             </div>
-            <h1 class="text-white text-2xl font-extrabold tracking-wide mb-1">Daftar Nanny</h1>
-            <p class="text-white/60 text-xs font-medium">
-                <span id="nannyCount">{{ count($nannies ?? []) }}</span> nanny tersedia
-            </p>
         </div>
     </div>
 
-    <!-- ─── SCROLLABLE BODY ───────────────────────────────────────────────── -->
-    <div class="flex-1 overflow-y-auto no-scrollbar px-4 pt-5" id="mainScroll">
+    <div class="anim delay-1 relative z-10 bg-[#8B46D3] bg-[url('/assets/bg-texture.png')] bg-cover bg-center
+                px-[24px] pt-[55px] pb-[72px]
+                before:content-[''] before:absolute before:inset-0 before:bg-[#8B46D3] before:opacity-60 before:-z-10">
+        <div class="flex items-center gap-3 relative z-10">
+            <a href="{{ route('dashboard') }}"
+               class="w-10 h-10 rounded-full bg-white/20 border-[1.5px] border-white/30 flex items-center justify-center shrink-0">
+                <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
+            </a>
+            <div>
+                <span class="text-white text-[17px] font-extrabold tracking-wide">List Nanny</span>
+                <p class="text-white/60 text-xs font-medium mt-0.5">{{ count($nannies ?? []) }} nanny available</p>
+            </div>
+        </div>
+    </div>
 
-        <!-- ── SEARCH BAR ─────────────────────────────────────────────────── -->
-        <div class="flex gap-2 mb-5 anim-up delay-2">
-            <form action="{{ route('majikan-nanny-list') }}" method="GET" class="flex gap-2 w-full">
-                <div class="search-wrapper flex-1 flex items-center bg-white rounded-2xl px-4 py-3 border-2 border-plum-soft gap-3 transition-all">
-                    <ion-icon name="search" style="font-size:18px;color:#7B1E5A;flex-shrink:0;"></ion-icon>
+    <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar flex flex-col gap-4">
+        <div class="anim delay-2">
+            <form action="{{ route('majikan-nanny-list') }}" method="GET" class="flex gap-2 w-full" id="searchForm">
+                <div class="search-wrapper flex-1 flex items-center bg-[#F4F4F4] rounded-full px-4 py-2.5 border border-[#DDD6EF] gap-2 transition-all">
+                    <ion-icon name="search-outline" style="font-size:16px;color:#8B86A5;flex-shrink:0;"></ion-icon>
                     <input
                         type="text"
                         name="search"
                         value="{{ request('search') }}"
-                        placeholder="Cari nanny..."
-                        class="search-input flex-1 text-sm font-medium text-plum-dark placeholder-plum-accent bg-transparent"
+                        placeholder="Search nanny...."
+                        class="search-input flex-1 text-[13px] font-semibold text-[#4B5563] placeholder-[#9CA3AF] bg-transparent"
                     >
                     @if(request('search'))
-                    <a href="{{ route('majikan-nanny-list') }}" class="text-plum-accent hover:text-plum-muted">
-                        <ion-icon name="close-circle" style="font-size:18px;"></ion-icon>
+                    <a href="{{ route('majikan-nanny-list') }}" class="text-[#A8A2C2]">
+                        <ion-icon name="close-circle" style="font-size:16px;"></ion-icon>
                     </a>
                     @endif
                 </div>
-                <button type="submit"
-                        class="w-12 h-12 bg-plum rounded-2xl flex items-center justify-center flex-shrink-0 hover:bg-plum-light active:scale-95 transition-all shadow-md shadow-plum/30">
-                    <ion-icon name="search" style="font-size:18px;color:white;"></ion-icon>
+                <input type="hidden" name="status" id="statusInput" value="{{ request('status', 'all') }}">
+                <input type="hidden" name="sort" id="sortInput" value="{{ request('sort', 'all') }}">
+                <button type="button" id="openFilterBtn"
+                        class="w-9 h-9 bg-[#F4F4F4] border border-[#DDD6EF] rounded-full flex items-center justify-center flex-shrink-0 active:scale-95 transition-all">
+                    <ion-icon name="options-outline" style="font-size:16px;color:#8B46D3;"></ion-icon>
                 </button>
             </form>
         </div>
 
-        <!-- ── NANNY GRID — mirrors GridCard component (3 cols, circular avatar) ── -->
-        <div class="anim-up delay-3">
+        <div class="anim delay-3">
             @if(isset($nannies) && count($nannies) > 0)
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-[#5A556E] text-[18px] font-extrabold">Nanny's Recommendation</h2>
+                <div class="bg-[#EDE9FE] px-3 py-1 rounded-full">
+                    <span class="text-[#8B46D3] text-xs font-bold">{{ count($nannies) }} Nanny</span>
+                </div>
+            </div>
 
-            {{--
-                RN GridCard mapping:
-                gridContainer  → flex flex-wrap justify-between pb-10
-                card           → w-[31%] bg-white rounded-2xl py-4 px-2 items-center mb-4 border-2 border-[#F3E6FA]
-                avatarContainer → mb-3
-                avatar/placeholder → w-16 h-16 rounded-full bg-[#F3E6FA] border-3 border-[#F3E6FA]
-                name           → text-sm font-bold text-[#4A0E35] text-center mb-1.5 px-1
-                roleContainer  → flex items-center gap-1 px-1
-                role icon      → briefcase-outline 12px #A2397B
-                role text      → text-xs text-[#A2397B] font-medium text-center
-            --}}
-            <div class="flex flex-wrap justify-between pb-10">
+            <div class="flex flex-col gap-2 pb-6">
                 @foreach($nannies as $i => $nanny)
+                @php
+                    $statusRaw = strtolower($nanny['status'] ?? ($nanny['availability'] ?? 'available'));
+                    $isHired = in_array($statusRaw, ['hired', 'busy', 'booked']);
+                    $badgeClass = $isHired ? 'badge-hired' : 'badge-available';
+                    $badgeText = $isHired ? 'HIRED' : 'AVAILABLE';
+                    $rating = $nanny['rating'] ?? '4.9';
+                    $reviews = $nanny['reviews'] ?? 42;
+                    $experience = $nanny['experience'] ?? 'More than 2 years of experience';
+                @endphp
                 <a href="{{ route('majikan-nanny-detail', $nanny['id']) }}"
-                   class="nanny-card bg-white rounded-2xl py-4 px-2 flex flex-col items-center mb-4"
-                   style="width:31%; border: 2px solid #F3E6FA; animation: slideUp 0.3s ease {{ $i * 0.05 }}s both; opacity:0;"
-                >
-                    <!-- avatarContainer: mb-3 -->
-                    <div class="mb-3">
+                   class="nanny-card block bg-white rounded-[14px] px-3 py-2.5 shadow-[0_2px_10px_rgba(0,0,0,0.10)] border border-[#EAE6F5]"
+                   style="animation: slideUp 0.35s ease {{ $i * 0.05 }}s both; opacity:0;">
+                    <div class="flex items-center gap-3">
                         @if(!empty($nanny['foto']))
-                        {{-- avatar: w-16 h-16 rounded-full bg-[#F3E6FA] border-3 --}}
                         <img src="{{ $nanny['foto'] }}"
                              alt="{{ $nanny['name'] }}"
-                             class="w-16 h-16 rounded-full object-cover"
-                             style="background:#F3E6FA; border: 3px solid #F3E6FA;"
+                             class="w-[50px] h-[50px] rounded-[8px] object-cover bg-[#F3F0FD]"
                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
                         >
-                        <div class="w-16 h-16 rounded-full items-center justify-center hidden"
-                             style="background:#F3E6FA; border: 3px solid #F3E6FA;">
-                            <ion-icon name="person" style="font-size:28px;color:#7B1E5A;"></ion-icon>
+                        <div class="w-[50px] h-[50px] rounded-[8px] items-center justify-center hidden bg-[#F3F0FD]">
+                            <ion-icon name="person" style="font-size:24px;color:#8B46D3;"></ion-icon>
                         </div>
                         @else
-                        {{-- avatarPlaceholder --}}
-                        <div class="w-16 h-16 rounded-full flex items-center justify-center"
-                             style="background:#F3E6FA; border: 3px solid #F3E6FA;">
-                            <ion-icon name="person" style="font-size:28px;color:#7B1E5A;"></ion-icon>
+                        <div class="w-[50px] h-[50px] rounded-[8px] flex items-center justify-center bg-[#F3F0FD]">
+                            <ion-icon name="person" style="font-size:24px;color:#8B46D3;"></ion-icon>
                         </div>
                         @endif
-                    </div>
 
-                    <!-- name: fontSize:14, fontWeight:700, color:#4A0E35, textAlign:center, mb:6, px:4 -->
-                    <p class="text-sm font-bold text-center mb-1.5 px-1 line-clamp-1 w-full"
-                       style="color:#4A0E35;">
-                        {{ $nanny['name'] }}
-                    </p>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between gap-2">
+                                <p class="text-[#1E1B2E] font-extrabold text-[15px] truncate">{{ $nanny['name'] }}</p>
+                                <span class="{{ $badgeClass }} text-[10px] font-extrabold px-2 py-1 rounded-full leading-none shrink-0">
+                                    {{ $badgeText }}
+                                </span>
+                            </div>
 
-                    <!-- roleContainer: flex, items-center, gap:4, px:4 -->
-                    @if(!empty($nanny['role']))
-                    <div class="flex items-center px-1" style="gap:4px;">
-                        <ion-icon name="briefcase-outline" style="font-size:12px;color:#A2397B;flex-shrink:0;"></ion-icon>
-                        <span class="text-xs font-medium text-center line-clamp-1" style="color:#A2397B;">
-                            {{ $nanny['role'] }}
-                        </span>
+                            <div class="flex items-center gap-1 mt-0.5">
+                                <ion-icon name="star" style="font-size:12px;color:#F59E0B;"></ion-icon>
+                                <span class="text-[#1E1B2E] text-[12px] font-extrabold">{{ $rating }}</span>
+                                <span class="text-[#8B86A5] text-[11px] font-semibold">({{ $reviews }} reviews)</span>
+                            </div>
+
+                            <p class="text-[#8B86A5] text-[11px] italic font-semibold mt-0.5 truncate">
+                                "{{ $experience }}"
+                            </p>
+                        </div>
                     </div>
-                    @endif
                 </a>
                 @endforeach
             </div>
 
             @elseif(request('search'))
-            <!-- ── EMPTY SEARCH STATE ─────────────────────────────────────── -->
             <div class="flex flex-col items-center pt-16 pb-10 px-8">
-                <div class="float-anim w-24 h-24 rounded-full bg-plum-soft flex items-center justify-center mb-5">
-                    <ion-icon name="search-outline" style="font-size:44px;color:#B895C8;"></ion-icon>
+                <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-5">
+                    <ion-icon name="search-outline" style="font-size:44px;color:#C4B5FD;"></ion-icon>
                 </div>
-                <h3 class="text-plum-dark font-bold text-lg mb-2">Nanny tidak ditemukan</h3>
-                <p class="text-plum-muted text-sm text-center leading-relaxed">
-                    Tidak ada nanny yang sesuai dengan pencarian
-                    "<span class="font-semibold text-plum">{{ request('search') }}</span>"
+                <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">Nanny tidak ditemukan</h3>
+                <p class="text-[#9CA3AF] text-sm text-center leading-relaxed">
+                    Tidak ada nanny sesuai pencarian
+                    "<span class="font-semibold text-[#8B46D3]">{{ request('search') }}</span>"
                 </p>
                 <a href="{{ route('majikan-nanny-list') }}"
-                   class="mt-6 bg-plum text-white text-sm font-bold px-6 py-3 rounded-2xl hover:bg-plum-light transition-colors shadow-md shadow-plum/30">
+                   class="mt-6 bg-[#8B46D3] text-white text-sm font-bold px-6 py-3 rounded-2xl shadow-[0_8px_18px_rgba(139,70,211,0.35)]">
                     Lihat Semua Nanny
                 </a>
             </div>
 
             @else
-            <!-- ── EMPTY STATE ─────────────────────────────────────────────── -->
             <div class="flex flex-col items-center pt-16 pb-10 px-8">
-                <div class="float-anim w-24 h-24 rounded-full bg-plum-soft flex items-center justify-center mb-5">
-                    <ion-icon name="people-outline" style="font-size:44px;color:#B895C8;"></ion-icon>
+                <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-5">
+                    <ion-icon name="people-outline" style="font-size:44px;color:#C4B5FD;"></ion-icon>
                 </div>
-                <h3 class="text-plum-dark font-bold text-lg mb-2">Belum ada nanny</h3>
-                <p class="text-plum-muted text-sm text-center leading-relaxed">
+                <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">Belum ada nanny</h3>
+                <p class="text-[#9CA3AF] text-sm text-center leading-relaxed">
                     Daftar nanny akan muncul di sini
                 </p>
             </div>
             @endif
         </div>
-
-        <div class="h-8"></div>
     </div>
 
-    <!-- ─── BOTTOM NAV ───────────────────────────────────────────────────── -->
     @include('partials.bottom-nav', ['active' => 'home'])
 
 </div>
 </div>
 
+<div id="filterModal" class="fixed inset-0 z-50 bg-black/35 hidden opacity-0">
+    <div class="h-full flex items-end sm:items-center sm:justify-center">
+        <div id="filterSheet" class="w-full sm:max-w-sm bg-white rounded-t-[28px] sm:rounded-[24px] px-5 pt-5 pb-6 translate-y-full sm:translate-y-8">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-1.5">
+                    <ion-icon name="options-outline" style="font-size:17px;color:#8B46D3;"></ion-icon>
+                    <h3 class="text-[#1E1B2E] font-extrabold text-[24px] leading-none">Filter</h3>
+                </div>
+                <button type="button" id="closeFilterBtn" class="w-7 h-7 flex items-center justify-center">
+                    <ion-icon name="close" style="font-size:24px;color:#111827;"></ion-icon>
+                </button>
+            </div>
+
+            <div class="h-px bg-[#E5E7EB] mb-4"></div>
+
+            <div class="space-y-4">
+                <div>
+                    <p class="text-[#1F2937] text-[20px] font-extrabold mb-2 leading-none">Status</p>
+                    <div class="flex gap-2">
+                        <button type="button" class="filter-chip" data-group="status" data-value="all">All</button>
+                        <button type="button" class="filter-chip" data-group="status" data-value="available">Available</button>
+                        <button type="button" class="filter-chip" data-group="status" data-value="hired">Hired</button>
+                    </div>
+                </div>
+
+                <div class="h-px bg-[#E5E7EB]"></div>
+
+                <div>
+                    <p class="text-[#1F2937] text-[20px] font-extrabold mb-2 leading-none">Short By</p>
+                    <div class="flex gap-2">
+                        <button type="button" class="filter-chip" data-group="sort" data-value="all">All</button>
+                        <button type="button" class="filter-chip" data-group="sort" data-value="latest">Latest</button>
+                        <button type="button" class="filter-chip" data-group="sort" data-value="oldest">Oldest</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-3 mt-6">
+                <button type="button" id="resetFilterBtn"
+                        class="flex-1 bg-white border border-[#E5E7EB] text-[#EF4444] rounded-[12px] h-11 font-extrabold text-[15px] leading-none flex items-center justify-center gap-2">
+                    <ion-icon name="close-circle" style="font-size:16px;"></ion-icon>
+                    <span>Reset</span>
+                </button>
+                <button type="button" id="applyFilterBtn"
+                        class="flex-1 bg-[#8B46D3] text-white rounded-[12px] h-11 font-extrabold text-[15px] leading-none flex items-center justify-center gap-2">
+                    <ion-icon name="save-outline" style="font-size:16px;"></ion-icon>
+                    <span>Apply</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    // Status bar clock
-    function updateClock() {
-        const now = new Date();
-        const h = String(now.getHours()).padStart(2, '0');
-        const m = String(now.getMinutes()).padStart(2, '0');
+    (function () {
         const el = document.getElementById('statusTime');
-        if (el) el.textContent = `${h}:${m}`;
-    }
-    updateClock();
-    setInterval(updateClock, 30000);
+        function tick() {
+            const now = new Date();
+            if (el) el.textContent = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        }
+        tick();
+        setInterval(tick, 30000);
+    })();
+
+    (function () {
+        const modal = document.getElementById('filterModal');
+        const sheet = document.getElementById('filterSheet');
+        const openBtn = document.getElementById('openFilterBtn');
+        const closeBtn = document.getElementById('closeFilterBtn');
+        const applyBtn = document.getElementById('applyFilterBtn');
+        const resetBtn = document.getElementById('resetFilterBtn');
+        const statusInput = document.getElementById('statusInput');
+        const sortInput = document.getElementById('sortInput');
+        const form = document.getElementById('searchForm');
+
+        let selectedStatus = statusInput.value || 'all';
+        let selectedSort = sortInput.value || 'all';
+
+        function paintChips() {
+            document.querySelectorAll('.filter-chip').forEach((chip) => {
+                const group = chip.dataset.group;
+                const value = chip.dataset.value;
+                const isActive = (group === 'status' && value === selectedStatus) || (group === 'sort' && value === selectedSort);
+                chip.classList.toggle('active', isActive);
+            });
+        }
+
+        function openModal() {
+            paintChips();
+            modal.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                modal.style.opacity = '1';
+                sheet.style.transform = 'translateY(0)';
+            });
+        }
+
+        function closeModal() {
+            modal.style.opacity = '0';
+            sheet.style.transform = 'translateY(100%)';
+            setTimeout(() => modal.classList.add('hidden'), 220);
+        }
+
+        document.querySelectorAll('.filter-chip').forEach((chip) => {
+            chip.addEventListener('click', () => {
+                if (chip.dataset.group === 'status') selectedStatus = chip.dataset.value;
+                if (chip.dataset.group === 'sort') selectedSort = chip.dataset.value;
+                paintChips();
+            });
+        });
+
+        openBtn.addEventListener('click', openModal);
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+        resetBtn.addEventListener('click', () => {
+            selectedStatus = 'all';
+            selectedSort = 'all';
+            statusInput.value = 'all';
+            sortInput.value = 'all';
+            form.submit();
+        });
+
+        applyBtn.addEventListener('click', () => {
+            statusInput.value = selectedStatus;
+            sortInput.value = selectedSort;
+            form.submit();
+        });
+    })();
 </script>
 @include('partials.auth-guard')
 </body>

@@ -6,136 +6,125 @@
     <title>Pesan</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-    <script>
-        tailwind.config = {
-            theme: { extend: {
-                colors: { plum:{DEFAULT:'#7B1E5A',light:'#9B2E72',dark:'#4A0E35',pale:'#FFF9FB',soft:'#F3E6FA',muted:'#A2397B'} },
-                fontFamily: { sans:['Plus Jakarta Sans','sans-serif'] }
-            }}
-        }
-    </script>
     <style>
-        * { -webkit-tap-highlight-color:transparent; box-sizing:border-box; }
-        body { font-family:'Plus Jakarta Sans',sans-serif; background:#FFF9FB; margin:0; }
-
-        @media (min-width:640px) {
-            .phone-wrapper { display:flex; align-items:flex-start; justify-content:center; min-height:100vh; padding:32px 0; background:linear-gradient(135deg,#f8e8f3,#ede0f0,#e8d5ee); }
-            .phone-frame   { width:390px; min-height:844px; border-radius:44px; box-shadow:0 40px 80px rgba(123,30,90,0.25),0 0 0 8px #1a0d14,0 0 0 10px #2d1020; overflow:hidden; }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
-        .no-scrollbar::-webkit-scrollbar { display:none; }
-        .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
-
-        @keyframes slideUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
-        .anim-up { animation:slideUp .35s ease both; }
-
-        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-        .fade-in { animation:fadeIn .3s ease both; }
+        .anim { animation: slideUp 0.4s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.13s; }
+        .delay-3 { animation-delay: 0.21s; }
 
         @keyframes floatEmpty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
         .float-anim { animation:floatEmpty 3s ease-in-out infinite; }
 
-        /* Role group accordion */
-        .group-content { overflow:hidden; transition:max-height .3s ease; }
-        .group-chevron  { transition:transform .3s ease; }
-        .group-chevron.open { transform:rotate(90deg); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .search-input:focus { outline: none; }
+        .chat-item { transition: transform .15s ease; }
+        .chat-item:active { transform: scale(0.98); }
 
-        /* Chat item hover */
-        .chat-item { transition:background .15s ease, transform .15s ease; }
-        .chat-item:active { transform:scale(0.98); background:#FFF9FB; }
-
-        /* Unread badge pulse */
-        @keyframes badgePop { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
-        .badge-pop { animation:badgePop 1.8s ease-in-out infinite; }
-
-        /* Role color map via CSS vars */
-        .role-konsultan { --rc:#2D7DD2; --rb:#EBF4FF; }
-        .role-nanny     { --rc:#E84855; --rb:#FFF0F1; }
-        .role-majikan   { --rc:#3BB273; --rb:#EDFAF3; }
-        .role-default   { --rc:#7B1E5A; --rb:#F3E6FA; }
-
-        .status-bar-icons svg { display:inline-block; }
-        .pb-safe { padding-bottom:env(safe-area-inset-bottom,0px); }
+        .tab-btn {
+            border-radius: 12px;
+            padding: 8px 14px;
+            color: #7C7893;
+            font-size: 13px;
+            font-weight: 800;
+            line-height: 1;
+            transition: all .15s ease;
+        }
+        .tab-btn.active {
+            background: linear-gradient(to right, #7C3AED, #8B46D3);
+            color: white;
+            box-shadow: 0 6px 14px rgba(139,70,211,0.28);
+        }
     </style>
 </head>
-<body>
-<div class="phone-wrapper">
-<div class="phone-frame bg-plum-pale flex flex-col" style="min-height:100vh;">
+<body class="font-['Nunito'] bg-[#E5E2F5]">
+<div class="sm:flex sm:items-start sm:justify-center sm:min-h-screen sm:py-8 sm:pb-[60px]">
+<div class="sm:w-[390px] sm:min-h-[844px] sm:rounded-[44px] sm:shadow-[0_40px_80px_rgba(124,58,237,0.28),0_0_0_8px_#1a1030,0_0_0_10px_#2d1a50] sm:overflow-hidden bg-[#F0EDFB] min-h-screen flex flex-col relative">
 
-    <!-- STATUS BAR -->
-    <div class="hidden sm:flex items-center justify-between px-8 pt-4 pb-1 bg-plum shrink-0">
-        <span class="text-xs font-semibold text-white/80" id="statusTime">9:41</span>
-        <div class="flex gap-1 items-center text-white">
-            <svg class="w-4 h-3" viewBox="0 0 17 12" fill="white" opacity="0.8"><rect x="0" y="3" width="3" height="9" rx="0.5"/><rect x="4.5" y="2" width="3" height="10" rx="0.5"/><rect x="9" y="0.5" width="3" height="11.5" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg>
-            <div class="flex items-center"><div class="w-6 h-3 border border-white/70 rounded-sm p-px flex items-stretch"><div class="bg-white flex-1"></div></div></div>
-        </div>
-    </div>
-
-    <!-- HEADER -->
-    <div class="bg-gradient-to-br from-plum to-plum-light shrink-0 px-5 pt-10 pb-14 relative overflow-hidden" style="border-radius:0 0 28px 28px;">
-        <div class="absolute top-0 right-0 w-40 h-40 rounded-full bg-white/5 -translate-y-10 translate-x-10 pointer-events-none"></div>
-        <a href="{{ route('dashboard') }}"
-           class="absolute top-10 left-5 w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
-            <ion-icon name="arrow-back" style="font-size:20px;color:white;"></ion-icon>
-        </a>
-        <div class="flex flex-col items-center">
-            <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-3 shadow-lg">
-                <ion-icon name="chatbubbles" style="font-size:30px;color:#7B1E5A;"></ion-icon>
-            </div>
-            <h1 class="text-white text-2xl font-extrabold">Pesan</h1>
-            <p id="headerSubtitle" class="text-white/60 text-sm mt-1">Memuat percakapan...</p>
-        </div>
-    </div>
-
-    <!-- SEARCH BAR -->
-    <div class="px-4 -mt-5 z-10 shrink-0">
-        <div class="bg-white rounded-2xl shadow-lg shadow-plum/10 border-2 border-plum-soft/60 flex items-center gap-3 px-4 py-3.5">
-            <ion-icon name="search-outline" style="font-size:18px;color:#A2397B;flex-shrink:0;"></ion-icon>
-            <input type="text" id="searchInput" placeholder="Cari percakapan..."
-                   class="flex-1 text-sm font-medium text-plum-dark placeholder-plum-muted/50 outline-none bg-transparent"
-                   oninput="filterChats(this.value)"/>
-            <button id="clearSearch" onclick="clearSearch()" class="hidden">
-                <ion-icon name="close-circle" style="font-size:18px;color:#B895C8;"></ion-icon>
-            </button>
-        </div>
-    </div>
-
-    <!-- CHAT LIST -->
-    <div id="chatListArea" class="flex-1 overflow-y-auto no-scrollbar px-4 pt-4 pb-24">
-        <!-- Skeleton loader -->
-        <div id="skeletonLoader" class="space-y-3">
-            @for($i=0;$i<4;$i++)
-            <div class="bg-white rounded-2xl p-4 flex items-center gap-3 animate-pulse">
-                <div class="w-12 h-12 rounded-full bg-plum-soft shrink-0"></div>
-                <div class="flex-1 space-y-2">
-                    <div class="h-3.5 bg-plum-soft rounded-full w-3/4"></div>
-                    <div class="h-3 bg-plum-soft/60 rounded-full w-1/2"></div>
+    <div class="hidden sm:flex sm:items-center sm:justify-between bg-[#8B46D3] px-6 pt-[14px] text-white text-xs font-bold">
+        <span id="statusTime">9:41</span>
+        <div class="flex items-center gap-1.5">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+                <rect x="0" y="4" width="3" height="7" rx="0.6" fill="white" opacity="0.5"/>
+                <rect x="4.5" y="2.5" width="3" height="8.5" rx="0.6" fill="white" opacity="0.7"/>
+                <rect x="9" y="0.5" width="3" height="10.5" rx="0.6" fill="white"/>
+            </svg>
+            <div class="flex items-center">
+                <div class="w-[22px] h-[11px] border-[1.5px] border-white/70 rounded-[3px] p-[1.5px]">
+                    <div class="bg-white rounded-[1.5px] h-full"></div>
                 </div>
-                <div class="h-3 w-10 bg-plum-soft/40 rounded-full"></div>
             </div>
-            @endfor
-        </div>
-
-        <!-- Actual chat groups (rendered by JS) -->
-        <div id="chatGroups" class="space-y-3 hidden"></div>
-
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden flex flex-col items-center pt-16 pb-8 px-8">
-            <div class="float-anim w-28 h-28 rounded-full bg-plum-soft flex items-center justify-center mb-6">
-                <ion-icon id="emptyIcon" name="chatbubble-ellipses-outline" style="font-size:52px;color:#E0BBE4;"></ion-icon>
-            </div>
-            <h3 id="emptyTitle" class="text-plum-dark font-bold text-lg mb-2 text-center">Belum ada percakapan</h3>
-            <p id="emptyDesc" class="text-plum-muted text-sm text-center leading-relaxed">
-                Mulai percakapan baru dengan mengirim pesan pertama
-            </p>
         </div>
     </div>
 
-    <!-- BOTTOM NAV -->
+    <div class="anim delay-1 relative z-10 bg-[#8B46D3] bg-[url('/assets/bg-texture.png')] bg-cover bg-center
+                px-[24px] pt-[55px] pb-[72px]
+                before:content-[''] before:absolute before:inset-0 before:bg-[#8B46D3] before:opacity-60 before:-z-10">
+        <div class="flex items-center gap-3 relative z-10">
+            <a href="{{ route('dashboard') }}"
+               class="w-10 h-10 rounded-full bg-white/20 border-[1.5px] border-white/30 flex items-center justify-center shrink-0">
+                <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
+            </a>
+            <div>
+                <span class="text-white text-[17px] font-extrabold tracking-wide">Message</span>
+                <p id="headerSubtitle" class="text-white/70 text-xs font-semibold mt-0.5">Loading conversation...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar">
+        <div class="anim delay-2 bg-white rounded-[20px] p-4 shadow-[0_2px_12px_rgba(0,0,0,0.08)]">
+            <div class="flex items-center bg-[#F4F4F4] rounded-[10px] border border-[#DDD6EF] px-3 py-2.5 mb-3">
+                <ion-icon name="search-outline" style="font-size:16px;color:#8B86A5;flex-shrink:0;"></ion-icon>
+                <input type="text" id="searchInput" placeholder="Search message...."
+                       class="search-input flex-1 text-[13px] font-semibold text-[#4B5563] placeholder-[#9CA3AF] bg-transparent ml-2"
+                       oninput="applyFilters()">
+            </div>
+
+            <div class="border border-[#DDD6EF] rounded-[10px] p-1 grid grid-cols-3 gap-1">
+                <button class="tab-btn active" data-tab="all" onclick="setRoleFilter('all')">All</button>
+                <button class="tab-btn" data-tab="consultant" onclick="setRoleFilter('consultant')">Consultant</button>
+                <button class="tab-btn" data-tab="nanny" onclick="setRoleFilter('nanny')">Nanny</button>
+            </div>
+        </div>
+
+        <div id="chatListArea" class="pt-3 pb-2">
+            <div id="skeletonLoader" class="space-y-3">
+                @for($i=0;$i<6;$i++)
+                <div class="bg-white rounded-[14px] p-3.5 flex items-center gap-3 animate-pulse">
+                    <div class="w-[52px] h-[52px] rounded-[8px] bg-[#ECE8FA] shrink-0"></div>
+                    <div class="flex-1 space-y-2">
+                        <div class="h-3.5 bg-[#ECE8FA] rounded-full w-2/3"></div>
+                        <div class="h-3 bg-[#ECE8FA] rounded-full w-1/2"></div>
+                    </div>
+                    <div class="h-3 w-10 bg-[#ECE8FA] rounded-full"></div>
+                </div>
+                @endfor
+            </div>
+
+            <div id="chatList" class="space-y-3 hidden"></div>
+
+            <div id="emptyState" class="hidden flex flex-col items-center pt-16 pb-8 px-8">
+                <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-6">
+                    <ion-icon id="emptyIcon" name="chatbubble-ellipses-outline" style="font-size:48px;color:#C4B5FD;"></ion-icon>
+                </div>
+                <h3 id="emptyTitle" class="text-[#1E1B2E] font-bold text-lg mb-2 text-center">Belum ada percakapan</h3>
+                <p id="emptyDesc" class="text-[#9CA3AF] text-sm text-center leading-relaxed">
+                    Mulai percakapan baru dengan mengirim pesan pertama
+                </p>
+            </div>
+        </div>
+    </div>
+
     @include('partials.bottom-nav', ['active' => 'home'])
 
 </div>
@@ -143,7 +132,10 @@
 
 <script>
 // ── Config ────────────────────────────────────────────────────────────────────
-const USER_ID        = {{ session('user_id') ?? 'null' }};
+@php
+    $resolvedUserId = session('user_id') ?: data_get(session('user'), 'id_user');
+@endphp
+const USER_ID        = @json($resolvedUserId);
 const AUTH_TOKEN     = "{{ session('token') }}";
 const PUSHER_KEY     = "{{ config('services.pusher.key') }}";
 const PUSHER_CLUSTER = "{{ config('services.pusher.options.cluster', 'ap1') }}";
@@ -153,21 +145,6 @@ const CSRF           = "{{ csrf_token() }}";
 // ── Helpers ───────────────────────────────────────────────────────────────────
 function updateClock(){const el=document.getElementById('statusTime');if(el){const n=new Date();el.textContent=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;}}
 updateClock();setInterval(updateClock,30000);
-
-const roleConfig = {
-    konsultan : { color:'#2D7DD2', bg:'#EBF4FF', icon:'person-circle-outline' },
-    nanny     : { color:'#E84855', bg:'#FFF0F1', icon:'heart-outline' },
-    pengasuh  : { color:'#E84855', bg:'#FFF0F1', icon:'heart-outline' },
-    majikan   : { color:'#3BB273', bg:'#EDFAF3', icon:'briefcase-outline' },
-};
-
-function getRoleConfig(role) {
-    const r = (role||'').toLowerCase();
-    for (const [key, cfg] of Object.entries(roleConfig)) {
-        if (r.includes(key)) return cfg;
-    }
-    return { color:'#7B1E5A', bg:'#F3E6FA', icon:'people-outline' };
-}
 
 function formatTime(ts) {
     const d    = new Date(ts);
@@ -182,8 +159,16 @@ function initials(name) {
     return (name||'?').charAt(0).toUpperCase();
 }
 
+function normalizeRole(role) {
+    const r = (role || '').toLowerCase();
+    if (r.includes('konsultan') || r.includes('consultant')) return 'consultant';
+    if (r.includes('nanny') || r.includes('pengasuh')) return 'nanny';
+    return 'other';
+}
+
 // ── Chat Data ─────────────────────────────────────────────────────────────────
 let allChats = [];
+let currentRoleFilter = 'all';
 
 function processChatData(raw) {
     return raw.map(c => ({
@@ -195,162 +180,113 @@ function processChatData(raw) {
         lastMessage : c.pesan_terakhir || '',
         timestamp   : c.created_at,
         unread      : c.unread_count || 0,
+        roleType    : normalizeRole(c.role_penerima),
     }));
 }
 
-function groupByRole(chats) {
-    const groups = {};
-    chats.forEach(c => {
-        const r = c.role || 'Lainnya';
-        if (!groups[r]) groups[r] = [];
-        groups[r].push(c);
-    });
-    return Object.entries(groups).sort(([a],[b]) => {
-        if (a==='Lainnya') return 1;
-        if (b==='Lainnya') return -1;
-        return a.localeCompare(b);
-    });
-}
-
 // ── Render ────────────────────────────────────────────────────────────────────
-function buildChatItemHTML(chat, roleColor) {
+function buildChatItemHTML(chat, idx) {
     const av = chat.avatar
-        ? `<img src="${chat.avatar}" class="w-12 h-12 rounded-full object-cover border-2 border-white" alt="${chat.name}"/>`
-        : `<div class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg shrink-0" style="background:${roleColor}">${initials(chat.name)}</div>`;
+        ? `<img src="${chat.avatar}" class="w-[52px] h-[52px] rounded-[8px] object-cover bg-[#F3F0FD]" alt="${chat.name}"/>`
+        : `<div class="w-[52px] h-[52px] rounded-[8px] flex items-center justify-center text-[#8B46D3] font-extrabold text-lg bg-[#F3F0FD]">${initials(chat.name)}</div>`;
 
-    const badge = chat.unread > 0
-        ? `<span class="badge-pop ml-2 min-w-[20px] h-5 rounded-full text-white text-[10px] font-bold flex items-center justify-center px-1.5" style="background:${roleColor}">${chat.unread>99?'99+':chat.unread}</span>`
+    const unreadBadge = chat.unread > 0
+        ? `<span class="w-5 h-5 rounded-full bg-[#8B46D3] text-white text-[10px] font-extrabold flex items-center justify-center">${chat.unread>99?'99+':chat.unread}</span>`
         : '';
+    const isUnread = chat.unread > 0;
+    const itemClass = isUnread
+        ? 'bg-white rounded-[14px] px-3 py-2.5 shadow-[0_2px_10px_rgba(0,0,0,0.10)] border border-[#EAE6F5]'
+        : 'bg-transparent rounded-[14px] px-3 py-2.5 border border-transparent';
 
-    const unreadDot = chat.unread > 0
-        ? `<span class="w-2 h-2 rounded-full ml-1 shrink-0" style="background:${roleColor}"></span>`
-        : '';
+    const roleDot = chat.roleType === 'consultant'
+        ? '#10B981'
+        : (chat.roleType === 'nanny' ? '#06B6D4' : '#A78BFA');
 
-    const msgStyle = chat.unread > 0
-        ? 'color:#4A0E35;font-weight:600;'
-        : 'color:#A2397B;font-weight:400;';
+    const timeText = chat.unread > 0 ? formatTime(chat.timestamp) : (new Date(chat.timestamp) > (new Date(Date.now() - 24*3600000)) ? formatTime(chat.timestamp) : 'Friday');
 
     return `
     <a href="/chat/${chat.otherUserId}?nama=${encodeURIComponent(chat.name)}"
-       class="chat-item flex items-center gap-3 px-4 py-3.5 border-b border-plum-soft/30 last:border-b-0">
+       class="chat-item block ${itemClass}"
+       style="animation: slideUp .35s ease ${idx * 0.04}s both; opacity:0;">
+       <div class="flex items-center gap-3">
         <div class="relative shrink-0">
             ${av}
-            ${chat.unread > 0 ? `<span class="absolute -top-1 -right-1 w-4 h-4 rounded-full border-2 border-white" style="background:#FF4757;"></span>` : ''}
+            <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white" style="background:${roleDot};"></span>
         </div>
         <div class="flex-1 min-w-0">
-            <div class="flex items-center justify-between mb-1">
-                <span class="text-plum-dark font-bold text-sm truncate flex-1">${chat.name}</span>
-                <div class="flex items-center gap-1 ml-2 shrink-0">
-                    ${badge}
-                    <span class="text-plum-muted/70 text-[10px] font-medium">${formatTime(chat.timestamp)}</span>
-                </div>
+            <div class="flex items-start justify-between gap-2">
+                <p class="text-[#1E1B2E] text-[15px] font-extrabold truncate">${chat.name}</p>
+                <span class="text-[#8B46D3] text-[12px] font-bold shrink-0">${timeText}</span>
             </div>
-            <div class="flex items-center">
-                <span class="text-sm truncate flex-1" style="${msgStyle}">${chat.lastMessage||'Belum ada pesan'}</span>
-                ${unreadDot}
+
+            <div class="flex items-center justify-between gap-2 mt-0.5">
+                <p class="text-[#4B5563] text-[13px] font-semibold truncate">${chat.lastMessage||'Belum ada pesan'}</p>
+                ${unreadBadge}
             </div>
         </div>
-        <div class="w-7 h-7 rounded-full flex items-center justify-center shrink-0" style="background:${roleColor}20">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M4 2L8 6L4 10" stroke="${roleColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </div>
+       </div>
     </a>`;
 }
 
-function buildGroupHTML(role, chats, idx) {
-    const cfg        = getRoleConfig(role);
-    const totalUnread = chats.reduce((s,c)=>s+c.unread,0);
-    const unreadBadge = totalUnread > 0
-        ? `<span class="ml-2 px-2 py-0.5 rounded-full text-white text-[10px] font-bold" style="background:${cfg.color}">${totalUnread>99?'99+':totalUnread}</span>`
-        : '';
-    const groupId = `group-${idx}`;
-    const contentId = `content-${idx}`;
-    const chevronId = `chevron-${idx}`;
-
-    return `
-    <div class="anim-up bg-white rounded-3xl shadow-sm overflow-hidden border-2 border-plum-soft/40" style="animation-delay:${idx*0.07}s; border-left:4px solid ${cfg.color};">
-        <!-- Group Header -->
-        <button type="button" onclick="toggleGroup('${contentId}','${chevronId}')"
-                class="w-full flex items-center gap-3 px-4 py-3.5 text-left"
-                style="background:${cfg.bg};">
-            <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style="background:${cfg.color}20;">
-                <ion-icon name="${cfg.icon}" style="font-size:18px;color:${cfg.color};"></ion-icon>
-            </div>
-            <div class="flex-1">
-                <p class="font-extrabold text-sm" style="color:${cfg.color};">${role}</p>
-                <p class="text-[11px] text-plum-muted font-medium">${chats.length} percakapan</p>
-            </div>
-            ${unreadBadge}
-            <ion-icon id="${chevronId}" name="chevron-forward" class="group-chevron open" style="font-size:18px;color:${cfg.color};flex-shrink:0;"></ion-icon>
-        </button>
-
-        <!-- Chat Items -->
-        <div id="${contentId}" class="group-content border-t border-plum-soft/40">
-            ${chats.map(c=>buildChatItemHTML(c, cfg.color)).join('')}
-        </div>
-    </div>`;
-}
-
 function renderChats(chats) {
-    const groups  = groupByRole(chats);
-    const total   = chats.length;
-    const unread  = chats.reduce((s,c)=>s+c.unread,0);
+    const total = chats.length;
+    const unread = chats.reduce((s,c)=>s+c.unread,0);
+    const list = document.getElementById('chatList');
+    const empty = document.getElementById('emptyState');
+    const skeleton = document.getElementById('skeletonLoader');
 
     document.getElementById('headerSubtitle').textContent =
-        `${total} percakapan${unread>0?' · '+unread+' belum dibaca':''}`;
-
-    const container = document.getElementById('chatGroups');
-    const empty     = document.getElementById('emptyState');
-    const skeleton  = document.getElementById('skeletonLoader');
+        `${total} conversation${total > 1 ? 's' : ''}${unread>0?' · '+unread+' unread':''}`;
 
     skeleton.style.display = 'none';
-    container.classList.remove('hidden');
+    list.classList.remove('hidden');
 
-    if (groups.length === 0) {
-        container.innerHTML = '';
+    if (total === 0) {
+        list.innerHTML = '';
         empty.classList.remove('hidden');
         return;
     }
 
     empty.classList.add('hidden');
-    container.innerHTML = groups.map(([r,c],i)=>buildGroupHTML(r,c,i)).join('');
+    list.innerHTML = chats
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+        .map((chat, idx) => buildChatItemHTML(chat, idx))
+        .join('');
 }
 
-function filterChats(q) {
-    const btn = document.getElementById('clearSearch');
-    btn.classList.toggle('hidden', !q);
-    if (!q) { renderChats(allChats); return; }
+function setRoleFilter(tab) {
+    currentRoleFilter = tab;
+    document.querySelectorAll('.tab-btn').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+    });
+    applyFilters();
+}
 
-    const filtered = allChats.filter(c =>
-        c.name.toLowerCase().includes(q.toLowerCase()) ||
-        c.lastMessage.toLowerCase().includes(q.toLowerCase())
-    );
-    renderChats(filtered);
+function applyFilters() {
+    const q = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+    let filtered = [...allChats];
+
+    if (currentRoleFilter === 'consultant') {
+        filtered = filtered.filter((c) => c.roleType === 'consultant');
+    } else if (currentRoleFilter === 'nanny') {
+        filtered = filtered.filter((c) => c.roleType === 'nanny');
+    }
+
+    if (q) {
+        filtered = filtered.filter(c =>
+            (c.name || '').toLowerCase().includes(q) ||
+            (c.lastMessage || '').toLowerCase().includes(q)
+        );
+    }
 
     if (filtered.length === 0) {
-        document.getElementById('emptyIcon').setAttribute('name','search-outline');
-        document.getElementById('emptyTitle').textContent = 'Percakapan tidak ditemukan';
-        document.getElementById('emptyDesc').textContent  = `Tidak ada yang cocok dengan "${q}"`;
-    }
-}
-
-function clearSearch() {
-    document.getElementById('searchInput').value = '';
-    document.getElementById('clearSearch').classList.add('hidden');
-    renderChats(allChats);
-}
-
-function toggleGroup(contentId, chevronId) {
-    const content = document.getElementById(contentId);
-    const chevron = document.getElementById(chevronId);
-    const isOpen  = chevron.classList.contains('open');
-    if (isOpen) {
-        content.style.maxHeight = content.scrollHeight + 'px';
-        requestAnimationFrame(() => { content.style.maxHeight = '0'; });
-        chevron.classList.remove('open');
+        const isSearch = !!q;
+        document.getElementById('emptyIcon').setAttribute('name', isSearch ? 'search-outline' : 'chatbubble-ellipses-outline');
+        document.getElementById('emptyTitle').textContent = isSearch ? 'Percakapan tidak ditemukan' : 'Belum ada percakapan';
+        document.getElementById('emptyDesc').textContent = isSearch ? `Tidak ada yang cocok dengan "${q}"` : 'Mulai percakapan baru dengan mengirim pesan pertama';
+        renderChats([]);
     } else {
-        content.style.maxHeight = content.scrollHeight + 'px';
-        setTimeout(() => { content.style.maxHeight = 'none'; }, 300);
-        chevron.classList.add('open');
+        renderChats(filtered);
     }
 }
 
@@ -363,7 +299,7 @@ async function fetchChatList() {
         const data = await res.json();
         if (data.success && Array.isArray(data.data)) {
             allChats = processChatData(data.data);
-            renderChats(allChats);
+            applyFilters();
         } else {
             renderChats([]);
         }
@@ -401,11 +337,10 @@ fetchChatList();
                 lastMessage: chat.pesan,
                 timestamp: chat.created_at,
                 unread: 1,
+                roleType: normalizeRole(chat.role_pengirim),
             });
         }
-        // Re-render if not searching
-        const q = document.getElementById('searchInput').value;
-        if (!q) renderChats(allChats);
+        applyFilters();
     });
 })();
 </script>

@@ -6,298 +6,324 @@
     <title>{{ $isEditing ? 'Edit Profil' : 'Detail Profil' }}</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tambahkan SweetAlert2 CSS dan JS -->
-    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        plum: { DEFAULT:'#7B1E5A', light:'#9B2E72', dark:'#4A0E35', pale:'#FFF9FB', soft:'#F3E6FA', muted:'#A2397B' }
-                    },
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
+
     <style>
         * { -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #FFF9FB; }
 
-        @media (min-width: 640px) {
-            .phone-wrapper { display:flex; align-items:flex-start; justify-content:center; min-height:100vh; padding:32px 0; background:linear-gradient(135deg,#f8e8f3 0%,#ede0f0 60%,#e8d5ee 100%); }
-            .phone-frame   { width:390px; min-height:844px; border-radius:44px; box-shadow:0 40px 80px rgba(123,30,90,0.25),0 0 0 8px #1a0d14,0 0 0 10px #2d1020; overflow:hidden; position:relative; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
+        .anim { animation: slideUp 0.4s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.13s; }
+        .delay-3 { animation-delay: 0.21s; }
+        .delay-4 { animation-delay: 0.29s; }
+        .delay-5 { animation-delay: 0.37s; }
 
-        .input-field { transition: border-color 0.2s, box-shadow 0.2s; }
-        .input-field:focus { outline:none; border-color:#7B1E5A; box-shadow:0 0 0 3px rgba(123,30,90,0.1); }
+        @keyframes avatarIn {
+            from { opacity: 0; transform: scale(0.82); }
+            to   { opacity: 1; transform: scale(1); }
+        }
+        .avatar-in { animation: avatarIn 0.4s cubic-bezier(0.34,1.56,0.64,1) 0.1s forwards; opacity: 0; }
 
-        .no-scrollbar::-webkit-scrollbar { display:none; }
-        .no-scrollbar { -ms-overflow-style:none; scrollbar-width:none; }
-        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Bottom sheet modal */
+        /* Input fields */
+        .inp {
+            width: 100%;
+            background: #F5F4FB;
+            border: 1.5px solid #E8E4F5;
+            border-radius: 12px;
+            padding: 13px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1E1B2E;
+            font-family: 'Nunito', sans-serif;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .inp:focus { outline: none; border-color: #8B46D3; box-shadow: 0 0 0 3px rgba(139,70,211,0.12); }
+        .inp::placeholder { color: #B0A8CC; font-weight: 500; }
+
+        select.inp { appearance: none; -webkit-appearance: none; cursor: pointer;
+                     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238B46D3' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+                     background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; }
+
+        label.field-label { display: block; font-size: 13px; font-weight: 700; color: #1E1B2E; margin-bottom: 7px; }
+        label.field-label .req { color: #EF4444; margin-left: 2px; }
+
+        /* Bottom sheet */
         .sheet { transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); transform: translateY(100%); }
         .sheet.open { transform: translateY(0); }
         .sheet-backdrop { transition: opacity 0.3s ease; }
 
-        /* Custom SweetAlert2 styling */
-        .swal2-popup {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            border-radius: 24px !important;
-            padding: 20px !important;
-        }
-        .swal2-title {
-            color: #4A0E35 !important;
-            font-weight: 800 !important;
-            font-size: 1.25rem !important;
-        }
-        .swal2-html-container {
-            color: #A2397B !important;
-            font-weight: 500 !important;
-        }
-        .swal2-confirm {
-            background: linear-gradient(to right, #7B1E5A, #9B2E72) !important;
-            border-radius: 16px !important;
-            font-weight: 700 !important;
-            padding: 12px 24px !important;
-        }
-        .swal2-cancel {
-            border-radius: 16px !important;
-            font-weight: 600 !important;
-            padding: 12px 24px !important;
-        }
+        /* Info card row */
+        .info-row { display: flex; align-items: flex-start; gap: 14px; padding: 13px 16px;
+                    background: #F8F7FF; border-radius: 14px; }
+        .info-icon { width: 40px; height: 40px; border-radius: 12px; display: flex;
+                     align-items: center; justify-content: center; flex-shrink: 0; }
 
-        @keyframes slideUp {
-            from { opacity:0; transform:translateY(16px); }
-            to   { opacity:1; transform:translateY(0); }
+        /* ── Success Modal ───────────────────────────── */
+        #successModal { transition: opacity 0.25s ease; }
+
+        @keyframes modalBoxIn {
+            from { opacity: 0; transform: translateY(40px) scale(0.94); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
         }
-        .anim-up { animation: slideUp 0.4s ease forwards; }
-        .delay-1 { animation-delay:0.05s; opacity:0; }
-        .delay-2 { animation-delay:0.12s; opacity:0; }
-        .delay-3 { animation-delay:0.19s; opacity:0; }
-        .delay-4 { animation-delay:0.26s; opacity:0; }
+        .modal-box-in { animation: modalBoxIn 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+
+        @keyframes badgePop {
+            0%   { opacity: 0; transform: scale(0.3) rotate(-15deg); }
+            65%  { transform: scale(1.15) rotate(4deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+        .badge-pop { animation: badgePop 0.65s cubic-bezier(0.34,1.56,0.64,1) 0.25s both; }
+
+        @keyframes floatDot {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-7px); }
+        }
+        .dot-r { animation: floatDot 2.2s ease-in-out infinite; }
+        .dot-o { animation: floatDot 2.7s ease-in-out 0.4s infinite; }
+        .dot-b { animation: floatDot 2.5s ease-in-out 0.7s infinite; }
+
+        @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .spin-slow { animation: spinSlow 9s linear infinite; }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; } 50% { opacity: 0.25; }
+        }
+        .pulse-dot { animation: pulseDot 1s ease-in-out infinite; }
+
+        .txt-in-1 { animation: slideUp 0.45s ease 0.5s both; }
+        .txt-in-2 { animation: slideUp 0.45s ease 0.65s both; }
+        .btn-in   { animation: slideUp 0.45s ease 0.8s both; }
+        .rdr-in   { animation: slideUp 0.45s ease 0.95s both; }
     </style>
 </head>
-<body>
+<body class="font-['Nunito'] bg-[#E5E2F5]">
 
-<div class="phone-wrapper">
-<div class="phone-frame bg-plum-pale flex flex-col">
+<div class="sm:flex sm:items-start sm:justify-center sm:min-h-screen sm:py-8 sm:pb-[60px]">
+<div class="sm:w-[390px] sm:min-h-[844px] sm:rounded-[44px] sm:shadow-[0_40px_80px_rgba(124,58,237,0.28),0_0_0_8px_#1a1030,0_0_0_10px_#2d1a50] sm:overflow-hidden bg-[#F0EDFB] min-h-screen flex flex-col relative">
 
     <!-- STATUS BAR -->
-    <div class="hidden sm:flex items-center justify-between px-8 pt-4 pb-1 bg-plum">
-        <span class="text-xs font-semibold text-white/80" id="statusTime">9:41</span>
-        <div class="flex gap-1 items-center">
-            <svg class="w-4 h-3" viewBox="0 0 17 12" fill="white" opacity="0.8"><rect x="0" y="3" width="3" height="9" rx="0.5"/><rect x="4.5" y="2" width="3" height="10" rx="0.5"/><rect x="9" y="0.5" width="3" height="11.5" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg>
-            <div class="flex items-center"><div class="w-6 h-3 border border-white/70 rounded-sm p-px flex items-stretch"><div class="bg-white flex-1"></div></div></div>
+    <div class="hidden sm:flex sm:items-center sm:justify-between bg-[#8B46D3] px-6 pt-[14px] text-white text-xs font-bold">
+        <span id="statusTime">9:41</span>
+        <div class="flex items-center gap-1.5">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+                <rect x="0" y="4" width="3" height="7" rx="0.6" fill="white" opacity="0.5"/>
+                <rect x="4.5" y="2.5" width="3" height="8.5" rx="0.6" fill="white" opacity="0.7"/>
+                <rect x="9" y="0.5" width="3" height="10.5" rx="0.6" fill="white"/>
+                <rect x="13.5" y="0" width="3" height="11" rx="0.6" fill="white" opacity="0.25"/>
+            </svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="white">
+                <path d="M8 3C5.5 3 3.3 4 1.7 5.6L0 3.8C2.1 1.7 5 0.5 8 0.5s5.9 1.2 8 3.3L14.3 5.6C12.7 4 10.5 3 8 3z" opacity="0.5"/>
+                <path d="M8 6.5c-1.5 0-2.8.6-3.8 1.5L2.5 6.2C3.9 4.8 5.9 4 8 4s4.1.8 5.5 2.2L11.8 8C10.8 7.1 9.5 6.5 8 6.5z" opacity="0.75"/>
+                <circle cx="8" cy="10.5" r="2"/>
+            </svg>
+            <div class="flex items-center">
+                <div class="w-[22px] h-[11px] border-[1.5px] border-white/70 rounded-[3px] p-[1.5px]">
+                    <div class="bg-white rounded-[1.5px] h-full"></div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- TOP BAR -->
-    <div class="flex items-center gap-3 px-4 pt-4 pb-3 bg-plum-pale shrink-0 border-b border-plum-soft/40">
-        <a href="{{ route('profil.index') }}"
-           class="w-9 h-9 rounded-xl bg-plum-soft flex items-center justify-center">
-            <ion-icon name="arrow-back" style="font-size:20px;color:#7B1E5A;"></ion-icon>
-        </a>
-        <h1 class="text-plum-dark font-extrabold text-base flex-1">
-            {{ $isEditing ? ($user['is_filled'] == 0 ? 'Lengkapi Profil' : 'Edit Profil') : 'Detail Profil' }}
-        </h1>
-        @if(!$isEditing)
-        <a href="{{ route('profil.detail', ['edit' => 1]) }}"
-           class="flex items-center gap-1.5 bg-plum text-white text-xs font-bold px-3 py-2 rounded-xl">
-            <ion-icon name="create-outline" style="font-size:14px;"></ion-icon>
-            Edit
-        </a>
-        @endif
+    <!-- PURPLE HEADER -->
+    <div class="anim delay-1 relative z-10 bg-[#8B46D3] bg-[url('/assets/bg-texture.png')] bg-cover bg-center
+                px-[24px] pt-[55px] pb-[72px]
+                before:content-[''] before:absolute before:inset-0 before:bg-[#8B46D3] before:opacity-60 before:-z-10">
+        <div class="flex items-center gap-3 relative z-10">
+            <a href="{{ route('profil.index') }}"
+               class="w-10 h-10 rounded-full bg-white/20 border-[1.5px] border-white/30 flex items-center justify-center shrink-0">
+                <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
+            </a>
+            <span class="text-white text-[17px] font-extrabold tracking-wide">My Profile</span>
+        </div>
     </div>
 
-
-    <!-- SCROLLABLE -->
-    <div class="flex-1 overflow-y-auto no-scrollbar px-4 py-4 pb-6">
+    <!-- WHITE BODY -->
+    <div class="flex-1 overflow-y-auto px-[30px] pt-[30px] pb-20 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 flex flex-col gap-5 hide-scrollbar">
 
     @if($isEditing)
-    {{-- ═══════════════ EDIT MODE ═══════════════ --}}
+    {{-- ══════════════════════ EDIT / FORM MODE ══════════════════════ --}}
 
-        @if($user['is_filled'] == 0)
-        <!-- Incomplete profile banner -->
-        <div class="anim-up delay-1 mb-4 bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
-            <div class="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
-                <ion-icon name="information-circle" style="font-size:20px;color:#d97706;"></ion-icon>
+        <!-- Avatar section -->
+        <div class="flex flex-col items-center pt-[28px] pb-[20px]">
+            <div class="avatar-in relative mb-2">
+                <div class="w-[88px] h-[88px] rounded-full p-[3px]"
+                     style="background: linear-gradient(135deg, #C4B5FD 0%, #8B46D3 100%);">
+                    {{--
+                        BUG FIX: Struktur avatar sekarang konsisten di kedua kondisi.
+                        #avatarIcon dan #avatarPreview selalu ada di DOM agar JS
+                        tidak error "Cannot set properties of null".
+                    --}}
+                    @if($user['foto_url'] ?? null)
+                        {{-- Sudah ada foto: tampilkan img, icon disembunyikan --}}
+                        <ion-icon id="avatarIcon" name="person"
+                                  style="display:none; font-size:42px; color:#8B46D3;"></ion-icon>
+                        <img id="avatarPreview"
+                             src="{{ $user['foto_url'] }}"
+                             alt="foto"
+                             class="w-full h-full rounded-full object-cover border-2 border-white"/>
+                    @else
+                        {{-- Belum ada foto: tampilkan placeholder + icon, img disembunyikan --}}
+                        <div id="avatarPlaceholder"
+                             class="w-full h-full rounded-full bg-[#F0EDFB] border-2 border-white flex items-center justify-center">
+                            <ion-icon id="avatarIcon" name="person"
+                                      style="font-size:42px; color:#8B46D3;"></ion-icon>
+                        </div>
+                        <img id="avatarPreview"
+                             src=""
+                             alt="foto"
+                             class="hidden"
+                             style="position:absolute; inset:3px; width:calc(100% - 6px); height:calc(100% - 6px); border-radius:9999px; object-fit:cover; border:2px solid white;"/>
+                    @endif
+                </div>
+
+                <!-- Camera button -->
+                <label for="fotoInput"
+                       class="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-[#8B46D3] border-[2.5px] border-white flex items-center justify-center cursor-pointer shadow-md">
+                    <ion-icon name="camera" style="font-size:16px;color:white;"></ion-icon>
+                </label>
+                <input type="file" id="fotoInput" name="foto" accept="image/*" class="hidden">
             </div>
-            <div>
-                <p class="text-amber-800 font-bold text-sm">Profil Belum Lengkap</p>
-                <p class="text-amber-700 text-xs mt-0.5 leading-relaxed">Lengkapi data profil untuk melanjutkan menggunakan aplikasi.</p>
-            </div>
+            <p class="text-[#8B46D3] text-[13px] font-bold mt-1">Change Profil Picture</p>
         </div>
-        @endif
 
-        <form id="profileForm" enctype="multipart/form-data" novalidate>
+        <form id="profileForm" enctype="multipart/form-data" novalidate class="flex flex-col gap-0">
             @csrf
 
-            <!-- FOTO PROFIL -->
-            <div class="anim-up delay-1 bg-white rounded-3xl p-5 mb-4 shadow-sm shadow-plum/10 flex flex-col items-center">
-                <p class="text-plum-dark font-bold text-sm mb-4 self-start">Foto Profil</p>
-                <div class="relative">
-                    <div id="avatarPreviewWrap" class="w-24 h-24 rounded-full border-4 border-plum-soft overflow-hidden bg-plum-soft flex items-center justify-center">
-                        @if($user['foto_url'] ?? null)
-                            <img id="avatarPreview" src="{{ $user['foto_url'] }}" class="w-full h-full object-cover" alt="foto"/>
-                        @else
-                            <ion-icon id="avatarIcon" name="person" style="font-size:44px;color:#7B1E5A;"></ion-icon>
-                            <img id="avatarPreview" src="" class="w-full h-full object-cover hidden" alt="foto"/>
-                        @endif
+            <!-- Divider -->
+            <div class="h-px bg-[#F0EDFB] mb-5"></div>
+
+            <!-- PERSONAL INFORMATION label -->
+            <p class="text-[10px] font-extrabold uppercase tracking-[0.12em] text-[#9CA3AF] mb-4">Personal Information</p>
+
+            <!-- Full Name -->
+            <div class="anim delay-2 mb-4">
+                <label class="field-label">Full Name <span class="req">*</span></label>
+                <input type="text" name="name" id="name"
+                       value="{{ $user['name'] ?? '' }}"
+                       placeholder="Nama lengkap"
+                       class="inp"/>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="anim delay-2 mb-4">
+                <label class="field-label">Phone Number <span class="req">*</span></label>
+                <input type="tel" name="no_hp" id="noHp"
+                       value="{{ $user['no_hp'] ?? '' }}"
+                       placeholder="+62 8xxxxxxxxx"
+                       class="inp"/>
+            </div>
+
+            <!-- Date of Birth + Gender (side by side) -->
+            <div class="anim delay-2 flex gap-3 mb-4">
+                <div class="flex-1">
+                    <label class="field-label">Date Of Birth <span class="req">*</span></label>
+                    <div class="relative">
+                        <input type="date" name="tanggal_lahir" id="tanggalLahir"
+                               value="{{ $user['tanggal_lahir'] ?? '' }}"
+                               class="inp pr-10"/>
+                        <ion-icon name="calendar-outline"
+                                  style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:17px;color:#8B46D3;pointer-events:none;"></ion-icon>
                     </div>
-                    <label for="fotoInput"
-                           class="absolute -bottom-1 -right-1 w-9 h-9 rounded-full bg-plum border-2 border-white flex items-center justify-center cursor-pointer shadow-md">
-                        <ion-icon name="camera" style="font-size:16px;color:white;"></ion-icon>
-                    </label>
-                    <input type="file" id="fotoInput" name="foto" accept="image/*" class="hidden">
                 </div>
-                <p class="text-plum-muted text-xs mt-3">Ketuk kamera untuk ganti foto</p>
-            </div>
-
-            <!-- DATA UTAMA -->
-            <div class="anim-up delay-2 bg-white rounded-3xl p-5 mb-4 shadow-sm shadow-plum/10 space-y-4">
-                <p class="text-plum-dark font-bold text-sm">Data Utama</p>
-
-                <!-- Nama -->
-                <div>
-                    <label class="block text-xs font-semibold text-plum mb-1.5">Nama Lengkap <span class="text-red-400">*</span></label>
-                    <input type="text" name="name" id="name"
-                           value="{{ $user['name'] ?? '' }}"
-                           placeholder="Nama lengkap"
-                           class="input-field w-full bg-plum-pale border-2 border-plum-soft rounded-2xl px-4 py-3.5 text-sm font-medium text-plum-dark placeholder-plum-muted/50"/>
-                </div>
-
-                <!-- No HP -->
-                <div>
-                    <label class="block text-xs font-semibold text-plum mb-1.5">Nomor HP <span class="text-red-400">*</span></label>
-                    <input type="tel" name="no_hp" id="noHp"
-                           value="{{ $user['no_hp'] ?? '' }}"
-                           placeholder="081234567890"
-                           class="input-field w-full bg-plum-pale border-2 border-plum-soft rounded-2xl px-4 py-3.5 text-sm font-medium text-plum-dark placeholder-plum-muted/50"/>
-                </div>
-
-                <!-- Tanggal Lahir -->
-                <div>
-                    <label class="block text-xs font-semibold text-plum mb-1.5">Tanggal Lahir <span class="text-red-400">*</span></label>
-                    <input type="date" name="tanggal_lahir" id="tanggalLahir"
-                           value="{{ $user['tanggal_lahir'] ?? '' }}"
-                           class="input-field w-full bg-plum-pale border-2 border-plum-soft rounded-2xl px-4 py-3.5 text-sm font-medium text-plum-dark"/>
-                </div>
-
-                <!-- Gender -->
-                <div>
-                    <label class="block text-xs font-semibold text-plum mb-2">Gender <span class="text-red-400">*</span></label>
-                    <div class="grid grid-cols-2 gap-3">
-                        <button type="button" onclick="setGender('L')"
-                                id="genderL"
-                                class="gender-btn flex items-center justify-center gap-2 py-3 rounded-2xl border-2 text-sm font-bold transition-all
-                                       {{ ($user['gender'] ?? '') === 'L' ? 'border-plum bg-plum-soft text-plum' : 'border-plum-soft bg-white text-plum-muted' }}">
-                            <ion-icon name="male-outline" style="font-size:18px;"></ion-icon> Laki-laki
-                        </button>
-                        <button type="button" onclick="setGender('P')"
-                                id="genderP"
-                                class="gender-btn flex items-center justify-center gap-2 py-3 rounded-2xl border-2 text-sm font-bold transition-all
-                                       {{ ($user['gender'] ?? '') === 'P' ? 'border-plum bg-plum-soft text-plum' : 'border-plum-soft bg-white text-plum-muted' }}">
-                            <ion-icon name="female-outline" style="font-size:18px;"></ion-icon> Perempuan
-                        </button>
-                    </div>
-                    <input type="hidden" name="gender" id="genderInput" value="{{ $user['gender'] ?? '' }}">
+                <div class="flex-1">
+                    <label class="field-label">Gender <span class="req">*</span></label>
+                    <select name="gender" id="genderSelect" class="inp">
+                        <option value="">Pilih</option>
+                        <option value="L" {{ ($user['gender'] ?? '') === 'L' ? 'selected' : '' }}>Laki-laki</option>
+                        <option value="P" {{ ($user['gender'] ?? '') === 'P' ? 'selected' : '' }}>Wanita</option>
+                    </select>
                 </div>
             </div>
 
-            <!-- LOKASI -->
-            <div class="anim-up delay-3 bg-white rounded-3xl p-5 mb-4 shadow-sm shadow-plum/10 space-y-4">
-                <p class="text-plum-dark font-bold text-sm">Lokasi</p>
-
-                <!-- Provinsi -->
-                <div>
-                    <label class="block text-xs font-semibold text-plum mb-1.5">Provinsi <span class="text-red-400">*</span></label>
-                    <button type="button" onclick="openSheet('provinsi')"
-                            class="input-field w-full bg-plum-pale border-2 border-plum-soft rounded-2xl px-4 py-3.5 text-sm font-medium text-left flex items-center justify-between">
-                        <span id="provinsiLabel" class="{{ ($user['provinsi'] ?? '') ? 'text-plum-dark' : 'text-plum-muted/50' }}">
-                            {{ $user['provinsi'] ?? 'Pilih Provinsi' }}
-                        </span>
-                        <ion-icon name="chevron-down" style="font-size:18px;color:#A2397B;"></ion-icon>
-                    </button>
-                    <input type="hidden" name="id_provinsi" id="idProvinsi" value="{{ $user['id_provinsi'] ?? '' }}">
-                </div>
-
-                <!-- Kota -->
-                <div>
-                    <label class="block text-xs font-semibold text-plum mb-1.5">Kota <span class="text-red-400">*</span></label>
-                    <button type="button" id="kotaBtn" onclick="openSheet('kota')"
-                            class="input-field w-full bg-plum-pale border-2 border-plum-soft rounded-2xl px-4 py-3.5 text-sm font-medium text-left flex items-center justify-between
-                                   {{ !($user['id_provinsi'] ?? '') ? 'opacity-50' : '' }}"
-                            {{ !($user['id_provinsi'] ?? '') ? 'disabled' : '' }}>
-                        <span id="kotaLabel" class="{{ ($user['kota'] ?? '') ? 'text-plum-dark' : 'text-plum-muted/50' }}">
-                            {{ $user['kota'] ?? 'Pilih Kota' }}
-                        </span>
-                        <ion-icon name="chevron-down" style="font-size:18px;color:#A2397B;"></ion-icon>
-                    </button>
-                    <input type="hidden" name="id_kota" id="idKota" value="{{ $user['id_kota'] ?? '' }}">
-                </div>
-
-                <!-- Alamat -->
-                <div>
-                    <label class="block text-xs font-semibold text-plum mb-1.5">Alamat Lengkap <span class="text-red-400">*</span></label>
-                    <textarea name="alamat" id="alamat" rows="3"
-                              placeholder="Masukkan alamat lengkap"
-                              class="input-field w-full bg-plum-pale border-2 border-plum-soft rounded-2xl px-4 py-3.5 text-sm font-medium text-plum-dark placeholder-plum-muted/50 resize-none">{{ $user['alamat'] ?? '' }}</textarea>
-                </div>
+            <!-- Province -->
+            <div class="anim delay-3 mb-4">
+                <label class="field-label">Province <span class="req">*</span></label>
+                <button type="button" onclick="openSheet('provinsi')"
+                        class="inp flex items-center justify-between text-left">
+                    <span id="provinsiLabel" class="{{ ($user['provinsi'] ?? '') ? 'text-[#1E1B2E]' : 'text-[#B0A8CC]' }} font-[600]">
+                        {{ $user['provinsi'] ?? 'Select Province' }}
+                    </span>
+                    <ion-icon name="chevron-down-outline" style="font-size:17px;color:#8B46D3;flex-shrink:0;"></ion-icon>
+                </button>
+                <input type="hidden" name="id_provinsi" id="idProvinsi" value="{{ $user['id_provinsi'] ?? '' }}">
             </div>
 
-            <!-- INFORMASI TAMBAHAN -->
-            <div class="anim-up delay-4 bg-white rounded-3xl p-5 mb-4 shadow-sm shadow-plum/10 space-y-4">
-                <div>
-                    <p class="text-plum-dark font-bold text-sm">Informasi Tambahan</p>
-                    <p class="text-plum-muted text-xs mt-0.5">Opsional — tingkatkan visibilitas profil</p>
-                </div>
-
-                <!-- Bio -->
-                <div>
-                    <label class="block text-xs font-semibold text-plum mb-1.5">Bio</label>
-                    <textarea name="bio" rows="3"
-                              placeholder="Ceritakan tentang diri Anda"
-                              class="input-field w-full bg-plum-pale border-2 border-plum-soft rounded-2xl px-4 py-3.5 text-sm font-medium text-plum-dark placeholder-plum-muted/50 resize-none">{{ $user['bio'] ?? '' }}</textarea>
-                </div>
-
-                {{-- Field skill/pengalaman/sertifikasi hanya untuk non-Majikan (id_role != 2) --}}
-                @if(($user['id_role'] ?? 0) != 2)
-                <div>
-                    <label class="block text-xs font-semibold text-plum mb-1.5">Skill</label>
-                    <textarea name="skill" rows="2"
-                              placeholder="Contoh: Masakan Nusantara, Asuh Anak"
-                              class="input-field w-full bg-plum-pale border-2 border-plum-soft rounded-2xl px-4 py-3.5 text-sm font-medium text-plum-dark placeholder-plum-muted/50 resize-none">{{ $user['skill'] ?? '' }}</textarea>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-plum mb-1.5">Pengalaman (tahun)</label>
-                    <input type="number" name="pengalaman"
-                           value="{{ $user['pengalaman'] ?? '' }}"
-                           placeholder="Contoh: 3" min="0"
-                           class="input-field w-full bg-plum-pale border-2 border-plum-soft rounded-2xl px-4 py-3.5 text-sm font-medium text-plum-dark placeholder-plum-muted/50"/>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-plum mb-1.5">Sertifikasi</label>
-                    <textarea name="sertifikasi" rows="2"
-                              placeholder="Contoh: CPR, First Aid, PAUD"
-                              class="input-field w-full bg-plum-pale border-2 border-plum-soft rounded-2xl px-4 py-3.5 text-sm font-medium text-plum-dark placeholder-plum-muted/50 resize-none">{{ $user['sertifikasi'] ?? '' }}</textarea>
-                </div>
-                @endif
+            <!-- City / District -->
+            <div class="anim delay-3 mb-4">
+                <label class="field-label">City / District <span class="req">*</span></label>
+                <button type="button" id="kotaBtn" onclick="openSheet('kota')"
+                        class="inp flex items-center justify-between text-left {{ !($user['id_provinsi'] ?? '') ? 'opacity-50' : '' }}">
+                    <span id="kotaLabel" class="{{ ($user['kota'] ?? '') ? 'text-[#1E1B2E]' : 'text-[#B0A8CC]' }} font-[600]">
+                        {{ $user['kota'] ?? 'Select City' }}
+                    </span>
+                    <ion-icon name="chevron-down-outline" style="font-size:17px;color:#8B46D3;flex-shrink:0;"></ion-icon>
+                </button>
+                <input type="hidden" name="id_kota" id="idKota" value="{{ $user['id_kota'] ?? '' }}">
             </div>
 
-            <!-- SAVE BUTTON -->
-            <div class="anim-up delay-4">
+            <!-- Address -->
+            <div class="anim delay-3 mb-5">
+                <label class="field-label">Address <span class="req">*</span></label>
+                <textarea name="alamat" id="alamat" rows="3"
+                          placeholder="Masukkan alamat lengkap"
+                          class="inp resize-none">{{ $user['alamat'] ?? '' }}</textarea>
+            </div>
+
+            <!-- Divider -->
+            <div class="h-px bg-[#F0EDFB] mb-5"></div>
+
+            <!-- MORE INFORMATION -->
+            <div class="anim delay-4 mb-4">
+                <p class="text-[10px] font-extrabold uppercase tracking-[0.12em] text-[#9CA3AF]">More Information</p>
+                <p class="text-[#8B46D3] text-[12px] font-semibold mt-[3px]">Optional - Improve Your Profile</p>
+            </div>
+
+            <!-- Bio -->
+            <div class="anim delay-4 mb-4">
+                <label class="field-label">Bio</label>
+                <textarea name="bio" rows="3"
+                          placeholder="Tell me about yourself"
+                          class="inp resize-none">{{ $user['bio'] ?? '' }}</textarea>
+            </div>
+
+            {{-- Skill/Pengalaman/Sertifikasi — non-Majikan only --}}
+            @if(($user['id_role'] ?? 0) != 2)
+            <div class="anim delay-4 mb-4">
+                <label class="field-label">Skill</label>
+                <textarea name="skill" rows="2"
+                          placeholder="Contoh: Masakan Nusantara, Asuh Anak"
+                          class="inp resize-none">{{ $user['skill'] ?? '' }}</textarea>
+            </div>
+            <div class="anim delay-4 mb-4">
+                <label class="field-label">Pengalaman (tahun)</label>
+                <input type="number" name="pengalaman"
+                       value="{{ $user['pengalaman'] ?? '' }}"
+                       placeholder="Contoh: 3" min="0"
+                       class="inp"/>
+            </div>
+            <div class="anim delay-5 mb-4">
+                <label class="field-label">Sertifikasi</label>
+                <textarea name="sertifikasi" rows="2"
+                          placeholder="Contoh: CPR, First Aid, PAUD"
+                          class="inp resize-none">{{ $user['sertifikasi'] ?? '' }}</textarea>
+            </div>
+            @endif
+
+            <!-- SAVE CHANGES button -->
+            <div class="anim delay-5 mt-2 flex flex-col gap-3">
                 <button type="submit" id="submitBtn"
-                        class="w-full bg-gradient-to-r from-plum to-plum-light text-white font-bold py-4 rounded-2xl shadow-lg shadow-plum/30 flex items-center justify-center gap-2 text-sm active:scale-97 transition-all">
-                    <ion-icon name="checkmark-circle-outline" id="btnIcon" style="font-size:18px;"></ion-icon>
-                    <span id="btnText">Simpan Profil</span>
+                        class="w-full flex items-center justify-center gap-2 bg-[#8B46D3] text-white font-extrabold py-[15px] rounded-[14px] text-[14px] tracking-wide transition-transform duration-150 active:scale-[0.97] shadow-[0_4px_16px_rgba(139,70,211,0.35)]">
+                    <ion-icon name="save-outline" id="btnIcon" style="font-size:18px;"></ion-icon>
+                    <span id="btnText">Save Changes</span>
                     <svg id="btnSpinner" class="w-4 h-4 animate-spin hidden" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
@@ -306,150 +332,170 @@
 
                 @if($user['is_filled'] == 1)
                 <a href="{{ route('profil.detail') }}"
-                   class="block text-center text-plum-muted font-semibold text-sm py-3 mt-2">
-                    Batal
+                   class="w-full flex items-center justify-center gap-2 bg-white border-[1.5px] border-[#FECACA] text-[#EF4444] font-extrabold py-[15px] rounded-[14px] text-[14px] tracking-wide transition-transform duration-150 active:scale-[0.97]">
+                    <ion-icon name="close-circle" style="font-size:18px;color:#EF4444;"></ion-icon>
+                    Cancel
                 </a>
                 @endif
             </div>
 
-            <div class="h-4"></div>
         </form>
+        <div class="h-6"></div>
 
     @else
-    {{-- ═══════════════ VIEW MODE ═══════════════ --}}
+    {{-- ══════════════════════ VIEW MODE ══════════════════════ --}}
 
-        <!-- PROFILE HEADER CARD -->
-        <div class="anim-up delay-1 bg-white rounded-3xl p-5 mb-4 shadow-sm shadow-plum/10 flex flex-col items-center">
-            @if($user['foto_url'] ?? null)
-                <img src="{{ $user['foto_url'] }}" class="w-24 h-24 rounded-full border-4 border-plum-soft object-cover mb-4" alt="foto"/>
-            @else
-                <div class="w-24 h-24 rounded-full border-4 border-plum-soft bg-plum-soft flex items-center justify-center mb-4">
-                    <ion-icon name="person" style="font-size:44px;color:#7B1E5A;"></ion-icon>
-                </div>
-            @endif
-            <h2 class="text-plum-dark text-xl font-extrabold">{{ $user['name'] ?? '-' }}</h2>
-            <div class="mt-2 bg-plum-soft px-4 py-1.5 rounded-full">
-                <span class="text-plum text-xs font-bold">{{ $user['role'] ?? '-' }}</span>
+        <!-- Avatar + Name -->
+        <div class="flex flex-col items-center pt-[28px] pb-[24px]">
+            <div class="avatar-in mb-4">
+                @if($user['foto_url'] ?? null)
+                    <div class="w-[88px] h-[88px] rounded-full p-[3px]"
+                         style="background: linear-gradient(135deg, #C4B5FD 0%, #8B46D3 100%);">
+                        <img src="{{ $user['foto_url'] }}" alt="foto"
+                             class="w-full h-full rounded-full object-cover border-2 border-white"/>
+                    </div>
+                @else
+                    <div class="w-[88px] h-[88px] rounded-full p-[3px]"
+                         style="background: linear-gradient(135deg, #C4B5FD 0%, #8B46D3 100%);">
+                        <div class="w-full h-full rounded-full bg-[#F0EDFB] border-2 border-white flex items-center justify-center">
+                            <ion-icon name="person" style="font-size:42px;color:#8B46D3;"></ion-icon>
+                        </div>
+                    </div>
+                @endif
+            </div>
+            <h1 class="anim delay-2 text-[#1E1B2E] text-[22px] font-extrabold leading-tight mb-3">
+                {{ $user['name'] ?? 'Pengguna' }}
+            </h1>
+            <div class="anim delay-2">
+                <span class="inline-block px-5 py-[6px] rounded-full bg-[#EDE9FE] text-[#8B46D3] text-[12px] font-bold">
+                    {{ $user['role'] ?? '' }}
+                </span>
             </div>
         </div>
 
-        <!-- INFO PRIBADI -->
-        <div class="anim-up delay-2 bg-white rounded-3xl p-5 mb-4 shadow-sm shadow-plum/10 space-y-4">
-            <p class="text-plum-dark font-bold text-sm">Informasi Pribadi</p>
+        <!-- Personal Information -->
+        <div class="flex flex-col gap-[10px] pb-5">
+
+            <!-- Section label -->
+            <div class="anim delay-2">
+                <p class="text-[10px] font-extrabold uppercase tracking-[0.12em] text-[#9CA3AF] mb-[6px]">Personal Information</p>
+            </div>
 
             @php
                 $infoRows = [
-                    ['icon' => 'mail-outline',     'label' => 'Email',         'value' => $user['email'] ?? '-'],
-                    ['icon' => 'call-outline',      'label' => 'No. HP',        'value' => $user['no_hp'] ?? '-'],
-                    ['icon' => 'calendar-outline',  'label' => 'Tanggal Lahir', 'value' => $user['tanggal_lahir'] ?? '-'],
-                    ['icon' => 'person-outline',    'label' => 'Gender',        'value' => ($user['gender'] ?? '') === 'L' ? 'Laki-laki' : (($user['gender'] ?? '') === 'P' ? 'Perempuan' : '-')],
-                    ['icon' => 'location-outline',  'label' => 'Lokasi',        'value' => ($user['kota'] ?? '') && ($user['provinsi'] ?? '') ? $user['kota'].', '.$user['provinsi'] : '-'],
-                    ['icon' => 'home-outline',      'label' => 'Alamat',        'value' => $user['alamat'] ?? '-'],
+                    ['icon' => 'mail-outline',     'iconBg' => '#EDE9FE', 'iconClr' => '#8B46D3',
+                     'label' => 'EMAIL',           'value' => $user['email'] ?? '-'],
+                    ['icon' => 'call-outline',      'iconBg' => '#FCE7F3', 'iconClr' => '#EC4899',
+                     'label' => 'PHONE NUMBER',    'value' => $user['no_hp'] ?? '-'],
+                    ['icon' => 'calendar-outline',  'iconBg' => '#E0E7FF', 'iconClr' => '#6366F1',
+                     'label' => 'DATE OF BIRTH',   'value' => $user['tanggal_lahir'] ?? '-'],
+                    ['icon' => 'transgender-outline','iconBg' => '#FEF3C7','iconClr' => '#F59E0B',
+                     'label' => 'GENDER',
+                     'value' => ($user['gender'] ?? '') === 'L' ? 'Laki-laki' : (($user['gender'] ?? '') === 'P' ? 'Perempuan' : '-')],
+                    ['icon' => 'location-outline',  'iconBg' => '#EDE9FE', 'iconClr' => '#8B46D3',
+                     'label' => 'LOCATION',
+                     'value' => ($user['kota'] ?? '-')],
+                    ['icon' => 'home-outline',      'iconBg' => '#FCE7F3', 'iconClr' => '#EC4899',
+                     'label' => 'ADDRESS',         'value' => $user['alamat'] ?? '-'],
                 ];
+                $rowDelay = 200;
             @endphp
 
             @foreach($infoRows as $row)
-            <div class="flex items-start gap-3">
-                <div class="w-9 h-9 rounded-xl bg-plum-soft flex items-center justify-center shrink-0 mt-0.5">
-                    <ion-icon name="{{ $row['icon'] }}" style="font-size:17px;color:#7B1E5A;"></ion-icon>
+            @php $rowDelay += 60; @endphp
+            <div class="info-row shadow-[0_2px_12px_rgba(0,0,0,0.07)]" style="animation: slideUp 0.4s ease {{ $rowDelay }}ms both; opacity:0;">
+                <div class="info-icon" style="background:{{ $row['iconBg'] }};">
+                    <ion-icon name="{{ $row['icon'] }}" style="font-size:18px;color:{{ $row['iconClr'] }};"></ion-icon>
                 </div>
                 <div class="flex-1 min-w-0">
-                    <p class="text-[10px] text-plum-muted font-semibold uppercase tracking-wide">{{ $row['label'] }}</p>
-                    <p class="text-plum-dark text-sm font-medium mt-0.5 break-words">{{ $row['value'] }}</p>
+                    <p class="text-[9px] font-extrabold tracking-wider text-[#9CA3AF]">{{ $row['label'] }}</p>
+                    <p class="text-[#1E1B2E] text-[14px] font-bold mt-[3px] break-words">{{ $row['value'] }}</p>
                 </div>
             </div>
             @endforeach
-        </div>
 
-        {{-- Bio --}}
-        @if($user['bio'] ?? null)
-        <div class="anim-up delay-3 bg-white rounded-3xl p-5 mb-4 shadow-sm shadow-plum/10">
-            <p class="text-plum-dark font-bold text-sm mb-2">Bio</p>
-            <p class="text-plum-dark text-sm leading-relaxed">{{ $user['bio'] }}</p>
-        </div>
-        @endif
-
-        {{-- Profesional (non-Majikan) --}}
-        @if(($user['id_role'] ?? 0) != 2 && (($user['skill'] ?? null) || ($user['pengalaman'] ?? null) || ($user['sertifikasi'] ?? null)))
-        <div class="anim-up delay-3 bg-white rounded-3xl p-5 mb-4 shadow-sm shadow-plum/10 space-y-4">
-            <p class="text-plum font-bold text-sm">Informasi Profesional</p>
-
-            @if($user['skill'] ?? null)
-            <div class="flex items-start gap-3">
-                <div class="w-9 h-9 rounded-xl bg-plum-soft flex items-center justify-center shrink-0">
-                    <ion-icon name="star-outline" style="font-size:16px;color:#7B1E5A;"></ion-icon>
+            {{-- Bio --}}
+            @if($user['bio'] ?? null)
+            <div class="info-row" style="animation: slideUp 0.4s ease {{ $rowDelay + 60 }}ms both; opacity:0;">
+                <div class="info-icon bg-[#F0EDFB]">
+                    <ion-icon name="document-text-outline" style="font-size:18px;color:#8B46D3;"></ion-icon>
                 </div>
-                <div><p class="text-[10px] text-plum-muted font-semibold uppercase tracking-wide">Skill</p>
-                <p class="text-plum-dark text-sm font-medium mt-0.5">{{ $user['skill'] }}</p></div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-[9px] font-extrabold tracking-wider text-[#9CA3AF]">BIO</p>
+                    <p class="text-[#1E1B2E] text-[14px] font-bold mt-[3px]">{{ $user['bio'] }}</p>
+                </div>
             </div>
             @endif
 
-            @if($user['pengalaman'] ?? null)
-            <div class="flex items-start gap-3">
-                <div class="w-9 h-9 rounded-xl bg-plum-soft flex items-center justify-center shrink-0">
-                    <ion-icon name="briefcase-outline" style="font-size:16px;color:#7B1E5A;"></ion-icon>
+            {{-- Professional info — non-Majikan --}}
+            @if(($user['id_role'] ?? 0) != 2)
+                @if($user['skill'] ?? null)
+                <div class="info-row" style="animation: slideUp 0.4s ease {{ $rowDelay + 80 }}ms both; opacity:0;">
+                    <div class="info-icon bg-[#DBEAFE]">
+                        <ion-icon name="star-outline" style="font-size:18px;color:#3B82F6;"></ion-icon>
+                    </div>
+                    <div><p class="text-[9px] font-extrabold tracking-wider text-[#9CA3AF]">SKILL</p>
+                    <p class="text-[#1E1B2E] text-[14px] font-bold mt-[3px]">{{ $user['skill'] }}</p></div>
                 </div>
-                <div><p class="text-[10px] text-plum-muted font-semibold uppercase tracking-wide">Pengalaman</p>
-                <p class="text-plum-dark text-sm font-medium mt-0.5">{{ $user['pengalaman'] }} tahun</p></div>
-            </div>
+                @endif
+                @if($user['pengalaman'] ?? null)
+                <div class="info-row" style="animation: slideUp 0.4s ease {{ $rowDelay + 100 }}ms both; opacity:0;">
+                    <div class="info-icon bg-[#D1FAE5]">
+                        <ion-icon name="briefcase-outline" style="font-size:18px;color:#10B981;"></ion-icon>
+                    </div>
+                    <div><p class="text-[9px] font-extrabold tracking-wider text-[#9CA3AF]">PENGALAMAN</p>
+                    <p class="text-[#1E1B2E] text-[14px] font-bold mt-[3px]">{{ $user['pengalaman'] }} tahun</p></div>
+                </div>
+                @endif
             @endif
 
-            @if($user['sertifikasi'] ?? null)
-            <div class="flex items-start gap-3">
-                <div class="w-9 h-9 rounded-xl bg-plum-soft flex items-center justify-center shrink-0">
-                    <ion-icon name="ribbon-outline" style="font-size:16px;color:#7B1E5A;"></ion-icon>
-                </div>
-                <div><p class="text-[10px] text-plum-muted font-semibold uppercase tracking-wide">Sertifikasi</p>
-                <p class="text-plum-dark text-sm font-medium mt-0.5">{{ $user['sertifikasi'] }}</p></div>
+            <!-- UPDATE PROFILE button -->
+            <div style="animation: slideUp 0.4s ease {{ $rowDelay + 120 }}ms both; opacity:0; margin-top: 8px;">
+                <a href="{{ route('profil.detail', ['edit' => 1]) }}"
+                   class="w-full flex items-center justify-center gap-2 bg-[#8B46D3] text-white font-extrabold py-[15px] rounded-[14px] text-[14px] tracking-wide shadow-[0_4px_16px_rgba(139,70,211,0.35)] transition-transform duration-150 active:scale-[0.97]">
+                    <ion-icon name="create-outline" style="font-size:18px;"></ion-icon>
+                    Update Profile
+                </a>
             </div>
-            @endif
-        </div>
-        @endif
 
-        <!-- EDIT BUTTON -->
-        <div class="anim-up delay-4">
-            <a href="{{ route('profil.detail', ['edit' => 1]) }}"
-               class="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-plum to-plum-light text-white font-bold py-4 rounded-2xl shadow-lg shadow-plum/30 text-sm">
-                <ion-icon name="create-outline" style="font-size:18px;"></ion-icon>
-                Edit Profil
-            </a>
         </div>
-
-        <div class="h-4"></div>
 
     @endif
-    </div>{{-- end scrollable --}}
+    </div>{{-- end white body --}}
+
+    <!-- BOTTOM NAV -->
+    @include('partials.bottom-nav', ['active' => 'profil'])
 
 </div>
 </div>
 
-{{-- ═══════════ BOTTOM SHEETS ═══════════ --}}
-
+{{-- ══════════════ BOTTOM SHEETS ══════════════ --}}
 <!-- Backdrop -->
 <div id="sheetBackdrop"
      class="sheet-backdrop fixed inset-0 bg-black/50 z-40 hidden opacity-0"
-     onclick="closeSheet()">
-</div>
+     onclick="closeSheet()"></div>
 
 <!-- Provinsi Sheet -->
-<div id="provinsiSheet" class="sheet fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl max-h-[75vh] flex flex-col sm:max-w-[390px] sm:mx-auto">
-    <div class="flex items-center justify-between px-5 pt-5 pb-3 border-b border-plum-soft/50 shrink-0">
-        <h3 class="text-plum-dark font-extrabold text-base">Pilih Provinsi</h3>
-        <button onclick="closeSheet()" class="w-8 h-8 rounded-full bg-plum-soft flex items-center justify-center">
-            <ion-icon name="close" style="font-size:18px;color:#7B1E5A;"></ion-icon>
+<div id="provinsiSheet"
+     class="sheet fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-[28px] max-h-[75vh] flex flex-col sm:max-w-[390px] sm:mx-auto">
+    <div class="flex items-center justify-between px-5 pt-5 pb-3 border-b border-[#F0EDFB] shrink-0">
+        <h3 class="text-[#1E1B2E] font-extrabold text-[16px]">Pilih Provinsi</h3>
+        <button onclick="closeSheet()"
+                class="w-8 h-8 rounded-full bg-[#F0EDFB] flex items-center justify-center">
+            <ion-icon name="close" style="font-size:18px;color:#8B46D3;"></ion-icon>
         </button>
     </div>
     <div class="px-4 py-3 shrink-0">
-        <div class="flex items-center gap-2 bg-plum-soft rounded-2xl px-4 py-2.5">
-            <ion-icon name="search-outline" style="font-size:16px;color:#A2397B;flex-shrink:0;"></ion-icon>
+        <div class="flex items-center gap-2 bg-[#F5F4FB] rounded-[12px] px-4 py-2.5">
+            <ion-icon name="search-outline" style="font-size:16px;color:#8B46D3;flex-shrink:0;"></ion-icon>
             <input type="text" id="provinsiSearch" placeholder="Cari provinsi..."
                    oninput="filterList('provinsi', this.value)"
-                   class="flex-1 bg-transparent text-sm text-plum-dark placeholder-plum-muted/60 outline-none font-medium"/>
+                   class="flex-1 bg-transparent text-sm text-[#1E1B2E] placeholder-[#B0A8CC] outline-none font-semibold"/>
         </div>
     </div>
     <div id="provinsiList" class="overflow-y-auto flex-1 pb-4">
-        <div class="flex justify-center py-6">
-            <svg class="w-6 h-6 animate-spin text-plum" fill="none" viewBox="0 0 24 24">
+        <div class="flex justify-center py-8">
+            <svg class="w-6 h-6 animate-spin" style="color:#8B46D3" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
             </svg>
@@ -458,24 +504,26 @@
 </div>
 
 <!-- Kota Sheet -->
-<div id="kotaSheet" class="sheet fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl max-h-[75vh] flex flex-col sm:max-w-[390px] sm:mx-auto">
-    <div class="flex items-center justify-between px-5 pt-5 pb-3 border-b border-plum-soft/50 shrink-0">
-        <h3 class="text-plum-dark font-extrabold text-base">Pilih Kota</h3>
-        <button onclick="closeSheet()" class="w-8 h-8 rounded-full bg-plum-soft flex items-center justify-center">
-            <ion-icon name="close" style="font-size:18px;color:#7B1E5A;"></ion-icon>
+<div id="kotaSheet"
+     class="sheet fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-[28px] max-h-[75vh] flex flex-col sm:max-w-[390px] sm:mx-auto">
+    <div class="flex items-center justify-between px-5 pt-5 pb-3 border-b border-[#F0EDFB] shrink-0">
+        <h3 class="text-[#1E1B2E] font-extrabold text-[16px]">Pilih Kota</h3>
+        <button onclick="closeSheet()"
+                class="w-8 h-8 rounded-full bg-[#F0EDFB] flex items-center justify-center">
+            <ion-icon name="close" style="font-size:18px;color:#8B46D3;"></ion-icon>
         </button>
     </div>
     <div class="px-4 py-3 shrink-0">
-        <div class="flex items-center gap-2 bg-plum-soft rounded-2xl px-4 py-2.5">
-            <ion-icon name="search-outline" style="font-size:16px;color:#A2397B;flex-shrink:0;"></ion-icon>
+        <div class="flex items-center gap-2 bg-[#F5F4FB] rounded-[12px] px-4 py-2.5">
+            <ion-icon name="search-outline" style="font-size:16px;color:#8B46D3;flex-shrink:0;"></ion-icon>
             <input type="text" id="kotaSearch" placeholder="Cari kota..."
                    oninput="filterList('kota', this.value)"
-                   class="flex-1 bg-transparent text-sm text-plum-dark placeholder-plum-muted/60 outline-none font-medium"/>
+                   class="flex-1 bg-transparent text-sm text-[#1E1B2E] placeholder-[#B0A8CC] outline-none font-semibold"/>
         </div>
     </div>
     <div id="kotaList" class="overflow-y-auto flex-1 pb-4">
-        <div class="flex justify-center py-6">
-            <svg class="w-6 h-6 animate-spin text-plum" fill="none" viewBox="0 0 24 24">
+        <div class="flex justify-center py-8">
+            <svg class="w-6 h-6 animate-spin" style="color:#8B46D3" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
             </svg>
@@ -483,109 +531,163 @@
     </div>
 </div>
 
+<!-- Toast notification -->
+<div id="toast"
+     class="fixed top-5 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-3 bg-white rounded-2xl px-5 py-3.5 shadow-[0_8px_32px_rgba(0,0,0,0.15)] border border-[#F0EDFB] transition-all duration-300 opacity-0 -translate-y-2 pointer-events-none max-w-[340px] w-[90%]">
+    <div id="toastIcon" class="w-8 h-8 rounded-full flex items-center justify-center shrink-0"></div>
+    <p id="toastMsg" class="text-[#1E1B2E] text-[13px] font-bold flex-1"></p>
+</div>
+
+{{-- ══════════════ SUCCESS MODAL ══════════════ --}}
+<div id="successModal"
+     class="fixed inset-0 z-[70] flex items-end justify-center hidden opacity-0"
+     style="background: rgba(15,10,35,0.55); backdrop-filter: blur(4px);">
+
+    <div class="modal-box-in w-full sm:max-w-[390px] bg-gradient-to-b from-white via-white to-[#D4BAEF]/40
+                rounded-t-[36px] pt-10 pb-12 px-8 flex flex-col items-center relative overflow-hidden min-h-[460px]">
+
+        <!-- Decorative: spinning dashed circle (top-right) -->
+        <div class="absolute top-6 right-8 pointer-events-none">
+            <svg class="spin-slow w-[75px] h-[75px] text-[#D4BAEF]" viewBox="0 0 75 75" fill="none">
+                <circle cx="37.5" cy="37.5" r="33" stroke="currentColor" stroke-width="2.5"
+                        stroke-dasharray="7 5" stroke-linecap="round"/>
+            </svg>
+        </div>
+
+        <!-- Floating dots -->
+        <div class="dot-r absolute top-9 left-12 w-3.5 h-3.5 rounded-full bg-[#EF4444] pointer-events-none"></div>
+        <div class="dot-o absolute top-[140px] left-8 w-3 h-3 rounded-full bg-[#F59E0B] pointer-events-none"></div>
+        <div class="dot-b absolute top-[155px] right-10 w-3.5 h-3.5 rounded-full bg-[#3B82F6] pointer-events-none"></div>
+
+        <!-- Corner shape (bottom-left) -->
+        <div class="absolute bottom-16 left-6 pointer-events-none opacity-50">
+            <svg width="60" height="60" viewBox="0 0 60 60" fill="none">
+                <rect x="3" y="3" width="54" height="54" rx="14" stroke="#C4B5FD" stroke-width="2.5" fill="none"/>
+            </svg>
+        </div>
+
+        <!-- Green badge -->
+        <div class="badge-pop mb-7 z-10">
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+                <path d="M60 7
+                         L67 22 L83 18.5 L80.5 35 L95 43.5
+                         L86 57 L95 70.5 L80.5 79 L83 95.5
+                         L67 92 L60 107 L53 92 L37 95.5
+                         L39.5 79 L25 70.5 L34 57 L25 43.5
+                         L39.5 35 L37 18.5 L53 22 Z"
+                      fill="#22C55E"/>
+                <path d="M41 60 L54 73 L79 47"
+                      stroke="white" stroke-width="5.5"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+
+        <h2 class="txt-in-1 text-[#1E1B2E] text-[30px] font-extrabold mb-2 text-center z-10">
+            Successful!
+        </h2>
+
+        <p class="txt-in-2 text-[#9CA3AF] text-[14px] font-semibold text-center leading-relaxed mb-9 max-w-[240px] z-10">
+            Congratulations, your data has been successfully updated.
+        </p>
+
+        <div class="btn-in w-full z-10">
+            <a href="{{ route('dashboard') }}"
+               class="flex items-center justify-center gap-2 w-full bg-[#8B46D3] text-white font-extrabold py-[15px] rounded-full text-[14px] tracking-wide shadow-[0_4px_20px_rgba(139,70,211,0.32)] transition-transform duration-150 active:scale-[0.97]">
+                Browse Home <span class="text-base leading-none">→</span>
+            </a>
+        </div>
+
+        <div class="rdr-in flex items-center gap-2 mt-4 z-10">
+            <span class="pulse-dot w-2 h-2 rounded-full bg-[#22C55E] inline-block"></span>
+            <span class="text-[#9CA3AF] text-[11px] font-bold uppercase tracking-wider">
+                AUTO REDIRECT IN <span id="successCountdown">5</span>s
+            </span>
+        </div>
+
+    </div>
+</div>
+
 <script>
 // Clock
-function updateClock() {
+(function () {
     const el = document.getElementById('statusTime');
-    if (el) { const n = new Date(); el.textContent = `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`; }
-}
-updateClock(); setInterval(updateClock, 30000);
+    function tick() {
+        const now = new Date();
+        if (el) el.textContent = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    }
+    tick(); setInterval(tick, 30000);
+})();
 
-// ── SweetAlert Functions ─────────────────────────────────────────────────────
-function showAlert(msg, type = 'error') {
-    Swal.fire({
-        text: msg,
-        icon: type,
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#7B1E5A',
-        timer: type === 'success' ? 2000 : undefined,
-        timerProgressBar: type === 'success',
-        showClass: {
-            popup: 'animate__animated animate__fadeInUp animate__faster'
-        },
-        hideClass: {
-            popup: 'animate__animated animate__fadeOutDown animate__faster'
-        }
-    });
-}
-
-function showSuccessAlert(msg, redirectUrl) {
-    Swal.fire({
-        text: msg,
-        icon: 'success',
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#7B1E5A',
-        timer: 2000,
-        timerProgressBar: true,
-        showClass: {
-            popup: 'animate__animated animate__fadeInUp animate__faster'
-        },
-        hideClass: {
-            popup: 'animate__animated animate__fadeOutDown animate__faster'
-        }
-    }).then(() => {
-        window.location.href = redirectUrl;
-    });
+// ── Toast ─────────────────────────────────────────────────────────────────────
+function showToast(msg, type = 'error') {
+    const toast  = document.getElementById('toast');
+    const icon   = document.getElementById('toastIcon');
+    const msgEl  = document.getElementById('toastMsg');
+    const colors = { error: { bg:'#FEE2E2', clr:'#EF4444', name:'close-circle' },
+                     success:{ bg:'#D1FAE5', clr:'#10B981', name:'checkmark-circle' } };
+    const c = colors[type] || colors.error;
+    icon.style.background = c.bg;
+    icon.innerHTML = `<ion-icon name="${c.name}" style="font-size:18px;color:${c.clr};"></ion-icon>`;
+    msgEl.textContent = msg;
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateX(-50%) translateY(0)';
+    toast.style.pointerEvents = 'auto';
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(-8px)';
+        toast.style.pointerEvents = 'none';
+    }, type === 'success' ? 1800 : 3000);
 }
 
-// ── Gender toggle ─────────────────────────────────────────────────────────────
-function setGender(val) {
-    document.getElementById('genderInput').value = val;
-    const activeClass = 'border-plum bg-plum-soft text-plum';
-    const inactiveClass = 'border-plum-soft bg-white text-plum-muted';
-    ['L','P'].forEach(g => {
-        const btn = document.getElementById('gender' + g);
-        if (!btn) return;
-        btn.className = btn.className.replace(activeClass, '').replace(inactiveClass, '').trim();
-        btn.className += ' ' + (g === val ? activeClass : inactiveClass);
-    });
-}
-
-// ── Foto preview ─────────────────────────────────────────────────────────────
+// ── Avatar preview ────────────────────────────────────────────────────────────
 const fotoInput = document.getElementById('fotoInput');
 if (fotoInput) {
-    fotoInput.addEventListener('change', function() {
+    fotoInput.addEventListener('change', function () {
         const file = this.files[0];
         if (!file) return;
-        const preview = document.getElementById('avatarPreview');
-        const icon    = document.getElementById('avatarIcon');
-        const reader  = new FileReader();
+
+        const preview     = document.getElementById('avatarPreview');
+        const placeholder = document.getElementById('avatarPlaceholder');
+        const icon        = document.getElementById('avatarIcon');
+        const reader      = new FileReader();
+
         reader.onload = e => {
-            if (preview) { preview.src = e.target.result; preview.classList.remove('hidden'); }
-            if (icon)    { icon.style.display = 'none'; }
+            // Tampilkan img preview dengan foto baru
+            if (preview) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                preview.style.display = '';
+            }
+            // Sembunyikan placeholder div (hanya ada saat belum ada foto)
+            if (placeholder) placeholder.style.display = 'none';
+            // Sembunyikan ion-icon (ada di kedua kondisi, tapi display:none di kondisi sudah ada foto)
+            if (icon) icon.style.display = 'none';
         };
+
         reader.readAsDataURL(file);
     });
 }
 
 // ── Bottom Sheet ──────────────────────────────────────────────────────────────
-let activeSheet    = null;
-let provinsiData   = [];
-let kotaData       = [];
-const API_BASE     = "{{ url('/profil') }}";
-const CSRF         = "{{ csrf_token() }}";
+let activeSheet  = null;
+let provinsiData = [];
+let kotaData     = [];
+const API_BASE   = "{{ url('/profil') }}";
 
 async function openSheet(type) {
     activeSheet = type;
     const backdrop = document.getElementById('sheetBackdrop');
     const sheet    = document.getElementById(type + 'Sheet');
-
     backdrop.classList.remove('hidden');
-    requestAnimationFrame(() => {
-        backdrop.style.opacity = '1';
-        sheet.classList.add('open');
-    });
-
-    if (type === 'provinsi' && provinsiData.length === 0) {
-        await loadProvinsi();
-    }
+    requestAnimationFrame(() => { backdrop.style.opacity = '1'; sheet.classList.add('open'); });
+    if (type === 'provinsi' && provinsiData.length === 0) await loadProvinsi();
     if (type === 'kota') {
-        const idProvinsi = document.getElementById('idProvinsi').value;
-        if (!idProvinsi) { closeSheet(); showAlert('Pilih provinsi terlebih dahulu!'); return; }
-        await loadKota(idProvinsi);
+        const idProv = document.getElementById('idProvinsi').value;
+        if (!idProv) { closeSheet(); showToast('Pilih provinsi terlebih dahulu!'); return; }
+        await loadKota(idProv);
     }
 }
-
 function closeSheet() {
     if (!activeSheet) return;
     const backdrop = document.getElementById('sheetBackdrop');
@@ -594,79 +696,55 @@ function closeSheet() {
     sheet.classList.remove('open');
     setTimeout(() => { backdrop.classList.add('hidden'); activeSheet = null; }, 350);
 }
-
 async function loadProvinsi() {
     try {
-        const res  = await fetch(`${API_BASE}/provinsi`, { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF } });
+        const res  = await fetch(`${API_BASE}/provinsi`, { headers: { 'Accept':'application/json','X-CSRF-TOKEN':CSRF_TOKEN } });
         const data = await res.json();
-        if (data.success) {
-            provinsiData = data.data;
-            renderList('provinsi', provinsiData);
-        }
-    } catch (e) { showAlert('Gagal memuat data provinsi.'); }
+        if (data.success) { provinsiData = data.data; renderList('provinsi', provinsiData); }
+    } catch { showToast('Gagal memuat data provinsi.'); }
 }
-
-async function loadKota(idProvinsi) {
-    kotaData = [];
-    renderListLoading('kota');
+async function loadKota(idProv) {
+    kotaData = []; renderListLoading('kota');
     try {
-        const res  = await fetch(`${API_BASE}/kota/${idProvinsi}`, { headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF } });
+        const res  = await fetch(`${API_BASE}/kota/${idProv}`, { headers: { 'Accept':'application/json','X-CSRF-TOKEN':CSRF_TOKEN } });
         const data = await res.json();
-        if (data.success) {
-            kotaData = data.data;
-            renderList('kota', kotaData);
-        }
-    } catch (e) { showAlert('Gagal memuat data kota.'); }
+        if (data.success) { kotaData = data.data; renderList('kota', kotaData); }
+    } catch { showToast('Gagal memuat data kota.'); }
 }
-
 function renderListLoading(type) {
-    document.getElementById(type + 'List').innerHTML = `
-        <div class="flex justify-center py-6">
-            <svg class="w-6 h-6 animate-spin text-plum" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-            </svg>
-        </div>`;
+    document.getElementById(type + 'List').innerHTML = `<div class="flex justify-center py-8"><svg class="w-6 h-6 animate-spin" style="color:#8B46D3" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg></div>`;
 }
-
 function renderList(type, data) {
-    const container = document.getElementById(type + 'List');
-    if (!data || data.length === 0) {
-        container.innerHTML = '<p class="text-center text-plum-muted text-sm py-8">Data tidak ditemukan</p>';
-        return;
-    }
-    container.innerHTML = data.map(item => `
-        <button type="button"
-                onclick="selectItem('${type}', ${item.id}, '${item.nama.replace(/'/g, "\\'")}')"
-                class="w-full text-left px-5 py-3.5 border-b border-plum-soft/40 text-sm font-medium text-plum-dark hover:bg-plum-soft/50 transition-colors">
-            ${item.nama}
-        </button>`).join('');
+    const el = document.getElementById(type + 'List');
+    if (!data || !data.length) { el.innerHTML = '<p class="text-center text-[#9CA3AF] text-sm py-8 font-semibold">Data tidak ditemukan</p>'; return; }
+    el.innerHTML = data.map(item =>
+        `<button type="button" onclick="selectItem('${type}',${item.id},'${item.nama.replace(/'/g,"\\'")}')"
+                 class="w-full text-left px-5 py-[13px] border-b border-[#F5F4FB] text-[14px] font-semibold text-[#1E1B2E] hover:bg-[#F5F4FB] transition-colors">
+             ${item.nama}
+         </button>`
+    ).join('');
 }
-
 function selectItem(type, id, nama) {
     if (type === 'provinsi') {
-        document.getElementById('idProvinsi').value  = id;
+        document.getElementById('idProvinsi').value = id;
         document.getElementById('provinsiLabel').textContent = nama;
-        document.getElementById('provinsiLabel').className   = 'text-plum-dark';
-        // Reset kota
-        document.getElementById('idKota').value   = '';
-        document.getElementById('kotaLabel').textContent  = 'Pilih Kota';
-        document.getElementById('kotaLabel').className    = 'text-plum-muted/50';
+        document.getElementById('provinsiLabel').className = 'text-[#1E1B2E] font-[600]';
+        document.getElementById('idKota').value = '';
+        document.getElementById('kotaLabel').textContent = 'Select City';
+        document.getElementById('kotaLabel').className = 'text-[#B0A8CC] font-[600]';
         kotaData = [];
-        const kotaBtn = document.getElementById('kotaBtn');
-        if (kotaBtn) { kotaBtn.disabled = false; kotaBtn.classList.remove('opacity-50'); }
+        const kb = document.getElementById('kotaBtn');
+        if (kb) { kb.disabled = false; kb.classList.remove('opacity-50'); }
     } else {
-        document.getElementById('idKota').value  = id;
+        document.getElementById('idKota').value = id;
         document.getElementById('kotaLabel').textContent = nama;
-        document.getElementById('kotaLabel').className   = 'text-plum-dark';
+        document.getElementById('kotaLabel').className = 'text-[#1E1B2E] font-[600]';
     }
     closeSheet();
 }
-
-function filterList(type, query) {
-    const source = type === 'provinsi' ? provinsiData : kotaData;
-    const filtered = source.filter(item => item.nama.toLowerCase().includes(query.toLowerCase()));
-    renderList(type, filtered);
+function filterList(type, q) {
+    const src = type === 'provinsi' ? provinsiData : kotaData;
+    renderList(type, src.filter(i => i.nama.toLowerCase().includes(q.toLowerCase())));
 }
 
 // ── Form Submit ───────────────────────────────────────────────────────────────
@@ -674,58 +752,74 @@ const form = document.getElementById('profileForm');
 if (form) {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const name   = document.getElementById('name')?.value.trim();
+        const noHp   = document.getElementById('noHp')?.value.trim();
+        const tgl    = document.getElementById('tanggalLahir')?.value;
+        const gender = document.getElementById('genderSelect')?.value;
+        const prov   = document.getElementById('idProvinsi')?.value;
+        const kota   = document.getElementById('idKota')?.value;
+        const alamat = document.getElementById('alamat')?.value.trim();
 
-        // Validasi
-        const name    = document.getElementById('name')?.value.trim();
-        const noHp    = document.getElementById('noHp')?.value.trim();
-        const tgl     = document.getElementById('tanggalLahir')?.value;
-        const gender  = document.getElementById('genderInput')?.value;
-        const prov    = document.getElementById('idProvinsi')?.value;
-        const kota    = document.getElementById('idKota')?.value;
-        const alamat  = document.getElementById('alamat')?.value.trim();
+        if (!name)   return showToast('Nama wajib diisi!');
+        if (!noHp)   return showToast('Nomor HP wajib diisi!');
+        if (!tgl)    return showToast('Tanggal lahir wajib diisi!');
+        if (!gender) return showToast('Gender wajib dipilih!');
+        if (!prov)   return showToast('Provinsi wajib dipilih!');
+        if (!kota)   return showToast('Kota wajib dipilih!');
+        if (!alamat) return showToast('Alamat wajib diisi!');
 
-        if (!name)   return showAlert('Nama wajib diisi!');
-        if (!noHp)   return showAlert('Nomor HP wajib diisi!');
-        if (!tgl)    return showAlert('Tanggal lahir wajib diisi!');
-        if (!gender) return showAlert('Gender wajib dipilih!');
-        if (!prov)   return showAlert('Provinsi wajib dipilih!');
-        if (!kota)   return showAlert('Kota wajib dipilih!');
-        if (!alamat) return showAlert('Alamat wajib diisi!');
-
-        // Loading state
-        document.getElementById('submitBtn').disabled  = true;
-        document.getElementById('btnText').textContent = 'Menyimpan...';
-        document.getElementById('btnIcon').style.display   = 'none';
-        document.getElementById('btnSpinner').classList.remove('hidden');
+        const btn     = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const btnIcon = document.getElementById('btnIcon');
+        const spinner = document.getElementById('btnSpinner');
+        btn.disabled = true;
+        btnText.textContent = 'Menyimpan...';
+        btnIcon.style.display = 'none';
+        spinner.classList.remove('hidden');
 
         try {
-            const formData = new FormData(form);
-            const res  = await fetch('{{ route("profil.update") }}', {
+            const fd  = new FormData(form);
+            const res = await fetch('{{ route("profil.update") }}', {
                 method: 'POST',
-                headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF },
-                body: formData,
+                headers: { 'Accept':'application/json','X-CSRF-TOKEN':CSRF_TOKEN },
+                body: fd
             });
             const data = await res.json();
-
             if (data.success) {
-                showSuccessAlert(
-                    data.message || 'Profil berhasil disimpan!',
-                    '{{ route("profil.detail") }}'
-                );
+                showSuccessModal();
             } else {
-                const errMsg = data.errors ? Object.values(data.errors)[0] : (data.message || 'Gagal menyimpan profil.');
-                showAlert(Array.isArray(errMsg) ? errMsg[0] : errMsg);
+                const err = data.errors ? Object.values(data.errors)[0] : (data.message || 'Gagal menyimpan profil.');
+                showToast(Array.isArray(err) ? err[0] : err);
             }
-        } catch (err) {
-            showAlert('Terjadi kesalahan. Coba lagi.');
-        } finally {
-            document.getElementById('submitBtn').disabled  = false;
-            document.getElementById('btnText').textContent = 'Simpan Profil';
-            document.getElementById('btnIcon').style.display   = '';
-            document.getElementById('btnSpinner').classList.add('hidden');
+        } catch { showToast('Terjadi kesalahan. Coba lagi.'); }
+        finally {
+            btn.disabled = false;
+            btnText.textContent = 'Save Changes';
+            btnIcon.style.display = '';
+            spinner.classList.add('hidden');
         }
     });
 }
+
+let _countdownIv = null;
+function showSuccessModal() {
+    const modal = document.getElementById('successModal');
+    modal.classList.remove('hidden');
+    requestAnimationFrame(() => { modal.style.opacity = '1'; });
+    let secs = 5;
+    const el = document.getElementById('successCountdown');
+    clearInterval(_countdownIv);
+    _countdownIv = setInterval(() => {
+        secs--;
+        if (el) el.textContent = secs;
+        if (secs <= 0) {
+            clearInterval(_countdownIv);
+            window.location.href = '{{ route("dashboard") }}';
+        }
+    }, 1000);
+}
 </script>
+
+@include('partials.auth-guard')
 </body>
 </html>

@@ -252,7 +252,10 @@
 <!-- JAVASCRIPT -->
 <script>
 // ── Config dari Laravel (passed via Blade) ──────────────────────────────────
-const USER_ID = {{ session('user_id') ?? 'null' }};
+@php
+    $resolvedUserId = session('user_id') ?: data_get(session('user'), 'id_user');
+@endphp
+const USER_ID        = @json($resolvedUserId);
 const AUTH_TOKEN     = "{{ session('token') }}";
 const PUSHER_KEY     = "{{ config('services.pusher.key') }}";
 const PUSHER_CLUSTER = "{{ config('services.pusher.options.cluster', 'ap1') }}";
