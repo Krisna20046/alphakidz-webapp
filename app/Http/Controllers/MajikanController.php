@@ -134,24 +134,24 @@ class MajikanController extends Controller
 
     public function chooseDiary()
     {
-        $token = session('token');
-
-        try {
-            $res     = Http::withToken($token)->get("{$this->apiUrl}/user-anak-by-majikan");
-            $json    = $res->json();
-            $anakRaw = ($json['status'] ?? '') === 'success' ? ($json['data'] ?? []) : [];
-
-            // Hitung umur di server agar konsisten dengan RN hitungUmurLengkap()
-            $anakList = array_map(function ($anak) {
-                $anak['umur'] = $this->hitungUmur($anak['tanggal_lahir'] ?? null);
-                return $anak;
-            }, $anakRaw);
-
-        } catch (\Exception $e) {
-            $anakList = [];
+        $anakList = $this->fetchAnakList();
+ 
+        // Jika ada anak, langsung redirect ke diary anak pertama
+        if (!empty($anakList)) {
+            return redirect()->route('majikan-diary', $anakList[0]['id']);
         }
-
-        return view('majikan.diary-choose', compact('anakList'));
+ 
+        // Tidak ada anak — tampilkan halaman diary dengan empty state
+        return view('majikan.diary', [
+            'anakList'    => [],
+            'idAnak'      => null,
+            'namaAnak'    => '',
+            'tanggal'     => date('Y-m-d'),
+            'tanggalIndo' => $this->formatTanggalIndo(date('Y-m-d')),
+            'diaryData'   => null,
+            'aktivitas'   => [],
+            'activeKat'   => '',
+        ]);
     }
 
     /**
@@ -163,38 +163,38 @@ class MajikanController extends Controller
         $token    = session('token');
         $tanggal  = $request->get('tanggal', date('Y-m-d'));
         $kategori = $request->get('kategori', '');
-
+ 
         $diaryData = null;
         $aktivitas = [];
         $namaAnak  = '';
-
+ 
+        // Fetch daftar anak untuk avatar selector di header
+        $anakList = $this->fetchAnakList();
+ 
         try {
-
             $payload = ['id_anak' => $id, 'tanggal' => $tanggal];
             if ($kategori) $payload['kategori'] = $kategori;
-
+ 
             $res  = Http::withToken($token)->asMultipart()->post("{$this->apiUrl}/diary-for-majikan", $payload);
             $json = $res->json();
-
+ 
             if (($json['status'] ?? '') === 'success' && isset($json['data'])) {
                 $diaryData = $json['data'];
                 $namaAnak  = $diaryData['nama_anak'] ?? '';
-                $idAnak    = $diaryData['id_anak'] ?? 0;
-
-                // Flatten aktivitas dari aktivitas_per_tanggal[0]
+ 
                 $rawAktivitas = $diaryData['aktivitas_per_tanggal'][0]['aktivitas'] ?? [];
                 $aktivitas    = array_map(fn($a) => $this->formatAktivitas($a), $rawAktivitas);
             }
         } catch (\Exception $e) {
             // silent — tampil empty state
         }
-
-        // Format tanggal Indonesia untuk header
+ 
         $tanggalIndo = $this->formatTanggalIndo($tanggal);
-
+        $activeKat   = $kategori;
+ 
         return view('majikan.diary', compact(
-            'idAnak', 'namaAnak', 'tanggal', 'tanggalIndo',
-            'diaryData', 'aktivitas'
+            'anakList', 'namaAnak', 'tanggal', 'tanggalIndo',
+            'diaryData', 'aktivitas', 'activeKat'
         ) + ['idAnak' => $id]);
     }
 
@@ -242,6 +242,23 @@ class MajikanController extends Controller
             return $d->format('j') . ' ' . $months[(int)$d->format('n')] . ' ' . $d->format('Y');
         } catch (\Exception $e) {
             return $tanggal;
+        }
+    }
+
+    private function fetchAnakList(): array
+    {
+        $token = session('token');
+        try {
+            $res     = Http::withToken($token)->get("{$this->apiUrl}/user-anak-by-majikan");
+            $json    = $res->json();
+            $anakRaw = ($json['status'] ?? '') === 'success' ? ($json['data'] ?? []) : [];
+ 
+            return array_map(function ($anak) {
+                $anak['umur'] = $this->hitungUmur($anak['tanggal_lahir'] ?? null);
+                return $anak;
+            }, $anakRaw);
+        } catch (\Exception $e) {
+            return [];
         }
     }
 }
