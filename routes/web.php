@@ -97,6 +97,11 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/provinsi',       [ProfileController::class, 'getProvinsi'])->name('provinsi');
         Route::get('/kota/{id}',      [ProfileController::class, 'getKota']    )->name('kota');
     });
+    Route::prefix('reminder')->name('reminder.')->group(function () {
+        Route::get('/',               fn() => view('profil.reminder.index'))->name('index');
+        Route::get('/detail',         [ProfileController::class, 'detail']   )->name('detail');
+        Route::post('/update',        [ProfileController::class, 'update']   )->name('update');
+    });
 
     Route::prefix('majikan')->group(function () {
         Route::get('/nanny',    [MajikanController::class, 'indexNanny'])->name('majikan-nanny-list');

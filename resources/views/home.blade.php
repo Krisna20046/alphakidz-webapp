@@ -245,6 +245,7 @@
 
     <!-- BOTTOM NAV -->
     @include('partials.bottom-nav', ['active' => 'home'])
+    @include('partials.reminder')
 
 </div>
 </div>

@@ -166,10 +166,10 @@
                         'role'    => 'Majikan',
                     ],
                     [
-                        'route'   => 'alarm.index',
+                        'route'   => 'reminder.index',
                         'icon'    => 'alarm-outline',
-                        'label'   => 'Alarm & Notification',
-                        'sub'     => 'Set alarms and notifications as reminders of your needs',
+                        'label'   => 'Reminders',
+                        'sub'     => 'Reminders for your needs',
                         'iconBg'  => '#FEF3C7',
                         'iconClr' => '#F59E0B',
                     ],
