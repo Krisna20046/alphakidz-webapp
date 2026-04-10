@@ -174,7 +174,7 @@
                         'iconClr' => '#F59E0B',
                     ],
                     [
-                        'route'   => 'pengeluaran.index',
+                        'route'   => 'stock.index',
                         'icon'    => 'pricetag-outline',
                         'label'   => 'Expense Tracking',
                         'sub'     => "Transparent recording of children's expenses",

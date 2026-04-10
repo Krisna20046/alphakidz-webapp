@@ -99,8 +99,10 @@ Route::middleware('auth.api')->group(function () {
     });
     Route::prefix('reminder')->name('reminder.')->group(function () {
         Route::get('/',               fn() => view('profil.reminder.index'))->name('index');
-        Route::get('/detail',         [ProfileController::class, 'detail']   )->name('detail');
-        Route::post('/update',        [ProfileController::class, 'update']   )->name('update');
+    });
+
+    Route::prefix('stock')->name('stock.')->group(function () {
+        Route::get('/',               fn() => view('profil.stock.index'))->name('index');
     });
 
     Route::prefix('majikan')->group(function () {

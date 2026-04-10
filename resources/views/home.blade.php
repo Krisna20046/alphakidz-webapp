@@ -31,6 +31,19 @@
         
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        @keyframes reminderIn {
+            from { opacity: 0; transform: translateY(-8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .reminder-card-anim { animation: reminderIn 0.35s ease forwards; }
+
+        /* Reminder & Low Stock Cards */
+        @keyframes alertSlideIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .alert-card-enter { animation: alertSlideIn 0.3s ease forwards; }
     </style>
 </head>
 <body class="font-['Nunito'] bg-[#E5E2F5]">
@@ -91,6 +104,18 @@
 
     <!-- SCROLLABLE BODY -->
     <div class="flex-1 overflow-y-auto px-[30px] pt-[30px] pb-20 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 flex flex-col gap-5 hide-scrollbar" id="mainScroll">
+
+        {{-- REMINDER CLOSEST --}}
+        <div id="reminderSection" class="hidden"></div>
+
+        {{-- LOW STOCK ALERT --}}
+        <div id="lowStockSection" class="hidden"></div>
+
+        {{-- UPCOMING REMINDER --}}
+        <div id="homeReminderSection"></div>
+
+        {{-- LOW STOCK ALERT --}}
+        <div id="homeLowStockSection"></div>
 
         <!-- BANNER SLIDER -->
         <div class="anim delay-2">
@@ -252,6 +277,7 @@
 
 <!-- JAVASCRIPT -->
 <script>
+const API_BASE  = 'https://alphakidz.valove.id/api';
 // ── Config dari Laravel (passed via Blade) ──────────────────────────────────
 @php
     $resolvedUserId = session('user_id') ?: data_get(session('user'), 'id_user');
@@ -324,6 +350,119 @@ const CSRF           = "{{ csrf_token() }}";
         if (Math.abs(diff) > 40) goTo(current + (diff > 0 ? 1 : -1));
     });
 })();
+
+// ── Upcoming Reminder (closest to today) ─────────────────────
+(async function loadUpcomingReminder() {
+    if (!AUTH_TOKEN || !USER_ID) return;
+    try {
+        const res  = await fetch(`${API_BASE}/reminders/${USER_ID}`, {
+            headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN, 'Accept': 'application/json' }
+        });
+        const data = await res.json();
+        const reminders = data.data || [];
+        if (!reminders.length) return;
+
+        const now = new Date();
+
+        // Cari reminder dengan is_active=true, paling dekat dengan hari ini
+        const active = reminders.filter(r => r.is_active !== false);
+        if (!active.length) return;
+
+        // Urutkan: repeat weekly → tampilkan yg pertama; one-time → urutkan berdasar date
+        let nearest = null;
+        const oneTime = active
+            .filter(r => !r.is_repeat_weekly && r.date)
+            .map(r => ({ r, dt: new Date(r.date + 'T' + (r.time || '00:00:00')) }))
+            .sort((a, b) => Math.abs(a.dt - now) - Math.abs(b.dt - now));
+
+        const repeats = active.filter(r => r.is_repeat_weekly);
+
+        // Prioritaskan one-time yang paling dekat dengan hari ini
+        nearest = oneTime.length ? oneTime[0].r : (repeats.length ? repeats[0] : null);
+        if (!nearest) return;
+
+        // Hitung jarak hari
+        let daysLabel = '';
+        if (!nearest.is_repeat_weekly && nearest.date) {
+            const target = new Date(nearest.date);
+            target.setHours(0,0,0,0);
+            const today  = new Date(); today.setHours(0,0,0,0);
+            const diff   = Math.round((target - today) / 86400000);
+            if (diff === 0)      daysLabel = 'Today';
+            else if (diff === 1) daysLabel = 'Tomorrow';
+            else if (diff > 1)   daysLabel = diff + ' days left';
+            else if (diff < 0)   daysLabel = Math.abs(diff) + ' days ago';
+        } else {
+            daysLabel = 'Weekly';
+        }
+
+        const section = document.getElementById('homeReminderSection');
+        if (!section) return;
+
+        section.innerHTML = `
+        <div class="alert-card-enter bg-[#FFF5F5] rounded-[15px] px-4 py-3 flex items-center gap-3 shadow-[0_2px_12px_rgba(236,72,153,0.10)]">
+            <div class="w-10 h-10 rounded-full bg-[#FDE8F0] flex items-center justify-center flex-shrink-0">
+                <ion-icon name="notifications" style="color:#EC4899;font-size:18px;"></ion-icon>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-[#EC4899] text-[13px] font-extrabold truncate">${escHtmlHome(nearest.label)}</p>
+                <p class="text-[#9CA3AF] text-[11px] font-semibold mt-0.5">${daysLabel}</p>
+            </div>
+            <a href="{{ route('reminder.index') }}" class="text-[10px] font-extrabold text-[#EC4899] bg-[#FDE8F0] rounded-full px-3 py-1 no-underline flex-shrink-0">
+                DISMISS
+            </a>
+        </div>`;
+    } catch (e) { /* silent */ }
+})();
+
+// ── Low Stock Alert ───────────────────────────────────────────
+(async function loadLowStock() {
+    if (!AUTH_TOKEN || !USER_ID) return;
+    try {
+        const res  = await fetch(`${API_BASE}/stock/${USER_ID}`, {
+            headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN, 'Accept': 'application/json' }
+        });
+        const data = await res.json();
+        const items = (data.data || []).filter(item =>
+            item.low_stock_alert &&
+            (item.quantity ?? 0) <= (item.alert_threshold ?? 1)
+        );
+        if (!items.length) return;
+
+        const section = document.getElementById('homeLowStockSection');
+        if (!section) return;
+
+        const itemsHtml = items.slice(0, 3).map(item => `
+            <div class="flex items-center gap-2 bg-[#FFFBEB] rounded-[10px] px-3 py-2">
+                <ion-icon name="cube-outline" style="color:#F59E0B;font-size:14px;flex-shrink:0;"></ion-icon>
+                <span class="text-[12px] font-bold text-[#92400E] truncate flex-1">${escHtmlHome(item.name)}</span>
+                <span class="text-[10px] font-extrabold text-[#F59E0B] flex-shrink-0">${item.quantity} left</span>
+            </div>`).join('');
+
+        const moreText = items.length > 3 ? `<p class="text-[10px] font-bold text-[#F59E0B] text-center mt-1">+${items.length - 3} more low stock item${items.length - 3 > 1 ? 's' : ''}</p>` : '';
+
+        section.innerHTML = `
+        <div class="alert-card-enter bg-white rounded-[15px] px-4 py-3 shadow-[0_2px_12px_rgba(245,158,11,0.12)]">
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-[#FEF3C7] flex items-center justify-center flex-shrink-0">
+                        <ion-icon name="warning" style="color:#F59E0B;font-size:14px;"></ion-icon>
+                    </div>
+                    <span class="text-[13px] font-extrabold text-[#1E1B2E]">Low Stock Alert</span>
+                </div>
+                <a href="{{ route('stock.index') }}" class="text-[10px] font-extrabold text-[#8B46D3] no-underline">View All</a>
+            </div>
+            <div class="flex flex-col gap-1.5">
+                ${itemsHtml}
+                ${moreText}
+            </div>
+        </div>`;
+    } catch (e) { /* silent */ }
+})();
+
+function escHtmlHome(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
 // Unread badge
 let unreadCount = 0;
