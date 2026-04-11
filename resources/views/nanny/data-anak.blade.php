@@ -7,64 +7,71 @@
     <title>Data Anak</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <script>
-        tailwind.config={theme:{extend:{colors:{plum:{DEFAULT:'#7B1E5A',light:'#9B2E72',dark:'#4A0E35',pale:'#FFF9FB',soft:'#F3E6FA',muted:'#A2397B',accent:'#B895C8'}},fontFamily:{sans:['Plus Jakarta Sans','sans-serif']}}}}
-    </script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+
     <style>
-        *{-webkit-tap-highlight-color:transparent;}
-        body{font-family:'Plus Jakarta Sans',sans-serif;background:#FFF9FB;}
-        @media(min-width:640px){
-            .phone-wrapper{display:flex;align-items:flex-start;justify-content:center;min-height:100vh;padding:32px 0;background:linear-gradient(135deg,#f8e8f3 0%,#ede0f0 60%,#e8d5ee 100%);}
-            .phone-frame{width:390px;min-height:844px;border-radius:44px;box-shadow:0 40px 80px rgba(123,30,90,.25),0 0 0 8px #1a0d14,0 0 0 10px #2d1020;overflow:hidden;position:relative;}
+        * { -webkit-tap-highlight-color: transparent; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        @media(max-width:639px){.phone-wrapper{min-height:100vh;}.phone-frame{min-height:100vh;}}
-        .header-bg{background:linear-gradient(135deg,#7B1E5A 0%,#9B2E72 100%);}
-        @keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
-        .anim-up{animation:slideUp .35s ease forwards;}
-        .anim-up.d1{animation-delay:.05s;opacity:0;}
-        .anim-up.d2{animation-delay:.10s;opacity:0;}
-        .anim-up.d3{animation-delay:.15s;opacity:0;}
-        @keyframes floatEmpty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-        .float-anim{animation:floatEmpty 3s ease-in-out infinite;}
-        .no-scrollbar::-webkit-scrollbar{display:none;}.no-scrollbar{-ms-overflow-style:none;scrollbar-width:none;}
-        .anak-card{background:#fff;border-radius:20px;margin-bottom:16px;border:2px solid #F3E6FA;overflow:hidden;}
-        .detail-row{display:flex;align-items:flex-start;margin-bottom:12px;}
-        .detail-row:last-child{margin-bottom:0;}
+        .anim { animation: slideUp 0.4s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.13s; }
+        .delay-3 { animation-delay: 0.21s; }
+
+        @keyframes floatEmpty {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .float-anim { animation: floatEmpty 3s ease-in-out infinite; }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .anak-card { transition: transform .15s ease; }
+        .anak-card:active { transform: scale(0.98); }
     </style>
 </head>
-<body>
-<div class="phone-wrapper">
-<div class="phone-frame bg-plum-pale flex flex-col" style="max-height:100vh;">
+<body class="font-['Nunito'] bg-[#E5E2F5]">
 
-    <!-- STATUS BAR -->
-    <div class="hidden sm:flex items-center justify-between px-8 pt-4 pb-1 bg-plum flex-shrink-0">
-        <span class="text-xs font-semibold text-white/80" id="statusTime">9:41</span>
-        <div class="flex gap-1 items-center text-white">
-            <svg class="w-4 h-3" viewBox="0 0 17 12" fill="white" opacity="0.8"><rect x="0" y="3" width="3" height="9" rx="0.5"/><rect x="4.5" y="2" width="3" height="10" rx="0.5"/><rect x="9" y="0.5" width="3" height="11.5" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg>
-            <svg class="w-4 h-3" viewBox="0 0 16 12" fill="white" opacity="0.8"><path d="M8 2.4C5.6 2.4 3.4 3.4 1.8 5L0 3.2C2.2 1.2 5 0 8 0s5.8 1.2 8 3.2L14.2 5C12.6 3.4 10.4 2.4 8 2.4z"/><path d="M8 6c-1.4 0-2.6.6-3.6 1.4L2.6 5.6C4 4.4 5.8 3.6 8 3.6s4 .8 5.4 2L11.6 7.4C10.6 6.6 9.4 6 8 6z"/><circle cx="8" cy="10" r="2"/></svg>
-            <div class="flex items-center"><div class="w-6 h-3 border border-white/70 rounded-sm p-px flex items-stretch"><div class="bg-white flex-1"></div></div></div>
+<div class="sm:flex sm:items-start sm:justify-center sm:min-h-screen sm:py-8 sm:pb-[60px]">
+<div class="sm:w-[390px] sm:min-h-[844px] sm:rounded-[44px] sm:shadow-[0_40px_80px_rgba(124,58,237,0.28),0_0_0_8px_#1a1030,0_0_0_10px_#2d1a50] sm:overflow-hidden bg-[#F0EDFB] min-h-screen flex flex-col relative">
+
+    {{-- STATUS BAR --}}
+    <div class="hidden sm:flex sm:items-center sm:justify-between bg-[#8B46D3] px-6 pt-[14px] text-white text-xs font-bold">
+        <span id="statusTime">9:41</span>
+        <div class="flex items-center gap-1.5">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+                <rect x="0" y="4" width="3" height="7" rx="0.6" fill="white" opacity="0.5"/>
+                <rect x="4.5" y="2.5" width="3" height="8.5" rx="0.6" fill="white" opacity="0.7"/>
+                <rect x="9" y="0.5" width="3" height="10.5" rx="0.6" fill="white"/>
+            </svg>
+            <div class="flex items-center">
+                <div class="w-[22px] h-[11px] border-[1.5px] border-white/70 rounded-[3px] p-[1.5px]">
+                    <div class="bg-white rounded-[1.5px] h-full"></div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- HEADER -->
-    <div class="header-bg relative flex-shrink-0 overflow-hidden"
-         style="padding:50px 20px 24px;border-bottom-left-radius:24px;border-bottom-right-radius:24px;margin-bottom:0;">
-        <div class="absolute top-0 right-0 w-36 h-36 rounded-full bg-white/5 -translate-y-8 translate-x-8 pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-white/5 translate-y-5 -translate-x-5 pointer-events-none"></div>
-        <a href="{{ route('dashboard') }}"
-           class="absolute flex items-center justify-center bg-white/20 hover:bg-white/30 transition-colors rounded-full"
-           style="top:54px;left:20px;width:40px;height:40px;z-index:10;">
-            <ion-icon name="arrow-back" style="font-size:20px;color:#fff;"></ion-icon>
-        </a>
-        <div class="flex flex-col items-center anim-up d1">
-            <div class="flex items-center justify-center bg-white rounded-full mb-4 shadow-lg" style="width:64px;height:64px;">
-                <ion-icon name="happy" style="font-size:30px;color:#7B1E5A;"></ion-icon>
+    {{-- HEADER --}}
+    <div class="anim delay-1 relative z-10 bg-[#8B46D3] bg-[url('/assets/bg-texture.png')] bg-cover bg-center
+                px-[24px] pt-[55px] pb-[72px]
+                before:content-[''] before:absolute before:inset-0 before:bg-[#8B46D3] before:opacity-60 before:-z-10">
+        <div class="flex items-center gap-3 relative z-10">
+            <a href="{{ route('dashboard') }}"
+               class="w-10 h-10 rounded-full bg-white/20 border-[1.5px] border-white/30 flex items-center justify-center shrink-0">
+                <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
+            </a>
+            <div>
+                <span class="text-white text-[17px] font-extrabold tracking-wide">Child Data</span>
+                <p class="text-white/60 text-xs font-medium mt-0.5">Child Information on Assignment</p>
             </div>
-            <h1 class="font-bold text-white mb-1" style="font-size:24px;letter-spacing:0.5px;">Data Anak</h1>
-            <p style="font-size:14px;color:#F3E6FA;font-weight:500;">Informasi anak dalam penugasan</p>
         </div>
     </div>
 
@@ -72,24 +79,29 @@
 
     @if($assignmentData && count($anak) > 0)
 
-    <!-- SCROLLABLE -->
-    <div class="flex-1 overflow-y-auto no-scrollbar pb-16" style="padding-right:20px; padding-left:20px;">
+    {{-- SCROLLABLE CONTENT --}}
+    <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar flex flex-col gap-4">
 
-        {{-- Assignment info --}}
-        <div class="anim-up d2" style="padding-top:20px;margin-bottom:20px;">
-            <div class="flex items-center bg-white" style="border-radius:16px;border:2px solid #F3E6FA;padding:14px 16px;gap:12px;">
-                <div class="flex items-center justify-center flex-shrink-0"
-                     style="width:48px;height:48px;border-radius:12px;background:#F3E6FA;">
-                    <ion-icon name="briefcase" style="font-size:22px;color:#7B1E5A;"></ion-icon>
+        {{-- Assignment info card --}}
+        <div class="anim delay-2">
+            <div class="bg-white rounded-[14px] px-3 py-3 shadow-[0_2px_10px_rgba(0,0,0,0.08)] border border-[#EAE6F5] flex items-center gap-3">
+                {{-- Employer photo --}}
+                <div class="w-[56px] h-[56px] rounded-[10px] overflow-hidden bg-[#F3F0FD] shrink-0 flex items-center justify-center">
+                    @if(!empty($assignmentData['majikan_foto']))
+                    <img src="{{ $assignmentData['majikan_foto'] }}" alt="{{ $assignmentData['majikan_name'] }}"
+                         class="w-full h-full object-cover"
+                         onerror="this.style.display='none';this.parentElement.innerHTML='<ion-icon name=\'person\' style=\'font-size:26px;color:#8B46D3;\'></ion-icon>'">
+                    @else
+                    <ion-icon name="person" style="font-size:26px;color:#8B46D3;"></ion-icon>
+                    @endif
                 </div>
+                {{-- Info --}}
                 <div class="flex-1 min-w-0">
-                    <p style="font-size:11px;color:#A2397B;font-weight:600;margin-bottom:2px;">Penugasan dengan</p>
-                    <p class="truncate" style="font-size:15px;font-weight:700;color:#4A0E35;margin-bottom:4px;">
-                        {{ $assignmentData['majikan_name'] ?? '-' }}
-                    </p>
-                    <div class="flex items-center" style="gap:5px;">
-                        <ion-icon name="calendar-outline" style="font-size:12px;color:#A2397B;flex-shrink:0;"></ion-icon>
-                        <span style="font-size:12px;color:#A2397B;font-weight:500;">
+                    <p class="text-[10px] font-extrabold text-[#757575] uppercase tracking-wider mb-0.5">Assignment With</p>
+                    <p class="text-[#1E1B2E] font-extrabold text-[15px] truncate mb-1">{{ $assignmentData['majikan_name'] ?? '-' }}</p>
+                    <div class="flex gap-1">
+                        <ion-icon name="calendar-outline" style="font-size:11px;color:#8B46D3;flex-shrink:0;"></ion-icon>
+                        <span class="text-[#8B46D3] text-[11px] font-semibold">
                             {{ $assignmentData['tanggal_mulai'] ?? '' }} – {{ $assignmentData['tanggal_selesai'] ?? '' }}
                         </span>
                     </div>
@@ -98,121 +110,121 @@
         </div>
 
         {{-- List header --}}
-        <div class="flex items-center justify-between anim-up d2" style="margin-bottom:14px;">
-            <span style="font-size:18px;font-weight:700;color:#4A0E35;">Daftar Anak</span>
-            <span style="background:#F3E6FA;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:700;color:#7B1E5A;">
-                {{ count($anak) }}
+        <div class="anim delay-3 flex items-center justify-between">
+            <span class="text-[#1E1B2E] font-extrabold text-[18px]">Child Data</span>
+            <span class="text-[9px] font-extrabold px-3 py-1 rounded-full"
+                  style="background:#EDE9FE;color:#6D28D9;">
+                {{ count($anak) }} {{ count($anak) == 1 ? 'CHILD' : 'CHILDREN' }}
             </span>
         </div>
 
         {{-- Cards --}}
-        @foreach($anak as $i => $child)
-        @php
-            $lahir  = new DateTime($child['tanggal_lahir'] ?? 'now');
-            $diff   = $lahir->diff(new DateTime());
-            $umur   = ($diff->y > 0 ? $diff->y.' tahun ' : '') . $diff->m . ' bulan';
-            $isMale = ($child['gender'] ?? '') === 'L';
-            $hasDetail = !empty($child['catatan_khusus']) || !empty($child['alergi']) || !empty($child['hobi']);
-        @endphp
-        <div class="anak-card" style="animation:slideUp .3s ease {{ $i*.07 }}s both;opacity:0;">
-            {{-- Card header --}}
-            <div class="flex items-center" style="padding:16px;">
-                {{-- Avatar --}}
-                <div style="margin-right:12px;flex-shrink:0;">
-                    @if(!empty($child['foto']))
-                    <img src="{{ $child['foto'] }}" alt="{{ $child['nama'] }}"
-                         style="width:60px;height:60px;border-radius:30px;object-fit:cover;border:3px solid #F3E6FA;"
-                         onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
-                    <div class="items-center justify-center hidden"
-                         style="width:60px;height:60px;border-radius:30px;background:#F3E6FA;border:3px solid #F3E6FA;">
-                        <ion-icon name="happy" style="font-size:28px;color:#7B1E5A;"></ion-icon>
+        <div class="flex flex-col gap-3 pb-6">
+            @foreach($anak as $i => $child)
+            @php
+                $lahir  = new DateTime($child['tanggal_lahir'] ?? 'now');
+                $diff   = $lahir->diff(new DateTime());
+                $umur   = ($diff->y > 0 ? $diff->y . ' tahun ' : '') . $diff->m . ' bulan';
+                $isMale = ($child['gender'] ?? '') === 'L';
+                $hasDetail = !empty($child['catatan_khusus']) || !empty($child['alergi']) || !empty($child['hobi']);
+            @endphp
+
+            <div class="anak-card bg-white rounded-[14px] shadow-[0_2px_10px_rgba(0,0,0,0.08)] border border-[#EAE6F5] overflow-hidden"
+                 style="animation: slideUp 0.35s ease {{ $i * 0.07 }}s both; opacity:0;">
+
+                {{-- Card top --}}
+                <div class="flex items-center gap-3 px-3 py-3">
+                    {{-- Avatar --}}
+                    <div class="w-[56px] h-[56px] rounded-[10px] overflow-hidden bg-[#F3F0FD] shrink-0 flex items-center justify-center">
+                        @if(!empty($child['foto']))
+                        <img src="{{ $child['foto'] }}" alt="{{ $child['nama'] }}"
+                             class="w-full h-full object-cover"
+                             onerror="this.style.display='none';this.parentElement.innerHTML='<ion-icon name=\'happy\' style=\'font-size:26px;color:#8B46D3;\'></ion-icon>'">
+                        @else
+                        <ion-icon name="happy" style="font-size:26px;color:#8B46D3;"></ion-icon>
+                        @endif
                     </div>
-                    @else
-                    <div class="flex items-center justify-center"
-                         style="width:60px;height:60px;border-radius:30px;background:#F3E6FA;border:3px solid #F3E6FA;">
-                        <ion-icon name="happy" style="font-size:28px;color:#7B1E5A;"></ion-icon>
+
+                    {{-- Info --}}
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between gap-2 mb-1.5">
+                            <p class="text-[#1E1B2E] font-extrabold text-[15px] truncate">{{ $child['nama'] }}</p>
+                        </div>
+                        <div class="flex gap-1">
+                            <span class="iconify" data-icon="mdi-birthday-cake" style="font-size:11px;color:#8B46D3;flex-shrink:0;"></span>
+                            <span class="text-[#8B46D3] text-[11px] font-semibold">{{ trim($umur) }}</span>
+                        </div>
+                        <div class="flex gap-1">
+                            <span class="iconify" data-icon="{{ $isMale ? 'mdi-gender-male' : 'mdi-gender-female' }}" 
+                                style="font-size:14px;color:{{ $isMale ? '#2635DA' : '#F41E56' }};flex-shrink:0;"></span>
+                            <span class="text-[11px] font-semibold" style="color:{{ $isMale ? '#2635DA' : '#F41E56' }}">{{ $isMale ? 'Male' : 'Female' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                @if($hasDetail)
+                {{-- Divider --}}
+                <div class="h-px bg-[#F0ECF8] mx-3"></div>
+
+                {{-- Detail rows --}}
+                <div class="px-3 py-3 flex flex-col gap-3">
+
+                    @if(!empty($child['catatan_khusus']))
+                    <div class="flex items-start gap-3">
+                        <div class="w-[32px] h-[32px] rounded-[8px] bg-[#FEF3C7] flex items-center justify-center shrink-0">
+                            <span class="iconify" data-icon="mdi:file-document-outline" style="font-size:15px;color:#D97706;"></span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-[10px] font-extrabold text-[#8B86A5] uppercase tracking-wider mb-0.5">Special Notes</p>
+                            <p class="text-[#1E1B2E] text-[13px] font-semibold leading-[19px]">{{ $child['catatan_khusus'] }}</p>
+                        </div>
                     </div>
                     @endif
-                </div>
-                {{-- Info --}}
-                <div class="flex-1 min-w-0">
-                    <p class="truncate" style="font-size:17px;font-weight:700;color:#4A0E35;margin-bottom:8px;">
-                        {{ $child['nama'] }}
-                    </p>
-                    <div class="flex items-center" style="gap:14px;">
-                        <div class="flex items-center" style="gap:4px;">
-                            <ion-icon name="gift" style="font-size:13px;color:#7B1E5A;flex-shrink:0;"></ion-icon>
-                            <span style="font-size:13px;color:#7B1E5A;font-weight:500;">{{ trim($umur) }}</span>
+
+                    @if(!empty($child['alergi']))
+                    <div class="flex items-start gap-3">
+                        <div class="w-[32px] h-[32px] rounded-[8px] bg-[#FEE2E2] flex items-center justify-center shrink-0">
+                            <span class="iconify" data-icon="mdi:alert-outline" style="font-size:15px;color:#EF4444;"></span>
                         </div>
-                        <div class="flex items-center" style="gap:4px;">
-                            <ion-icon name="{{ $isMale ? 'male' : 'female' }}" style="font-size:13px;color:#7B1E5A;flex-shrink:0;"></ion-icon>
-                            <span style="font-size:13px;color:#7B1E5A;font-weight:500;">{{ $isMale ? 'Laki-laki' : 'Perempuan' }}</span>
+                        <div class="flex-1">
+                            <p class="text-[10px] font-extrabold text-[#8B86A5] uppercase tracking-wider mb-0.5">Allergies</p>
+                            <p class="text-[#1E1B2E] text-[13px] font-semibold leading-[19px]">{{ $child['alergi'] }}</p>
                         </div>
                     </div>
-                </div>
-            </div>
+                    @endif
 
-            @if($hasDetail)
-            {{-- Divider --}}
-            <div style="height:1px;background:#F3E6FA;margin:0 16px;"></div>
+                    @if(!empty($child['hobi']))
+                    <div class="flex items-start gap-3">
+                        <div class="w-[32px] h-[32px] rounded-[8px] bg-[#D6D8F3] flex items-center justify-center shrink-0">
+                            <span class="iconify" data-icon="mdi:heart-outline" style="font-size:15px;color:#2635DA;"></span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-[10px] font-extrabold text-[#8B86A5] uppercase tracking-wider mb-0.5">Hobby</p>
+                            <p class="text-[#1E1B2E] text-[13px] font-semibold leading-[19px]">{{ $child['hobi'] }}</p>
+                        </div>
+                    </div>
+                    @endif
 
-            {{-- Detail section --}}
-            <div style="padding:16px;">
-                @if(!empty($child['catatan_khusus']))
-                <div class="detail-row">
-                    <div class="flex items-center justify-center flex-shrink-0"
-                         style="width:32px;height:32px;border-radius:10px;background:#F3E6FA;margin-right:12px;">
-                        <ion-icon name="document-text" style="font-size:16px;color:#7B1E5A;"></ion-icon>
-                    </div>
-                    <div class="flex-1">
-                        <p style="font-size:12px;color:#A2397B;font-weight:600;margin-bottom:3px;">Catatan Khusus</p>
-                        <p style="font-size:14px;color:#4A0E35;font-weight:500;line-height:20px;">{{ $child['catatan_khusus'] }}</p>
-                    </div>
                 </div>
                 @endif
-                @if(!empty($child['alergi']))
-                <div class="detail-row">
-                    <div class="flex items-center justify-center flex-shrink-0"
-                         style="width:32px;height:32px;border-radius:10px;background:#FEE2E2;margin-right:12px;">
-                        <ion-icon name="warning" style="font-size:16px;color:#EF4444;"></ion-icon>
-                    </div>
-                    <div class="flex-1">
-                        <p style="font-size:12px;color:#A2397B;font-weight:600;margin-bottom:3px;">Alergi</p>
-                        <p style="font-size:14px;color:#4A0E35;font-weight:500;line-height:20px;">{{ $child['alergi'] }}</p>
-                    </div>
-                </div>
-                @endif
-                @if(!empty($child['hobi']))
-                <div class="detail-row">
-                    <div class="flex items-center justify-center flex-shrink-0"
-                         style="width:32px;height:32px;border-radius:10px;background:#F3E6FA;margin-right:12px;">
-                        <ion-icon name="heart" style="font-size:16px;color:#7B1E5A;"></ion-icon>
-                    </div>
-                    <div class="flex-1">
-                        <p style="font-size:12px;color:#A2397B;font-weight:600;margin-bottom:3px;">Hobi</p>
-                        <p style="font-size:14px;color:#4A0E35;font-weight:500;line-height:20px;">{{ $child['hobi'] }}</p>
-                    </div>
-                </div>
-                @endif
+
             </div>
-            @endif
+            @endforeach
         </div>
-        @endforeach
 
         <div style="height:30px;"></div>
     </div>
 
     @else
-    {{-- Empty --}}
-    <div class="flex-1 flex flex-col items-center justify-center" style="padding:40px;">
-        <div class="float-anim flex items-center justify-center"
-             style="width:120px;height:120px;border-radius:60px;background:#F3E6FA;margin-bottom:24px;">
-            <ion-icon name="happy-outline" style="font-size:60px;color:#B895C8;"></ion-icon>
+    {{-- EMPTY STATE --}}
+    <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar flex flex-col items-center justify-center">
+        <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-5">
+            <ion-icon name="happy-outline" style="font-size:44px;color:#C4B5FD;"></ion-icon>
         </div>
-        <p class="text-center" style="font-size:18px;font-weight:700;color:#4A0E35;margin-bottom:8px;">Belum ada data anak</p>
-        <p class="text-center" style="font-size:14px;color:#A2397B;line-height:22px;">
+        <h3 class="text-[#1E1B2E] font-extrabold text-lg mb-2">Belum ada data anak</h3>
+        <p class="text-[#8B86A5] text-sm text-center leading-relaxed px-8">
             @if($assignmentData)
-                Penugasan dengan {{ $assignmentData['majikan_name'] ?? '' }}<br>
+                Penugasan dengan <span class="font-bold text-[#8B46D3]">{{ $assignmentData['majikan_name'] ?? '' }}</span><br>
                 {{ $assignmentData['tanggal_mulai'] ?? '' }} – {{ $assignmentData['tanggal_selesai'] ?? '' }}
             @else
                 Tidak ada penugasan aktif saat ini
@@ -224,6 +236,7 @@
     @include('partials.bottom-nav', ['active' => ''])
 </div>
 </div>
+
 <script>
     function updateClock(){const n=new Date(),e=document.getElementById('statusTime');if(e)e.textContent=String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');}
     updateClock();setInterval(updateClock,30000);
