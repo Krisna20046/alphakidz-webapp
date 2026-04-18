@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -38,6 +39,7 @@ class NannyController extends Controller
     }
 
     // ── Data Anak ─────────────────────────────────────────────────────────────
+
     public function dataAnak()
     {
         $assignmentData = null;
@@ -56,6 +58,7 @@ class NannyController extends Controller
     }
 
     // ── Konsultan ─────────────────────────────────────────────────────────────
+
     public function konsultan()
     {
         $data = null;
@@ -74,6 +77,7 @@ class NannyController extends Controller
     }
 
     // ── Majikan ───────────────────────────────────────────────────────────────
+
     public function majikan()
     {
         $data     = null;
@@ -93,73 +97,87 @@ class NannyController extends Controller
         return view('nanny.data-majikan', compact('data', 'children'));
     }
 
-    // ── Choose Diary: daftar anak dari penugasan nanny ─────────────────────────
+    // ── Choose Diary: langsung redirect ke anak pertama ──────────────────────
 
     public function chooseDiary()
     {
-        $assignmentData = null;
+        ['anakList' => $anakList, 'idAssignment' => $idAssignment] = $this->fetchAnakData();
 
-        $res = Http::withHeaders($this->headers())
-            ->get($this->apiUrl('/nanny-assignments-anak-for-nanny'));
-
-        if ($res->successful()) {
-            $body = $res->json();
-            if (($body['status'] ?? '') === 'success' && !empty($body['data'])) {
-                $assignmentData = $body['data'][0];
-            }
+        if (!empty($anakList)) {
+            $firstId = (int) $anakList[0]['id'];
+            return redirect()->route('nanny-diary', [
+                'id_anak'       => $firstId,
+                'id_assignment' => $idAssignment,
+            ]);
         }
 
-        return view('nanny.diary-choose', compact('assignmentData'));
+        // Tidak ada anak — tampil empty state
+        return view('nanny.diary', [
+            'anakList'     => [],
+            'idAnak'       => null,
+            'idAssignment' => null,
+            'tanggal'      => date('Y-m-d'),
+            'tanggalIndo'  => $this->formatTanggalIndo(date('Y-m-d')),
+            'diaryData'    => null,
+            'aktivitas'    => [],
+            'activeKat'    => '',
+        ]);
     }
 
-    // ── Diary: list aktivitas anak pada tanggal tertentu ──────────────────────
+    // ── Diary: list aktivitas anak pada tanggal tertentu ─────────────────────
 
     public function showDiary(Request $request, int $id_anak)
     {
-        $tanggal  = $request->query('tanggal', now()->format('Y-m-d'));
-        $kategori = $request->query('kategori', '');
+        $token        = session('token');
+        $tanggal      = $request->get('tanggal', date('Y-m-d'));
+        $kategori     = $request->get('kategori', '');
+        $idAssignment = (int) $request->get('id_assignment', 0);
 
-        $formData = ['id_anak' => $id_anak, 'tanggal' => $tanggal];
-        if ($kategori) $formData['kategori'] = $kategori;
+        $diaryData = null;
+        $aktivitas = [];
 
-        $res = Http::withHeaders($this->headers())
-            ->asForm()
-            ->post($this->apiUrl('/diary-for-nanny'), $formData);
+        // Ambil daftar anak + id_assignment dari API
+        ['anakList' => $anakList, 'idAssignment' => $idAssignmentFromApi] = $this->fetchAnakData();
 
-        $diaryData  = null;
-        $aktivitas  = [];
-        $idAssignment = null;
-
-        if ($res->successful()) {
-            $body = $res->json();
-            if (($body['status'] ?? '') === 'success') {
-                $diaryData = $body['data'];
-                $idAssignment = $diaryData['id_assignment'] ?? null;
-                $idAnak = $diaryData['id_anak'] ?? 0;
-
-                // Flatten aktivitas dan format field waktu
-                $rawAkt = $diaryData['aktivitas_per_tanggal'][0]['aktivitas'] ?? [];
-                foreach ($rawAkt as $item) {
-                    $dur     = $item['durasi'] ?? ['jam' => 0, 'menit' => 0];
-                    $durFmt  = ($dur['jam'] > 0 ? $dur['jam'] . ' jam ' : '') . $dur['menit'] . ' menit';
-                    $aktivitas[] = array_merge($item, [
-                        'jam_mulai_fmt'  => $this->fmtJam($item['jam_mulai']  ?? ''),
-                        'jam_selesai_fmt'=> $this->fmtJam($item['jam_selesai'] ?? ''),
-                        'durasi_fmt'     => $durFmt,
-                    ]);
-                }
-            }
+        // Gunakan id_assignment dari query string; fallback ke hasil API
+        if (!$idAssignment && $idAssignmentFromApi) {
+            $idAssignment = $idAssignmentFromApi;
         }
 
-        $tanggalIndo = $this->tanggalIndo($tanggal);
+        try {
+            $payload = ['id_anak' => $id_anak, 'tanggal' => $tanggal];
+            if ($kategori) $payload['kategori'] = $kategori;
+
+            $res  = Http::withToken($token)
+                        ->asMultipart()
+                        ->post($this->apiUrl('/diary-for-nanny'), $payload);
+            $json = $res->json();
+
+            if (($json['status'] ?? '') === 'success' && isset($json['data'])) {
+                $diaryData = $json['data'];
+
+                $rawAktivitas = $diaryData['aktivitas_per_tanggal'][0]['aktivitas'] ?? [];
+                $aktivitas    = array_map(fn($a) => $this->formatAktivitas($a), $rawAktivitas);
+            }
+        } catch (\Exception $e) {
+            // silent — tampil empty state
+        }
+
+        $tanggalIndo = $this->formatTanggalIndo($tanggal);
+        $activeKat   = $kategori;
 
         return view('nanny.diary', compact(
-            'diaryData', 'aktivitas', 'idAnak', 'tanggal', 'tanggalIndo',
-            'kategori', 'idAssignment'
+            'anakList',
+            'tanggal',
+            'tanggalIndo',
+            'diaryData',
+            'aktivitas',
+            'activeKat',
+            'idAssignment'
         ) + ['idAnak' => $id_anak]);
     }
 
-    // ── Add Diary: tampilkan form ──────────────────────────────────────────────
+    // ── Add Diary: tampilkan form ─────────────────────────────────────────────
 
     public function showAdd(Request $request, int $id_anak)
     {
@@ -185,8 +203,6 @@ class NannyController extends Controller
             'foto'          => 'nullable|image|max:4096',
         ]);
 
-        // Build multipart array — setiap elemen harus berupa array asosiatif
-        // dengan key 'name' dan 'contents' (Laravel Http::asMultipart format)
         $multipart = [
             ['name' => 'id_assignment', 'contents' => (string) $request->id_assignment],
             ['name' => 'id_anak',       'contents' => (string) $request->id_anak],
@@ -197,7 +213,6 @@ class NannyController extends Controller
             ['name' => 'deskripsi',     'contents' => (string) ($request->deskripsi ?? '')],
         ];
 
-        // Jika ada file foto, tambahkan sebagai stream
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
             $multipart[] = [
@@ -217,4 +232,117 @@ class NannyController extends Controller
         $data = $res->json() ?? ['status' => 'error', 'message' => 'Tidak ada respon dari server'];
         return response()->json($data);
     }
+
+    // ── Private helpers ───────────────────────────────────────────────────────
+
+    /**
+     * Fetch daftar anak + id_assignment dari assignment aktif nanny.
+     *
+     * Response shape:
+     * {
+     *   "status": "success",
+     *   "data": [
+     *     {
+     *       "id_assignment": 24,
+     *       "anak": [{ "id": "25", "nama": "...", "foto": null, ... }]
+     *     }
+     *   ]
+     * }
+     *
+     * @return array{ anakList: array, idAssignment: int|null }
+     */
+    private function fetchAnakData(): array
+    {
+        $res = Http::withHeaders($this->headers())
+            ->get($this->apiUrl('/nanny-assignments-anak-for-nanny'));
+
+        if ($res->successful()) {
+            $body = $res->json();
+
+            if (($body['status'] ?? '') === 'success' && !empty($body['data'])) {
+                // Ambil assignment pertama yang aktif
+                $assignment   = $body['data'][0];
+                $idAssignment = (int) ($assignment['id_assignment'] ?? 0) ?: null;
+
+                // Normalise: pastikan id anak bertipe int
+                $anakList = array_map(function (array $anak) {
+                    $anak['id'] = (int) $anak['id'];
+                    return $anak;
+                }, $assignment['anak'] ?? []);
+
+                return [
+                    'anakList'     => $anakList,
+                    'idAssignment' => $idAssignment,
+                ];
+            }
+        }
+
+        return ['anakList' => [], 'idAssignment' => null];
+    }
+
+    /** @deprecated Gunakan fetchAnakData() */
+    private function fetchAnakList(): array
+    {
+        return $this->fetchAnakData()['anakList'];
+    }
+
+    private function formatTanggalIndo(string $tanggal): string
+    {
+        $months = ['','Januari','Februari','Maret','April','Mei','Juni',
+                       'Juli','Agustus','September','Oktober','November','Desember'];
+        try {
+            $d = new \DateTime($tanggal);
+            return $d->format('j') . ' ' . $months[(int)$d->format('n')] . ' ' . $d->format('Y');
+        } catch (\Exception $e) {
+            return $tanggal;
+        }
+    }
+
+    /**
+     * Format satu item aktivitas dari API menjadi array yang siap dipakai view.
+     */
+private function formatAktivitas(array $a): array
+{
+    // 1. Format Jam Mulai & Selesai
+    $jamMulai   = $a['jam_mulai']   ?? null;
+    $jamSelesai = $a['jam_selesai'] ?? null;
+
+    $a['jam_mulai_fmt']   = $jamMulai   ? date('H:i', strtotime($jamMulai))   : '-';
+    $a['jam_selesai_fmt'] = $jamSelesai ? date('H:i', strtotime($jamSelesai)) : '-';
+
+    // 2. Format Durasi (Output: "X jam Y menit" atau "Y menit")
+    $durasi = $a['durasi'] ?? [];
+    
+    // Pastikan $durasi adalah array sebelum mengakses key-nya
+    if (is_array($durasi)) {
+        $jam   = $durasi['jam']   ?? 0;
+        $menit = $durasi['menit'] ?? 0;
+
+        if ($jam == 0 && $menit == 0) {
+            $a['durasi_fmt'] = '-';
+        } else {
+            $jamStr = $jam > 0 ? "{$jam} jam " : '';
+            $a['durasi_fmt'] = "{$jamStr}{$menit} menit";
+        }
+    } else {
+        // Jika durasi bukan array (misal integer/string), gunakan nilai aslinya atau fallback
+        $a['durasi_fmt'] = $durasi ?: '-';
+    }
+
+    // 3. Pastikan fallback untuk field lainnya tetap ada
+    return [
+        'id'              => $a['id'] ?? null,
+        'kategori'        => $a['kategori'] ?? 'main',
+        'jam_mulai_fmt'   => $a['jam_mulai_fmt'],
+        'jam_selesai_fmt' => $a['jam_selesai_fmt'],
+        'durasi_fmt'      => $a['durasi_fmt'],
+        'mood'            => $a['mood'] ?? '',
+        'deskripsi'       => $a['deskripsi'] ?? '',
+        'foto_url'        => $a['foto_url'] ?? ($a['foto'] ?? ''),
+        'lokasi'          => $a['lokasi'] ?? '',
+        'lat'             => $a['lat'] ?? '',
+        'lng'             => $a['lng'] ?? '',
+        'nanny_name'      => $a['nanny_name'] ?? ($a['nanny'] ?? ''),
+    ];
+}
 }

@@ -163,7 +163,7 @@
 
         /* ── Add Item Dashed Button ── */
         .add-item-btn {
-            border: 2px dashed #A78BFA; border-radius: 18px;
+            border: 2px dashed #ffffff; border-radius: 18px;
             background: rgba(139,70,211,0.07);
             transition: background 0.18s ease, border-color 0.18s ease; cursor: pointer;
         }
@@ -173,7 +173,7 @@
         /* ── Save Button ── */
         .btn-save-all {
             width: 100%; padding: 15px; border-radius: 16px;
-            background: #6C3FC5; color: white;
+            background: #ffffff; color: #6C3FC5;
             font-size: 16px; font-weight: 800;
             display: flex; align-items: center; justify-content: center; gap: 8px;
             cursor: pointer; transition: opacity 0.18s ease, transform 0.15s ease; border: none;
@@ -332,8 +332,8 @@
             </div>
 
             <div class="add-item-btn py-4 flex items-center justify-center gap-2" onclick="openAddSheet()">
-                <span class="iconify" data-icon="material-symbols:add-circle-outline-rounded" style="font-size:20px;color:#8B46D3;"></span>
-                <span class="text-[#8B46D3] text-[14px] font-extrabold">Add New Item</span>
+                <span class="iconify" data-icon="material-symbols:add-circle-outline-rounded" style="font-size:20px;color:#ffffff;"></span>
+                <span class="text-[#ffffff] text-[14px] font-extrabold">Add New Item</span>
             </div>
 
             <button class="btn-save-all" id="saveAllBtn" onclick="saveAllChanges()">
@@ -367,8 +367,8 @@
 
                 <!-- Info card -->
                 <div class="bg-white/90 backdrop-blur-sm rounded-[18px] px-4 py-4 flex items-center gap-4 shadow-sm">
-                    <div class="w-12 h-12 rounded-full bg-[#FEF3C7] flex items-center justify-center shrink-0">
-                        <span class="iconify" data-icon="material-symbols:people-rounded" style="font-size:22px;color:#F59E0B;"></span>
+                    <div class="w-12 h-12 rounded-full bg-[#ede9fb] flex items-center justify-center shrink-0">
+                        <span class="iconify" data-icon="material-symbols:group-rounded" style="font-size:22px;color:#8B46D3;"></span>
                     </div>
                     <div>
                         <p class="text-[#1F2937] text-[16px] font-extrabold">Shared Inventory</p>
@@ -402,11 +402,10 @@
                 <!-- Nanny-only actions -->
                 <div id="nannyActions" class="hidden flex flex-col gap-3">
                     <div class="add-item-btn py-4 flex items-center justify-center gap-2" onclick="openSharedAddSheet()">
-                        <span class="iconify" data-icon="material-symbols:add-circle-outline-rounded" style="font-size:20px;color:#8B46D3;"></span>
-                        <span class="text-[#8B46D3] text-[14px] font-extrabold">Add Shared Item</span>
+                        <span class="iconify" data-icon="material-symbols:add-circle-outline-rounded" style="font-size:20px;color:#ffffff;"></span>
+                        <span class="text-[#ffffff] text-[14px] font-extrabold">Add Shared Item</span>
                     </div>
-                    <button class="btn-save-all" id="saveSharedBtn" onclick="saveSharedChanges()"
-                        style="background:linear-gradient(135deg,#F59E0B,#F97316);">
+                    <button class="btn-save-all" id="saveSharedBtn" onclick="saveSharedChanges()">
                         <span class="iconify" data-icon="material-symbols:save-rounded" style="font-size:20px;"></span>
                         Save Shared Changes
                     </button>
