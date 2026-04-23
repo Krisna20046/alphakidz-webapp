@@ -7,7 +7,7 @@
     <title>Rekap Diary Nanny</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
@@ -17,15 +17,15 @@
                 extend: {
                     colors: {
                         plum: {
-                            DEFAULT: '#7B1E5A',
-                            light:   '#9B2E72',
-                            dark:    '#4A0E35',
-                            pale:    '#FFF9FB',
-                            soft:    '#F3E6FA',
-                            muted:   '#A2397B',
+                            DEFAULT: '#8B46D3',
+                            light:   '#9F58F8',
+                            dark:    '#1E1B2E',
+                            pale:    '#F8F7FF',
+                            soft:    '#EDE9FE',
+                            muted:   '#8B86A5',
                         }
                     },
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
+                    fontFamily: { sans: ['Nunito', 'sans-serif'] }
                 }
             }
         }
@@ -33,20 +33,20 @@
 
     <style>
         * { -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #FFF9FB; }
+        body { font-family: 'Nunito', sans-serif; background: #E5E2F5; }
 
         /* ── Desktop phone frame ── */
         @media (min-width: 640px) {
             .phone-wrapper {
                 display: flex; align-items: flex-start; justify-content: center;
                 min-height: 100vh; padding: 32px 0;
-                background: linear-gradient(135deg, #f8e8f3 0%, #ede0f0 60%, #e8d5ee 100%);
+                background: #E5E2F5;
             }
             .phone-frame {
                 width: 390px; min-height: 844px;
                 border-radius: 44px;
-                box-shadow: 0 40px 80px rgba(123,30,90,0.25),
-                            0 0 0 8px #1a0d14, 0 0 0 10px #2d1020;
+                box-shadow: 0 40px 80px rgba(124,58,237,0.28),
+                            0 0 0 8px #1a1030, 0 0 0 10px #2d1a50;
                 overflow: hidden; position: relative;
             }
         }
@@ -55,8 +55,8 @@
             .phone-frame   { min-height: 100vh; }
         }
 
-        .header-bg { background: linear-gradient(135deg, #7B1E5A 0%, #9B2E72 100%); }
-        .header-wave { border-radius: 0 0 30px 30px; }
+        .header-bg { background: radial-gradient(circle at top left, rgba(255,255,255,0.14), transparent 34%), linear-gradient(135deg, #A855F7 0%, #8B46D3 40%, #9F58F8 100%); }
+        .header-wave { border-radius: 0; }
 
         /* Skeleton shimmer */
         @keyframes shimmer {
@@ -140,16 +140,44 @@
             100% { transform: scale(1); }
         }
         .badge-pop { animation: badgePop .3s ease forwards; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .shell-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(248,247,255,0.98) 58%, rgba(212,186,239,0.48) 100%);
+            border-radius: 50px 50px 0 0;
+            box-shadow: 0 -10px 30px rgba(139, 70, 211, 0.08);
+        }
+        .field-card {
+            background: rgba(255,255,255,0.86);
+            border: 1px solid #D8CAEF;
+            border-radius: 10px;
+            transition: border-color .15s ease, box-shadow .15s ease;
+        }
+        .field-card:focus-within, .field-card.active {
+            border-color: #8B46D3;
+            box-shadow: 0 0 0 3px rgba(139, 70, 211, 0.10);
+        }
+        .nanny-card { transition: transform .15s ease; }
+        .nanny-card:active { transform: scale(0.98); }
+        .category-chip {
+            border: 1.5px solid transparent;
+            transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+        }
+        .category-chip:active { transform: scale(0.96); }
+        .category-chip.active {
+            border-color: #8B46D3;
+            box-shadow: 0 6px 16px rgba(139,70,211,0.14);
+        }
     </style>
 </head>
-<body>
+<body class="font-['Nunito'] bg-[#E5E2F5]">
 
 <div class="phone-wrapper">
-<div class="phone-frame bg-plum-pale flex flex-col">
+<div class="phone-frame bg-[#F0EDFB] flex flex-col">
 
     <!-- STATUS BAR -->
-    <div class="hidden sm:flex items-center justify-between px-8 pt-4 pb-1 bg-plum">
-        <span class="text-xs font-semibold text-white/80" id="statusTime">9:41</span>
+    <div class="hidden sm:flex items-center justify-between px-6 pt-[14px] text-white text-xs font-bold bg-[#8B46D3]">
+        <span id="statusTime">9:41</span>
         <div class="flex gap-1 items-center text-white">
             <svg class="w-4 h-3" viewBox="0 0 17 12" fill="white" opacity="0.8"><rect x="0" y="3" width="3" height="9" rx="0.5"/><rect x="4.5" y="2" width="3" height="10" rx="0.5"/><rect x="9" y="0.5" width="3" height="11.5" rx="0.5"/></svg>
             <div class="flex items-center"><div class="w-6 h-3 border border-white/70 rounded-sm p-px flex items-stretch"><div class="bg-white rounded-xs flex-1"></div></div></div>
@@ -157,177 +185,146 @@
     </div>
 
     <!-- HEADER -->
-    <div class="header-bg header-wave px-5 pt-10 pb-8 relative shrink-0 overflow-hidden">
-        <div class="absolute top-0 right-0 w-40 h-40 rounded-full bg-white/5 -translate-y-10 translate-x-10"></div>
-        <div class="absolute bottom-0 left-0 w-24 h-24 rounded-full bg-white/5 translate-y-6 -translate-x-6"></div>
-        <div class="relative flex items-center gap-4">
+    <div class="header-bg header-wave px-[20px] pt-[54px] pb-[102px] relative shrink-0 overflow-hidden">
+        <div class="absolute inset-0 opacity-25 bg-[url('/assets/bg-texture.png')] bg-cover bg-center"></div>
+        <div class="relative z-10 flex items-start gap-3">
             <a href="{{ url()->previous() }}"
-               class="flex-shrink-0 w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors">
-                <ion-icon name="arrow-back" style="font-size:20px;color:#fff;"></ion-icon>
+               class="mt-0.5 flex-shrink-0 w-10 h-10 rounded-full bg-white/20 border border-white/25 flex items-center justify-center">
+                <ion-icon name="arrow-back" style="font-size:18px;color:#fff;"></ion-icon>
             </a>
-            <div>
-                <p class="text-white/60 text-xs font-medium mb-0.5">Konsultan</p>
-                <h1 class="text-white text-xl font-extrabold tracking-wide leading-tight">Rekap Diary Nanny</h1>
-                <p class="text-white/50 text-xs mt-0.5">Generate laporan aktivitas nanny</p>
+            <div class="min-w-0">
+                <h1 class="text-white text-[18px] font-extrabold leading-tight">Diary Recap</h1>
+                <p class="text-white/70 text-[11px] font-semibold mt-0.5 leading-[1.35]">Generate Nanny Diary Report</p>
             </div>
         </div>
     </div>
 
     <!-- SCROLLABLE BODY -->
-    <div class="flex-1 overflow-y-auto no-scrollbar" id="mainBody">
+    <div class="shell-card flex-1 overflow-y-auto hide-scrollbar px-[18px] pt-[18px] pb-28 -mt-[58px] relative z-20" id="mainBody">
 
         <!-- ── STEP 1: PILIH NANNY ─────────────────────────────────────── -->
-        <div id="step1" class="px-4 pt-5 pb-4">
+        <div id="step1" class="pb-4">
 
             <!-- Step indicator -->
-            <div class="flex items-center gap-2 mb-5 anim-up d1">
-                <div class="flex items-center gap-1.5">
-                    <div class="w-7 h-7 rounded-full bg-plum flex items-center justify-center">
-                        <span class="text-white text-xs font-bold">1</span>
-                    </div>
-                    <span class="text-plum-dark text-sm font-bold">Pilih Nanny</span>
-                </div>
-                <div class="flex-1 h-px bg-plum-soft"></div>
-                <div class="flex items-center gap-1.5 opacity-40">
-                    <div class="w-7 h-7 rounded-full bg-plum-soft flex items-center justify-center">
-                        <span class="text-plum text-xs font-bold">2</span>
-                    </div>
-                    <span class="text-plum-muted text-sm font-semibold">Filter</span>
+            <div class="flex items-center justify-between mb-3 anim-up d1">
+                <h2 class="text-[#5A556E] text-[18px] font-extrabold">Nanny's Assignment</h2>
+                <div class="bg-[#EDE9FE] px-3 py-1 rounded-full">
+                    <span id="nannyCountBadge" class="hidden text-[#8B46D3] text-xs font-bold badge-pop"></span>
                 </div>
             </div>
 
             <!-- Search & info -->
             <div class="anim-up d2 mb-4">
-                <div class="flex items-center gap-2 bg-white rounded-2xl border-2 border-plum-soft px-4 py-3 shadow-sm">
-                    <ion-icon name="search-outline" style="font-size:18px;color:#A2397B;"></ion-icon>
+                <div class="flex items-center bg-[#F4F4F4] rounded-full px-4 py-2.5 border border-[#DDD6EF] gap-2 transition-all focus-within:border-[#8B46D3] focus-within:shadow-[0_0_0_3px_rgba(139,70,211,0.14)]">
+                    <ion-icon name="search-outline" style="font-size:16px;color:#8B86A5;flex-shrink:0;"></ion-icon>
                     <input id="searchInput"
                            type="text"
-                           placeholder="Cari nama nanny..."
-                           class="flex-1 text-sm text-plum-dark placeholder-plum-muted bg-transparent outline-none font-medium"
+                           placeholder="Search nanny...."
+                           class="flex-1 text-[13px] font-semibold text-[#4B5563] placeholder-[#9CA3AF] bg-transparent outline-none"
                            oninput="filterNannies(this.value)"
                     />
-                    <span id="nannyCountBadge" class="hidden bg-plum-soft text-plum text-xs font-bold px-2 py-0.5 rounded-full badge-pop"></span>
                 </div>
             </div>
 
             <!-- Nanny list container -->
-            <div id="nannyList" class="anim-up d3 space-y-3"></div>
+            <div id="nannyList" class="anim-up d3 flex flex-col gap-2"></div>
 
         </div>
 
         <!-- ── STEP 2: FILTER & GENERATE ─────────────────────────────── -->
-        <div id="step2" class="hidden px-4 pt-5 pb-16">
+        <div id="step2" class="hidden pb-16">
 
             <!-- Step indicator -->
-            <div class="flex items-center gap-2 mb-5">
-                <div class="flex items-center gap-1.5 opacity-40">
-                    <div class="w-7 h-7 rounded-full bg-plum-soft flex items-center justify-center">
-                        <ion-icon name="checkmark" style="font-size:14px;color:#7B1E5A;"></ion-icon>
-                    </div>
-                    <span class="text-plum-muted text-sm font-semibold">Pilih Nanny</span>
-                </div>
-                <div class="flex-1 h-px bg-plum"></div>
-                <div class="flex items-center gap-1.5">
-                    <div class="w-7 h-7 rounded-full bg-plum flex items-center justify-center">
-                        <span class="text-white text-xs font-bold">2</span>
-                    </div>
-                    <span class="text-plum-dark text-sm font-bold">Filter</span>
-                </div>
-            </div>
-
-            <!-- Selected nanny card -->
-            <div id="selectedNannyCard" class="bg-white rounded-2xl border-2 border-plum-soft p-4 mb-5 flex items-center gap-4 shadow-sm">
-                <div id="selAvatar" class="w-14 h-14 rounded-2xl bg-plum-soft flex items-center justify-center overflow-hidden border-2 border-plum-soft flex-shrink-0">
-                    <ion-icon name="person" style="font-size:28px;color:#7B1E5A;"></ion-icon>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p id="selName" class="text-plum-dark text-base font-bold truncate">-</p>
-                    <p id="selEmail" class="text-plum-muted text-xs truncate mt-0.5">-</p>
-                    <div class="flex items-center gap-1 mt-1.5">
-                        <div class="w-2 h-2 rounded-full bg-blue-500"></div>
-                        <span class="text-blue-600 text-xs font-semibold">Aktif Bertugas</span>
-                    </div>
-                </div>
-                <button onclick="backToStep1()"
-                        class="w-9 h-9 rounded-xl bg-plum-soft flex items-center justify-center flex-shrink-0 hover:bg-red-50 transition-colors">
-                    <ion-icon name="close" style="font-size:18px;color:#7B1E5A;"></ion-icon>
+            <div class="mb-3">
+                <button onclick="backToStep1()" class="inline-flex items-center gap-1.5 text-[#8B46D3] text-[12px] font-extrabold">
+                    <ion-icon name="chevron-back" style="font-size:14px;"></ion-icon>
+                    Pilih nanny lain
                 </button>
             </div>
 
-            <!-- Form Card -->
-            <div class="bg-white rounded-2xl border-2 border-plum-soft p-5 mb-4 shadow-sm">
-                <div class="flex items-center gap-2 mb-5">
-                    <div class="w-8 h-8 rounded-xl bg-plum-soft flex items-center justify-center">
-                        <ion-icon name="filter" style="font-size:16px;color:#7B1E5A;"></ion-icon>
+            <!-- Selected nanny card -->
+            <div id="selectedNannyCard" class="bg-white/95 rounded-[14px] px-4 pt-5 pb-4 mb-4 shadow-[0_2px_10px_rgba(0,0,0,0.10)] border border-[#EAE6F5]">
+                <div class="flex flex-col items-center text-center">
+                    <div id="selAvatar" class="w-[78px] h-[78px] rounded-full bg-[#F3EEFC] flex items-center justify-center overflow-hidden border-[3px] border-[#D8CAEF] shadow-[0_4px_10px_rgba(139,70,211,0.16)]">
+                        <ion-icon name="person" style="font-size:30px;color:#8B46D3;"></ion-icon>
                     </div>
-                    <p class="text-plum-dark font-bold text-base">Filter Laporan</p>
+                    <p id="selName" class="text-[#1E1B2E] text-[15px] font-extrabold mt-3 truncate max-w-full">-</p>
+                    <span class="mt-1 inline-flex items-center rounded-full bg-[#DCFCE7] px-2 py-0.5 text-[9px] font-black text-[#166534]">ACTIVE</span>
+                    <div class="h-px w-full bg-[#E7DCF8] my-4"></div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex items-start gap-2.5">
+                        <div class="w-8 h-8 rounded-[5px] bg-[#EDE9FE] flex items-center justify-center flex-shrink-0"><ion-icon name="card-outline" style="font-size:15px;color:#8B46D3;"></ion-icon></div>
+                        <div class="min-w-0"><p class="text-[#B39BCF] text-[9px] font-black uppercase tracking-[1px]">Assignment ID</p><p id="selAssignmentId" class="text-[#1E1B2E] text-[12px] font-extrabold break-words">-</p></div>
+                    </div>
+                    <div class="flex items-start gap-2.5">
+                        <div class="w-8 h-8 rounded-[5px] bg-[#FDE7EF] flex items-center justify-center flex-shrink-0"><ion-icon name="mail-outline" style="font-size:15px;color:#EC4899;"></ion-icon></div>
+                        <div class="min-w-0"><p class="text-[#B39BCF] text-[9px] font-black uppercase tracking-[1px]">Email</p><p id="selEmail" class="text-[#1E1B2E] text-[12px] font-extrabold break-words">-</p></div>
+                    </div>
+                    <div class="flex items-start gap-2.5">
+                        <div class="w-8 h-8 rounded-[5px] bg-[#E8ECFF] flex items-center justify-center flex-shrink-0"><ion-icon name="call-outline" style="font-size:15px;color:#4F46E5;"></ion-icon></div>
+                        <div class="min-w-0"><p class="text-[#B39BCF] text-[9px] font-black uppercase tracking-[1px]">Phone Number</p><p id="selPhone" class="text-[#1E1B2E] text-[12px] font-extrabold break-words">-</p></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Card -->
+            <div class="bg-white/95 rounded-[14px] border border-[#EAE6F5] px-4 py-4 mb-4 shadow-[0_2px_10px_rgba(0,0,0,0.08)]">
+                <div class="flex items-center gap-1.5 mb-3">
+                    <ion-icon name="options-outline" style="font-size:15px;color:#8B46D3;"></ion-icon>
+                    <p class="text-[#1E1B2E] font-extrabold text-[13px]">Filter</p>
                 </div>
 
                 <!-- Tanggal Mulai -->
                 <div class="mb-4">
-                    <label class="block text-plum-muted text-xs font-semibold mb-2 uppercase tracking-wider">
-                        Tanggal Mulai <span class="text-red-500">*</span>
+                    <label class="block text-[#1E1B2E] text-[12px] font-bold mb-1.5">
+                        Start Date
                     </label>
-                    <div id="startDateWrapper" class="flex items-center gap-2 border-2 border-plum-soft rounded-xl px-4 py-3 bg-plum-pale focus-within:border-plum transition-colors">
-                        <ion-icon name="calendar-outline" style="font-size:18px;color:#A2397B;"></ion-icon>
+                    <div id="startDateWrapper" class="field-card flex items-center gap-2 px-3 py-2.5">
                         <input id="startDate" type="text" readonly
                                placeholder="YYYY-MM-DD"
-                               class="flex-1 text-sm text-plum-dark bg-transparent outline-none font-semibold cursor-pointer"
+                               class="flex-1 text-[12px] text-[#7C748F] bg-transparent outline-none font-extrabold cursor-pointer"
                                onclick="openDatePicker('start')"
                         />
-                        <ion-icon name="chevron-down" style="font-size:16px;color:#A2397B;" onclick="openDatePicker('start')" class="cursor-pointer"></ion-icon>
+                        <ion-icon name="calendar-outline" style="font-size:15px;color:#7C748F;" onclick="openDatePicker('start')" class="cursor-pointer"></ion-icon>
                     </div>
                     <p id="errStart" class="hidden text-red-500 text-xs mt-1 font-medium">Tanggal mulai harus diisi</p>
                 </div>
 
                 <!-- Tanggal Selesai -->
                 <div class="mb-4">
-                    <label class="block text-plum-muted text-xs font-semibold mb-2 uppercase tracking-wider">
-                        Tanggal Selesai <span class="text-red-500">*</span>
+                    <label class="block text-[#1E1B2E] text-[12px] font-bold mb-1.5">
+                        End Date
                     </label>
-                    <div id="endDateWrapper" class="flex items-center gap-2 border-2 border-plum-soft rounded-xl px-4 py-3 bg-plum-pale focus-within:border-plum transition-colors">
-                        <ion-icon name="calendar-outline" style="font-size:18px;color:#A2397B;"></ion-icon>
+                    <div id="endDateWrapper" class="field-card flex items-center gap-2 px-3 py-2.5">
                         <input id="endDate" type="text" readonly
                                placeholder="YYYY-MM-DD"
-                               class="flex-1 text-sm text-plum-dark bg-transparent outline-none font-semibold cursor-pointer"
+                               class="flex-1 text-[12px] text-[#7C748F] bg-transparent outline-none font-extrabold cursor-pointer"
                                onclick="openDatePicker('end')"
                         />
-                        <ion-icon name="chevron-down" style="font-size:16px;color:#A2397B;" onclick="openDatePicker('end')" class="cursor-pointer"></ion-icon>
+                        <ion-icon name="calendar-outline" style="font-size:15px;color:#7C748F;" onclick="openDatePicker('end')" class="cursor-pointer"></ion-icon>
                     </div>
                     <p id="errEnd" class="hidden text-red-500 text-xs mt-1 font-medium">Tanggal selesai harus diisi</p>
                 </div>
 
                 <!-- Kategori -->
                 <div class="mb-5">
-                    <label class="block text-plum-muted text-xs font-semibold mb-2 uppercase tracking-wider">
-                        Kategori <span class="text-plum-muted font-normal italic normal-case">(opsional)</span>
+                    <label class="block text-[#1E1B2E] text-[12px] font-bold mb-2">
+                        Activity Categories
                     </label>
-                    <button id="kategoriBtn" onclick="openKategoriModal()"
-                            class="w-full flex items-center justify-between border-2 border-plum-soft rounded-xl px-4 py-3 bg-plum-pale hover:border-plum transition-colors">
-                        <div class="flex items-center gap-2">
-                            <ion-icon name="list" style="font-size:18px;color:#A2397B;"></ion-icon>
-                            <span id="kategoriLabel" class="text-sm text-plum-muted font-medium">Semua Kategori</span>
-                        </div>
-                        <ion-icon name="chevron-down" style="font-size:16px;color:#A2397B;"></ion-icon>
-                    </button>
+                    <div id="categoryChips" class="flex flex-wrap gap-2"></div>
+                    <span id="kategoriLabel" class="hidden">Semua Kategori</span>
                 </div>
 
-                <!-- Export info -->
-                <div class="flex items-start gap-3 bg-blue-50 rounded-xl p-3 border border-blue-100">
-                    <ion-icon name="information-circle" style="font-size:20px;color:#3B82F6;" class="mt-0.5 flex-shrink-0"></ion-icon>
-                    <p class="text-blue-700 text-xs font-medium leading-relaxed">
-                        Laporan akan di-export dalam format <strong>Excel (.xlsx)</strong> dan otomatis terunduh
-                    </p>
-                </div>
             </div>
 
             <!-- Tips Card -->
-            <div class="bg-amber-50 rounded-2xl border-2 border-amber-100 p-4 mb-5">
+            <div class="bg-[#FFF7ED] rounded-[10px] border border-[#FED7AA] p-4 mb-5">
                 <div class="flex items-center gap-2 mb-3">
-                    <ion-icon name="bulb-outline" style="font-size:18px;color:#D97706;"></ion-icon>
-                    <p class="text-amber-700 font-bold text-sm">Informasi</p>
+                    <ion-icon name="information-circle-outline" style="font-size:16px;color:#F59E0B;"></ion-icon>
+                    <p class="text-[#D97706] font-extrabold text-[11px] uppercase tracking-wide">Information</p>
                 </div>
-                <ul class="space-y-1.5 text-xs text-plum-dark leading-relaxed">
+                <ul class="list-disc pl-5 space-y-0.5 text-[11px] text-[#7C748F] font-semibold leading-snug">
                     <li class="flex gap-2"><span class="text-amber-500 flex-shrink-0">•</span> Laporan mencakup semua diary dalam periode yang dipilih</li>
                     <li class="flex gap-2"><span class="text-amber-500 flex-shrink-0">•</span> Data dapat difilter berdasarkan kategori aktivitas</li>
                     <li class="flex gap-2"><span class="text-amber-500 flex-shrink-0">•</span> Pastikan periode tanggal sudah benar sebelum generate</li>
@@ -337,9 +334,9 @@
 
             <!-- Generate Button -->
             <button id="generateBtn" onclick="handleGenerate()"
-                    class="w-full flex items-center justify-center gap-3 bg-plum text-white rounded-2xl py-4 font-bold text-base shadow-lg shadow-plum/30 hover:bg-plum-light active:scale-95 transition-all mb-6">
-                <ion-icon name="download-outline" style="font-size:22px;"></ion-icon>
-                <span>Generate &amp; Download Laporan</span>
+                    class="w-full flex items-center justify-center gap-2 h-[44px] bg-[#8B46D3] text-white rounded-[8px] font-extrabold text-[13px] shadow-[0_8px_18px_rgba(139,70,211,0.32)] active:scale-[0.98] transition-all mb-6">
+                <ion-icon name="download-outline" style="font-size:16px;"></ion-icon>
+                <span>Generate &amp; Download Now</span>
             </button>
 
         </div>
@@ -492,12 +489,12 @@ let dpYear, dpMonth, dpDay;
 const MONTHS_ID = ['Januari','Februari','Maret','April','Mei','Juni',
                    'Juli','Agustus','September','Oktober','November','Desember'];
 const KATEGORI_OPTIONS = [
-    { value: '',        label: 'Semua Kategori',  icon: 'apps-outline'    },
-    { value: 'makan',   label: 'Makan',           icon: 'fast-food-outline' },
-    { value: 'tidur',   label: 'Tidur',           icon: 'moon-outline'    },
-    { value: 'main',    label: 'Main',            icon: 'game-controller-outline' },
-    { value: 'belajar', label: 'Belajar',         icon: 'book-outline'    },
-    { value: 'mandi',   label: 'Mandi',           icon: 'water-outline'   },
+    { value: '',        label: 'All',         short: 'All',       icon: 'apps-outline',            bg: '#EDE9FE', color: '#8B46D3' },
+    { value: 'makan',   label: 'Eat',         short: 'Eat',       icon: 'restaurant-outline',      bg: '#EDE9FE', color: '#8B46D3' },
+    { value: 'tidur',   label: 'Sleep',       short: 'Sleep',     icon: 'moon-outline',            bg: '#FDE7EF', color: '#EC4899' },
+    { value: 'main',    label: 'Play',        short: 'Play',      icon: 'game-controller-outline', bg: '#E8ECFF', color: '#4F46E5' },
+    { value: 'belajar', label: 'Study',       short: 'Study',     icon: 'book-outline',            bg: '#FEF3C7', color: '#D97706' },
+    { value: 'mandi',   label: 'Take Bath',   short: 'Take Bath', icon: 'water-outline',           bg: '#DCFCE7', color: '#16A34A' },
 ];
 
 // ── Clock ─────────────────────────────────────────────────────────────────────
@@ -591,8 +588,8 @@ async function fetchNannies() {
 function renderNannySkeleton() {
     const list = document.getElementById('nannyList');
     list.innerHTML = Array.from({length: 3}).map(() => `
-        <div class="bg-white rounded-2xl border-2 border-plum-soft p-4 flex items-center gap-4">
-            <div class="skeleton w-14 h-14 rounded-2xl flex-shrink-0"></div>
+        <div class="bg-white rounded-[14px] px-3 py-2.5 shadow-[0_2px_10px_rgba(0,0,0,0.08)] border border-[#EAE6F5] flex items-center gap-3">
+            <div class="skeleton w-[50px] h-[50px] rounded-[8px] flex-shrink-0"></div>
             <div class="flex-1 space-y-2">
                 <div class="skeleton h-4 w-32 rounded"></div>
                 <div class="skeleton h-3 w-44 rounded"></div>
@@ -608,38 +605,38 @@ function renderNannies(list) {
     if (list.length === 0) {
         container.innerHTML = `
             <div class="flex flex-col items-center py-12 text-center">
-                <div class="float-anim w-20 h-20 rounded-full bg-plum-soft flex items-center justify-center mb-4">
-                    <ion-icon name="person-outline" style="font-size:34px;color:#E0BBE4;"></ion-icon>
+                <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-5">
+                    <ion-icon name="person-outline" style="font-size:44px;color:#C4B5FD;"></ion-icon>
                 </div>
-                <p class="text-plum-dark font-bold text-base mb-1">Tidak ada nanny aktif</p>
-                <p class="text-plum-muted text-sm">Nanny aktif bertugas akan muncul di sini</p>
+                <p class="text-[#1E1B2E] font-extrabold text-lg mb-2">Tidak ada nanny aktif</p>
+                <p class="text-[#9CA3AF] text-sm">Nanny aktif bertugas akan muncul di sini</p>
             </div>`;
         return;
     }
 
     container.innerHTML = list.map((item, i) => `
         <button onclick="selectNanny(${item.id})"
-                class="card-press w-full text-left bg-white rounded-2xl border-2 border-plum-soft p-4 flex items-center gap-4 shadow-sm hover:border-plum/40 hover:shadow-md transition-all fade-in"
+                class="nanny-card w-full text-left bg-white rounded-[14px] px-3 py-2.5 shadow-[0_2px_10px_rgba(0,0,0,0.10)] border border-[#EAE6F5] fade-in"
                 style="animation-delay:${i * 0.06}s">
-            <div class="w-14 h-14 rounded-2xl overflow-hidden border-2 border-plum-soft flex-shrink-0 bg-plum-soft flex items-center justify-center">
-                ${item.foto
-                    ? `<img src="${item.foto}" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
-                       <ion-icon name="person" style="font-size:26px;color:#7B1E5A;display:none;" class="w-full h-full items-center justify-center"></ion-icon>`
-                    : `<ion-icon name="person" style="font-size:26px;color:#7B1E5A;"></ion-icon>`
-                }
-            </div>
-            <div class="flex-1 min-w-0">
-                <p class="text-plum-dark font-bold text-sm truncate">${item.name}</p>
-                <p class="text-plum-muted text-xs truncate mt-0.5">${item.email}</p>
-                <div class="flex items-center gap-1 mt-1.5">
-                    <span class="inline-flex items-center gap-1 bg-blue-50 border border-blue-100 rounded-full px-2 py-0.5 text-blue-600 text-xs font-semibold">
-                        <ion-icon name="time-outline" style="font-size:11px;"></ion-icon>
-                        Aktif Bertugas
-                    </span>
+            <div class="flex items-center gap-3">
+                <div class="w-[50px] h-[50px] rounded-[8px] overflow-hidden flex-shrink-0 bg-[#F3F0FD] flex items-center justify-center">
+                    ${item.foto
+                        ? `<img src="${item.foto}" class="w-full h-full object-cover" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+                           <div style="display:none" class="w-full h-full items-center justify-center"><ion-icon name="person" style="font-size:24px;color:#8B46D3;"></ion-icon></div>`
+                        : `<ion-icon name="person" style="font-size:24px;color:#8B46D3;"></ion-icon>`
+                    }
                 </div>
-            </div>
-            <div class="w-8 h-8 rounded-xl bg-plum-soft flex items-center justify-center flex-shrink-0">
-                <ion-icon name="chevron-forward" style="font-size:16px;color:#7B1E5A;"></ion-icon>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-start justify-between gap-2">
+                        <p class="text-[#1E1B2E] font-extrabold text-[15px] truncate">${item.name || '-'}</p>
+                        <span class="bg-[#DCFCE7] text-[#166534] text-[10px] font-extrabold px-2 py-1 rounded-full leading-none shrink-0">ACTIVE</span>
+                    </div>
+                    <div class="flex items-center gap-1 mt-0.5">
+                        <ion-icon name="briefcase-outline" style="font-size:12px;color:#8B46D3;"></ion-icon>
+                        <span class="text-[#1E1B2E] text-[12px] font-extrabold truncate">Nanny</span>
+                    </div>
+                    <p class="text-[#8B86A5] text-[11px] italic font-semibold mt-0.5 truncate">"${item.email || 'Siap dibuatkan rekap diary'}"</p>
+                </div>
             </div>
         </button>
     `).join('');
@@ -648,7 +645,7 @@ function renderNannies(list) {
 function filterNannies(query) {
     const q = query.toLowerCase().trim();
     const filtered = q ? allNannies.filter(n =>
-        n.name.toLowerCase().includes(q) || n.email.toLowerCase().includes(q)
+        String(n.name || '').toLowerCase().includes(q) || String(n.email || '').toLowerCase().includes(q)
     ) : allNannies;
     renderNannies(filtered);
     updateCountBadge(filtered.length);
@@ -658,7 +655,7 @@ function updateCountBadge(count) {
     const badge = document.getElementById('nannyCountBadge');
     const n = count !== undefined ? count : allNannies.length;
     if (n > 0) {
-        badge.textContent = n + ' nanny';
+        badge.textContent = n + ' Nanny';
         badge.classList.remove('hidden');
     } else {
         badge.classList.add('hidden');
@@ -681,13 +678,15 @@ function showStep1() {
 function showStep2() {
     // Populate nanny info
     document.getElementById('selName').textContent  = selectedNanny.name;
-    document.getElementById('selEmail').textContent = selectedNanny.email;
+    document.getElementById('selEmail').textContent = selectedNanny.email || '-';
+    document.getElementById('selAssignmentId').textContent = selectedNanny.assignment_id || selectedNanny.id_assignment || selectedNanny.id || '-';
+    document.getElementById('selPhone').textContent = selectedNanny.no_hp || selectedNanny.phone || selectedNanny.nanny_no_hp || selectedNanny.nomor_hp || '-';
 
     const avatarEl = document.getElementById('selAvatar');
     if (selectedNanny.foto) {
         avatarEl.innerHTML = `<img src="${selectedNanny.foto}" class="w-full h-full object-cover" />`;
     } else {
-        avatarEl.innerHTML = `<ion-icon name="person" style="font-size:28px;color:#7B1E5A;"></ion-icon>`;
+        avatarEl.innerHTML = `<ion-icon name="person" style="font-size:30px;color:#8B46D3;"></ion-icon>`;
     }
 
     // Default date range: last 30 days
@@ -695,6 +694,7 @@ function showStep2() {
     const start = new Date(); start.setDate(start.getDate() - 30);
     document.getElementById('startDate').value = formatDate(start);
     document.getElementById('endDate').value   = formatDate(now);
+    renderCategoryChips();
 
     document.getElementById('step1').classList.add('hidden');
     document.getElementById('step2').classList.remove('hidden');
@@ -812,6 +812,24 @@ function updateDpPreview() {
 }
 
 // ── Kategori Modal ────────────────────────────────────────────────────────────
+function renderCategoryChips() {
+    const wrap = document.getElementById('categoryChips');
+    if (!wrap) return;
+
+    wrap.innerHTML = KATEGORI_OPTIONS.map(opt => {
+        const active = selectedKategori === opt.value;
+        return `
+            <button type="button"
+                    onclick="selectKategori('${opt.value}')"
+                    class="category-chip ${active ? 'active' : ''} inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-extrabold"
+                    style="background:${opt.bg};color:${opt.color};">
+                <ion-icon name="${opt.icon}" style="font-size:11px;"></ion-icon>
+                <span>${opt.short}</span>
+            </button>
+        `;
+    }).join('');
+}
+
 function openKategoriModal() {
     const list = document.getElementById('kategoriList');
     list.innerHTML = KATEGORI_OPTIONS.map(opt => `
@@ -848,8 +866,8 @@ function selectKategori(val) {
     selectedKategori = val;
     const opt = KATEGORI_OPTIONS.find(o => o.value === val);
     document.getElementById('kategoriLabel').textContent = opt ? opt.label : 'Semua Kategori';
-    document.getElementById('kategoriLabel').className =
-        val ? 'text-sm text-plum-dark font-semibold' : 'text-sm text-plum-muted font-medium';
+    document.getElementById('kategoriLabel').className = 'hidden';
+    renderCategoryChips();
     closeKategoriModal();
 }
 

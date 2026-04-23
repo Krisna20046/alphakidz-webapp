@@ -335,7 +335,7 @@
         <div class="anim delay-6 space-y-3 pt-1">
 
             {{-- Hubungi Nanny --}}
-            <a href="{{ route('chat.room', $idUser) }}"
+            <a href="{{ route('chat.room', $idUser) }}?nama={{ urlencode($nanny['name'] ?? 'Nanny') }}"
                class="bg-white border border-[#E7E3F5] text-[#8B46D3] rounded-2xl font-extrabold
                       flex items-center justify-center gap-2 h-[52px]
                       shadow-[0_2px_10px_rgba(0,0,0,0.06)] active:scale-[0.97] transition-transform">
