@@ -1,297 +1,266 @@
 {{-- resources/views/konsultan/majikan-nanny.blade.php --}}
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Majikan Anda</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <link href = "https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap"
+        rel = "stylesheet">
+    <script script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        plum: {
-                            DEFAULT: '#7B1E5A',
-                            light:   '#9B2E72',
-                            dark:    '#4A0E35',
-                            pale:    '#FFF9FB',
-                            soft:    '#F3E6FA',
-                            muted:   '#A2397B',
-                            accent:  '#B895C8',
-                        }
-                    },
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
-
     <style>
-        * { -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #FFF9FB; }
-
-        @media (min-width: 640px) {
-            .phone-wrapper {
-                display: flex; align-items: flex-start; justify-content: center;
-                min-height: 100vh; padding: 32px 0;
-                background: linear-gradient(135deg, #f8e8f3 0%, #ede0f0 60%, #e8d5ee 100%);
-            }
-            .phone-frame {
-                width: 390px; min-height: 844px;
-                border-radius: 44px;
-                box-shadow: 0 40px 80px rgba(123,30,90,0.25),
-                            0 0 0 8px #1a0d14, 0 0 0 10px #2d1020;
-                overflow: hidden; position: relative;
-            }
+        * {
+            -webkit-tap-highlight-color: transparent;
         }
-        @media (max-width: 639px) {
-            .phone-wrapper { min-height: 100vh; }
-            .phone-frame   { min-height: 100vh; }
-        }
-
-        .header-bg { background: linear-gradient(135deg, #7B1E5A 0%, #9B2E72 100%); }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .anim-up         { animation: slideUp 0.4s ease forwards; }
-        .anim-up.delay-1 { animation-delay: 0.05s; opacity: 0; }
-        .anim-up.delay-2 { animation-delay: 0.12s; opacity: 0; }
-        .anim-up.delay-3 { animation-delay: 0.20s; opacity: 0; }
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
 
-        .majikan-card {
-            transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        .majikan-card:hover  { box-shadow: 0 6px 20px rgba(123,30,90,0.12); opacity: 0.92; }
-        .majikan-card:active { transform: scale(0.98); opacity: 0.75; }
+
+        .anim {
+            animation: slideUp 0.4s ease forwards;
+            opacity: 0;
+        }
+
+        .delay-1 {
+            animation-delay: 0.05s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.13s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.21s;
+        }
 
         @keyframes floatEmpty {
-            0%,100% { transform: translateY(0); }
-            50%     { transform: translateY(-6px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
         }
-        .float-anim { animation: floatEmpty 3s ease-in-out infinite; }
 
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .float-anim {
+            animation: floatEmpty 3s ease-in-out infinite;
+        }
 
-        .badge-aktif    { background: #DCFCE7; color: #166534; }
-        .badge-pending  { background: #FEF9C3; color: #854D0E; }
-        .badge-inactive { background: #FEE2E2; color: #991B1B; }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .majikan-card {
+            transition: transform .15s ease;
+        }
+
+        .majikan-card:active {
+            transform: scale(0.98);
+        }
+
+        .badge-aktif {
+            background: #DCFCE7;
+            color: #166534;
+        }
+
+        .badge-pending {
+            background: #FEF9C3;
+            color: #854D0E;
+        }
+
+        .badge-inactive {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
     </style>
 </head>
-<body>
 
-<div class="phone-wrapper">
-<div class="phone-frame bg-plum-pale flex flex-col">
+<body class="font-['Nunito'] bg-[#E5E2F5]">
+    <div class="sm:flex sm:items-start sm:justify-center sm:min-h-screen sm:py-8 sm:pb-[60px]">
+        <div
+            class="sm:w-[390px] sm:min-h-[844px] sm:rounded-[44px] sm:shadow-[0_40px_80px_rgba(124,58,237,0.28),0_0_0_8px_#1a1030,0_0_0_10px_#2d1a50] sm:overflow-hidden bg-[#F0EDFB] min-h-screen flex flex-col relative">
 
-    <!-- STATUS BAR -->
-    <div class="hidden sm:flex items-center justify-between px-8 pt-4 pb-1 bg-plum">
-        <span class="text-xs font-semibold text-white/80" id="statusTime">9:41</span>
-        <div class="flex gap-1 items-center text-white">
-            <svg class="w-4 h-3" viewBox="0 0 17 12" fill="white" opacity="0.8"><rect x="0" y="3" width="3" height="9" rx="0.5"/><rect x="4.5" y="2" width="3" height="10" rx="0.5"/><rect x="9" y="0.5" width="3" height="11.5" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg>
-            <svg class="w-4 h-3" viewBox="0 0 16 12" fill="white" opacity="0.8"><path d="M8 2.4C5.6 2.4 3.4 3.4 1.8 5L0 3.2C2.2 1.2 5 0 8 0s5.8 1.2 8 3.2L14.2 5C12.6 3.4 10.4 2.4 8 2.4z"/><path d="M8 6c-1.4 0-2.6.6-3.6 1.4L2.6 5.6C4 4.4 5.8 3.6 8 3.6s4 .8 5.4 2L11.6 7.4C10.6 6.6 9.4 6 8 6z"/><circle cx="8" cy="10" r="2"/></svg>
-            <div class="flex items-center"><div class="w-6 h-3 border border-white/70 rounded-sm p-px flex items-stretch"><div class="bg-white rounded-xs flex-1"></div></div></div>
-        </div>
-    </div>
-
-    <!-- HEADER -->
-    <div class="header-bg rounded-b-[30px] px-5 pt-10 pb-8 relative shrink-0 overflow-hidden">
-        <div class="absolute top-0 right-0 w-36 h-36 rounded-full bg-white/5 -translate-y-8 translate-x-8 pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-white/5 translate-y-5 -translate-x-5 pointer-events-none"></div>
-
-        <a href="{{ route('dashboard') }}"
-           class="absolute top-[54px] left-5 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center z-10 hover:bg-white/30 transition-colors">
-            <ion-icon name="arrow-back" style="font-size:20px;color:#fff;"></ion-icon>
-        </a>
-
-        <div class="flex flex-col items-center anim-up delay-1">
-            <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-4 shadow-lg shadow-plum-dark/20">
-                <ion-icon name="people" style="font-size:30px;color:#7B1E5A;"></ion-icon>
-            </div>
-            <h1 class="text-white text-2xl font-extrabold tracking-wide mb-1">Majikan Anda</h1>
-            <p class="text-white/60 text-xs font-medium">Daftar majikan di bawah pengawasan Anda</p>
-        </div>
-    </div>
-
-    <!-- BODY -->
-    <div class="flex-1 overflow-y-auto no-scrollbar px-4 pt-5 pb-4">
-
-        @if(session('success'))
-        <div id="flash-success"
-             class="mb-4 bg-green-50 border border-green-200 text-green-700 text-xs font-semibold px-4 py-3 rounded-2xl flex items-center gap-2">
-            <ion-icon name="checkmark-circle" style="font-size:16px;color:#16A34A;flex-shrink:0;"></ion-icon>
-            {{ session('success') }}
-        </div>
-        @endif
-
-        @if(isset($assignments) && count($assignments) > 0)
-
-        <!-- List Header -->
-        <div class="flex items-center justify-between mb-4 anim-up delay-2">
-            <h2 class="text-plum-dark font-extrabold text-base">Daftar Majikan</h2>
-            <div class="bg-plum-soft px-3 py-1 rounded-full">
-                <span class="text-plum text-xs font-extrabold">{{ count($assignments) }}</span>
-            </div>
-        </div>
-
-        <!-- Cards -->
-        <div class="space-y-4 anim-up delay-3 pb-16">
-            @foreach($assignments as $i => $item)
-            <a href="{{ route('konsultan-majikan-nanny-detail', $item['id_majikan']) }}"
-               class="majikan-card bg-white rounded-3xl border-2 border-plum-soft overflow-hidden block"
-               style="animation: slideUp 0.3s ease {{ $i * 0.06 }}s both; opacity:0;"
-            >
-                <!-- Card Header: Majikan -->
-                <div class="flex items-center gap-3 p-4">
-                    <!-- Avatar -->
-                    <div class="flex-shrink-0">
-                        @if(!empty($item['majikan_foto']))
-                        <img src="{{ $item['majikan_foto'] }}"
-                             alt="{{ $item['majikan_name'] }}"
-                             class="w-14 h-14 rounded-full object-cover"
-                             style="border: 3px solid #F3E6FA;"
-                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
-                        >
-                        <div class="w-14 h-14 rounded-full items-center justify-center hidden"
-                             style="background:#F3E6FA; border: 3px solid #F3E6FA;">
-                            <ion-icon name="person" style="font-size:24px;color:#7B1E5A;"></ion-icon>
+            <div
+                class="hidden sm:flex sm:items-center sm:justify-between bg-[#8B46D3] px-6 pt-[14px] text-white text-xs font-bold">
+                <span id="statusTime">9:41</span>
+                <div class="flex items-center gap-1.5">
+                    <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+                        <rect x="0" y="4" width="3" height="7" rx="0.6" fill="white" opacity="0.5" />
+                        <rect x="4.5" y="2.5" width="3" height="8.5" rx="0.6" fill="white"
+                            opacity="0.7" />
+                        <rect x="9" y="0.5" width="3" height="10.5" rx="0.6" fill="white" />
+                    </svg>
+                    <div class="flex items-center">
+                        <div class="w-[22px] h-[11px] border-[1.5px] border-white/70 rounded-[3px] p-[1.5px]">
+                            <div class="bg-white rounded-[1.5px] h-full"></div>
                         </div>
-                        @else
-                        <div class="w-14 h-14 rounded-full flex items-center justify-center"
-                             style="background:#F3E6FA; border: 3px solid #F3E6FA;">
-                            <ion-icon name="person" style="font-size:24px;color:#7B1E5A;"></ion-icon>
-                        </div>
-                        @endif
-                    </div>
-
-                    <!-- Info -->
-                    <div class="flex-1 min-w-0">
-                        <p class="text-plum-dark font-extrabold text-base truncate mb-1">
-                            {{ $item['majikan_name'] }}
-                        </p>
-                        <div class="flex items-center gap-1 mb-1">
-                            @php $isMale = ($item['majikan_gender'] ?? '') === 'L'; @endphp
-                            <ion-icon name="{{ $isMale ? 'male' : 'female' }}" style="font-size:13px;color:#7B1E5A;"></ion-icon>
-                            <span class="text-plum text-xs font-semibold">
-                                {{ $isMale ? 'Laki-laki' : 'Perempuan' }}
-                            </span>
-                        </div>
-                        <div class="flex items-center gap-1">
-                            <ion-icon name="mail-outline" style="font-size:12px;color:#A2397B;flex-shrink:0;"></ion-icon>
-                            <span class="text-plum-muted text-xs font-medium truncate">
-                                {{ $item['majikan_email'] ?? '-' }}
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Chevron -->
-                    <div class="w-7 h-7 rounded-full bg-plum-soft flex items-center justify-center flex-shrink-0">
-                        <ion-icon name="chevron-forward" style="font-size:14px;color:#7B1E5A;"></ion-icon>
                     </div>
                 </div>
+            </div>
 
-                <!-- Nanny Assignment Section -->
-                @if(!empty($item['id_nanny']))
-                <div class="h-px bg-plum-soft mx-4"></div>
-                <div class="px-4 py-3">
-                    <div class="flex items-center gap-2 mb-2">
-                        <ion-icon name="people" style="font-size:14px;color:#7B1E5A;"></ion-icon>
-                        <span class="text-plum text-xs font-extrabold uppercase tracking-wide">Nanny Ditugaskan</span>
-                    </div>
-
-                    <div class="flex items-center gap-3 bg-plum-pale rounded-2xl p-3 border border-plum-soft">
-                        <!-- Nanny Avatar -->
-                        <div class="flex-shrink-0">
-                            @if(!empty($item['nanny_foto']))
-                            <img src="{{ $item['nanny_foto'] }}"
-                                 alt="{{ $item['nanny_name'] }}"
-                                 class="w-10 h-10 rounded-full object-cover"
-                                 style="border: 2px solid #F3E6FA;"
-                                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
-                            >
-                            <div class="w-10 h-10 rounded-full items-center justify-center hidden"
-                                 style="background:#F3E6FA; border: 2px solid #F3E6FA;">
-                                <ion-icon name="person" style="font-size:18px;color:#7B1E5A;"></ion-icon>
-                            </div>
-                            @else
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center"
-                                 style="background:#F3E6FA; border: 2px solid #F3E6FA;">
-                                <ion-icon name="person" style="font-size:18px;color:#7B1E5A;"></ion-icon>
-                            </div>
-                            @endif
-                        </div>
-
-                        <!-- Nanny Info -->
-                        <div class="flex-1 min-w-0">
-                            <p class="text-plum-dark text-sm font-bold truncate">{{ $item['nanny_name'] ?? '-' }}</p>
-                            <p class="text-plum-muted text-[11px] font-medium">Nanny</p>
-                        </div>
-
-                        <!-- Status Badge -->
-                        @php
-                            $status      = strtolower($item['status'] ?? '');
-                            $badgeClass  = $status === 'aktif'  ? 'badge-aktif'
-                                         : ($status === 'aktif' ? 'badge-aktif' : 'badge-pending');
-                            $statusLabel = !empty($item['status']) ? ucfirst($item['status']) : 'Bertugas';
-                            if ($status === 'aktif')    { $badgeClass = 'badge-aktif'; }
-                            elseif ($status === 'nonaktif') { $badgeClass = 'badge-inactive'; }
-                            else                            { $badgeClass = 'badge-pending'; }
-                        @endphp
-                        <span class="text-[10px] font-extrabold px-2 py-1 rounded-full flex-shrink-0 {{ $badgeClass }}">
-                            ● {{ $statusLabel }}
-                        </span>
+            <div
+                class="anim delay-1 relative z-10 bg-[#8B46D3] bg-[url('/assets/bg-texture.png')] bg-cover bg-center px-[24px] pt-[55px] pb-[72px] before:content-[''] before:absolute before:inset-0 before:bg-[#8B46D3] before:opacity-60 before:-z-10">
+                <div class="flex items-center gap-3 relative z-10">
+                    <a href="{{ route('dashboard') }}"
+                        class="w-10 h-10 rounded-full bg-white/20 border-[1.5px] border-white/30 flex items-center justify-center shrink-0">
+                        <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
+                    </a>
+                    <div>
+                        <span class="text-white text-[17px] font-extrabold tracking-wide">Majikan Anda</span>
+                        <p class="text-white/60 text-xs font-medium mt-0.5">{{ count($assignments ?? []) }} majikan
+                            dalam pengawasan</p>
                     </div>
                 </div>
+            </div>
+
+            <div
+                class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar flex flex-col gap-4">
+                @if (session('success'))
+                    <div id="flash-success"
+                        class="anim delay-2 bg-[#DCFCE7] border border-[#BBF7D0] text-[#166534] text-xs font-bold px-4 py-3 rounded-[14px] flex items-center gap-2">
+                        <ion-icon name="checkmark-circle"
+                            style="font-size:16px;color:#16A34A;flex-shrink:0;"></ion-icon>
+                        {{ session('success') }}
+                    </div>
                 @endif
-            </a>
-            @endforeach
-        </div>
 
-        @else
-        <!-- Empty State -->
-        <div class="flex flex-col items-center pt-16 pb-10 px-8 anim-up delay-2">
-            <div class="float-anim w-28 h-28 rounded-full bg-plum-soft flex items-center justify-center mb-6">
-                <ion-icon name="people-outline" style="font-size:52px;color:#B895C8;"></ion-icon>
+                <div class="anim delay-3">
+                    @if (isset($assignments) && count($assignments) > 0)
+                        <div class="flex items-center justify-between mb-2">
+                            <h2 class="text-[#5A556E] text-[18px] font-extrabold">Daftar Majikan</h2>
+                            <div class="bg-[#EDE9FE] px-3 py-1 rounded-full">
+                                <span class="text-[#8B46D3] text-xs font-bold">{{ count($assignments) }} Majikan</span>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-2 pb-6">
+                            @foreach ($assignments as $i => $item)
+                                @php
+                                    $isMale = ($item['majikan_gender'] ?? '') === 'L';
+                                    $status = strtolower($item['status'] ?? '');
+                                    if ($status === 'aktif') {
+                                        $badgeClass = 'badge-aktif';
+                                    } elseif ($status === 'nonaktif') {
+                                        $badgeClass = 'badge-inactive';
+                                    } else {
+                                        $badgeClass = 'badge-pending';
+                                    }
+                                    $statusLabel = !empty($item['status']) ? ucfirst($item['status']) : 'Bertugas';
+                                    $nannyName = $item['nanny_name'] ?? null;
+                                    $subtitle = $nannyName
+                                        ? 'Nanny: ' . $nannyName
+                                        : $item['majikan_email'] ?? 'Detail majikan dalam pengawasan Anda';
+                                @endphp
+                                <a href="{{ route('konsultan-majikan-nanny-detail', $item['id_majikan']) }}"
+                                    class="majikan-card block bg-white rounded-[14px] px-3 py-2.5 shadow-[0_2px_10px_rgba(0,0,0,0.10)] border border-[#EAE6F5]"
+                                    style="animation: slideUp 0.35s ease {{ $i * 0.05 }}s both; opacity:0;">
+                                    <div class="flex items-center gap-3">
+                                        @if (!empty($item['majikan_foto']))
+                                            <img src="{{ $item['majikan_foto'] }}" alt="{{ $item['majikan_name'] }}"
+                                                class="w-[50px] h-[50px] rounded-[8px] object-cover bg-[#F3F0FD]"
+                                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                            <div
+                                                class="w-[50px] h-[50px] rounded-[8px] items-center justify-center hidden bg-[#F3F0FD]">
+                                                <ion-icon name="person"
+                                                    style="font-size:24px;color:#8B46D3;"></ion-icon>
+                                            </div>
+                                        @else
+                                            <div
+                                                class="w-[50px] h-[50px] rounded-[8px] flex items-center justify-center bg-[#F3F0FD]">
+                                                <ion-icon name="person"
+                                                    style="font-size:24px;color:#8B46D3;"></ion-icon>
+                                            </div>
+                                        @endif
+
+                                        <div class="flex-1 min-w-0">
+                                            <div class="flex items-start justify-between gap-2">
+                                                <p class="text-[#1E1B2E] font-extrabold text-[15px] truncate">
+                                                    {{ $item['majikan_name'] }}</p>
+                                                <span
+                                                    class="{{ $badgeClass }} text-[10px] font-extrabold px-2 py-1 rounded-full leading-none shrink-0">
+                                                    {{ $statusLabel }}
+                                                </span>
+                                            </div>
+
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center gap-1 mb-0.5">
+                                                    <ion-icon name="{{ $isMale ? 'male-outline' : 'female-outline' }}"
+                                                        style="font-size:11px;color:#8B46D3;flex-shrink:0;"></ion-icon>
+                                                    <span
+                                                        class="text-[#8B86A5] text-[11px] font-semibold truncate">{{ $isMale ? 'Laki-laki' : 'Perempuan' }}</span>
+                                                </div>
+                                                @if (!empty($item['majikan_email']))
+                                                    <div class="flex items-center gap-1 mb-0.5">
+                                                        <ion-icon name="mail-outline"
+                                                            style="font-size:11px;color:#8B46D3;flex-shrink:0;"></ion-icon>
+                                                        <span
+                                                            class="text-[#8B86A5] text-[11px] font-semibold truncate">{{ $item['majikan_email'] ?? '-' }}</span>
+                                                    </div>
+                                                @endif
+                                            </div>
+
+                                            <p class="text-[#8B86A5] text-[11px] italic font-semibold mt-0.5 truncate">
+                                                "{{ $subtitle }}"
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="flex flex-col items-center pt-16 pb-10 px-8">
+                            <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-5">
+                                <ion-icon name="people-outline" style="font-size:44px;color:#C4B5FD;"></ion-icon>
+                            </div>
+                            <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">Belum ada majikan</h3>
+                            <p class="text-[#9CA3AF] text-sm text-center leading-relaxed">
+                                Anda belum memiliki majikan yang terdaftar di bawah pengawasan Anda
+                            </p>
+                        </div>
+                    @endif
+                </div>
             </div>
-            <h3 class="text-plum-dark font-extrabold text-lg mb-2">Belum ada majikan</h3>
-            <p class="text-plum-muted text-sm text-center leading-relaxed">
-                Anda belum memiliki majikan yang terdaftar di bawah pengawasan Anda
-            </p>
-        </div>
-        @endif
 
-        <div class="h-6"></div>
+            @include('partials.bottom-nav', ['active' => 'home'])
+
+        </div>
     </div>
 
-    <!-- BOTTOM NAV -->
-    @include('partials.bottom-nav', ['active' => 'home'])
+    <script>
+        (function() {
+            const el = document.getElementById('statusTime');
 
-</div>
-</div>
-
-<script>
-    function updateClock() {
-        const now = new Date();
-        const h = String(now.getHours()).padStart(2, '0');
-        const m = String(now.getMinutes()).padStart(2, '0');
-        const el = document.getElementById('statusTime');
-        if (el) el.textContent = `${h}:${m}`;
-    }
-    updateClock();
-    setInterval(updateClock, 30000);
-
-    setTimeout(() => {
-        const el = document.getElementById('flash-success');
-        if (el) el.style.display = 'none';
-    }, 4000);
-</script>
-@include('partials.auth-guard')
+            function tick() {
+                const now = new Date();
+                if (el) el.textContent =
+                    `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            }
+            tick();
+            setInterval(tick, 30000);
+        })();
+    </script>
+    @include('partials.auth-guard')
 </body>
+
 </html>

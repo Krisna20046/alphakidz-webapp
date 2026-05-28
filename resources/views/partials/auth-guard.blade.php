@@ -31,7 +31,7 @@
         '/logout',
     ];
 
-    const POLL_MS = 60_000;   // polling interval
+    const POLL_MS = 120_000;   // polling interval
     let pollTimer   = null;
     let isChecking  = false;
     let failCount   = 0;      // consecutive network failures

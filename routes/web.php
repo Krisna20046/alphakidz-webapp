@@ -21,6 +21,8 @@ Route::middleware('guest.api')->group(function () {
     Route::post('/login',    [AuthController::class, 'login']       )->name('login.post');
     Route::get( '/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']    )->name('register.post');
+    Route::get( '/forgot-password', [AuthController::class, 'showForgotPassword'])->name('forgot.password');
+    Route::get( '/reset-password',  [AuthController::class, 'showResetPassword'] )->name('reset.password');
 });
 
 Route::post('/auth/store-token', [AuthController::class, 'storeToken'])->name('auth.store-token');
@@ -42,6 +44,10 @@ Route::get('/manifest.json', function () {
 Route::get('/offline', function () {
     return view('offline');
 })->name('offline');
+
+Route::get('/auth/google/callback', function () {
+    return view('auth.google-callback');
+})->name('google.callback');
 
 // ─── Protected Routes ─────────────────────────────────────────────────────────
 
@@ -90,6 +96,13 @@ Route::middleware('auth.api')->group(function () {
         // Dropdown AJAX
         Route::get('/provinsi',       [ProfileController::class, 'getProvinsi'])->name('provinsi');
         Route::get('/kota/{id}',      [ProfileController::class, 'getKota']    )->name('kota');
+    });
+    Route::prefix('reminder')->name('reminder.')->group(function () {
+        Route::get('/',               fn() => view('profil.reminder.index'))->name('index');
+    });
+
+    Route::prefix('stock')->name('stock.')->group(function () {
+        Route::get('/',               fn() => view('profil.stock.index'))->name('index');
     });
 
     Route::prefix('majikan')->group(function () {

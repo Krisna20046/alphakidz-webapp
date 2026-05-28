@@ -7,101 +7,25 @@
     <title>Detail Nanny — {{ $nanny['name'] ?? 'Nanny' }}</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        plum: {
-                            DEFAULT: '#7B1E5A',
-                            light:   '#9B2E72',
-                            dark:    '#4A0E35',
-                            pale:    '#FFF9FB',
-                            soft:    '#F3E6FA',
-                            muted:   '#A2397B',
-                            accent:  '#B895C8',
-                        }
-                    },
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
-
     <style>
         * { -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #FFF9FB; }
-
-        @media (min-width: 640px) {
-            .phone-wrapper {
-                display: flex; align-items: flex-start; justify-content: center;
-                min-height: 100vh; padding: 32px 0;
-                background: linear-gradient(135deg, #f8e8f3 0%, #ede0f0 60%, #e8d5ee 100%);
-            }
-            .phone-frame {
-                width: 390px; min-height: 844px;
-                border-radius: 44px;
-                box-shadow: 0 40px 80px rgba(123,30,90,0.25),
-                            0 0 0 8px #1a0d14, 0 0 0 10px #2d1020;
-                overflow: hidden; position: relative;
-            }
-        }
-        @media (max-width: 639px) {
-            .phone-wrapper { min-height: 100vh; }
-            .phone-frame   { min-height: 100vh; }
-        }
-
-        .header-bg { background: linear-gradient(135deg, #7B1E5A 0%, #9B2E72 100%); }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(18px); }
+            from { opacity: 0; transform: translateY(16px); }
             to   { opacity: 1; transform: translateY(0); }
         }
-        .anim-up    { animation: slideUp 0.35s ease forwards; }
-        .anim-up.d1 { animation-delay: 0.05s; opacity: 0; }
-        .anim-up.d2 { animation-delay: 0.12s; opacity: 0; }
-        .anim-up.d3 { animation-delay: 0.19s; opacity: 0; }
-        .anim-up.d4 { animation-delay: 0.26s; opacity: 0; }
-        .anim-up.d5 { animation-delay: 0.33s; opacity: 0; }
-        .anim-up.d6 { animation-delay: 0.40s; opacity: 0; }
-        .anim-up.d7 { animation-delay: 0.47s; opacity: 0; }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        .info-card { transition: box-shadow 0.2s ease; }
-        .info-card:hover { box-shadow: 0 4px 16px rgba(123,30,90,0.10); }
-
-        @keyframes avatarRing {
-            0%,100% { box-shadow: 0 0 0 0 rgba(123,30,90,0.3); }
-            50%     { box-shadow: 0 0 0 8px rgba(123,30,90,0); }
-        }
-        .avatar-ring { animation: avatarRing 2.5s ease-in-out 0.5s infinite; }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #7B1E5A, #9B2E72);
-            transition: opacity 0.2s, transform 0.15s;
-        }
-        .btn-primary:hover  { opacity: 0.92; }
-        .btn-primary:active { transform: scale(0.97); }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #DC2626, #EF4444);
-            transition: opacity 0.2s, transform 0.15s;
-        }
-        .btn-danger:hover  { opacity: 0.92; }
-        .btn-danger:active { transform: scale(0.97); }
-
-        .btn-success {
-            background: linear-gradient(135deg, #16A34A, #22C55E);
-            transition: opacity 0.2s, transform 0.15s;
-        }
-        .btn-success:hover  { opacity: 0.92; }
-        .btn-success:active { transform: scale(0.97); }
+        .anim         { animation: slideUp 0.4s ease forwards; opacity: 0; }
+        .delay-1      { animation-delay: 0.05s; }
+        .delay-2      { animation-delay: 0.13s; }
+        .delay-3      { animation-delay: 0.21s; }
+        .delay-4      { animation-delay: 0.29s; }
+        .delay-5      { animation-delay: 0.37s; }
+        .delay-6      { animation-delay: 0.45s; }
+        .delay-7      { animation-delay: 0.53s; }
 
         @keyframes floatEmpty {
             0%,100% { transform: translateY(0); }
@@ -109,209 +33,232 @@
         }
         .float-anim { animation: floatEmpty 3s ease-in-out infinite; }
 
+        @keyframes avatarPulse {
+            0%,100% { box-shadow: 0 0 0 0 rgba(139,70,211,0.3); }
+            50%     { box-shadow: 0 0 0 8px rgba(139,70,211,0); }
+        }
+        .avatar-pulse { animation: avatarPulse 2.5s ease-in-out 0.5s infinite; }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .section-card {
+            background: #FFFFFF;
+            border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+        }
+        .detail-item {
+            background: #F8F8FB;
+            border: 1px solid #ECEAF4;
+            border-radius: 10px;
+        }
+
         /* Modal */
-        .modal-overlay { background: rgba(74,14,53,0.5); backdrop-filter: blur(4px); }
+        .modal-overlay { background: rgba(30,11,60,0.5); backdrop-filter: blur(4px); }
         .modal-card    { animation: slideUp 0.25s ease forwards; }
     </style>
 </head>
-<body>
+<body class="font-['Nunito'] bg-[#E5E2F5]">
 
-<div class="phone-wrapper">
-<div class="phone-frame bg-plum-pale flex flex-col">
+<div class="sm:flex sm:items-start sm:justify-center sm:min-h-screen sm:py-8 sm:pb-[60px]">
+<div class="sm:w-[390px] sm:min-h-[844px] sm:rounded-[44px] sm:shadow-[0_40px_80px_rgba(124,58,237,0.28),0_0_0_8px_#1a1030,0_0_0_10px_#2d1a50] sm:overflow-hidden bg-[#F0EDFB] min-h-screen flex flex-col relative">
 
-    <!-- STATUS BAR -->
-    <div class="hidden sm:flex items-center justify-between px-8 pt-4 pb-1 bg-plum">
-        <span class="text-xs font-semibold text-white/80" id="statusTime">9:41</span>
-        <div class="flex gap-1 items-center text-white">
-            <svg class="w-4 h-3" viewBox="0 0 17 12" fill="white" opacity="0.8"><rect x="0" y="3" width="3" height="9" rx="0.5"/><rect x="4.5" y="2" width="3" height="10" rx="0.5"/><rect x="9" y="0.5" width="3" height="11.5" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg>
-            <svg class="w-4 h-3" viewBox="0 0 16 12" fill="white" opacity="0.8"><path d="M8 2.4C5.6 2.4 3.4 3.4 1.8 5L0 3.2C2.2 1.2 5 0 8 0s5.8 1.2 8 3.2L14.2 5C12.6 3.4 10.4 2.4 8 2.4z"/><path d="M8 6c-1.4 0-2.6.6-3.6 1.4L2.6 5.6C4 4.4 5.8 3.6 8 3.6s4 .8 5.4 2L11.6 7.4C10.6 6.6 9.4 6 8 6z"/><circle cx="8" cy="10" r="2"/></svg>
-            <div class="flex items-center"><div class="w-6 h-3 border border-white/70 rounded-sm p-px flex items-stretch"><div class="bg-white rounded-xs flex-1"></div></div></div>
+    {{-- STATUS BAR --}}
+    <div class="hidden sm:flex sm:items-center sm:justify-between bg-[#8B46D3] px-6 pt-[14px] text-white text-xs font-bold">
+        <span id="statusTime">9:41</span>
+        <div class="flex items-center gap-1.5">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+                <rect x="0" y="4" width="3" height="7" rx="0.6" fill="white" opacity="0.5"/>
+                <rect x="4.5" y="2.5" width="3" height="8.5" rx="0.6" fill="white" opacity="0.7"/>
+                <rect x="9" y="0.5" width="3" height="10.5" rx="0.6" fill="white"/>
+            </svg>
+            <div class="flex items-center">
+                <div class="w-[22px] h-[11px] border-[1.5px] border-white/70 rounded-[3px] p-[1.5px]">
+                    <div class="bg-white rounded-[1.5px] h-full"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- HEADER --}}
+    <div class="anim delay-1 relative z-10 bg-[#8B46D3] bg-[url('/assets/bg-texture.png')] bg-cover bg-center
+                px-[24px] pt-[55px] pb-[72px]
+                before:content-[''] before:absolute before:inset-0 before:bg-[#8B46D3] before:opacity-60 before:-z-10">
+        <div class="flex items-start gap-3 relative z-10">
+            <a href="{{ route('konsultan-nanny-anda') }}"
+               class="mt-1 w-10 h-10 rounded-full bg-white/20 border-[1.5px] border-white/30 flex items-center justify-center shrink-0">
+                <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
+            </a>
+            <div>
+                <span class="text-white text-[17px] font-extrabold tracking-wide">Detail Nanny</span>
+                <p class="text-white/70 text-xs font-semibold mt-0.5 leading-[1.3]">Informasi lengkap profil<br>dan manajemen akun nanny</p>
+            </div>
         </div>
     </div>
 
     @if(!isset($nanny))
-    <!-- NOT FOUND -->
-    <div class="header-bg rounded-b-[30px] px-5 pt-10 pb-8 relative shrink-0 overflow-hidden">
-        <div class="absolute top-0 right-0 w-36 h-36 rounded-full bg-white/5 -translate-y-8 translate-x-8 pointer-events-none"></div>
-        <a href="{{ route('konsultan-nanny-anda') }}"
-           class="absolute top-[54px] left-5 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center z-10 hover:bg-white/30 transition-colors">
-            <ion-icon name="arrow-back" style="font-size:20px;color:#fff;"></ion-icon>
-        </a>
-        <div class="flex flex-col items-center">
-            <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-4">
-                <ion-icon name="person" style="font-size:30px;color:#7B1E5A;"></ion-icon>
+    {{-- NOT FOUND --}}
+    <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar">
+        <div class="flex flex-col items-center justify-center pt-20 px-8">
+            <div class="float-anim w-28 h-28 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-6">
+                <ion-icon name="person-circle-outline" style="font-size:60px;color:#C4B5FD;"></ion-icon>
             </div>
-            <h1 class="text-white text-2xl font-extrabold tracking-wide mb-1">Detail Nanny</h1>
-            <p class="text-white/60 text-xs font-medium">Informasi lengkap nanny</p>
+            <h2 class="text-[#1E1B2E] font-bold text-xl mb-2">Data tidak ditemukan</h2>
+            <p class="text-[#9CA3AF] text-sm text-center leading-relaxed mb-6">Data yang Anda cari tidak tersedia</p>
+            <a href="{{ route('konsultan-nanny-anda') }}"
+               class="bg-[#8B46D3] text-white text-sm font-bold px-8 py-3 rounded-2xl shadow-[0_8px_20px_rgba(139,70,211,0.35)]">
+                Kembali ke Daftar
+            </a>
         </div>
-    </div>
-    <div class="flex-1 flex flex-col items-center justify-center px-10">
-        <div class="float-anim w-28 h-28 rounded-full bg-plum-soft flex items-center justify-center mb-6">
-            <ion-icon name="person-circle-outline" style="font-size:64px;color:#B895C8;"></ion-icon>
-        </div>
-        <h2 class="text-plum-dark font-bold text-xl mb-2">Data tidak ditemukan</h2>
-        <p class="text-plum-muted text-sm text-center leading-relaxed mb-6">Data yang Anda cari tidak tersedia</p>
-        <a href="{{ route('konsultan-nanny-anda') }}"
-           class="btn-primary text-white text-sm font-bold px-8 py-3 rounded-2xl shadow-md shadow-plum/30">
-            Kembali ke Daftar
-        </a>
     </div>
 
     @else
-    <!-- HEADER -->
-    <div class="header-bg rounded-b-[30px] px-5 pt-10 pb-8 relative shrink-0 overflow-hidden">
-        <div class="absolute top-0 right-0 w-36 h-36 rounded-full bg-white/5 -translate-y-8 translate-x-8 pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-white/5 translate-y-5 -translate-x-5 pointer-events-none"></div>
+    @php
+        $isActive = (int)($nanny['is_active'] ?? 1) === 1;
+        $idUser   = (int)($nanny['id_user']   ?? 0);
+        $isMale   = ($nanny['gender'] ?? '') === 'L';
+    @endphp
 
-        <a href="{{ route('konsultan-nanny-anda') }}"
-           class="absolute top-[54px] left-5 w-10 h-10 rounded-full bg-white/20 flex items-center justify-center z-10 hover:bg-white/30 transition-colors">
-            <ion-icon name="arrow-back" style="font-size:20px;color:#fff;"></ion-icon>
-        </a>
+    <div class="flex-1 overflow-y-auto px-[20px] pt-[20px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar space-y-4">
 
-        <div class="flex flex-col items-center anim-up d1">
-            <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center mb-4 shadow-lg shadow-plum-dark/20">
-                <ion-icon name="person" style="font-size:30px;color:#7B1E5A;"></ion-icon>
-            </div>
-            <h1 class="text-white text-2xl font-extrabold tracking-wide mb-1">Detail Nanny</h1>
-            <p class="text-white/60 text-xs font-medium">Informasi lengkap nanny</p>
+        {{-- FLASH MESSAGES --}}
+        @if(session('success'))
+        <div id="flash-success"
+             class="bg-green-50 border border-green-200 text-green-700 text-xs font-semibold px-4 py-3 rounded-2xl flex items-center gap-2">
+            <ion-icon name="checkmark-circle" style="font-size:16px;color:#16A34A;flex-shrink:0;"></ion-icon>
+            {{ session('success') }}
         </div>
-    </div>
-
-    @if(session('success'))
-    <div id="flash-success"
-         class="mx-4 mt-3 bg-green-50 border border-green-200 text-green-700 text-xs font-semibold px-4 py-3 rounded-2xl flex items-center gap-2">
-        <ion-icon name="checkmark-circle" style="font-size:16px;color:#16A34A;flex-shrink:0;"></ion-icon>
-        {{ session('success') }}
-    </div>
-    @endif
-    @if(session('error'))
-    <div id="flash-error"
-         class="mx-4 mt-3 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold px-4 py-3 rounded-2xl flex items-center gap-2">
-        <ion-icon name="alert-circle" style="font-size:16px;color:#DC2626;flex-shrink:0;"></ion-icon>
-        {{ session('error') }}
-    </div>
-    @endif
-
-    <!-- SCROLLABLE BODY -->
-    <div class="flex-1 overflow-y-auto no-scrollbar px-4 py-5 space-y-4">
-
-        @php
-            $isActive  = (int)($nanny['is_active'] ?? 1) === 1;
-            $idUser    = (int)($nanny['id_user']   ?? $nanny['id_user'] ?? 0);
-        @endphp
-
-        <!-- PROFILE CARD -->
-        <div class="info-card bg-white rounded-3xl border-2 border-plum-soft p-6 flex flex-col items-center anim-up d2">
-            @if(!empty($nanny['foto']))
-            <img src="{{ $nanny['foto'] }}"
-                 alt="{{ $nanny['name'] }}"
-                 class="avatar-ring w-28 h-28 rounded-full object-cover border-4 border-plum-soft mb-4"
-                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
-            >
-            <div class="avatar-ring w-28 h-28 rounded-full bg-plum-soft border-4 border-plum-soft mb-4 items-center justify-center hidden">
-                <ion-icon name="person" style="font-size:48px;color:#7B1E5A;"></ion-icon>
-            </div>
-            @else
-            <div class="avatar-ring w-28 h-28 rounded-full bg-plum-soft border-4 border-plum-soft mb-4 flex items-center justify-center">
-                <ion-icon name="person" style="font-size:48px;color:#7B1E5A;"></ion-icon>
-            </div>
-            @endif
-
-            <h2 class="text-plum-dark text-xl font-extrabold mb-2 text-center">{{ $nanny['name'] }}</h2>
-
-            <div class="flex items-center gap-1.5 bg-plum-soft px-4 py-2 rounded-full mb-3">
-                <ion-icon name="briefcase" style="font-size:13px;color:#7B1E5A;"></ion-icon>
-                <span class="text-plum text-xs font-bold">{{ $nanny['posisi'] ?? 'Nanny' }}</span>
-            </div>
-
-            <!-- Status Badge -->
-            <div class="px-4 py-1.5 rounded-full {{ $isActive ? 'bg-green-100' : 'bg-red-100' }}">
-                <span class="text-xs font-extrabold tracking-wide {{ $isActive ? 'text-green-700' : 'text-red-700' }}">
-                    {{ $isActive ? '● AKTIF' : '● NONAKTIF' }}
-                </span>
-            </div>
-        </div>
-
-        <!-- BIO -->
-        @if(!empty($nanny['bio']))
-        <div class="info-card bg-white rounded-3xl border-2 border-plum-soft p-5 anim-up d3">
-            <div class="flex items-center gap-2 mb-3">
-                <div class="w-8 h-8 rounded-xl bg-plum-soft flex items-center justify-center">
-                    <ion-icon name="information-circle" style="font-size:16px;color:#7B1E5A;"></ion-icon>
-                </div>
-                <h3 class="text-plum-dark font-bold text-sm">Bio</h3>
-            </div>
-            <p class="text-plum-dark/80 text-sm leading-relaxed">{{ $nanny['bio'] }}</p>
+        @endif
+        @if(session('error'))
+        <div id="flash-error"
+             class="bg-red-50 border border-red-200 text-red-700 text-xs font-semibold px-4 py-3 rounded-2xl flex items-center gap-2">
+            <ion-icon name="alert-circle" style="font-size:16px;color:#DC2626;flex-shrink:0;"></ion-icon>
+            {{ session('error') }}
         </div>
         @endif
 
-        <!-- KONTAK -->
-        <div class="info-card bg-white rounded-3xl border-2 border-plum-soft p-5 anim-up d3">
-            <div class="flex items-center gap-2 mb-4">
-                <div class="w-8 h-8 rounded-xl bg-plum-soft flex items-center justify-center">
-                    <ion-icon name="call" style="font-size:16px;color:#7B1E5A;"></ion-icon>
+        {{-- ── PROFILE CARD ── --}}
+        <div class="section-card anim delay-2 p-5">
+            <div class="flex flex-col items-center">
+                @if(!empty($nanny['foto']))
+                <img src="{{ $nanny['foto'] }}" alt="{{ $nanny['name'] }}"
+                     class="avatar-pulse w-[88px] h-[88px] rounded-full object-cover border-4 border-[#EDE9FE] shadow-[0_3px_10px_rgba(0,0,0,0.12)]"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="avatar-pulse w-[88px] h-[88px] rounded-full bg-[#F3F0FD] border-4 border-[#EDE9FE] items-center justify-center hidden">
+                    <ion-icon name="person" style="font-size:42px;color:#8B46D3;"></ion-icon>
                 </div>
-                <h3 class="text-plum-dark font-bold text-sm">Informasi Kontak</h3>
+                @else
+                <div class="avatar-pulse w-[88px] h-[88px] rounded-full bg-[#F3F0FD] border-4 border-[#EDE9FE] flex items-center justify-center">
+                    <ion-icon name="person" style="font-size:42px;color:#8B46D3;"></ion-icon>
+                </div>
+                @endif
+
+                <h2 class="text-[#1E1B2E] text-[22px] font-extrabold mt-3 mb-2">{{ $nanny['name'] }}</h2>
+
+                {{-- Posisi badge --}}
+                <div class="flex items-center gap-1.5 bg-[#EDE9FE] px-3 py-1.5 rounded-full mb-2">
+                    <ion-icon name="briefcase-outline" style="font-size:12px;color:#8B46D3;"></ion-icon>
+                    <span class="text-[#8B46D3] text-[10px] font-extrabold tracking-wide uppercase">{{ $nanny['posisi'] ?? 'Nanny' }}</span>
+                </div>
+
+                {{-- Status badge --}}
+                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full {{ $isActive ? 'bg-[#DCFCE7]' : 'bg-[#FEE2E2]' }}">
+                    <ion-icon name="ellipse" style="font-size:8px;color:{{ $isActive ? '#166534' : '#991B1B' }};"></ion-icon>
+                    <span class="text-[10px] font-extrabold tracking-wide uppercase {{ $isActive ? 'text-[#166534]' : 'text-[#991B1B]' }}">
+                        {{ $isActive ? 'AKTIF' : 'NONAKTIF' }}
+                    </span>
+                </div>
             </div>
-            <div class="space-y-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-plum-soft flex items-center justify-center flex-shrink-0">
-                        <ion-icon name="mail" style="font-size:16px;color:#7B1E5A;"></ion-icon>
+
+            @if(!empty($nanny['bio']))
+            <div class="h-px bg-[#E5E1F0] my-4"></div>
+            <div class="bg-[#F8F8FB] border border-[#ECEAF4] rounded-[10px] px-3 py-2.5 flex items-start gap-3">
+                <div class="w-8 h-8 rounded-[8px] bg-[#EDE9FE] flex items-center justify-center shrink-0 mt-0.5">
+                    <ion-icon name="information-circle-outline" style="font-size:16px;color:#8B46D3;"></ion-icon>
+                </div>
+                <div class="flex-1">
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Bio</p>
+                    <p class="text-[#1E1B2E] text-[12px] font-semibold leading-relaxed">{{ $nanny['bio'] }}</p>
+                </div>
+            </div>
+            @endif
+        </div>
+
+        {{-- ── CONTACT INFORMATION CARD ── --}}
+        <div class="section-card anim delay-3 p-5">
+            <div class="flex items-center gap-2">
+                <ion-icon name="call" style="font-size:16px;color:#8B46D3;"></ion-icon>
+                <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Informasi Kontak</h3>
+            </div>
+            <div class="h-px bg-[#E5E1F0] my-4"></div>
+
+            <div class="space-y-2">
+                {{-- Email --}}
+                <div class="detail-item px-3 py-2.5 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#EFE9FB] flex items-center justify-center shrink-0">
+                        <ion-icon name="at-outline" style="font-size:16px;color:#8B46D3;"></ion-icon>
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-plum-muted text-[10px] font-semibold uppercase tracking-wide mb-0.5">Email</p>
-                        <p class="text-plum-dark text-sm font-semibold truncate">{{ $nanny['email'] ?? '-' }}</p>
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Email</p>
+                        <p class="text-[#1E1B2E] text-[13px] font-extrabold truncate">{{ $nanny['email'] ?? '-' }}</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-plum-soft flex items-center justify-center flex-shrink-0">
-                        <ion-icon name="call" style="font-size:16px;color:#7B1E5A;"></ion-icon>
+
+                {{-- No HP --}}
+                <div class="detail-item px-3 py-2.5 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#EDE9FE] flex items-center justify-center shrink-0">
+                        <ion-icon name="call-outline" style="font-size:16px;color:#4F46E5;"></ion-icon>
                     </div>
                     <div class="flex-1">
-                        <p class="text-plum-muted text-[10px] font-semibold uppercase tracking-wide mb-0.5">Nomor HP</p>
-                        <p class="text-plum-dark text-sm font-semibold">{{ $nanny['no_hp'] ?? '-' }}</p>
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Nomor HP</p>
+                        <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $nanny['no_hp'] ?? '-' }}</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- INFORMASI PRIBADI -->
-        <div class="info-card bg-white rounded-3xl border-2 border-plum-soft p-5 anim-up d4">
-            <div class="flex items-center gap-2 mb-4">
-                <div class="w-8 h-8 rounded-xl bg-plum-soft flex items-center justify-center">
-                    <ion-icon name="person-circle" style="font-size:16px;color:#7B1E5A;"></ion-icon>
-                </div>
-                <h3 class="text-plum-dark font-bold text-sm">Informasi Pribadi</h3>
+        {{-- ── PERSONAL INFORMATION CARD ── --}}
+        <div class="section-card anim delay-4 p-5">
+            <div class="flex items-center gap-2">
+                <ion-icon name="person-circle" style="font-size:16px;color:#8B46D3;"></ion-icon>
+                <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Informasi Pribadi</h3>
             </div>
-            <div class="space-y-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-plum-soft flex items-center justify-center flex-shrink-0">
-                        <ion-icon name="calendar" style="font-size:16px;color:#7B1E5A;"></ion-icon>
+            <div class="h-px bg-[#E5E1F0] my-4"></div>
+
+            <div class="space-y-2">
+                {{-- Tanggal Lahir --}}
+                <div class="detail-item px-3 py-2.5 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#FDE8EF] flex items-center justify-center shrink-0">
+                        <ion-icon name="calendar-outline" style="font-size:16px;color:#EC4899;"></ion-icon>
                     </div>
                     <div class="flex-1">
-                        <p class="text-plum-muted text-[10px] font-semibold uppercase tracking-wide mb-0.5">Tanggal Lahir</p>
-                        <p class="text-plum-dark text-sm font-semibold">{{ $nanny['tanggal_lahir'] ?? '-' }}</p>
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Tanggal Lahir</p>
+                        <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $nanny['tanggal_lahir'] ?? '-' }}</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-plum-soft flex items-center justify-center flex-shrink-0">
-                        @php $isMale = ($nanny['gender'] ?? '') === 'L'; @endphp
-                        <ion-icon name="{{ $isMale ? 'male' : 'female' }}" style="font-size:16px;color:#7B1E5A;"></ion-icon>
+
+                {{-- Gender --}}
+                <div class="detail-item px-3 py-2.5 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#EDE9FE] flex items-center justify-center shrink-0">
+                        <ion-icon name="{{ $isMale ? 'male-outline' : 'female-outline' }}"
+                                  style="font-size:16px;color:{{ $isMale ? '#4F46E5' : '#EC4899' }};"></ion-icon>
                     </div>
                     <div class="flex-1">
-                        <p class="text-plum-muted text-[10px] font-semibold uppercase tracking-wide mb-0.5">Gender</p>
-                        <p class="text-plum-dark text-sm font-semibold">
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Gender</p>
+                        <p class="text-[#1E1B2E] text-[13px] font-extrabold">
                             @php $g = $nanny['gender'] ?? ''; echo $g === 'L' ? 'Laki-laki' : ($g === 'P' ? 'Perempuan' : '-'); @endphp
                         </p>
                     </div>
                 </div>
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-plum-soft flex items-center justify-center flex-shrink-0">
-                        <ion-icon name="location" style="font-size:16px;color:#7B1E5A;"></ion-icon>
+
+                {{-- Lokasi --}}
+                <div class="detail-item px-3 py-2.5 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#FEF3E2] flex items-center justify-center shrink-0">
+                        <ion-icon name="location-outline" style="font-size:16px;color:#F59E0B;"></ion-icon>
                     </div>
                     <div class="flex-1">
-                        <p class="text-plum-muted text-[10px] font-semibold uppercase tracking-wide mb-0.5">Lokasi</p>
-                        <p class="text-plum-dark text-sm font-semibold">
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Lokasi</p>
+                        <p class="text-[#1E1B2E] text-[13px] font-extrabold">
                             @if(!empty($nanny['kota']) && !empty($nanny['provinsi']))
                                 {{ $nanny['kota'] }}, {{ $nanny['provinsi'] }}
                             @else -
@@ -319,60 +266,64 @@
                         </p>
                     </div>
                 </div>
+
+                {{-- Alamat (kondisional) --}}
                 @if(!empty($nanny['alamat']))
-                <div class="flex items-start gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-plum-soft flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <ion-icon name="home" style="font-size:16px;color:#7B1E5A;"></ion-icon>
+                <div class="bg-[#F8F8FB] border border-[#ECEAF4] rounded-[10px] px-3 py-2.5 flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#EFE9FB] flex items-center justify-center shrink-0 mt-0.5">
+                        <ion-icon name="home-outline" style="font-size:16px;color:#8B46D3;"></ion-icon>
                     </div>
                     <div class="flex-1">
-                        <p class="text-plum-muted text-[10px] font-semibold uppercase tracking-wide mb-0.5">Alamat</p>
-                        <p class="text-plum-dark text-sm font-semibold leading-snug">{{ $nanny['alamat'] }}</p>
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Alamat</p>
+                        <p class="text-[#1E1B2E] text-[12px] font-semibold leading-snug">{{ $nanny['alamat'] }}</p>
                     </div>
                 </div>
                 @endif
             </div>
         </div>
 
-        <!-- INFORMASI PROFESIONAL -->
+        {{-- ── PROFESSIONAL INFORMATION CARD ── --}}
         @if(!empty($nanny['skill']) || !empty($nanny['pengalaman']) || !empty($nanny['sertifikasi']))
-        <div class="info-card bg-white rounded-3xl border-2 border-plum-soft p-5 anim-up d5">
-            <div class="flex items-center gap-2 mb-4">
-                <div class="w-8 h-8 rounded-xl bg-plum-soft flex items-center justify-center">
-                    <ion-icon name="briefcase" style="font-size:16px;color:#7B1E5A;"></ion-icon>
-                </div>
-                <h3 class="text-plum-dark font-bold text-sm">Informasi Profesional</h3>
+        <div class="section-card anim delay-5 p-5">
+            <div class="flex items-center gap-2">
+                <ion-icon name="briefcase" style="font-size:16px;color:#8B46D3;"></ion-icon>
+                <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Informasi Profesional</h3>
             </div>
-            <div class="space-y-3">
+            <div class="h-px bg-[#E5E1F0] my-4"></div>
+
+            <div class="space-y-2">
                 @if(!empty($nanny['skill']))
-                <div class="flex items-start gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-plum-soft flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <ion-icon name="star" style="font-size:16px;color:#7B1E5A;"></ion-icon>
+                <div class="bg-[#F8F8FB] border border-[#ECEAF4] rounded-[10px] px-3 py-2.5 flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#FEF3E2] flex items-center justify-center shrink-0 mt-0.5">
+                        <ion-icon name="star-outline" style="font-size:16px;color:#F59E0B;"></ion-icon>
                     </div>
                     <div class="flex-1">
-                        <p class="text-plum-muted text-[10px] font-semibold uppercase tracking-wide mb-0.5">Skill</p>
-                        <p class="text-plum-dark text-sm font-semibold leading-snug">{{ $nanny['skill'] }}</p>
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Skill</p>
+                        <p class="text-[#1E1B2E] text-[12px] font-semibold leading-snug">{{ $nanny['skill'] }}</p>
                     </div>
                 </div>
                 @endif
+
                 @if(!empty($nanny['pengalaman']))
-                <div class="flex items-start gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-plum-soft flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <ion-icon name="time" style="font-size:16px;color:#7B1E5A;"></ion-icon>
+                <div class="bg-[#F8F8FB] border border-[#ECEAF4] rounded-[10px] px-3 py-2.5 flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#EDE9FE] flex items-center justify-center shrink-0 mt-0.5">
+                        <ion-icon name="time-outline" style="font-size:16px;color:#4F46E5;"></ion-icon>
                     </div>
                     <div class="flex-1">
-                        <p class="text-plum-muted text-[10px] font-semibold uppercase tracking-wide mb-0.5">Pengalaman</p>
-                        <p class="text-plum-dark text-sm font-semibold leading-snug">{{ $nanny['pengalaman'] }}</p>
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Pengalaman</p>
+                        <p class="text-[#1E1B2E] text-[12px] font-semibold leading-snug">{{ $nanny['pengalaman'] }}</p>
                     </div>
                 </div>
                 @endif
+
                 @if(!empty($nanny['sertifikasi']))
-                <div class="flex items-start gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-plum-soft flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <ion-icon name="ribbon" style="font-size:16px;color:#7B1E5A;"></ion-icon>
+                <div class="bg-[#F8F8FB] border border-[#ECEAF4] rounded-[10px] px-3 py-2.5 flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#DCFCE7] flex items-center justify-center shrink-0 mt-0.5">
+                        <ion-icon name="ribbon-outline" style="font-size:16px;color:#166534;"></ion-icon>
                     </div>
                     <div class="flex-1">
-                        <p class="text-plum-muted text-[10px] font-semibold uppercase tracking-wide mb-0.5">Sertifikasi</p>
-                        <p class="text-plum-dark text-sm font-semibold leading-snug">{{ $nanny['sertifikasi'] }}</p>
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Sertifikasi</p>
+                        <p class="text-[#1E1B2E] text-[12px] font-semibold leading-snug">{{ $nanny['sertifikasi'] }}</p>
                     </div>
                 </div>
                 @endif
@@ -380,74 +331,83 @@
         </div>
         @endif
 
-        <!-- ACTION BUTTONS -->
-        <div class="space-y-3 anim-up d7 pb-2">
+        {{-- ── ACTION BUTTONS ── --}}
+        <div class="anim delay-6 space-y-3 pt-1">
 
-            <!-- Hubungi Nanny -->
-            <a href="{{ route('chat.room', $idUser) }}"
-               class="btn-primary w-full flex items-center justify-center gap-2 text-white font-bold text-sm py-4 rounded-2xl shadow-lg shadow-plum/30">
-                <ion-icon name="chatbubble-ellipses" style="font-size:18px;"></ion-icon>
-                Hubungi Nanny
+            {{-- Hubungi Nanny --}}
+            <a href="{{ route('chat.room', $idUser) }}?nama={{ urlencode($nanny['name'] ?? 'Nanny') }}"
+               class="bg-white border border-[#E7E3F5] text-[#8B46D3] rounded-2xl font-extrabold
+                      flex items-center justify-center gap-2 h-[52px]
+                      shadow-[0_2px_10px_rgba(0,0,0,0.06)] active:scale-[0.97] transition-transform">
+                <ion-icon name="chatbubble-ellipses-outline" style="font-size:18px;"></ion-icon>
+                <span>Hubungi Nanny</span>
             </a>
 
-            <!-- Ubah Status -->
+            {{-- Toggle Status Akun --}}
             @if($isActive)
             <button onclick="openStatusModal()"
-                    class="w-full flex items-center justify-center gap-2 font-bold text-sm py-4 rounded-2xl border-2 border-red-200 bg-red-50 text-red-600 hover:bg-red-100 transition-colors">
-                <ion-icon name="close-circle" style="font-size:18px;"></ion-icon>
+                    class="w-full flex items-center justify-center gap-2 h-[52px] rounded-2xl font-extrabold text-[14px]
+                           bg-[#FEF2F2] border border-[#FECACA] text-[#DC2626]
+                           active:scale-[0.97] transition-transform">
+                <ion-icon name="close-circle-outline" style="font-size:18px;"></ion-icon>
                 Nonaktifkan Akun
             </button>
             @else
             <button onclick="openStatusModal()"
-                    class="w-full flex items-center justify-center gap-2 font-bold text-sm py-4 rounded-2xl border-2 border-green-200 bg-green-50 text-green-600 hover:bg-green-100 transition-colors">
-                <ion-icon name="checkmark-circle" style="font-size:18px;"></ion-icon>
+                    class="w-full flex items-center justify-center gap-2 h-[52px] rounded-2xl font-extrabold text-[14px]
+                           bg-[#F0FDF4] border border-[#BBF7D0] text-[#16A34A]
+                           active:scale-[0.97] transition-transform">
+                <ion-icon name="checkmark-circle-outline" style="font-size:18px;"></ion-icon>
                 Aktifkan Akun
             </button>
             @endif
         </div>
 
-        <div class="h-6"></div>
     </div>
 
-    <!-- STATUS MODAL -->
+    {{-- ── STATUS MODAL ── --}}
     <div id="statusModal"
          class="hidden fixed inset-0 z-50 flex items-end justify-center sm:items-center"
-         style="padding: 0 0 80px 0;"
-    >
+         style="padding-bottom: 80px;">
         <div class="modal-overlay absolute inset-0" onclick="closeStatusModal()"></div>
-        <div class="modal-card relative bg-white rounded-3xl mx-4 p-6 w-full max-w-sm shadow-2xl z-10">
+        <div class="modal-card relative bg-white rounded-[24px] mx-5 p-6 w-full max-w-sm shadow-[0_20px_60px_rgba(0,0,0,0.2)] z-10">
             <div class="flex flex-col items-center text-center mb-6">
-                <div class="w-16 h-16 rounded-full flex items-center justify-center mb-4
-                     {{ $isActive ? 'bg-red-50' : 'bg-green-50' }}">
+                <div class="w-[68px] h-[68px] rounded-full flex items-center justify-center mb-4
+                     {{ $isActive ? 'bg-[#FEF2F2]' : 'bg-[#F0FDF4]' }}">
                     <ion-icon name="{{ $isActive ? 'close-circle' : 'checkmark-circle' }}"
                               style="font-size:36px;color:{{ $isActive ? '#DC2626' : '#16A34A' }};"></ion-icon>
                 </div>
-                <h3 class="text-plum-dark font-extrabold text-lg mb-2">
+                <h3 class="text-[#1E1B2E] font-extrabold text-[18px] mb-2">
                     {{ $isActive ? 'Nonaktifkan Akun?' : 'Aktifkan Akun?' }}
                 </h3>
-                <p class="text-plum-muted text-sm leading-relaxed">
+                <p class="text-[#8B86A5] text-[13px] leading-relaxed">
                     Anda akan
-                    <span class="font-bold {{ $isActive ? 'text-red-600' : 'text-green-600' }}">
+                    <span class="font-extrabold {{ $isActive ? 'text-[#DC2626]' : 'text-[#16A34A]' }}">
                         {{ $isActive ? 'menonaktifkan' : 'mengaktifkan' }}
                     </span>
-                    akun nanny <span class="font-bold text-plum-dark">{{ $nanny['name'] }}</span>.
+                    akun nanny <span class="font-extrabold text-[#1E1B2E]">{{ $nanny['name'] }}</span>.
                     {{ $isActive ? 'Nanny tidak dapat login setelah dinonaktifkan.' : 'Nanny dapat kembali login setelah diaktifkan.' }}
                 </p>
             </div>
 
             <div class="flex gap-3">
                 <button onclick="closeStatusModal()"
-                        class="flex-1 py-3.5 rounded-2xl border-2 border-plum-soft text-plum-muted font-bold text-sm hover:bg-plum-soft transition-colors">
+                        class="flex-1 h-[48px] rounded-2xl border border-[#ECEAF4] bg-[#F8F8FB]
+                               text-[#8B86A5] font-extrabold text-[13px]
+                               active:scale-[0.97] transition-transform">
                     Batal
                 </button>
                 <form action="{{ route('konsultan-nanny-update-status') }}" method="POST" class="flex-1">
                     @csrf
-                    <input type="hidden" name="id"        value="{{ $idUser }}">
-                    <input type="hidden" name="is_active" value="{{ $isActive ? 0 : 1 }}">
+                    <input type="hidden" name="id"         value="{{ $idUser }}">
+                    <input type="hidden" name="is_active"  value="{{ $isActive ? 0 : 1 }}">
                     <input type="hidden" name="redirect_id" value="{{ $nanny['id_user'] }}">
                     <button type="submit"
-                            class="w-full py-3.5 rounded-2xl text-white font-bold text-sm shadow-md
-                                   {{ $isActive ? 'btn-danger' : 'btn-success' }}">
+                            class="w-full h-[48px] rounded-2xl text-white font-extrabold text-[13px]
+                                   active:scale-[0.97] transition-transform
+                                   {{ $isActive
+                                       ? 'bg-[#DC2626] shadow-[0_4px_12px_rgba(220,38,38,0.35)]'
+                                       : 'bg-[#16A34A] shadow-[0_4px_12px_rgba(22,163,74,0.35)]' }}">
                         Ya, {{ $isActive ? 'Nonaktifkan' : 'Aktifkan' }}
                     </button>
                 </form>
@@ -457,36 +417,34 @@
 
     @endif
 
-    <!-- BOTTOM NAV -->
     @include('partials.bottom-nav', ['active' => 'home'])
 
 </div>
 </div>
 
 <script>
-    function updateClock() {
-        const now = new Date();
-        const h = String(now.getHours()).padStart(2, '0');
-        const m = String(now.getMinutes()).padStart(2, '0');
+    (function () {
         const el = document.getElementById('statusTime');
-        if (el) el.textContent = `${h}:${m}`;
-    }
-    updateClock();
-    setInterval(updateClock, 30000);
+        function tick() {
+            const now = new Date();
+            if (el) el.textContent =
+                `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        }
+        tick();
+        setInterval(tick, 30000);
+    })();
 
     function openStatusModal() {
         const m = document.getElementById('statusModal');
         m.classList.remove('hidden');
-        m.classList.add('flex');
     }
     function closeStatusModal() {
         const m = document.getElementById('statusModal');
         m.classList.add('hidden');
-        m.classList.remove('flex');
     }
 
-    setTimeout(() => {
-        ['flash-success','flash-error'].forEach(id => {
+    setTimeout(function () {
+        ['flash-success', 'flash-error'].forEach(function (id) {
             const el = document.getElementById(id);
             if (el) el.style.display = 'none';
         });

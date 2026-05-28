@@ -7,437 +7,340 @@
     <title>Detail Konsultan — {{ $konsultan['name'] ?? 'Konsultan' }}</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        plum: {
-                            DEFAULT: '#7B1E5A',
-                            light:   '#9B2E72',
-                            dark:    '#4A0E35',
-                            pale:    '#FFF9FB',
-                            soft:    '#F3E6FA',
-                            muted:   '#A2397B',
-                            accent:  '#B895C8',
-                        }
-                    },
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
-
     <style>
         * { -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #FFF9FB; }
-
-        @media (min-width: 640px) {
-            .phone-wrapper {
-                display: flex; align-items: flex-start; justify-content: center;
-                min-height: 100vh; padding: 32px 0;
-                background: linear-gradient(135deg, #f8e8f3 0%, #ede0f0 60%, #e8d5ee 100%);
-            }
-            .phone-frame {
-                width: 390px; min-height: 844px; border-radius: 44px;
-                box-shadow: 0 40px 80px rgba(123,30,90,0.25),
-                            0 0 0 8px #1a0d14, 0 0 0 10px #2d1020;
-                overflow: hidden; position: relative;
-            }
-        }
-        @media (max-width: 639px) {
-            .phone-wrapper { min-height: 100vh; }
-            .phone-frame   { min-height: 100vh; }
-        }
-
-        .header-bg { background: linear-gradient(135deg, #7B1E5A 0%, #9B2E72 100%); }
-
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(18px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .anim-up     { animation: slideUp 0.35s ease forwards; }
-        .anim-up.d1  { animation-delay: 0.05s; opacity: 0; }
-        .anim-up.d2  { animation-delay: 0.12s; opacity: 0; }
-        .anim-up.d3  { animation-delay: 0.19s; opacity: 0; }
-        .anim-up.d4  { animation-delay: 0.26s; opacity: 0; }
-        .anim-up.d5  { animation-delay: 0.33s; opacity: 0; }
-        .anim-up.d6  { animation-delay: 0.40s; opacity: 0; }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* infoCard hover */
-        .info-card { transition: box-shadow 0.2s ease; }
-        .info-card:hover { box-shadow: 0 4px 16px rgba(123,30,90,0.10); }
-
-        /* Button — gradient matches RN Button component */
-        .btn-primary {
-            background: linear-gradient(135deg, #7B1E5A, #9B2E72);
-            transition: opacity 0.2s, transform 0.15s;
-        }
-        .btn-primary:hover  { opacity: 0.92; }
-        .btn-primary:active { transform: scale(0.97); }
+        .anim { animation: slideUp 0.4s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.13s; }
+        .delay-3 { animation-delay: 0.21s; }
+        .delay-4 { animation-delay: 0.29s; }
+        .delay-5 { animation-delay: 0.37s; }
 
         @keyframes floatEmpty {
             0%,100% { transform: translateY(0); }
-            50%     { transform: translateY(-6px); }
+            50% { transform: translateY(-6px); }
         }
         .float-anim { animation: floatEmpty 3s ease-in-out infinite; }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .section-card {
+            background: #FFFFFF;
+            border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+        }
+        .detail-item {
+            background: #F8F8FB;
+            border: 1px solid #ECEAF4;
+            border-radius: 10px;
+        }
+        .btn-contact {
+            background: #FFFFFF;
+            border: 1px solid #E7E3F5;
+            color: #8B46D3;
+            border-radius: 12px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 48px;
+        }
+        .btn-contact.disabled {
+            color: #B8B3CC;
+            background: #F7F7FA;
+            cursor: not-allowed;
+        }
     </style>
 </head>
-<body>
+<body class="font-['Nunito'] bg-[#E5E2F5]">
 
-<div class="phone-wrapper">
-<div class="phone-frame bg-plum-pale flex flex-col">
+<div class="sm:flex sm:items-start sm:justify-center sm:min-h-screen sm:py-8 sm:pb-[60px]">
+<div class="sm:w-[390px] sm:min-h-[844px] sm:rounded-[44px] sm:shadow-[0_40px_80px_rgba(124,58,237,0.28),0_0_0_8px_#1a1030,0_0_0_10px_#2d1a50] sm:overflow-hidden bg-[#F0EDFB] min-h-screen flex flex-col relative">
 
-    <!-- STATUS BAR -->
-    <div class="hidden sm:flex items-center justify-between px-8 pt-4 pb-1 bg-plum">
-        <span class="text-xs font-semibold text-white/80" id="statusTime">9:41</span>
-        <div class="flex gap-1 items-center text-white">
-            <svg class="w-4 h-3" viewBox="0 0 17 12" fill="white" opacity="0.8"><rect x="0" y="3" width="3" height="9" rx="0.5"/><rect x="4.5" y="2" width="3" height="10" rx="0.5"/><rect x="9" y="0.5" width="3" height="11.5" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg>
-            <svg class="w-4 h-3" viewBox="0 0 16 12" fill="white" opacity="0.8"><path d="M8 2.4C5.6 2.4 3.4 3.4 1.8 5L0 3.2C2.2 1.2 5 0 8 0s5.8 1.2 8 3.2L14.2 5C12.6 3.4 10.4 2.4 8 2.4z"/><path d="M8 6c-1.4 0-2.6.6-3.6 1.4L2.6 5.6C4 4.4 5.8 3.6 8 3.6s4 .8 5.4 2L11.6 7.4C10.6 6.6 9.4 6 8 6z"/><circle cx="8" cy="10" r="2"/></svg>
-            <div class="flex items-center"><div class="w-6 h-3 border border-white/70 rounded-sm p-px flex items-stretch"><div class="bg-white rounded-xs flex-1"></div></div></div>
+    {{-- STATUS BAR --}}
+    <div class="hidden sm:flex sm:items-center sm:justify-between bg-[#8B46D3] px-6 pt-[14px] text-white text-xs font-bold">
+        <span id="statusTime">9:41</span>
+        <div class="flex items-center gap-1.5">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+                <rect x="0" y="4" width="3" height="7" rx="0.6" fill="white" opacity="0.5"/>
+                <rect x="4.5" y="2.5" width="3" height="8.5" rx="0.6" fill="white" opacity="0.7"/>
+                <rect x="9" y="0.5" width="3" height="10.5" rx="0.6" fill="white"/>
+            </svg>
+            <div class="flex items-center">
+                <div class="w-[22px] h-[11px] border-[1.5px] border-white/70 rounded-[3px] p-[1.5px]">
+                    <div class="bg-white rounded-[1.5px] h-full"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- HEADER --}}
+    <div class="anim delay-1 relative z-10 bg-[#8B46D3] bg-[url('/assets/bg-texture.png')] bg-cover bg-center
+                px-[24px] pt-[55px] pb-[72px]
+                before:content-[''] before:absolute before:inset-0 before:bg-[#8B46D3] before:opacity-60 before:-z-10">
+        <div class="flex items-start gap-3 relative z-10">
+            <a href="{{ route('majikan-konsultan-list') }}"
+               class="mt-1 w-10 h-10 rounded-full bg-white/20 border-[1.5px] border-white/30 flex items-center justify-center shrink-0">
+                <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
+            </a>
+            <div>
+                <span class="text-white text-[17px] font-extrabold tracking-wide">Konsultan Details</span>
+                <p class="text-white/70 text-xs font-semibold mt-0.5 leading-[1.3]">Complete Profile Information and<br>Expertise</p>
+            </div>
         </div>
     </div>
 
     @if(!isset($konsultan))
-    {{-- ── NOT FOUND ─────────────────────────────────────────────────────── --}}
-    {{-- header --}}
-    <div class="header-bg rounded-b-[24px] relative shrink-0 overflow-hidden"
-         style="padding: 50px 20px 24px;">
-        <a href="{{ route('majikan-konsultan-list') }}"
-           class="absolute flex items-center justify-center bg-white/20 hover:bg-white/30 transition-colors rounded-full"
-           style="top:54px;left:20px;width:40px;height:40px;">
-            <ion-icon name="arrow-back" style="font-size:20px;color:#fff;"></ion-icon>
-        </a>
-        <div class="flex flex-col items-center">
-            <div class="flex items-center justify-center bg-white rounded-full mb-4 shadow-lg"
-                 style="width:64px;height:64px;">
-                <ion-icon name="person" style="font-size:30px;color:#7B1E5A;"></ion-icon>
+    {{-- NOT FOUND --}}
+    <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar">
+        <div class="flex flex-col items-center justify-center pt-20 px-8">
+            <div class="float-anim w-28 h-28 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-6">
+                <ion-icon name="person-circle-outline" style="font-size:60px;color:#C4B5FD;"></ion-icon>
             </div>
-            <h1 class="font-bold text-white mb-1" style="font-size:24px;letter-spacing:0.5px;">Detail Konsultan</h1>
-            <p style="font-size:14px;color:#F3E6FA;font-weight:500;">Informasi lengkap konsultan</p>
+            <h2 class="text-[#1E1B2E] font-bold text-xl mb-2">Data tidak ditemukan</h2>
+            <p class="text-[#9CA3AF] text-sm text-center leading-relaxed mb-6">Data yang Anda cari tidak tersedia</p>
+            <a href="{{ route('majikan-konsultan-list') }}"
+               class="bg-[#8B46D3] text-white text-sm font-bold px-8 py-3 rounded-2xl shadow-[0_8px_20px_rgba(139,70,211,0.35)]">
+                Kembali ke Daftar
+            </a>
         </div>
-    </div>
-    {{-- emptyContainer: flex:1, justifyContent:center, alignItems:center, padding:40 --}}
-    <div class="flex-1 flex flex-col items-center justify-center" style="padding:40px;">
-        <div class="float-anim flex items-center justify-center"
-             style="width:120px;height:120px;border-radius:60px;background:#F3E6FA;margin-bottom:24px;">
-            <ion-icon name="person-circle-outline" style="font-size:80px;color:#B895C8;"></ion-icon>
-        </div>
-        <p class="text-center" style="font-size:18px;font-weight:700;color:#4A0E35;margin-bottom:8px;">
-            Data konsultan tidak ditemukan
-        </p>
-        <p class="text-center" style="font-size:14px;color:#A2397B;line-height:20px;margin-bottom:24px;">
-            Data yang Anda cari tidak tersedia
-        </p>
-        <a href="{{ route('majikan-konsultan-list') }}"
-           class="btn-primary text-white font-bold"
-           style="font-size:14px;padding:12px 28px;border-radius:16px;">
-            Kembali ke Daftar
-        </a>
     </div>
 
     @else
-    {{-- ── HEADER ─────────────────────────────────────────────────────────── --}}
-    {{--
-        header: bg:#7B1E5A, pt:50, pb:24, px:20,
-                borderBottomLeftRadius:24, borderBottomRightRadius:24
-    --}}
-    <div class="header-bg relative shrink-0 overflow-hidden"
-         style="padding:50px 20px 24px; border-bottom-left-radius:24px; border-bottom-right-radius:24px;">
-        <div class="absolute top-0 right-0 w-36 h-36 rounded-full bg-white/5 -translate-y-8 translate-x-8 pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-white/5 translate-y-5 -translate-x-5 pointer-events-none"></div>
+    @php
+        $rating         = $konsultan['rating'] ?? '4.9';
+        $experienceYears = $konsultan['pengalaman_tahun'] ?? ($konsultan['lama_pengalaman'] ?? '-');
+        $genderText     = ($konsultan['gender'] ?? '') === 'L' ? 'Laki-laki' : (($konsultan['gender'] ?? '') === 'P' ? 'Perempuan' : '-');
+        $locationText   = (!empty($konsultan['kota']) && !empty($konsultan['provinsi']))
+                            ? $konsultan['kota'].', '.$konsultan['provinsi']
+                            : ($konsultan['kota'] ?? $konsultan['provinsi'] ?? '-');
+        $isMale         = ($konsultan['gender'] ?? '') === 'L';
+    @endphp
 
-        {{-- backButton: absolute, top:54, left:20, w:40, h:40, borderRadius:20, bg:rgba(255,255,255,0.2) --}}
-        <a href="{{ route('majikan-konsultan-list') }}"
-           class="absolute flex items-center justify-center bg-white/20 hover:bg-white/30 transition-colors rounded-full anim-up d1"
-           style="top:54px;left:20px;width:40px;height:40px;z-index:10;">
-            <ion-icon name="arrow-back" style="font-size:20px;color:#fff;"></ion-icon>
-        </a>
+    <div class="flex-1 overflow-y-auto px-[20px] pt-[20px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar space-y-4">
 
-        {{-- headerContent: alignItems:center --}}
-        <div class="flex flex-col items-center anim-up d1">
-            {{-- headerIconContainer: w:64, h:64, borderRadius:32, bg:#fff, mb:16 --}}
-            <div class="flex items-center justify-center bg-white rounded-full mb-4 shadow-lg shadow-plum-dark/20"
-                 style="width:64px;height:64px;">
-                <ion-icon name="person" style="font-size:30px;color:#7B1E5A;"></ion-icon>
+        {{-- ── PROFILE CARD ── --}}
+        <div class="section-card anim delay-2 p-5">
+            <div class="flex flex-col items-center">
+                @if(!empty($konsultan['foto_url']))
+                <img src="{{ $konsultan['foto_url'] }}" alt="{{ $konsultan['name'] }}"
+                     class="w-[88px] h-[88px] rounded-full object-cover border-4 border-[#EDE9FE] shadow-[0_3px_10px_rgba(0,0,0,0.12)]"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="w-[88px] h-[88px] rounded-full bg-[#F3F0FD] border-4 border-[#EDE9FE] items-center justify-center hidden">
+                    <ion-icon name="person" style="font-size:42px;color:#8B46D3;"></ion-icon>
+                </div>
+                @else
+                <div class="w-[88px] h-[88px] rounded-full bg-[#F3F0FD] border-4 border-[#EDE9FE] flex items-center justify-center">
+                    <ion-icon name="person" style="font-size:42px;color:#8B46D3;"></ion-icon>
+                </div>
+                @endif
+
+                <h2 class="text-[#1E1B2E] text-[25px] font-extrabold mt-3">{{ $konsultan['name'] }}</h2>
+
+                <div class="mt-2 bg-[#EFE9FB] px-3 py-1 rounded-full flex items-center gap-1.5">
+                    <ion-icon name="{{ !empty($konsultan['spesialis']) ? 'school-outline' : 'briefcase-outline' }}" style="font-size:12px;color:#8B46D3;"></ion-icon>
+                    <span class="text-[#8B46D3] text-[10px] font-extrabold tracking-wide uppercase">
+                        {{ $konsultan['spesialis'] ?? ($konsultan['role'] ?? 'Certified Consultant') }}
+                    </span>
+                </div>
             </div>
-            {{-- headerTitle: fontSize:24, fontWeight:700, color:#fff, letterSpacing:0.5, mb:4 --}}
-            <h1 class="font-bold text-white mb-1" style="font-size:24px;letter-spacing:0.5px;">Detail Konsultan</h1>
-            {{-- headerSubtitle: fontSize:14, color:#F3E6FA, fontWeight:500 --}}
-            <p style="font-size:14px;color:#F3E6FA;font-weight:500;">Informasi lengkap konsultan</p>
-        </div>
-    </div>
 
-    {{-- ── SCROLLABLE — scrollContent: padding:20 ─────────────────────────── --}}
-    <div class="flex-1 overflow-y-auto no-scrollbar p-4 pb-16">
+            <div class="h-px bg-[#E5E1F0] my-4"></div>
 
-        {{-- ── PROFILE CARD ──────────────────────────────────────────────────
-             profileCard: bg:#fff, borderRadius:20, padding:24, mb:16, border:2 solid #F3E6FA
-             profileHeader: alignItems:center
-        --}}
-        <div class="info-card flex flex-col items-center anim-up d2"
-             style="background:#fff; border-radius:20px; padding:24px; margin-bottom:16px; border:2px solid #F3E6FA;">
-
-            {{-- foto: w:120, h:120, borderRadius:60, borderWidth:4, borderColor:#F3E6FA, mb:16 --}}
-            @if(!empty($konsultan['foto_url']))
-            <img src="{{ $konsultan['foto_url'] }}"
-                 alt="{{ $konsultan['name'] }}"
-                 class="object-cover"
-                 style="width:120px;height:120px;border-radius:60px;border:4px solid #F3E6FA;margin-bottom:16px;"
-                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-            >
-            <div class="items-center justify-center hidden"
-                 style="width:120px;height:120px;border-radius:60px;background:#F3E6FA;border:4px solid #F3E6FA;margin-bottom:16px;">
-                <ion-icon name="person" style="font-size:50px;color:#7B1E5A;"></ion-icon>
+            <div class="grid grid-cols-3 gap-2 text-center">
+                <div>
+                    <p class="text-[#7C7893] text-[10px] uppercase tracking-[1.2px] font-extrabold">Rating</p>
+                    <p class="text-[#1E1B2E] text-[13px] font-extrabold mt-1">⭐ {{ $rating }}</p>
+                </div>
+                <div>
+                    <p class="text-[#7C7893] text-[10px] uppercase tracking-[1.2px] font-extrabold">Experience</p>
+                    <p class="text-[#1E1B2E] text-[13px] font-extrabold mt-1">
+                        {{ $experienceYears !== '-' ? $experienceYears.' Thn' : '-' }}
+                    </p>
+                </div>
+                <div>
+                    <p class="text-[#7C7893] text-[10px] uppercase tracking-[1.2px] font-extrabold">Clients</p>
+                    <p class="text-[#1E1B2E] text-[13px] font-extrabold mt-1">{{ $konsultan['total_klien'] ?? '-' }}</p>
+                </div>
             </div>
-            @else
-            {{-- fotoPlaceholder: w:120, h:120, borderRadius:60, bg:#F3E6FA, border:4, mb:16 --}}
-            <div class="flex items-center justify-center"
-                 style="width:120px;height:120px;border-radius:60px;background:#F3E6FA;border:4px solid #F3E6FA;margin-bottom:16px;">
-                <ion-icon name="person" style="font-size:50px;color:#7B1E5A;"></ion-icon>
-            </div>
-            @endif
-
-            {{-- nama: fontSize:22, fontWeight:700, color:#4A0E35, mb:8 --}}
-            <p class="text-center" style="font-size:22px;font-weight:700;color:#4A0E35;margin-bottom:8px;">
-                {{ $konsultan['name'] }}
-            </p>
-
-            {{-- spesialisBadge (jika ada) —
-                 flexDirection:row, alignItems:center, bg:#F3E6FA, px:16, py:8, borderRadius:16, gap:6 --}}
-            @if(!empty($konsultan['spesialis']))
-            <div class="flex items-center" style="background:#F3E6FA;padding:8px 16px;border-radius:16px;gap:6px;">
-                <ion-icon name="school" style="font-size:14px;color:#7B1E5A;flex-shrink:0;"></ion-icon>
-                <span style="font-size:13px;color:#7B1E5A;font-weight:600;">{{ $konsultan['spesialis'] }}</span>
-            </div>
-            @endif
         </div>
 
-        {{-- ── BIO CARD (kondisional) ─────────────────────────────────────────
-             bioCard: bg:#fff, borderRadius:20, padding:20, mb:16, border:2 solid #F3E6FA
-        --}}
+        {{-- ── BIO CARD (kondisional) ── --}}
         @if(!empty($konsultan['bio']))
-        <div class="info-card anim-up d3"
-             style="background:#fff;border-radius:20px;padding:20px;margin-bottom:16px;border:2px solid #F3E6FA;">
-            {{-- sectionHeader: flexDirection:row, alignItems:center, mb:16, gap:8 --}}
-            <div class="flex items-center" style="margin-bottom:16px;gap:8px;">
-                <ion-icon name="information-circle" style="font-size:20px;color:#7B1E5A;"></ion-icon>
-                <span style="font-size:16px;font-weight:700;color:#4A0E35;">Bio</span>
+        <div class="section-card anim delay-3 p-5">
+            <div class="flex items-center gap-2">
+                <ion-icon name="information-circle" style="font-size:16px;color:#8B46D3;"></ion-icon>
+                <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Bio</h3>
             </div>
-            {{-- bioText: fontSize:15, color:#4A0E35, lineHeight:22 --}}
-            <p style="font-size:15px;color:#4A0E35;line-height:22px;">{{ $konsultan['bio'] }}</p>
+            <div class="h-px bg-[#E5E1F0] my-4"></div>
+            <p class="text-[#4B5563] text-[13px] font-semibold leading-relaxed">{{ $konsultan['bio'] }}</p>
         </div>
         @endif
 
-        {{-- ── INFORMASI KONTAK ──────────────────────────────────────────────
-             infoCard: bg:#fff, borderRadius:20, padding:20, mb:16, border:2 solid #F3E6FA
-        --}}
-        <div class="info-card anim-up d3"
-             style="background:#fff;border-radius:20px;padding:20px;margin-bottom:16px;border:2px solid #F3E6FA;">
-            <div class="flex items-center" style="margin-bottom:16px;gap:8px;">
-                <ion-icon name="call" style="font-size:20px;color:#7B1E5A;"></ion-icon>
-                <span style="font-size:16px;font-weight:700;color:#4A0E35;">Informasi Kontak</span>
+        {{-- ── CONTACT INFORMATION ── --}}
+        <div class="section-card anim delay-3 p-5">
+            <div class="flex items-center gap-2">
+                <ion-icon name="call" style="font-size:16px;color:#8B46D3;"></ion-icon>
+                <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Contact Information</h3>
             </div>
+            <div class="h-px bg-[#E5E1F0] my-4"></div>
 
-            {{-- infoRow: flexDirection:row, alignItems:flex-start, mb:16 --}}
-            <div class="flex items-start" style="margin-bottom:16px;">
-                {{-- infoIconContainer: w:40, h:40, borderRadius:12, bg:#F3E6FA, mr:12 --}}
-                <div class="flex items-center justify-center flex-shrink-0"
-                     style="width:40px;height:40px;border-radius:12px;background:#F3E6FA;margin-right:12px;">
-                    <ion-icon name="mail" style="font-size:18px;color:#7B1E5A;"></ion-icon>
+            <div class="space-y-2">
+                <div class="detail-item px-3 py-2.5 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#EFE9FB] flex items-center justify-center shrink-0">
+                        <ion-icon name="at-outline" style="font-size:16px;color:#8B46D3;"></ion-icon>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Email</p>
+                        <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $konsultan['email'] ?? '-' }}</p>
+                    </div>
                 </div>
-                <div class="flex-1">
-                    {{-- infoLabel: fontSize:12, color:#A2397B, fontWeight:600, mb:4 --}}
-                    <p style="font-size:12px;color:#A2397B;font-weight:600;margin-bottom:4px;">Email</p>
-                    {{-- infoValue: fontSize:15, color:#4A0E35, fontWeight:500, lineHeight:20 --}}
-                    <p style="font-size:15px;color:#4A0E35;font-weight:500;line-height:20px;">
-                        {{ $konsultan['email'] ?? '-' }}
-                    </p>
-                </div>
-            </div>
-
-            <div class="flex items-start">
-                <div class="flex items-center justify-center flex-shrink-0"
-                     style="width:40px;height:40px;border-radius:12px;background:#F3E6FA;margin-right:12px;">
-                    <ion-icon name="call" style="font-size:18px;color:#7B1E5A;"></ion-icon>
-                </div>
-                <div class="flex-1">
-                    <p style="font-size:12px;color:#A2397B;font-weight:600;margin-bottom:4px;">Nomor HP</p>
-                    <p style="font-size:15px;color:#4A0E35;font-weight:500;line-height:20px;">
-                        {{ $konsultan['no_hp'] ?? '-' }}
-                    </p>
+                <div class="detail-item px-3 py-2.5 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#FDE8EF] flex items-center justify-center shrink-0">
+                        <ion-icon name="call-outline" style="font-size:16px;color:#EC4899;"></ion-icon>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Phone Number</p>
+                        <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $konsultan['no_hp'] ?? '-' }}</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        {{-- ── INFORMASI PRIBADI ─────────────────────────────────────────── --}}
-        <div class="info-card anim-up d4"
-             style="background:#fff;border-radius:20px;padding:20px;margin-bottom:16px;border:2px solid #F3E6FA;">
-            <div class="flex items-center" style="margin-bottom:16px;gap:8px;">
-                <ion-icon name="person-circle" style="font-size:20px;color:#7B1E5A;"></ion-icon>
-                <span style="font-size:16px;font-weight:700;color:#4A0E35;">Informasi Pribadi</span>
+        {{-- ── PERSONAL INFORMATION ── --}}
+        <div class="section-card anim delay-4 p-5">
+            <div class="flex items-center gap-2">
+                <ion-icon name="person-circle" style="font-size:16px;color:#8B46D3;"></ion-icon>
+                <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Personal Information</h3>
             </div>
+            <div class="h-px bg-[#E5E1F0] my-4"></div>
 
-            {{-- Tanggal Lahir --}}
-            <div class="flex items-start" style="margin-bottom:16px;">
-                <div class="flex items-center justify-center flex-shrink-0"
-                     style="width:40px;height:40px;border-radius:12px;background:#F3E6FA;margin-right:12px;">
-                    <ion-icon name="calendar" style="font-size:18px;color:#7B1E5A;"></ion-icon>
+            <div class="space-y-2">
+                <div class="detail-item px-3 py-2.5 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#EDE9FE] flex items-center justify-center shrink-0">
+                        <ion-icon name="calendar-outline" style="font-size:16px;color:#4F46E5;"></ion-icon>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Date Of Birth</p>
+                        <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $konsultan['tanggal_lahir'] ?? '-' }}</p>
+                    </div>
                 </div>
-                <div class="flex-1">
-                    <p style="font-size:12px;color:#A2397B;font-weight:600;margin-bottom:4px;">Tanggal Lahir</p>
-                    <p style="font-size:15px;color:#4A0E35;font-weight:500;line-height:20px;">
-                        {{ $konsultan['tanggal_lahir'] ?? '-' }}
-                    </p>
+                <div class="detail-item px-3 py-2.5 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#FDE8EF] flex items-center justify-center shrink-0">
+                        <ion-icon name="{{ $isMale ? 'male-outline' : 'female-outline' }}" style="font-size:16px;color:#EC4899;"></ion-icon>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Gender</p>
+                        <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $genderText }}</p>
+                    </div>
                 </div>
+                <div class="detail-item px-3 py-2.5 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#EDE9FE] flex items-center justify-center shrink-0">
+                        <ion-icon name="location-outline" style="font-size:16px;color:#4F46E5;"></ion-icon>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Location</p>
+                        <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $locationText }}</p>
+                    </div>
+                </div>
+                @if(!empty($konsultan['alamat']))
+                <div class="detail-item px-3 py-2.5 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#FEF3E2] flex items-center justify-center shrink-0">
+                        <ion-icon name="home-outline" style="font-size:16px;color:#F59E0B;"></ion-icon>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Address</p>
+                        <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $konsultan['alamat'] }}</p>
+                    </div>
+                </div>
+                @endif
             </div>
-
-            {{-- Gender — icon male/female sesuai data --}}
-            <div class="flex items-start" style="margin-bottom:16px;">
-                <div class="flex items-center justify-center flex-shrink-0"
-                     style="width:40px;height:40px;border-radius:12px;background:#F3E6FA;margin-right:12px;">
-                    @php $isMale = ($konsultan['gender'] ?? '') === 'L'; @endphp
-                    <ion-icon name="{{ $isMale ? 'male' : 'female' }}" style="font-size:18px;color:#7B1E5A;"></ion-icon>
-                </div>
-                <div class="flex-1">
-                    <p style="font-size:12px;color:#A2397B;font-weight:600;margin-bottom:4px;">Gender</p>
-                    <p style="font-size:15px;color:#4A0E35;font-weight:500;line-height:20px;">
-                        @php
-                            $g = $konsultan['gender'] ?? '';
-                            echo $g === 'L' ? 'Laki-laki' : ($g === 'P' ? 'Perempuan' : '-');
-                        @endphp
-                    </p>
-                </div>
-            </div>
-
-            {{-- Lokasi --}}
-            <div class="flex items-start" style="margin-bottom:{{ !empty($konsultan['alamat']) ? '16px' : '0' }};">
-                <div class="flex items-center justify-center flex-shrink-0"
-                     style="width:40px;height:40px;border-radius:12px;background:#F3E6FA;margin-right:12px;">
-                    <ion-icon name="location" style="font-size:18px;color:#7B1E5A;"></ion-icon>
-                </div>
-                <div class="flex-1">
-                    <p style="font-size:12px;color:#A2397B;font-weight:600;margin-bottom:4px;">Lokasi</p>
-                    <p style="font-size:15px;color:#4A0E35;font-weight:500;line-height:20px;">
-                        @if(!empty($konsultan['kota']) && !empty($konsultan['provinsi']))
-                            {{ $konsultan['kota'] }}, {{ $konsultan['provinsi'] }}
-                        @else
-                            -
-                        @endif
-                    </p>
-                </div>
-            </div>
-
-            {{-- Alamat (kondisional) --}}
-            @if(!empty($konsultan['alamat']))
-            <div class="flex items-start">
-                <div class="flex items-center justify-center flex-shrink-0"
-                     style="width:40px;height:40px;border-radius:12px;background:#F3E6FA;margin-right:12px;margin-top:2px;">
-                    <ion-icon name="home" style="font-size:18px;color:#7B1E5A;"></ion-icon>
-                </div>
-                <div class="flex-1">
-                    <p style="font-size:12px;color:#A2397B;font-weight:600;margin-bottom:4px;">Alamat</p>
-                    <p style="font-size:15px;color:#4A0E35;font-weight:500;line-height:20px;">
-                        {{ $konsultan['alamat'] }}
-                    </p>
-                </div>
-            </div>
-            @endif
         </div>
 
-        {{-- ── INFORMASI PROFESIONAL (kondisional) ──────────────────────────
-             Tampil jika ada skill, pengalaman, atau sertifikasi
-        --}}
+        {{-- ── PROFESSIONAL INFORMATION (kondisional) ── --}}
         @if(!empty($konsultan['skill']) || !empty($konsultan['pengalaman']) || !empty($konsultan['sertifikasi']))
-        <div class="info-card anim-up d5"
-             style="background:#fff;border-radius:20px;padding:20px;margin-bottom:16px;border:2px solid #F3E6FA;">
-            <div class="flex items-center" style="margin-bottom:16px;gap:8px;">
-                <ion-icon name="briefcase" style="font-size:20px;color:#7B1E5A;"></ion-icon>
-                <span style="font-size:16px;font-weight:700;color:#4A0E35;">Informasi Profesional</span>
+        <div class="section-card anim delay-5 p-5">
+            <div class="flex items-center gap-2">
+                <ion-icon name="briefcase" style="font-size:16px;color:#8B46D3;"></ion-icon>
+                <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Professional Information</h3>
             </div>
+            <div class="h-px bg-[#E5E1F0] my-4"></div>
 
-            @if(!empty($konsultan['skill']))
-            <div class="flex items-start" style="margin-bottom:16px;">
-                <div class="flex items-center justify-center flex-shrink-0"
-                     style="width:40px;height:40px;border-radius:12px;background:#F3E6FA;margin-right:12px;">
-                    <ion-icon name="star" style="font-size:18px;color:#7B1E5A;"></ion-icon>
+            <div class="space-y-2">
+                @if(!empty($konsultan['skill']))
+                <div class="detail-item px-3 py-2.5 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#EFE9FB] flex items-center justify-center shrink-0">
+                        <ion-icon name="star-outline" style="font-size:16px;color:#8B46D3;"></ion-icon>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Skill</p>
+                        <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $konsultan['skill'] }}</p>
+                    </div>
                 </div>
-                <div class="flex-1">
-                    <p style="font-size:12px;color:#A2397B;font-weight:600;margin-bottom:4px;">Skill</p>
-                    <p style="font-size:15px;color:#4A0E35;font-weight:500;line-height:20px;">{{ $konsultan['skill'] }}</p>
+                @endif
+                @if(!empty($konsultan['pengalaman']))
+                <div class="detail-item px-3 py-2.5 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#EDE9FE] flex items-center justify-center shrink-0">
+                        <ion-icon name="time-outline" style="font-size:16px;color:#4F46E5;"></ion-icon>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Experience</p>
+                        <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $konsultan['pengalaman'] }}</p>
+                    </div>
                 </div>
+                @endif
+                @if(!empty($konsultan['sertifikasi']))
+                <div class="detail-item px-3 py-2.5 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-[8px] bg-[#FEF3E2] flex items-center justify-center shrink-0">
+                        <ion-icon name="ribbon-outline" style="font-size:16px;color:#F59E0B;"></ion-icon>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Certification</p>
+                        <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $konsultan['sertifikasi'] }}</p>
+                    </div>
+                </div>
+                @endif
             </div>
-            @endif
-
-            @if(!empty($konsultan['pengalaman']))
-            <div class="flex items-start" style="margin-bottom:16px;">
-                <div class="flex items-center justify-center flex-shrink-0"
-                     style="width:40px;height:40px;border-radius:12px;background:#F3E6FA;margin-right:12px;">
-                    <ion-icon name="time" style="font-size:18px;color:#7B1E5A;"></ion-icon>
-                </div>
-                <div class="flex-1">
-                    <p style="font-size:12px;color:#A2397B;font-weight:600;margin-bottom:4px;">Pengalaman</p>
-                    <p style="font-size:15px;color:#4A0E35;font-weight:500;line-height:20px;">{{ $konsultan['pengalaman'] }}</p>
-                </div>
-            </div>
-            @endif
-
-            @if(!empty($konsultan['sertifikasi']))
-            <div class="flex items-start">
-                <div class="flex items-center justify-center flex-shrink-0"
-                     style="width:40px;height:40px;border-radius:12px;background:#F3E6FA;margin-right:12px;">
-                    <ion-icon name="ribbon" style="font-size:18px;color:#7B1E5A;"></ion-icon>
-                </div>
-                <div class="flex-1">
-                    <p style="font-size:12px;color:#A2397B;font-weight:600;margin-bottom:4px;">Sertifikasi</p>
-                    <p style="font-size:15px;color:#4A0E35;font-weight:500;line-height:20px;">{{ $konsultan['sertifikasi'] }}</p>
-                </div>
-            </div>
-            @endif
         </div>
         @endif
 
-        {{-- ── BUTTON — buttonContainer: mt:8 ──────────────────────────────
-             Button component: full width, gradient plum, text white, rounded, py:16
-        --}}
-        <div class="anim-up d6" style="margin-top:8px;">
-            <a href="{{ route('chat.room', $konsultan['id_user'] ?? $konsultan['id']) }}"
-               class="btn-primary w-full flex items-center justify-center gap-2 text-white font-bold"
-               style="font-size:15px; padding:16px; border-radius:16px; box-shadow:0 8px 20px rgba(123,30,90,0.3);">
-                <ion-icon name="chatbubble-ellipses" style="font-size:18px;"></ion-icon>
-                Hubungi Konsultan
+        {{-- ── CONTACT BUTTON ── --}}
+        <div class="anim delay-5 pt-1">
+            <a href="{{ route('chat.room', [$konsultan['id_user'] ?? $konsultan['id'], 'nama' =>($konsultan['name'])]) }}"
+               class="btn-contact shadow-[0_2px_10px_rgba(0,0,0,0.06)] w-full">
+                <ion-icon name="chatbubble-ellipses-outline" style="font-size:16px;"></ion-icon>
+                <span>Hubungi Konsultan</span>
             </a>
         </div>
 
-        {{-- Bottom Spacing: height:30 --}}
-        <div style="height:30px;"></div>
     </div>
-
     @endif
 
-    <!-- BOTTOM NAV -->
     @include('partials.bottom-nav', ['active' => 'home'])
 
 </div>
 </div>
 
 <script>
-    function updateClock() {
-        const now = new Date();
-        const h = String(now.getHours()).padStart(2,'0');
-        const m = String(now.getMinutes()).padStart(2,'0');
+    (function () {
         const el = document.getElementById('statusTime');
-        if (el) el.textContent = `${h}:${m}`;
-    }
-    updateClock();
-    setInterval(updateClock, 30000);
+        function tick() {
+            const now = new Date();
+            if (el) el.textContent = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        }
+        tick();
+        setInterval(tick, 30000);
+    })();
 </script>
 @include('partials.auth-guard')
 </body>

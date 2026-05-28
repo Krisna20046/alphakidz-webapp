@@ -7,293 +7,310 @@
     <title>Daftar Konsultan</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        plum: {
-                            DEFAULT: '#7B1E5A',
-                            light:   '#9B2E72',
-                            dark:    '#4A0E35',
-                            pale:    '#FFF9FB',
-                            soft:    '#F3E6FA',
-                            muted:   '#A2397B',
-                            accent:  '#B895C8',
-                        }
-                    },
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
-
     <style>
         * { -webkit-tap-highlight-color: transparent; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #FFF9FB; }
-
-        @media (min-width: 640px) {
-            .phone-wrapper {
-                display: flex; align-items: flex-start; justify-content: center;
-                min-height: 100vh; padding: 32px 0;
-                background: linear-gradient(135deg, #f8e8f3 0%, #ede0f0 60%, #e8d5ee 100%);
-            }
-            .phone-frame {
-                width: 390px; min-height: 844px; border-radius: 44px;
-                box-shadow: 0 40px 80px rgba(123,30,90,0.25),
-                            0 0 0 8px #1a0d14, 0 0 0 10px #2d1020;
-                overflow: hidden; position: relative;
-            }
-        }
-        @media (max-width: 639px) {
-            .phone-wrapper { min-height: 100vh; }
-            .phone-frame   { min-height: 100vh; }
-        }
-
-        .header-bg { background: linear-gradient(135deg, #7B1E5A 0%, #9B2E72 100%); }
-
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to   { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .anim-up         { animation: slideUp 0.4s ease forwards; }
-        .anim-up.delay-1 { animation-delay: 0.05s; opacity: 0; }
-        .anim-up.delay-2 { animation-delay: 0.12s; opacity: 0; }
-        .anim-up.delay-3 { animation-delay: 0.20s; opacity: 0; }
-
-        /* GridCard — matches RN activeOpacity:0.7 */
-        .konsultan-card { transition: transform 0.15s ease, opacity 0.15s ease; }
-        .konsultan-card:hover  { opacity: 0.85; }
-        .konsultan-card:active { transform: scale(0.95); opacity: 0.7; }
+        .anim { animation: slideUp 0.4s ease forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.05s; }
+        .delay-2 { animation-delay: 0.13s; }
+        .delay-3 { animation-delay: 0.21s; }
 
         @keyframes floatEmpty {
             0%,100% { transform: translateY(0); }
-            50%     { transform: translateY(-6px); }
+            50% { transform: translateY(-6px); }
         }
         .float-anim { animation: floatEmpty 3s ease-in-out infinite; }
 
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .konsultan-card { transition: transform .15s ease; }
+        .konsultan-card:active { transform: scale(0.98); }
 
-        .search-input:focus { outline: none; }
         .search-wrapper:focus-within {
-            border-color: #7B1E5A !important;
-            box-shadow: 0 0 0 3px rgba(123,30,90,0.12);
+            border-color: #8B46D3;
+            box-shadow: 0 0 0 3px rgba(139,70,211,0.14);
+        }
+        .search-input:focus { outline: none; }
+
+        .badge-available { background: #DCFCE7; color: #166534; }
+        .badge-hired     { background: #FEF3C7; color: #B45309; }
+
+        #filterModal { transition: opacity .22s ease; }
+        #filterSheet  { transition: transform .28s cubic-bezier(0.22, 1, 0.36, 1); }
+
+        .filter-chip {
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: 800;
+            line-height: 1;
+            transition: all .15s ease;
+        }
+        .filter-chip[data-group="status"][data-value="all"].active,
+        .filter-chip[data-group="sort"][data-value="all"].active {
+            background: #8B46D3; color: #fff;
+        }
+        .filter-chip[data-group="status"][data-value="available"].active {
+            background: #E0E7FF; color: #4F46E5;
+        }
+        .filter-chip[data-group="status"][data-value="hired"].active {
+            background: #FEF3C7; color: #B45309;
+        }
+        .filter-chip[data-group="sort"][data-value="latest"].active {
+            background: #E0E7FF; color: #4F46E5;
+        }
+        .filter-chip[data-group="sort"][data-value="oldest"].active {
+            background: #FEF3C7; color: #B45309;
+        }
+        .filter-chip:not(.active) {
+            background: #F3F4F6;
+            color: #9CA3AF;
         }
     </style>
 </head>
-<body>
+<body class="font-['Nunito'] bg-[#E5E2F5]">
+<div class="sm:flex sm:items-start sm:justify-center sm:min-h-screen sm:py-8 sm:pb-[60px]">
+<div class="sm:w-[390px] sm:min-h-[844px] sm:rounded-[44px] sm:shadow-[0_40px_80px_rgba(124,58,237,0.28),0_0_0_8px_#1a1030,0_0_0_10px_#2d1a50] sm:overflow-hidden bg-[#F0EDFB] min-h-screen flex flex-col relative">
 
-<div class="phone-wrapper">
-<div class="phone-frame bg-plum-pale flex flex-col">
-
-    <!-- STATUS BAR -->
-    <div class="hidden sm:flex items-center justify-between px-8 pt-4 pb-1 bg-plum">
-        <span class="text-xs font-semibold text-white/80" id="statusTime">9:41</span>
-        <div class="flex gap-1 items-center text-white">
-            <svg class="w-4 h-3" viewBox="0 0 17 12" fill="white" opacity="0.8"><rect x="0" y="3" width="3" height="9" rx="0.5"/><rect x="4.5" y="2" width="3" height="10" rx="0.5"/><rect x="9" y="0.5" width="3" height="11.5" rx="0.5"/><rect x="13.5" y="0" width="3" height="12" rx="0.5" opacity="0.3"/></svg>
-            <svg class="w-4 h-3" viewBox="0 0 16 12" fill="white" opacity="0.8"><path d="M8 2.4C5.6 2.4 3.4 3.4 1.8 5L0 3.2C2.2 1.2 5 0 8 0s5.8 1.2 8 3.2L14.2 5C12.6 3.4 10.4 2.4 8 2.4z"/><path d="M8 6c-1.4 0-2.6.6-3.6 1.4L2.6 5.6C4 4.4 5.8 3.6 8 3.6s4 .8 5.4 2L11.6 7.4C10.6 6.6 9.4 6 8 6z"/><circle cx="8" cy="10" r="2"/></svg>
-            <div class="flex items-center"><div class="w-6 h-3 border border-white/70 rounded-sm p-px flex items-stretch"><div class="bg-white rounded-xs flex-1"></div></div></div>
-        </div>
-    </div>
-
-    <!-- HEADER -->
-    <div class="header-bg rounded-b-[30px] px-5 pt-10 pb-8 relative shrink-0 overflow-hidden" style="margin-bottom:20px;">
-        <div class="absolute top-0 right-0 w-36 h-36 rounded-full bg-white/5 -translate-y-8 translate-x-8 pointer-events-none"></div>
-        <div class="absolute bottom-0 left-0 w-20 h-20 rounded-full bg-white/5 translate-y-5 -translate-x-5 pointer-events-none"></div>
-
-        <!-- Back button -->
-        <a href="{{ route('dashboard') }}"
-           class="absolute z-10 flex items-center justify-center bg-white/20 hover:bg-white/30 transition-colors rounded-full"
-           style="top:54px; left:20px; width:40px; height:40px;">
-            <ion-icon name="arrow-back" style="font-size:20px;color:#fff;"></ion-icon>
-        </a>
-
-        <!-- Header content — alignItems:'center' -->
-        <div class="flex flex-col items-center anim-up delay-1">
-            <!-- headerIconContainer: w-64 h-64 rounded-full bg-white mb-16 -->
-            <div class="flex items-center justify-center bg-white rounded-full mb-4 shadow-lg shadow-plum-dark/20"
-                 style="width:64px;height:64px;">
-                <ion-icon name="people" style="font-size:30px;color:#7B1E5A;"></ion-icon>
+    {{-- STATUS BAR (desktop mock) --}}
+    <div class="hidden sm:flex sm:items-center sm:justify-between bg-[#8B46D3] px-6 pt-[14px] text-white text-xs font-bold">
+        <span id="statusTime">9:41</span>
+        <div class="flex items-center gap-1.5">
+            <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+                <rect x="0" y="4" width="3" height="7" rx="0.6" fill="white" opacity="0.5"/>
+                <rect x="4.5" y="2.5" width="3" height="8.5" rx="0.6" fill="white" opacity="0.7"/>
+                <rect x="9" y="0.5" width="3" height="10.5" rx="0.6" fill="white"/>
+            </svg>
+            <div class="flex items-center">
+                <div class="w-[22px] h-[11px] border-[1.5px] border-white/70 rounded-[3px] p-[1.5px]">
+                    <div class="bg-white rounded-[1.5px] h-full"></div>
+                </div>
             </div>
-            <!-- headerTitle: fontSize:24, fontWeight:700, color:#fff, letterSpacing:0.5, mb:4 -->
-            <h1 class="font-bold text-white mb-1" style="font-size:24px; letter-spacing:0.5px;">Daftar Konsultan</h1>
-            <!-- headerSubtitle: fontSize:14, color:#F3E6FA, fontWeight:500 -->
-            <p class="font-medium" style="font-size:14px; color:#F3E6FA;">
-                {{ count($konsultans ?? []) }} konsultan tersedia
-            </p>
         </div>
     </div>
 
-    <!-- SCROLLABLE BODY — scrollView: flex:1, paddingHorizontal:20 -->
-    <div class="flex-1 overflow-y-auto no-scrollbar px-4 pb-16">
+    {{-- HEADER --}}
+    <div class="anim delay-1 relative z-10 bg-[#8B46D3] bg-[url('/assets/bg-texture.png')] bg-cover bg-center
+                px-[24px] pt-[55px] pb-[72px]
+                before:content-[''] before:absolute before:inset-0 before:bg-[#8B46D3] before:opacity-60 before:-z-10">
+        <div class="flex items-center gap-3 relative z-10">
+            <a href="{{ route('dashboard') }}"
+               class="w-10 h-10 rounded-full bg-white/20 border-[1.5px] border-white/30 flex items-center justify-center shrink-0">
+                <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
+            </a>
+            <div>
+                <span class="text-white text-[17px] font-extrabold tracking-wide">List Konsultan</span>
+                <p class="text-white/60 text-xs font-medium mt-0.5">{{ count($konsultans ?? []) }} konsultan tersedia</p>
+            </div>
+        </div>
+    </div>
 
-        <!-- SEARCH BAR — searchContainer: flexDirection:row, mb:20, gap:10 -->
-        <div class="flex anim-up delay-2" style="gap:10px; margin-bottom:20px;">
-            <form action="{{ route('majikan-konsultan-list') }}" method="GET" class="flex w-full" style="gap:10px;">
-                {{-- searchInputContainer: flex:1, flexDirection:row, alignItems:center, bg:#fff,
-                     borderRadius:16, px:16, py:12, borderWidth:2, borderColor:#F3E6FA, gap:12 --}}
-                <div class="search-wrapper flex-1 flex items-center bg-white"
-                     style="border-radius:16px; padding:12px 16px; border:2px solid #F3E6FA; gap:12px; transition: border-color 0.2s, box-shadow 0.2s;">
-                    <ion-icon name="search" style="font-size:20px;color:#7B1E5A;flex-shrink:0;"></ion-icon>
+    {{-- SCROLLABLE CONTENT --}}
+    <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar flex flex-col gap-4">
+
+        {{-- SEARCH + FILTER --}}
+        <div class="anim delay-2">
+            <form action="{{ route('majikan-konsultan-list') }}" method="GET" class="flex gap-2 w-full" id="searchForm">
+                <div class="search-wrapper flex-1 flex items-center bg-[#F4F4F4] rounded-full px-4 py-2.5 border border-[#DDD6EF] gap-2 transition-all">
+                    <ion-icon name="search-outline" style="font-size:16px;color:#8B86A5;flex-shrink:0;"></ion-icon>
                     <input
                         type="text"
                         name="search"
                         value="{{ request('search') }}"
                         placeholder="Cari konsultan..."
-                        class="search-input flex-1 bg-transparent font-medium"
-                        style="font-size:15px; color:#4A0E35;"
-                        placeholder-style="color:#B895C8"
+                        class="search-input flex-1 text-[13px] font-semibold text-[#4B5563] placeholder-[#9CA3AF] bg-transparent"
                     >
                     @if(request('search'))
-                    <a href="{{ route('majikan-konsultan-list') }}" style="color:#B895C8; flex-shrink:0;">
-                        <ion-icon name="close-circle" style="font-size:20px; display:block;"></ion-icon>
+                    <a href="{{ route('majikan-konsultan-list') }}" class="text-[#A8A2C2]">
+                        <ion-icon name="close-circle" style="font-size:16px;"></ion-icon>
                     </a>
                     @endif
                 </div>
-                {{-- searchButton: bg:#7B1E5A, w:48, h:48, borderRadius:16 --}}
-                <button type="submit"
-                        class="flex items-center justify-center flex-shrink-0 hover:opacity-90 active:scale-95 transition-all shadow-md"
-                        style="background:#7B1E5A; width:48px; height:48px; border-radius:16px; box-shadow: 0 4px 12px rgba(123,30,90,0.3);">
-                    <ion-icon name="search" style="font-size:20px;color:white;"></ion-icon>
-                </button>
             </form>
         </div>
 
-        <!-- CONTENT -->
-        <div class="anim-up delay-3">
-
+        {{-- LIST --}}
+        <div class="anim delay-3">
             @if(isset($konsultans) && count($konsultans) > 0)
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-[#5A556E] text-[18px] font-extrabold">Rekomendasi Konsultan</h2>
+                <div class="bg-[#EDE9FE] px-3 py-1 rounded-full">
+                    <span class="text-[#8B46D3] text-xs font-bold">{{ count($konsultans) }} Konsultan</span>
+                </div>
+            </div>
 
-            {{--
-                GridCard — gridContainer: flexDirection:row, flexWrap:wrap, justifyContent:space-between, pb:40
-                card: width:31%, bg:#fff, borderRadius:16, py:16, px:8, alignItems:center, mb:16,
-                      borderWidth:2, borderColor:#F3E6FA
-                avatarContainer: mb:12
-                avatar/placeholder: w:64, h:64, borderRadius:32, bg:#F3E6FA, border:3 solid #F3E6FA
-                name: fontSize:14, fontWeight:700, color:#4A0E35, textAlign:center, mb:6, px:4
-                roleContainer: flexDirection:row, alignItems:center, gap:4, px:4
-                role: fontSize:12, color:#A2397B, fontWeight:500
-            --}}
-            <div class="flex flex-wrap justify-between" style="padding-bottom:40px;">
+            <div class="flex flex-col gap-2 pb-6">
                 @foreach($konsultans as $i => $konsultan)
+                @php
+                    $statusRaw  = strtolower($konsultan['status'] ?? ($konsultan['availability'] ?? 'available'));
+                    $isHired    = in_array($statusRaw, ['hired', 'busy', 'booked']);
+                    $badgeClass = $isHired ? 'badge-hired' : 'badge-available';
+                    $badgeText  = $isHired ? 'HIRED' : 'AVAILABLE';
+                    $rating     = $konsultan['rating']     ?? '4.9';
+                    $reviews    = $konsultan['reviews']    ?? 42;
+                    $role       = $konsultan['role']       ?? 'Konsultan Parenting';
+                @endphp
                 <a href="{{ route('majikan-konsultan-detail', $konsultan['id']) }}"
-                   class="konsultan-card flex flex-col items-center bg-white"
-                   style="width:31%;
-                          border-radius:16px;
-                          padding: 16px 8px;
-                          margin-bottom:16px;
-                          border: 2px solid #F3E6FA;
-                          animation: slideUp 0.3s ease {{ $i * 0.05 }}s both;
-                          opacity:0;"
-                >
-                    <!-- avatarContainer: mb:12 -->
-                    <div style="margin-bottom:12px;">
+                   class="konsultan-card block bg-white rounded-[14px] px-3 py-2.5 shadow-[0_2px_10px_rgba(0,0,0,0.10)] border border-[#EAE6F5]"
+                   style="animation: slideUp 0.35s ease {{ $i * 0.05 }}s both; opacity:0;">
+                    <div class="flex items-center gap-3">
+                        {{-- Avatar --}}
                         @if(!empty($konsultan['foto']))
                         <img src="{{ $konsultan['foto'] }}"
                              alt="{{ $konsultan['name'] }}"
-                             class="object-cover"
-                             style="width:64px; height:64px; border-radius:32px; background:#F3E6FA; border:3px solid #F3E6FA;"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                        >
-                        <div class="items-center justify-center hidden"
-                             style="width:64px; height:64px; border-radius:32px; background:#F3E6FA; border:3px solid #F3E6FA;">
-                            <ion-icon name="person" style="font-size:28px;color:#7B1E5A;"></ion-icon>
+                             class="w-[50px] h-[50px] rounded-[8px] object-cover bg-[#F3F0FD]"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="w-[50px] h-[50px] rounded-[8px] items-center justify-center hidden bg-[#F3F0FD]">
+                            <ion-icon name="person" style="font-size:24px;color:#8B46D3;"></ion-icon>
                         </div>
                         @else
-                        <div class="flex items-center justify-center"
-                             style="width:64px; height:64px; border-radius:32px; background:#F3E6FA; border:3px solid #F3E6FA;">
-                            <ion-icon name="person" style="font-size:28px;color:#7B1E5A;"></ion-icon>
+                        <div class="w-[50px] h-[50px] rounded-[8px] flex items-center justify-center bg-[#F3F0FD]">
+                            <ion-icon name="person" style="font-size:24px;color:#8B46D3;"></ion-icon>
                         </div>
                         @endif
-                    </div>
 
-                    <!-- name: fontSize:14, fontWeight:700, color:#4A0E35, textAlign:center, mb:6, px:4 -->
-                    <p class="text-center line-clamp-1 w-full"
-                       style="font-size:14px; font-weight:700; color:#4A0E35; margin-bottom:6px; padding:0 4px;">
-                        {{ $konsultan['name'] }}
-                    </p>
+                        {{-- Info --}}
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-start justify-between gap-2">
+                                <p class="text-[#1E1B2E] font-extrabold text-[15px] truncate">{{ $konsultan['name'] }}</p>
+                                <span class="{{ $badgeClass }} text-[10px] font-extrabold px-2 py-1 rounded-full leading-none shrink-0">
+                                    {{ $badgeText }}
+                                </span>
+                            </div>
 
-                    <!-- roleContainer + role -->
-                    @if(!empty($konsultan['role']))
-                    <div class="flex items-center" style="gap:4px; padding:0 4px;">
-                        <ion-icon name="briefcase-outline" style="font-size:12px;color:#A2397B;flex-shrink:0;"></ion-icon>
-                        <span class="text-center line-clamp-1"
-                              style="font-size:12px; color:#A2397B; font-weight:500;">
-                            {{ $konsultan['role'] }}
-                        </span>
+                            <div class="flex items-center gap-1 mt-0.5">
+                                <ion-icon name="star" style="font-size:12px;color:#F59E0B;"></ion-icon>
+                                <span class="text-[#1E1B2E] text-[12px] font-extrabold">{{ $rating }}</span>
+                                <span class="text-[#8B86A5] text-[11px] font-semibold">({{ $reviews }} reviews)</span>
+                            </div>
+
+                            <div class="flex items-center gap-1 mt-0.5">
+                                <ion-icon name="briefcase-outline" style="font-size:11px;color:#C4B5FD;flex-shrink:0;"></ion-icon>
+                                <p class="text-[#8B86A5] text-[11px] font-semibold truncate">{{ $role }}</p>
+                            </div>
+                        </div>
                     </div>
-                    @endif
                 </a>
                 @endforeach
             </div>
 
             @elseif(request('search'))
-            <!-- emptyState: alignItems:center, pt:60, px:40 -->
-            <div class="flex flex-col items-center" style="padding-top:60px; padding-bottom:40px; padding-left:40px; padding-right:40px;">
-                <!-- emptyIconCircle: w:120, h:120, borderRadius:60, bg:#F3E6FA, mb:24 -->
-                <div class="float-anim flex items-center justify-center"
-                     style="width:120px;height:120px;border-radius:60px;background:#F3E6FA;margin-bottom:24px;">
-                    <ion-icon name="people-outline" style="font-size:60px;color:#B895C8;"></ion-icon>
+            <div class="flex flex-col items-center pt-16 pb-10 px-8">
+                <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-5">
+                    <ion-icon name="search-outline" style="font-size:44px;color:#C4B5FD;"></ion-icon>
                 </div>
-                <!-- emptyText: fontSize:18, fontWeight:700, color:#4A0E35, textAlign:center, mb:8 -->
-                <h3 class="text-center" style="font-size:18px;font-weight:700;color:#4A0E35;margin-bottom:8px;">
-                    Konsultan tidak ditemukan
-                </h3>
-                <!-- emptySubtext: fontSize:14, color:#A2397B, textAlign:center, lineHeight:20 -->
-                <p class="text-center" style="font-size:14px;color:#A2397B;line-height:20px;">
-                    Tidak ada konsultan yang sesuai dengan pencarian
-                    "<span style="font-weight:600;color:#7B1E5A;">{{ request('search') }}</span>"
+                <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">Konsultan tidak ditemukan</h3>
+                <p class="text-[#9CA3AF] text-sm text-center leading-relaxed">
+                    Tidak ada konsultan sesuai pencarian
+                    "<span class="font-semibold text-[#8B46D3]">{{ request('search') }}</span>"
                 </p>
                 <a href="{{ route('majikan-konsultan-list') }}"
-                   class="mt-6 text-white font-bold hover:opacity-90 transition-opacity"
-                   style="background:#7B1E5A;font-size:14px;padding:12px 24px;border-radius:16px;box-shadow:0 4px 12px rgba(123,30,90,0.3);">
+                   class="mt-6 bg-[#8B46D3] text-white text-sm font-bold px-6 py-3 rounded-2xl shadow-[0_8px_18px_rgba(139,70,211,0.35)]">
                     Lihat Semua Konsultan
                 </a>
             </div>
 
             @else
-            <!-- empty — belum ada data -->
-            <div class="flex flex-col items-center" style="padding-top:60px; padding-bottom:40px; padding-left:40px; padding-right:40px;">
-                <div class="float-anim flex items-center justify-center"
-                     style="width:120px;height:120px;border-radius:60px;background:#F3E6FA;margin-bottom:24px;">
-                    <ion-icon name="people-outline" style="font-size:60px;color:#B895C8;"></ion-icon>
+            <div class="flex flex-col items-center pt-16 pb-10 px-8">
+                <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-5">
+                    <ion-icon name="people-outline" style="font-size:44px;color:#C4B5FD;"></ion-icon>
                 </div>
-                <h3 class="text-center" style="font-size:18px;font-weight:700;color:#4A0E35;margin-bottom:8px;">
-                    Belum ada konsultan tersedia
-                </h3>
-                <p class="text-center" style="font-size:14px;color:#A2397B;line-height:20px;">
+                <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">Belum ada konsultan</h3>
+                <p class="text-[#9CA3AF] text-sm text-center leading-relaxed">
                     Daftar konsultan akan muncul di sini
                 </p>
             </div>
             @endif
-
         </div>
-
-        <!-- Bottom Spacing: height:30 -->
-        <div style="height:30px;"></div>
     </div>
 
-    <!-- BOTTOM NAV -->
     @include('partials.bottom-nav', ['active' => 'home'])
 
 </div>
 </div>
 
 <script>
-    function updateClock() {
-        const now = new Date();
-        const h = String(now.getHours()).padStart(2,'0');
-        const m = String(now.getMinutes()).padStart(2,'0');
+    (function () {
         const el = document.getElementById('statusTime');
-        if (el) el.textContent = `${h}:${m}`;
-    }
-    updateClock();
-    setInterval(updateClock, 30000);
+        function tick() {
+            const now = new Date();
+            if (el) el.textContent = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        }
+        tick();
+        setInterval(tick, 30000);
+    })();
+
+    (function () {
+        const modal       = document.getElementById('filterModal');
+        const sheet       = document.getElementById('filterSheet');
+        const openBtn     = document.getElementById('openFilterBtn');
+        const closeBtn    = document.getElementById('closeFilterBtn');
+        const applyBtn    = document.getElementById('applyFilterBtn');
+        const resetBtn    = document.getElementById('resetFilterBtn');
+        const statusInput = document.getElementById('statusInput');
+        const sortInput   = document.getElementById('sortInput');
+        const form        = document.getElementById('searchForm');
+
+        let selectedStatus = statusInput.value || 'all';
+        let selectedSort   = sortInput.value   || 'all';
+
+        function paintChips() {
+            document.querySelectorAll('.filter-chip').forEach((chip) => {
+                const group    = chip.dataset.group;
+                const value    = chip.dataset.value;
+                const isActive = (group === 'status' && value === selectedStatus)
+                              || (group === 'sort'   && value === selectedSort);
+                chip.classList.toggle('active', isActive);
+            });
+        }
+
+        function openModal() {
+            paintChips();
+            modal.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                modal.style.opacity = '1';
+                sheet.style.transform = 'translateY(0)';
+            });
+        }
+
+        function closeModal() {
+            modal.style.opacity = '0';
+            sheet.style.transform = 'translateY(100%)';
+            setTimeout(() => modal.classList.add('hidden'), 220);
+        }
+
+        document.querySelectorAll('.filter-chip').forEach((chip) => {
+            chip.addEventListener('click', () => {
+                if (chip.dataset.group === 'status') selectedStatus = chip.dataset.value;
+                if (chip.dataset.group === 'sort')   selectedSort   = chip.dataset.value;
+                paintChips();
+            });
+        });
+
+        openBtn.addEventListener('click', openModal);
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+        resetBtn.addEventListener('click', () => {
+            selectedStatus    = 'all';
+            selectedSort      = 'all';
+            statusInput.value = 'all';
+            sortInput.value   = 'all';
+            form.submit();
+        });
+
+        applyBtn.addEventListener('click', () => {
+            statusInput.value = selectedStatus;
+            sortInput.value   = selectedSort;
+            form.submit();
+        });
+    })();
 </script>
 @include('partials.auth-guard')
 </body>
