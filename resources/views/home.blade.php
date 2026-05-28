@@ -11,6 +11,10 @@
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
+    <!-- Leaflet.js for GPS map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
         @keyframes badgePulse {
             0%, 100% { transform: scale(1); }
@@ -61,6 +65,104 @@
             to   { opacity: 1; transform: translateY(0); }
         }
         .alert-card-enter { animation: alertSlideIn 0.3s ease forwards; }
+
+        /* ── GPS Tracker Card ── */
+        .gps-card {
+            background: #FFFFFF;
+            border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .gps-mini-map {
+            width: 100%;
+            height: 260px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #E5E1F0;
+        }
+        .gps-nanny-item {
+            background: #F8F8FB;
+            border: 1px solid #ECEAF4;
+            border-radius: 12px;
+            transition: transform 0.15s ease;
+        }
+        .gps-nanny-item:active { transform: scale(0.98); }
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+        .gps-live-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #22C55E;
+            animation: pulse-dot 1.8s ease-in-out infinite;
+            display: inline-block;
+        }
+        .gps-live-dot.offline {
+            background: #A8A2C2;
+            animation: none;
+        }
+        .gps-refresh-btn {
+            transition: transform 0.3s ease;
+        }
+        .gps-refresh-btn.spinning {
+            transform: rotate(360deg);
+        }
+        /* Leaflet zoom controls — styling lebih modern */
+        .gps-mini-map .leaflet-control-zoom {
+            border: none !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+            border-radius: 8px !important;
+            overflow: hidden;
+        }
+        .gps-mini-map .leaflet-control-zoom a {
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #4B5563;
+            background: white;
+            border: none !important;
+        }
+        .gps-mini-map .leaflet-control-zoom a:hover {
+            background: #F3F0FC;
+            color: #8B46D3;
+        }
+        .gps-mini-map .leaflet-control-zoom a.leaflet-control-zoom-in {
+            border-bottom: 1px solid #EDE9FE !important;
+        }
+        /* Attribution lebih clean */
+        .gps-mini-map .leaflet-control-attribution {
+            font-size: 9px;
+            background: rgba(255,255,255,0.85);
+            padding: 2px 6px;
+            border-radius: 4px 0 0 0;
+        }
+        /* Pulse marker animation */
+        @keyframes marker-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(139,70,211,0.5); }
+            70% { box-shadow: 0 0 0 14px rgba(139,70,211,0); }
+            100% { box-shadow: 0 0 0 0 rgba(139,70,211,0); }
+        }
+        .gps-marker-pulse {
+            animation: marker-pulse 2s ease-out infinite;
+        }
+        /* Fullscreen overlay */
+        #gpsFullscreenOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: #fff;
+            display: none;
+            flex-direction: column;
+        }
+        #gpsFullscreenOverlay.active { display: flex; }
+        #gpsFullscreenMap {
+            flex: 1;
+            width: 100%;
+            min-height: 0;
+        }
     </style>
 </head>
 <body class="font-['Nunito'] bg-[#E5E2F5]">
@@ -162,6 +264,109 @@
                     @foreach($banners as $i => $banner)
                     <div class="w-1.5 h-1.5 rounded-full bg-white/45 transition-all duration-300 {{ $i === 0 ? 'bg-white w-[18px]' : '' }}" data-dot="{{ $i }}"></div>
                     @endforeach
+                </div>
+            </div>
+        </div>
+
+        {{-- GPS TRACKER — untuk MAJIKAN: lihat lokasi nanny --}}
+        <div id="homeGpsSection" class="hidden">
+            <div class="gps-card p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-[#EDE9FE] flex items-center justify-center shrink-0">
+                            <ion-icon name="locate" style="font-size:16px;color:#8B46D3;"></ion-icon>
+                        </div>
+                        <div>
+                            <h3 class="text-[#1E1B2E] text-[15px] font-extrabold leading-tight">Nanny Live Location</h3>
+                            <p id="gpsStatusText" class="text-[#9CA3AF] text-[10px] font-semibold">Memuat lokasi...</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <button id="gpsFullscreenBtn" onclick="openGpsFullscreen()" class="w-8 h-8 rounded-full bg-[#F3F0FC] flex items-center justify-center border-0 cursor-pointer shrink-0" title="Fullscreen">
+                            <ion-icon name="expand-outline" style="font-size:16px;color:#8B46D3;"></ion-icon>
+                        </button>
+                        <button id="gpsRefreshBtn" onclick="refreshGpsLocations()" class="gps-refresh-btn w-8 h-8 rounded-full bg-[#F3F0FC] flex items-center justify-center border-0 cursor-pointer shrink-0" title="Refresh">
+                            <ion-icon name="refresh" style="font-size:16px;color:#8B46D3;"></ion-icon>
+                        </button>
+                    </div>
+                </div>
+                <div class="gps-mini-map mb-3" id="gpsMiniMap"></div>
+                <div id="gpsNannyList" class="space-y-2">
+                    <div class="gps-nanny-item p-3 flex items-center gap-3 animate-pulse">
+                        <div class="w-10 h-10 rounded-full bg-[#ECE8FA] shrink-0"></div>
+                        <div class="flex-1 space-y-1.5">
+                            <div class="h-3 bg-[#ECE8FA] rounded-full w-2/3"></div>
+                            <div class="h-2.5 bg-[#ECE8FA] rounded-full w-1/2"></div>
+                        </div>
+                        <div class="h-3 w-12 bg-[#ECE8FA] rounded-full"></div>
+                    </div>
+                    <div class="gps-nanny-item p-3 flex items-center gap-3 animate-pulse">
+                        <div class="w-10 h-10 rounded-full bg-[#ECE8FA] shrink-0"></div>
+                        <div class="flex-1 space-y-1.5">
+                            <div class="h-3 bg-[#ECE8FA] rounded-full w-1/2"></div>
+                            <div class="h-2.5 bg-[#ECE8FA] rounded-full w-3/4"></div>
+                        </div>
+                    </div>
+                </div>
+                <div id="gpsEmptyState" class="hidden flex flex-col items-center py-4">
+                    <div class="w-14 h-14 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-2">
+                        <ion-icon name="locate-outline" style="font-size:28px;color:#C4B5FD;"></ion-icon>
+                    </div>
+                    <p class="text-[#9CA3AF] text-[12px] font-bold">Belum ada nanny yang ditugaskan</p>
+                </div>
+            </div>
+        </div>
+
+        {{-- GPS FULLSCREEN OVERLAY --}}
+        <div id="gpsFullscreenOverlay">
+            <div class="flex items-center justify-between px-4 py-3 bg-white shadow-sm" style="z-index:1000;">
+                <div class="flex items-center gap-2">
+                    <button onclick="closeGpsFullscreen()" class="w-9 h-9 rounded-full bg-[#F3F0FC] flex items-center justify-center border-0 cursor-pointer">
+                        <ion-icon name="arrow-back" style="font-size:18px;color:#8B46D3;"></ion-icon>
+                    </button>
+                    <span class="text-[#1E1B2E] text-[15px] font-extrabold">Nanny Live Location</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button onclick="refreshGpsLocations()" class="gps-refresh-btn w-9 h-9 rounded-full bg-[#F3F0FC] flex items-center justify-center border-0 cursor-pointer" title="Refresh">
+                        <ion-icon name="refresh" style="font-size:18px;color:#8B46D3;"></ion-icon>
+                    </button>
+                    <button onclick="zoomToFitNannies()" class="w-9 h-9 rounded-full bg-[#F3F0FC] flex items-center justify-center border-0 cursor-pointer" title="Zoom to fit all">
+                        <ion-icon name="scan-outline" style="font-size:18px;color:#8B46D3;"></ion-icon>
+                    </button>
+                </div>
+            </div>
+            <div id="gpsFullscreenMap"></div>
+        </div>
+
+        {{-- GPS TRACKER — untuk NANNY: bagikan lokasi ke majikan --}}
+        <div id="nannyGpsSection" class="hidden anim delay-3">
+            <div class="gps-card p-4">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-[#EDE9FE] flex items-center justify-center shrink-0">
+                            <ion-icon name="locate" style="font-size:16px;color:#8B46D3;"></ion-icon>
+                        </div>
+                        <div>
+                            <h3 class="text-[#1E1B2E] text-[15px] font-extrabold leading-tight">Share My Location</h3>
+                            <p id="nannyGpsStatus" class="text-[#9CA3AF] text-[10px] font-semibold">Mulai bagikan lokasi Anda</p>
+                        </div>
+                    </div>
+                    {{-- Toggle Switch --}}
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="nannyGpsToggle" class="sr-only peer" onchange="toggleNannyGps()">
+                        <div class="w-11 h-6 bg-[#D1D5DB] rounded-full peer peer-checked:bg-[#8B46D3] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+                    </label>
+                </div>
+
+                {{-- Status card --}}
+                <div id="nannyGpsInfo" class="bg-[#F8F8FB] border border-[#ECEAF4] rounded-[12px] p-3 flex flex-col items-center gap-2">
+                    <div id="nannyGpsDot" class="w-12 h-12 rounded-full bg-[#D1D5DB] flex items-center justify-center">
+                        <ion-icon name="location-outline" style="font-size:24px;color:white;"></ion-icon>
+                    </div>
+                    <p id="nannyGpsStatusLabel" class="text-[#9CA3AF] text-[12px] font-bold">Location sharing is OFF</p>
+                    <p id="nannyGpsAddress" class="text-[#9CA3AF] text-[10px] font-semibold text-center hidden">📍 <span></span></p>
+                    <p id="nannyGpsCoords" class="text-[#8B46D3] text-[9px] font-bold hidden"></p>
+                    <p id="nannyGpsLastUpdate" class="text-[#9CA3AF] text-[9px] font-medium hidden">Last update: -</p>
                 </div>
             </div>
         </div>
@@ -291,12 +496,13 @@
 
 <!-- JAVASCRIPT -->
 <script>
-const API_BASE  = 'https://api.alpha-kidz.com/api';
+const API_BASE  = '{{ rtrim(config("services.api.base_url", env("API_BASE_URL", "http://127.0.0.1:8000/api")), "/") }}';
 // ── Config dari Laravel (passed via Blade) ──────────────────────────────────
 @php
     $resolvedUserId = session('user_id') ?: data_get(session('user'), 'id_user');
 @endphp
 const USER_ID        = @json($resolvedUserId);
+const USER_ROLE      = @json(session('user')['id_role'] ?? null);
 const AUTH_TOKEN     = "{{ session('token') }}";
 const PUSHER_KEY     = "{{ config('services.pusher.key') }}";
 const PUSHER_CLUSTER = "{{ config('services.pusher.options.cluster', 'ap1') }}";
@@ -596,6 +802,372 @@ document.addEventListener('visibilitychange', () => {
     if (document.visibilityState === 'visible') fetchUnreadCount();
 });
 
+// ── GPS Nanny Tracker ──────────────────────────────────────────
+let gpsMap = null;
+let gpsMarkers = {};
+let gpsRefreshInterval = null;
+let gpsFullscreenMap = null;
+let gpsFullscreenMarkers = {};
+let gpsNanniesData = []; // stored nanny data for popups
+
+function createGpsMap(containerId, showControls = true) {
+    const map = L.map(containerId, {
+        zoomControl: showControls,
+        attributionControl: true,
+        dragging: true,
+        scrollWheelZoom: true,
+        touchZoom: true,
+        doubleClickZoom: true,
+        boxZoom: true,
+        keyboard: true,
+    }).setView([-6.2088, 106.8456], 12);
+
+    // Tile: CartoDB Voyager — lebih modern, jalan detail, seperti Google Maps
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        maxZoom: 20,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+    }).addTo(map);
+
+    return map;
+}
+
+function gpsMarkerIcon(name, isOnline = true) {
+    const bg = isOnline ? '#8B46D3' : '#A8A2C2';
+    const initial = (name || '?').charAt(0).toUpperCase();
+    return L.divIcon({
+        className: '',
+        html: `
+        <div style="position:relative;display:flex;flex-direction:column;align-items:center;">
+            <div style="background:${bg};color:white;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;border:3px solid white;box-shadow:0 2px 10px rgba(0,0,0,0.35);position:relative;z-index:2;">${initial}</div>
+            ${isOnline ? '<div style="width:34px;height:34px;border-radius:50%;background:rgba(139,70,211,0.25);position:absolute;top:0;left:0;animation:marker-pulse 2s ease-out infinite;"></div>' : ''}
+            <div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid ${bg};margin-top:-2px;"></div>
+        </div>`,
+        iconSize: [34, 50],
+        iconAnchor: [17, 50],
+        popupAnchor: [0, -55],
+    });
+}
+
+function buildGpsPopup(n) {
+    const lat = parseFloat(n.latitude);
+    const lng = parseFloat(n.longitude);
+    const hasLoc = !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0;
+    const isLive = hasLoc && n.is_online !== false;
+    const statusColor = isLive ? '#22C55E' : '#A8A2C2';
+    const statusText = isLive ? 'Online' : 'Offline';
+    const coords = hasLoc ? `${lat.toFixed(6)}, ${lng.toFixed(6)}` : '-';
+    const mapsLink = hasLoc ? `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}` : null;
+
+    return `
+    <div style="font-family:Nunito,sans-serif;min-width:160px;">
+        <p style="font-weight:800;font-size:14px;margin:0 0 4px;color:#1E1B2E;">${escHtmlHome(n.name)}</p>
+        <p style="font-size:11px;margin:0 0 2px;color:#6B7280;">
+            <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${statusColor};margin-right:4px;"></span>
+            ${statusText}
+        </p>
+        <p style="font-size:10px;margin:0 0 2px;color:#9CA3AF;">📍 ${coords}</p>
+        <p style="font-size:10px;margin:0 0 4px;color:#9CA3AF;">🕐 ${n.last_update ? getTimeAgo(n.last_update) : '-'}</p>
+        ${mapsLink ? `<a href="${mapsLink}" target="_blank" style="display:inline-block;margin-top:4px;padding:6px 14px;background:#8B46D3;color:white;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;">📍 Buka Google Maps</a>` : ''}
+    </div>`;
+}
+
+function updateGpsMarkers(map, markerStore, nannies) {
+    Object.values(markerStore).forEach(m => map.removeLayer(m));
+    const bounds = [];
+    let hasLocation = false;
+
+    nannies.forEach(n => {
+        const lat = parseFloat(n.latitude);
+        const lng = parseFloat(n.longitude);
+        const hasLoc = !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0;
+        if (!hasLoc) return;
+
+        bounds.push([lat, lng]);
+        hasLocation = true;
+        const isLive = n.is_online !== false;
+        const icon = gpsMarkerIcon(n.name, isLive);
+        const marker = L.marker([lat, lng], { icon }).addTo(map);
+        marker.bindPopup(buildGpsPopup(n));
+        markerStore[n.id] = marker;
+    });
+
+    if (hasLocation) {
+        if (bounds.length === 1) {
+            map.setView(bounds[0], 15);
+        } else {
+            map.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+        }
+    }
+}
+
+async function refreshGpsLocations() {
+    const section = document.getElementById('homeGpsSection');
+    const list = document.getElementById('gpsNannyList');
+    const emptyState = document.getElementById('gpsEmptyState');
+    const statusText = document.getElementById('gpsStatusText');
+
+    document.querySelectorAll('.gps-refresh-btn').forEach(btn => {
+        btn.classList.add('spinning');
+        setTimeout(() => btn.classList.remove('spinning'), 600);
+    });
+
+    try {
+        const res = await fetch(`${API_BASE}/majikan/nanny-locations?user_id=${USER_ID}`, {
+            headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN, 'Accept': 'application/json' }
+        });
+        const data = await res.json();
+        const nannies = data.data || [];
+
+        if (!nannies.length) {
+            section.classList.add('hidden');
+            return;
+        }
+
+        section.classList.remove('hidden');
+        gpsNanniesData = nannies;
+        const online = nannies.filter(n => n.is_online !== false && parseFloat(n.latitude) && parseFloat(n.longitude)).length;
+        statusText.textContent = `${nannies.length} nanny${nannies.length > 1 ? 'ies' : ''} assigned · ${online} online`;
+
+        // Init mini map dengan drag/zoom aktif
+        if (!gpsMap) {
+            gpsMap = createGpsMap('gpsMiniMap', false);
+        }
+        updateGpsMarkers(gpsMap, gpsMarkers, nannies);
+
+        // Update fullscreen map jika sedang terbuka
+        if (gpsFullscreenMap) {
+            updateGpsMarkers(gpsFullscreenMap, gpsFullscreenMarkers, nannies);
+        }
+
+        // Render list
+        list.innerHTML = nannies.map((n, idx) => {
+            const lat = parseFloat(n.latitude);
+            const lng = parseFloat(n.longitude);
+            const hasLoc = !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0;
+            const isLive = hasLoc && n.is_online !== false;
+            const timeAgo = getTimeAgo(n.last_update);
+
+            return `
+            <div class="gps-nanny-item p-3 flex items-center gap-3" style="animation: slideUp 0.3s ease ${idx * 0.06}s both;">
+                <div class="w-10 h-10 rounded-full bg-[#F3F0FD] flex items-center justify-center text-[#8B46D3] font-extrabold text-sm shrink-0 border-2 border-[#EDE9FE]">
+                    ${escHtmlHome((n.name||'?')[0].toUpperCase())}
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[#1E1B2E] text-[13px] font-extrabold truncate">${escHtmlHome(n.name)}</span>
+                        <span class="gps-live-dot ${!isLive ? 'offline' : ''}"></span>
+                    </div>
+                    <p class="text-[#9CA3AF] text-[10px] font-semibold mt-0.5 truncate">
+                        ${hasLoc ? (n.address || `${lat.toFixed(6)}, ${lng.toFixed(6)}`) : 'Lokasi tidak tersedia'}
+                    </p>
+                </div>
+                <div class="text-right shrink-0">
+                    <p class="text-[10px] font-bold ${isLive ? 'text-[#22C55E]' : 'text-[#A8A2C2]'}">${isLive ? '● Live' : timeAgo}</p>
+                    ${hasLoc ? `<a href="https://www.google.com/maps?q=${lat},${lng}" target="_blank" class="text-[9px] font-semibold text-[#6366F1] no-underline">📍 Map</a>` : ''}
+                </div>
+            </div>`;
+        }).join('');
+
+        emptyState.classList.add('hidden');
+
+    } catch (e) {
+        console.error('GPS fetch error', e);
+        section?.classList.add('hidden');
+    }
+}
+
+function openGpsFullscreen() {
+    const overlay = document.getElementById('gpsFullscreenOverlay');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    if (!gpsFullscreenMap) {
+        setTimeout(() => {
+            gpsFullscreenMap = createGpsMap('gpsFullscreenMap', true);
+            setTimeout(() => gpsFullscreenMap.invalidateSize(), 100);
+            // Copy current data from mini map markers
+            const nannies = getNanniesFromMarkers();
+            updateGpsMarkers(gpsFullscreenMap, gpsFullscreenMarkers, nannies);
+        }, 200);
+    } else {
+        setTimeout(() => gpsFullscreenMap.invalidateSize(), 100);
+    }
+}
+
+function closeGpsFullscreen() {
+    document.getElementById('gpsFullscreenOverlay').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function zoomToFitNannies() {
+    if (!gpsFullscreenMap) return;
+    const bounds = Object.values(gpsFullscreenMarkers).map(m => m.getLatLng());
+    if (bounds.length === 1) {
+        gpsFullscreenMap.setView(bounds[0], 15);
+    } else if (bounds.length > 1) {
+        gpsFullscreenMap.fitBounds(bounds, { padding: [50, 50], maxZoom: 16 });
+    }
+}
+
+function getNanniesFromMarkers() {
+    // Kirim data nanny yang sudah disimpan dari API
+    return gpsNanniesData.filter(n => {
+        const lat = parseFloat(n.latitude);
+        const lng = parseFloat(n.longitude);
+        return !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0;
+    });
+}
+
+function getTimeAgo(dateStr) {
+    if (!dateStr) return '-';
+    const now = new Date();
+    const d = new Date(dateStr);
+    const diffMs = now - d;
+    const diffMin = Math.floor(diffMs / 60000);
+    if (diffMin < 1) return 'Just now';
+    if (diffMin < 60) return diffMin + 'm ago';
+    const diffHr = Math.floor(diffMin / 60);
+    if (diffHr < 24) return diffHr + 'h ago';
+    return Math.floor(diffHr / 24) + 'd ago';
+}
+
+// ── NANNY GPS SHARING ─────────────────────────────────────────
+let nannyGpsWatchId = null;
+let nannyGpsInterval = null;
+let nannyGpsIsActive = false;
+
+async function toggleNannyGps() {
+    const toggle = document.getElementById('nannyGpsToggle');
+    const dot = document.getElementById('nannyGpsDot');
+    const statusLabel = document.getElementById('nannyGpsStatusLabel');
+    const addressEl = document.getElementById('nannyGpsAddress');
+    const coordsEl = document.getElementById('nannyGpsCoords');
+    const lastUpdateEl = document.getElementById('nannyGpsLastUpdate');
+    const nannyStatus = document.getElementById('nannyGpsStatus');
+
+    if (toggle.checked) {
+        // Cek dukungan GPS
+        if (!navigator.geolocation) {
+            toggle.checked = false;
+            alert('GPS tidak didukung oleh browser ini.');
+            return;
+        }
+
+        nannyGpsIsActive = true;
+        dot.className = 'w-12 h-12 rounded-full bg-[#22C55E] flex items-center justify-center';
+        statusLabel.textContent = 'Location sharing is ON';
+        statusLabel.className = 'text-[#166534] text-[12px] font-bold';
+        nannyStatus.textContent = 'Mendapatkan lokasi...';
+        addressEl.classList.remove('hidden');
+        coordsEl.classList.remove('hidden');
+        lastUpdateEl.classList.remove('hidden');
+
+        // Kirim lokasi setiap 30 detik
+        await sendNannyLocation();
+
+        nannyGpsInterval = setInterval(sendNannyLocation, 60000);
+
+    } else {
+        nannyGpsIsActive = false;
+        if (nannyGpsInterval) { clearInterval(nannyGpsInterval); nannyGpsInterval = null; }
+
+        dot.className = 'w-12 h-12 rounded-full bg-[#D1D5DB] flex items-center justify-center';
+        statusLabel.textContent = 'Location sharing is OFF';
+        statusLabel.className = 'text-[#9CA3AF] text-[12px] font-bold';
+        nannyStatus.textContent = 'Mulai bagikan lokasi Anda';
+        addressEl.classList.add('hidden');
+        coordsEl.classList.add('hidden');
+        lastUpdateEl.classList.add('hidden');
+
+        // Kirim is_online = false ke API
+        try {
+            await fetch(`${API_BASE}/nanny/update-location`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer ' + AUTH_TOKEN },
+                body: JSON.stringify({ latitude: null, longitude: null, is_online: false }),
+            });
+        } catch (e) { /* silent */ }
+    }
+}
+
+async function sendNannyLocation() {
+    if (!nannyGpsIsActive) return;
+
+    try {
+        const pos = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 30000,
+            });
+        });
+
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        // Reverse geocoding pakai OpenStreetMap (gratis)
+        let address = '';
+        try {
+            const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16`, {
+                headers: { 'Accept-Language': 'id' }
+            });
+            const geoData = await geoRes.json();
+            address = geoData.display_name || '';
+        } catch (e) { /* silent */ }
+
+        // Kirim ke API
+        const res = await fetch(`${API_BASE}/nanny/update-location`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer ' + AUTH_TOKEN },
+            body: JSON.stringify({ latitude: lat, longitude: lng, is_online: true }),
+        });
+        const data = await res.json();
+
+        // Update UI
+        const addressEl = document.getElementById('nannyGpsAddress');
+        const coordsEl = document.getElementById('nannyGpsCoords');
+        const lastUpdateEl = document.getElementById('nannyGpsLastUpdate');
+        const nannyStatus = document.getElementById('nannyGpsStatus');
+
+        if (address) {
+            addressEl.querySelector('span').textContent = address.substring(0, 80) + (address.length > 80 ? '...' : '');
+            addressEl.classList.remove('hidden');
+        }
+        coordsEl.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+        coordsEl.classList.remove('hidden');
+        lastUpdateEl.textContent = 'Last update: ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        lastUpdateEl.classList.remove('hidden');
+        nannyStatus.textContent = 'Location active';
+
+    } catch (err) {
+        if (err.code === 1) {
+            // Permission denied
+            document.getElementById('nannyGpsToggle').checked = false;
+            nannyGpsIsActive = false;
+            if (nannyGpsInterval) { clearInterval(nannyGpsInterval); nannyGpsInterval = null; }
+            alert('Izinkan akses lokasi untuk membagikan posisi Anda.');
+        }
+        // Jika error lain (timeout, dll), abaikan dan coba lagi di interval berikutnya
+    }
+}
+
+// ── Init GPS ──────────────────────────────────────────────────
+(async function initGpsTracker() {
+    if (USER_ROLE == '2') {
+        // Role MAJIKAN — lihat lokasi nanny
+        const section = document.getElementById('homeGpsSection');
+        try {
+            await refreshGpsLocations();
+            gpsRefreshInterval = setInterval(refreshGpsLocations, 60000);
+        } catch(e) {
+            section?.classList.add('hidden');
+        }
+    } else if (USER_ROLE == '3') {
+        // Role NANNY — bagikan lokasi
+        document.getElementById('nannyGpsSection').classList.remove('hidden');
+    }
+})();
+
 // Pusher real-time
 (function initPusher() {
     if (!USER_ID || !AUTH_TOKEN || !PUSHER_KEY) return;
@@ -610,6 +1182,11 @@ document.addEventListener('visibilitychange', () => {
     const channel = pusher.subscribe(`private-chat.${USER_ID}`);
     channel.bind('chat.new', (event) => {
         if (event?.chat?.id_penerima == USER_ID) updateBadge(unreadCount + 1);
+    });
+
+    // Real-time nanny location update via Pusher
+    channel.bind('nanny.location', (event) => {
+        refreshGpsLocations();
     });
 })();
 </script>
