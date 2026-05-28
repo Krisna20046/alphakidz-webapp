@@ -318,7 +318,7 @@ document.getElementById('forgotForm').addEventListener('submit', async (e) => {
     setLoading(true);
 
     try {
-        const res = await fetch('https://alphakidz.valove.id/api/forgot-password', {
+        const res = await fetch('https://api.alpha-kidz.com/api/forgot-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

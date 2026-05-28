@@ -115,7 +115,7 @@
 
 <script>
 (function () {
-    const API_BASE  = 'https://alphakidz.valove.id/api';
+    const API_BASE  = 'https://api.alpha-kidz.com/api';
     @php
         $resolvedUserId = session('user_id') ?: data_get(session('user'), 'id_user');
     @endphp

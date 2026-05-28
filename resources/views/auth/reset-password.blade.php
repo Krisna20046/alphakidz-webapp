@@ -457,7 +457,7 @@ document.getElementById('resetForm').addEventListener('submit', async (e) => {
     setLoading(true);
 
     try {
-        const res = await fetch('https://alphakidz.valove.id/api/reset-password', {
+        const res = await fetch('https://api.alpha-kidz.com/api/reset-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

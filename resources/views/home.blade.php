@@ -291,7 +291,7 @@
 
 <!-- JAVASCRIPT -->
 <script>
-const API_BASE  = 'https://alphakidz.valove.id/api';
+const API_BASE  = 'https://api.alpha-kidz.com/api';
 // ── Config dari Laravel (passed via Blade) ──────────────────────────────────
 @php
     $resolvedUserId = session('user_id') ?: data_get(session('user'), 'id_user');

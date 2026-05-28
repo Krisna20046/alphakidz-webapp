@@ -87,7 +87,7 @@
 
     try {
         // ── STEP 1: Kirim code ke API backend untuk dapat token ──
-        const apiUrl = 'https://alphakidz.valove.id/api/auth/google/callback?' + params.toString();
+        const apiUrl = 'https://api.alpha-kidz.com/api/auth/google/callback?' + params.toString();
         const apiRes = await fetch(apiUrl, {
             method: 'GET',
             headers: { 'Accept': 'application/json' },

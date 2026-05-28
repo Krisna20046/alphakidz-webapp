@@ -12,14 +12,15 @@
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <style>
         * { -webkit-tap-highlight-color:transparent; box-sizing:border-box; }
-        body { font-family:'Nunito',sans-serif; background:#E5E2F5; margin:0; overflow:hidden; }
+        html, body { font-family:'Nunito',sans-serif; background:#E5E2F5; margin:0; height:100%; overflow:hidden; }
+        body { height:100dvh; }
 
         @media (min-width:640px) {
             .phone-wrapper { display:flex; align-items:flex-start; justify-content:center; min-height:100vh; padding:32px 0; }
             .phone-frame   { width:390px; height:844px; border-radius:44px; box-shadow:0 40px 80px rgba(124,58,237,0.28),0 0 0 8px #1a1030,0 0 0 10px #2d1a50; overflow:hidden; display:flex; flex-direction:column; }
         }
         @media (max-width:639px) {
-            .phone-frame { height:100dvh; display:flex; flex-direction:column; }
+            .phone-frame { height:100dvh; display:flex; flex-direction:column; overflow:hidden; }
         }
 
         /* Chat area */
@@ -170,8 +171,8 @@
     </style>
 </head>
 <body class="font-['Nunito'] bg-[#E5E2F5]">
-<div class="sm:flex sm:items-start sm:justify-center sm:min-h-screen sm:py-8 sm:pb-[60px]">
-<div class="sm:w-[390px] sm:min-h-[844px] sm:rounded-[44px] sm:shadow-[0_40px_80px_rgba(124,58,237,0.28),0_0_0_8px_#1a1030,0_0_0_10px_#2d1a50] sm:overflow-hidden bg-[#F0EDFB] min-h-screen flex flex-col relative">
+<div class="sm:flex sm:items-start sm:justify-center sm:min-h-screen sm:py-8 sm:pb-[60px]" id="appWrapper">
+<div class="phone-frame sm:w-[390px] sm:min-h-[844px] sm:rounded-[44px] sm:shadow-[0_40px_80px_rgba(124,58,237,0.28),0_0_0_8px_#1a1030,0_0_0_10px_#2d1a50] sm:overflow-hidden bg-[#F0EDFB] w-full flex flex-col relative" id="phoneFrame">
 
     <!-- STATUS BAR -->
     <div class="hidden sm:flex sm:items-center sm:justify-between bg-[#8B46D3] px-6 pt-[14px] text-white text-xs font-bold">
@@ -666,10 +667,33 @@ async function sendMessage(){
     });
 })();
 
+// ── VisualViewport handler (mobile keyboard support) ──────────────────────────
+(function initViewport(){
+    if(!window.visualViewport) return;
+
+    const phoneFrame = document.getElementById('phoneFrame');
+
+    function adjustViewport(){
+        const vv = window.visualViewport;
+        const isMobile = window.innerWidth < 640;
+        if(!isMobile) return;
+        phoneFrame.style.height = vv.height + 'px';
+    }
+
+    window.visualViewport.addEventListener('resize', () => {
+        adjustViewport();
+        requestAnimationFrame(() => scrollToBottom());
+    });
+
+    adjustViewport();
+})();
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 (async function init(){
     await fetchChat(1, true);
     initScrollListener();
+    // Initial scroll to bottom after messages load
+    setTimeout(() => scrollToBottom(), 300);
 })();
 </script>
 @include('partials.auth-guard')

@@ -413,7 +413,7 @@ document.getElementById('googleBtn').addEventListener('click', async () => {
     btn.classList.add('loading');
 
     try {
-        const res  = await fetch('https://alphakidz.valove.id/api/auth/google/redirect', {
+        const res  = await fetch('https://api.alpha-kidz.com/api/auth/google/redirect', {
             method: 'GET',
             headers: { 'Accept': 'application/json' },
         });
