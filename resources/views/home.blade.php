@@ -1031,123 +1031,43 @@ function getTimeAgo(dateStr) {
     return Math.floor(diffHr / 24) + 'd ago';
 }
 
-// ── NANNY GPS SHARING ─────────────────────────────────────────
-let nannyGpsWatchId = null;
-let nannyGpsInterval = null;
-let nannyGpsIsActive = false;
-
+// ── NANNY GPS SHARING (UI local — logic global ada di nanny-gps-sharer) ──
 async function toggleNannyGps() {
     const toggle = document.getElementById('nannyGpsToggle');
-    const dot = document.getElementById('nannyGpsDot');
-    const statusLabel = document.getElementById('nannyGpsStatusLabel');
-    const addressEl = document.getElementById('nannyGpsAddress');
-    const coordsEl = document.getElementById('nannyGpsCoords');
-    const lastUpdateEl = document.getElementById('nannyGpsLastUpdate');
-    const nannyStatus = document.getElementById('nannyGpsStatus');
+    if (!toggle) return;
 
     if (toggle.checked) {
-        // Cek dukungan GPS
         if (!navigator.geolocation) {
             toggle.checked = false;
             alert('GPS tidak didukung oleh browser ini.');
             return;
         }
+        if (window.startNannyGps) await window.startNannyGps();
 
-        nannyGpsIsActive = true;
-        dot.className = 'w-12 h-12 rounded-full bg-[#22C55E] flex items-center justify-center';
-        statusLabel.textContent = 'Location sharing is ON';
-        statusLabel.className = 'text-[#166534] text-[12px] font-bold';
-        nannyStatus.textContent = 'Mendapatkan lokasi...';
-        addressEl.classList.remove('hidden');
-        coordsEl.classList.remove('hidden');
-        lastUpdateEl.classList.remove('hidden');
-
-        // Kirim lokasi setiap 30 detik
-        await sendNannyLocation();
-
-        nannyGpsInterval = setInterval(sendNannyLocation, 60000);
+        // Update UI local
+        const dot = document.getElementById('nannyGpsDot');
+        if (dot) dot.className = 'w-12 h-12 rounded-full bg-[#22C55E] flex items-center justify-center';
+        const statusLabel = document.getElementById('nannyGpsStatusLabel');
+        if (statusLabel) { statusLabel.textContent = 'Location sharing is ON'; statusLabel.className = 'text-[#166534] text-[12px] font-bold'; }
+        document.getElementById('nannyGpsCoords')?.classList.remove('hidden');
+        document.getElementById('nannyGpsLastUpdate')?.classList.remove('hidden');
+        document.getElementById('nannyGpsAddress')?.classList.remove('hidden');
+        const nannyStatus = document.getElementById('nannyGpsStatus');
+        if (nannyStatus) nannyStatus.textContent = 'Mendapatkan lokasi...';
 
     } else {
-        nannyGpsIsActive = false;
-        if (nannyGpsInterval) { clearInterval(nannyGpsInterval); nannyGpsInterval = null; }
+        if (window.stopNannyGps) await window.stopNannyGps(true);
 
-        dot.className = 'w-12 h-12 rounded-full bg-[#D1D5DB] flex items-center justify-center';
-        statusLabel.textContent = 'Location sharing is OFF';
-        statusLabel.className = 'text-[#9CA3AF] text-[12px] font-bold';
-        nannyStatus.textContent = 'Mulai bagikan lokasi Anda';
-        addressEl.classList.add('hidden');
-        coordsEl.classList.add('hidden');
-        lastUpdateEl.classList.add('hidden');
-
-        // Kirim is_online = false ke API
-        try {
-            await fetch(`${API_BASE}/nanny/update-location`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer ' + AUTH_TOKEN },
-                body: JSON.stringify({ latitude: null, longitude: null, is_online: false }),
-            });
-        } catch (e) { /* silent */ }
-    }
-}
-
-async function sendNannyLocation() {
-    if (!nannyGpsIsActive) return;
-
-    try {
-        const pos = await new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(resolve, reject, {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 30000,
-            });
-        });
-
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
-
-        // Reverse geocoding pakai OpenStreetMap (gratis)
-        let address = '';
-        try {
-            const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16`, {
-                headers: { 'Accept-Language': 'id' }
-            });
-            const geoData = await geoRes.json();
-            address = geoData.display_name || '';
-        } catch (e) { /* silent */ }
-
-        // Kirim ke API
-        const res = await fetch(`${API_BASE}/nanny/update-location`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer ' + AUTH_TOKEN },
-            body: JSON.stringify({ latitude: lat, longitude: lng, is_online: true }),
-        });
-        const data = await res.json();
-
-        // Update UI
-        const addressEl = document.getElementById('nannyGpsAddress');
-        const coordsEl = document.getElementById('nannyGpsCoords');
-        const lastUpdateEl = document.getElementById('nannyGpsLastUpdate');
+        // Update UI local
+        const dot = document.getElementById('nannyGpsDot');
+        if (dot) dot.className = 'w-12 h-12 rounded-full bg-[#D1D5DB] flex items-center justify-center';
+        const statusLabel = document.getElementById('nannyGpsStatusLabel');
+        if (statusLabel) { statusLabel.textContent = 'Location sharing is OFF'; statusLabel.className = 'text-[#9CA3AF] text-[12px] font-bold'; }
+        document.getElementById('nannyGpsCoords')?.classList.add('hidden');
+        document.getElementById('nannyGpsLastUpdate')?.classList.add('hidden');
+        document.getElementById('nannyGpsAddress')?.classList.add('hidden');
         const nannyStatus = document.getElementById('nannyGpsStatus');
-
-        if (address) {
-            addressEl.querySelector('span').textContent = address.substring(0, 80) + (address.length > 80 ? '...' : '');
-            addressEl.classList.remove('hidden');
-        }
-        coordsEl.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-        coordsEl.classList.remove('hidden');
-        lastUpdateEl.textContent = 'Last update: ' + new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-        lastUpdateEl.classList.remove('hidden');
-        nannyStatus.textContent = 'Location active';
-
-    } catch (err) {
-        if (err.code === 1) {
-            // Permission denied
-            document.getElementById('nannyGpsToggle').checked = false;
-            nannyGpsIsActive = false;
-            if (nannyGpsInterval) { clearInterval(nannyGpsInterval); nannyGpsInterval = null; }
-            alert('Izinkan akses lokasi untuk membagikan posisi Anda.');
-        }
-        // Jika error lain (timeout, dll), abaikan dan coba lagi di interval berikutnya
+        if (nannyStatus) nannyStatus.textContent = 'Mulai bagikan lokasi Anda';
     }
 }
 

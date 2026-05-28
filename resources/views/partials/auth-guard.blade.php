@@ -218,3 +218,5 @@
 
 })();
 </script>
+
+@include('partials.nanny-gps-sharer')
