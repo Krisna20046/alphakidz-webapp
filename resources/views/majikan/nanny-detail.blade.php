@@ -148,19 +148,19 @@
 
             <div class="h-px bg-[#E5E1F0] my-4"></div>
 
-            <div class="grid grid-cols-3 gap-2 text-center">
-                <div>
+            <div class="grid grid-cols-1 gap-2 text-center">
+                {{-- <div>
                     <p class="text-[#7C7893] text-[10px] uppercase tracking-[1.2px] font-extrabold">Rating</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold mt-1">⭐ {{ $rating }}</p>
-                </div>
+                </div> --}}
                 <div>
                     <p class="text-[#7C7893] text-[10px] uppercase tracking-[1.2px] font-extrabold">Experience</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold mt-1">{{ $experienceYears }} Thn</p>
                 </div>
-                <div>
+                {{-- <div>
                     <p class="text-[#7C7893] text-[10px] uppercase tracking-[1.2px] font-extrabold">Employer</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold mt-1">{{ $employerCount }}</p>
-                </div>
+                </div> --}}
             </div>
         </div>
 

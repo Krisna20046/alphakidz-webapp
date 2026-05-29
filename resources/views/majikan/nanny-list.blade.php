@@ -135,65 +135,18 @@
             </form>
         </div>
 
-        <div class="anim delay-3">
+        <div class="anim delay-3" id="nannyListContainer">
             @if(isset($nannies) && count($nannies) > 0)
             <div class="flex items-center justify-between mb-2">
                 <h2 class="text-[#5A556E] text-[18px] font-extrabold">Nanny's Recommendation</h2>
                 <div class="bg-[#EDE9FE] px-3 py-1 rounded-full">
-                    <span class="text-[#8B46D3] text-xs font-bold">{{ count($nannies) }} Nanny</span>
+                    <span class="text-[#8B46D3] text-xs font-bold" id="nannyCount">{{ count($nannies) }} Nanny</span>
                 </div>
             </div>
 
-            <div class="flex flex-col gap-2 pb-6">
-                @foreach($nannies as $i => $nanny)
-                @php
-                    $statusRaw = strtolower($nanny['status'] ?? ($nanny['availability'] ?? 'available'));
-                    $isHired = in_array($statusRaw, ['hired', 'busy', 'booked']);
-                    $badgeClass = $isHired ? 'badge-hired' : 'badge-available';
-                    $badgeText = $isHired ? 'HIRED' : 'AVAILABLE';
-                    $rating = $nanny['rating'] ?? '4.9';
-                    $reviews = $nanny['reviews'] ?? 42;
-                    $experience = $nanny['experience'] ?? 'More than 2 years of experience';
-                @endphp
-                <a href="{{ route('majikan-nanny-detail', $nanny['id']) }}"
-                   class="nanny-card block bg-white rounded-[14px] px-3 py-2.5 shadow-[0_2px_10px_rgba(0,0,0,0.10)] border border-[#EAE6F5]"
-                   style="animation: slideUp 0.35s ease {{ $i * 0.05 }}s both; opacity:0;">
-                    <div class="flex items-center gap-3">
-                        @if(!empty($nanny['foto']))
-                        <img src="{{ $nanny['foto'] }}"
-                             alt="{{ $nanny['name'] }}"
-                             class="w-[50px] h-[50px] rounded-[8px] object-cover bg-[#F3F0FD]"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                        >
-                        <div class="w-[50px] h-[50px] rounded-[8px] items-center justify-center hidden bg-[#F3F0FD]">
-                            <ion-icon name="person" style="font-size:24px;color:#8B46D3;"></ion-icon>
-                        </div>
-                        @else
-                        <div class="w-[50px] h-[50px] rounded-[8px] flex items-center justify-center bg-[#F3F0FD]">
-                            <ion-icon name="person" style="font-size:24px;color:#8B46D3;"></ion-icon>
-                        </div>
-                        @endif
-
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-start justify-between gap-2">
-                                <p class="text-[#1E1B2E] font-extrabold text-[15px] truncate">{{ $nanny['name'] }}</p>
-                                <span class="{{ $badgeClass }} text-[10px] font-extrabold px-2 py-1 rounded-full leading-none shrink-0">
-                                    {{ $badgeText }}
-                                </span>
-                            </div>
-
-                            <div class="flex items-center gap-1 mt-0.5">
-                                <ion-icon name="star" style="font-size:12px;color:#F59E0B;"></ion-icon>
-                                <span class="text-[#1E1B2E] text-[12px] font-extrabold">{{ $rating }}</span>
-                                <span class="text-[#8B86A5] text-[11px] font-semibold">({{ $reviews }} reviews)</span>
-                            </div>
-
-                            <p class="text-[#8B86A5] text-[11px] italic font-semibold mt-0.5 truncate">
-                                "{{ $experience }}"
-                            </p>
-                        </div>
-                    </div>
-                </a>
+            <div class="flex flex-col gap-2 pb-6" id="nanniesWrapper">
+                @foreach($nannies as $nanny)
+                    @include('majikan.nanny-card', ['nanny' => $nanny, 'i' => $loop->index])
                 @endforeach
             </div>
 
@@ -296,6 +249,18 @@
         setInterval(tick, 30000);
     })();
 
+    const allNannies = @json($nannies ?? []);
+
+    (function () {
+        const el = document.getElementById('statusTime');
+        function tick() {
+            const now = new Date();
+            if (el) el.textContent = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        }
+        tick();
+        setInterval(tick, 30000);
+    })();
+
     (function () {
         const modal = document.getElementById('filterModal');
         const sheet = document.getElementById('filterSheet');
@@ -305,10 +270,97 @@
         const resetBtn = document.getElementById('resetFilterBtn');
         const statusInput = document.getElementById('statusInput');
         const sortInput = document.getElementById('sortInput');
-        const form = document.getElementById('searchForm');
+        const searchInput = document.querySelector('input[name="search"]');
+        const nannyListContainer = document.getElementById('nannyListContainer');
 
         let selectedStatus = statusInput.value || 'all';
         let selectedSort = sortInput.value || 'all';
+        let filteredNannies = [...allNannies];
+
+        function renderNannies() {
+            if (filteredNannies.length === 0) {
+                nannyListContainer.innerHTML = `
+                    <div class="flex flex-col items-center pt-16 pb-10 px-8">
+                        <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-5">
+                            <ion-icon name="people-outline" style="font-size:44px;color:#C4B5FD;"></ion-icon>
+                        </div>
+                        <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">Nanny tidak ditemukan</h3>
+                        <p class="text-[#9CA3AF] text-sm text-center leading-relaxed">Tidak ada nanny yang sesuai filter.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-[#5A556E] text-[18px] font-extrabold">Nanny's Recommendation</h2>
+                    <div class="bg-[#EDE9FE] px-3 py-1 rounded-full">
+                        <span class="text-[#8B46D3] text-xs font-bold">${filteredNannies.length} Nanny</span>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2 pb-6">
+            `;
+
+            filteredNannies.forEach((nanny, i) => {
+                const isHired = nanny['status_penugasan'] != null && nanny['status_penugasan'].toLowerCase() === 'active';
+                const badgeClass = isHired ? 'badge-hired' : 'badge-available';
+                const badgeText = isHired ? 'HIRED' : 'AVAILABLE';
+                const fotoUrl = nanny['foto'] || '';
+                const name = nanny['name'] || '';
+                const exp = (nanny['pengalaman'] || 0) + ' years experience';
+
+                let fotoHtml = `<div class="w-[50px] h-[50px] rounded-[8px] flex items-center justify-center bg-[#F3F0FD]">
+                                    <ion-icon name="person" style="font-size:24px;color:#8B46D3;"></ion-icon>
+                                </div>`;
+                if (fotoUrl) {
+                    fotoHtml = `<img src="${fotoUrl}" alt="${name}" class="w-[50px] h-[50px] rounded-[8px] object-cover bg-[#F3F0FD]"
+                                onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="w-[50px] h-[50px] rounded-[8px] items-center justify-center hidden bg-[#F3F0FD]">
+                                    <ion-icon name="person" style="font-size:24px;color:#8B46D3;"></ion-icon>
+                                </div>`;
+                }
+
+                html += `
+                    <a href="/majikan/nanny/${nanny.id}"
+                       class="nanny-card block bg-white rounded-[14px] px-3 py-2.5 shadow-[0_2px_10px_rgba(0,0,0,0.10)] border border-[#EAE6F5]"
+                       style="animation: slideUp 0.35s ease ${i * 0.05}s both; opacity:0;">
+                        <div class="flex items-center gap-3">
+                            ${fotoHtml}
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-start justify-between gap-2">
+                                    <p class="text-[#1E1B2E] font-extrabold text-[15px] truncate">${name}</p>
+                                    <span class="${badgeClass} text-[10px] font-extrabold px-2 py-1 rounded-full leading-none shrink-0">${badgeText}</span>
+                                </div>
+                                <p class="text-[#8B86A5] text-[11px] italic font-semibold mt-0.5 truncate">"${exp}"</p>
+                            </div>
+                        </div>
+                    </a>
+                `;
+            });
+
+            html += `</div>`;
+            nannyListContainer.innerHTML = html;
+        }
+
+        function applyFiltersAndSort() {
+            filteredNannies = [...allNannies];
+
+            if (selectedStatus !== 'all') {
+                filteredNannies = filteredNannies.filter(nanny => {
+                    const isHired = nanny['status_penugasan'] != null && nanny['status_penugasan'].toLowerCase() === 'active';
+                    return selectedStatus === 'hired' ? isHired : !isHired;
+                });
+            }
+
+            if (selectedSort === 'latest') {
+                filteredNannies.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            } else if (selectedSort === 'oldest') {
+                filteredNannies.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+            }
+
+            renderNannies();
+            closeModal();
+        }
 
         function paintChips() {
             document.querySelectorAll('.filter-chip').forEach((chip) => {
@@ -351,14 +403,21 @@
             selectedSort = 'all';
             statusInput.value = 'all';
             sortInput.value = 'all';
-            form.submit();
+            applyFiltersAndSort();
         });
 
         applyBtn.addEventListener('click', () => {
             statusInput.value = selectedStatus;
             sortInput.value = selectedSort;
-            form.submit();
+            applyFiltersAndSort();
         });
+
+        // Search tetap via server — submit form
+        if (searchInput) {
+            searchInput.addEventListener('change', () => {
+                document.getElementById('searchForm').submit();
+            });
+        }
     })();
 </script>
 @include('partials.auth-guard')

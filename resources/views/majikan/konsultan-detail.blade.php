@@ -155,10 +155,10 @@
                 </div>
             </div>
 
-            <div class="h-px bg-[#E5E1F0] my-4"></div>
+            {{-- <div class="h-px bg-[#E5E1F0] my-4"></div> --}}
 
             <div class="grid grid-cols-3 gap-2 text-center">
-                <div>
+                {{-- <div>
                     <p class="text-[#7C7893] text-[10px] uppercase tracking-[1.2px] font-extrabold">Rating</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold mt-1">⭐ {{ $rating }}</p>
                 </div>
@@ -171,7 +171,7 @@
                 <div>
                     <p class="text-[#7C7893] text-[10px] uppercase tracking-[1.2px] font-extrabold">Clients</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold mt-1">{{ $konsultan['total_klien'] ?? '-' }}</p>
-                </div>
+                </div> --}}
             </div>
         </div>
 

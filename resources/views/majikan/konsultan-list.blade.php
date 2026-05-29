@@ -185,9 +185,9 @@
                             </div>
 
                             <div class="flex items-center gap-1 mt-0.5">
-                                <ion-icon name="star" style="font-size:12px;color:#F59E0B;"></ion-icon>
+                                {{-- <ion-icon name="star" style="font-size:12px;color:#F59E0B;"></ion-icon>
                                 <span class="text-[#1E1B2E] text-[12px] font-extrabold">{{ $rating }}</span>
-                                <span class="text-[#8B86A5] text-[11px] font-semibold">({{ $reviews }} reviews)</span>
+                                <span class="text-[#8B86A5] text-[11px] font-semibold">({{ $reviews }} reviews)</span> --}}
                             </div>
 
                             <div class="flex items-center gap-1 mt-0.5">
