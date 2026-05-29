@@ -779,6 +779,11 @@ if (form) {
 
         try {
             const fd  = new FormData(form);
+            // fotoInput berada di luar <form>, jadi harus ditambahkan manual
+            const fotoInput = document.getElementById('fotoInput');
+            if (fotoInput && fotoInput.files[0]) {
+                fd.append('foto', fotoInput.files[0]);
+            }
             const res = await fetch('{{ route("profil.update") }}', {
                 method: 'POST',
                 headers: { 'Accept':'application/json','X-CSRF-TOKEN':CSRF_TOKEN },

@@ -59,12 +59,14 @@ class ProfileController extends Controller
         }
 
         try {
-            // Build multipart request
             $http = Http::withToken($token)
                 ->acceptJson()
-                ->timeout(20);
+                ->timeout(20)
+                ->asMultipart(); // Tambahkan ini untuk multipart/form-data
 
-            // Attach foto jika ada
+            $postData = $request->except(['_token']);
+
+            // Attach foto jika ada, dan pastikan tidak ada duplikasi 'foto' di $postData
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
                 $http = $http->attach(
@@ -73,12 +75,14 @@ class ProfileController extends Controller
                     $file->getClientOriginalName(),
                     ['Content-Type' => $file->getMimeType()]
                 );
+                // Hapus 'foto' dari $postData karena sudah di-attach secara terpisah
+                unset($postData['foto']);
             }
 
-            $response = $http->post("{$this->apiBaseUrl}/user-detail-update", array_merge(
-                ['id' => $id],
-                $request->except(['_token', 'foto'])
-            ));
+            // Tambahkan ID user ke data yang akan dikirim
+            $postData['id'] = $id;
+
+            $response = $http->post("{$this->apiBaseUrl}/user-detail-update", $postData);
 
             $data = $response->json();
 
