@@ -268,4 +268,181 @@ class KonsultanController extends Controller
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Diary Nanny (detailed view for consultant)
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * GET /konsultan/nanny/{id}/diary
+     * Menampilkan diary detail untuk nanny yang diawasi konsultan.
+     */
+    public function showDiary(int $id, Request $request)
+    {
+        $tanggal = $request->input('tanggal', date('Y-m-d'));
+        $idAnak = $request->input('id_anak');
+        $kategori = $request->input('kategori', '');
+
+        try {
+            // Fetch diary data from API
+            $params = [
+                'id_nanny' => $id,
+            ];
+            if ($tanggal) {
+                $params['tanggal'] = $tanggal;
+            }
+            if ($kategori) {
+                $params['kategori'] = $kategori;
+            }
+
+            $response = Http::withToken($this->token())
+                ->acceptJson()
+                ->get($this->apiUrl('/diary-nanny-for-konsultan'), $params);
+
+            $json = $response->json();
+            $data = ($json['status'] ?? '') === 'success' ? ($json['data'] ?? null) : null;
+
+            // Fetch all nannies for selector
+            $allNannies = [];
+            try {
+                $nanniesResponse = Http::withToken($this->token())
+                    ->acceptJson()
+                    ->get($this->apiUrl('/konsultan-nanny'));
+                $nanniesJson = $nanniesResponse->json();
+                if (($nanniesJson['status'] ?? '') === 'success') {
+                    $allNannies = $nanniesJson['data'] ?? [];
+                }
+            } catch (\Throwable $e) {
+                // Continue without nanny list
+            }
+
+            // Fetch nanny's own details
+            $nannyDetail = null;
+            try {
+                $nannyResponse = Http::withToken($this->token())
+                    ->acceptJson()
+                    ->get($this->apiUrl('/konsultan-user-detail'), ['id_user' => $id]);
+                $nannyJson = $nannyResponse->json();
+                if (($nannyJson['status'] ?? '') === 'success') {
+                    $nannyDetail = $nannyJson['data'] ?? null;
+                }
+            } catch (\Throwable $e) {
+                // Continue without nanny detail
+            }
+
+            // Process data for view
+            $daftarAnak = [];
+            $aktivitas = [];
+
+            if ($data) {
+                $daftarAnak = $data['daftar_anak'] ?? [];
+                $rekapPerAnak = $data['rekap_per_anak'] ?? [];
+
+                // If id_anak is not specified, use first child
+                if (!$idAnak && !empty($daftarAnak)) {
+                    $idAnak = $daftarAnak[0]['id'];
+                }
+
+                // Find the selected child's data
+                $selectedAnakData = null;
+                if ($idAnak) {
+                    foreach ($rekapPerAnak as $anakData) {
+                        if (($anakData['id_anak'] ?? null) == $idAnak) {
+                            $selectedAnakData = $anakData;
+                            break;
+                        }
+                    }
+                }
+
+                // Fallback to first child if not found
+                if (!$selectedAnakData && !empty($rekapPerAnak)) {
+                    $selectedAnakData = $rekapPerAnak[0];
+                    $idAnak = $selectedAnakData['id_anak'] ?? null;
+                }
+
+                if ($selectedAnakData) {
+                    // Find activities for the selected date
+                    $aktivitasPerTanggal = $selectedAnakData['aktivitas_per_tanggal'] ?? [];
+                    foreach ($aktivitasPerTanggal as $tanggalData) {
+                        if ($tanggalData['tanggal'] === $tanggal) {
+                            $aktivitas = $tanggalData['aktivitas'] ?? [];
+                            break;
+                        }
+                    }
+                }
+
+                // Format aktivitas for view
+                $aktivitas = collect($aktivitas)->map(function ($item) {
+                    $jamMulai = $item['jam_mulai'] ?? '';
+                    $jamSelesai = $item['jam_selesai'] ?? '';
+
+                    // Extract time from datetime
+                    if (strlen($jamMulai) > 8) {
+                        $jamMulai = date('H:i', strtotime($jamMulai));
+                    }
+                    if (strlen($jamSelesai) > 8) {
+                        $jamSelesai = date('H:i', strtotime($jamSelesai));
+                    }
+
+                    $durasi = $item['durasi'] ?? [];
+                    $durasiStr = '';
+                    if (isset($durasi['jam']) && isset($durasi['menit'])) {
+                        $durasiStr = $durasi['jam'] . 'h ' . $durasi['menit'] . 'm';
+                    }
+
+                    return array_merge($item, [
+                        'jam_mulai_fmt' => $jamMulai,
+                        'jam_selesai_fmt' => $jamSelesai,
+                        'durasi_fmt' => $durasiStr,
+                    ]);
+                })->toArray();
+            }
+
+        } catch (\Throwable $e) {
+            $daftarAnak = [];
+            $aktivitas = [];
+            $nannyDetail = null;
+            $allNannies = [];
+        }
+
+        return view('konsultan.diary', [
+            'id_nanny' => $id,
+            'id_anak' => $idAnak,
+            'nanny_detail' => $nannyDetail,
+            'all_nannies' => $allNannies,
+            'daftar_anak' => $daftarAnak,
+            'aktivitas' => $aktivitas,
+            'tanggal' => $tanggal,
+            'activeKat' => $kategori,
+        ]);
+    }
+
+    /**
+     * GET /konsultan/diary
+     * Entry point dari menu home - redirect ke diary nanny pertama (ID terkecil).
+     */
+    public function diaryIndex()
+    {
+        try {
+            $response = Http::withToken($this->token())
+                ->acceptJson()
+                ->get($this->apiUrl('/konsultan-nanny'));
+
+            $json    = $response->json();
+            $nannies = ($json['status'] ?? '') === 'success' ? ($json['data'] ?? []) : [];
+
+            if (!empty($nannies)) {
+                // Ambil nanny dengan ID terkecil (paling lama)
+                $defaultNanny = collect($nannies)->sortBy('id')->first();
+                return redirect()->route('konsultan-nanny-diary', $defaultNanny['id']);
+            }
+
+            return redirect()->route('konsultan-nanny-anda')
+                ->with('error', 'Anda belum memiliki nanny yang terdaftar.');
+
+        } catch (\Throwable $e) {
+            return redirect()->route('konsultan-nanny-anda')
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
+    }
 }

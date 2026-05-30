@@ -166,6 +166,8 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/tugaskan-nanny/{id}/tambah',          fn()=>view('konsultan.tugaskan-nanny-tambah'));
         Route::get('/tugaskan-nanny/assignment/{id}/ubah', fn()=>view('konsultan.tugaskan-nanny-ubah'));
         Route::get('/rekap-diary',               fn()=>view('konsultan.rekap-diary'))->name('konsultan-rekap-diary-nanny-list');
+        Route::get('/diary',                [KonsultanController::class, 'diaryIndex'])->name('konsultan-diary');
+        Route::get('/nanny/{id}/diary', [KonsultanController::class, 'showDiary'])->name('konsultan-nanny-diary');
     });
 });
 
