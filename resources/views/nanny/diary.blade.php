@@ -377,7 +377,6 @@
                         ['value'=>'belajar','label'=>'📖 Belajar'],
                         ['value'=>'mandi','label'=>'🛁 Mandi'],
                     ];
-                    $activeKat = $kategori ?? '';
                 @endphp
                 @foreach($kats as $kat)
                 @php $isActive = $activeKat === $kat['value']; @endphp
