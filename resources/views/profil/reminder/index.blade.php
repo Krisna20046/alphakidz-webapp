@@ -33,8 +33,10 @@
             to   { opacity: 1; transform: translateY(0) scale(1); }
         }
         @keyframes sheetIn {
-            from { transform: translateY(100%); }
-            to   { transform: translateY(0); }
+            0%   { transform: translateY(100%) scale(0.96); opacity: 0; }
+            60%  { transform: translateY(-8px) scale(1.01); opacity: 1; }
+            80%  { transform: translateY(4px) scale(0.995); }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
         }
 
         .hide-scrollbar::-webkit-scrollbar { display: none; }
@@ -90,18 +92,22 @@
             z-index: 50;
             animation: fadeIn 0.2s ease;
         }
-        .bottom-sheet {
+        .bottom-sheet-wrapper {
             position: fixed;
-            bottom: 0; left: 50%;
-            transform: translateX(-50%);
+            bottom: 0; left: 0; right: 0;
+            display: flex; justify-content: center;
+            z-index: 51;
+            pointer-events: none;
+        }
+        .bottom-sheet {
             width: 100%; max-width: 390px;
             background: white;
             border-radius: 28px 28px 0 0;
             padding: 24px 24px 40px;
-            z-index: 51;
-            animation: sheetIn 0.32s cubic-bezier(0.32,0.72,0,1);
             max-height: 85vh;
             overflow-y: auto;
+            pointer-events: auto;
+            animation: sheetIn 0.32s cubic-bezier(0.32,0.72,0,1);
         }
         .bottom-sheet::-webkit-scrollbar { display: none; }
 
@@ -434,7 +440,8 @@
 <!--  BOTTOM SHEET: Create / Edit Alarm                           -->
 <!-- ============================================================ -->
 <div id="sheetOverlay" class="bottom-sheet-overlay hidden" onclick="closeSheet()"></div>
-<div id="alarmSheet" class="bottom-sheet hidden">
+<div class="bottom-sheet-wrapper hidden" id="sheetWrapper">
+<div id="alarmSheet" class="bottom-sheet">
 
     <!-- Header -->
     <div class="flex items-center justify-between mb-4">
@@ -914,11 +921,11 @@ function openEditSheet(id) {
 
 function showSheet() {
     document.getElementById('sheetOverlay').classList.remove('hidden');
-    document.getElementById('alarmSheet').classList.remove('hidden');
+    document.getElementById('sheetWrapper').classList.remove('hidden');
 }
 function closeSheet() {
     document.getElementById('sheetOverlay').classList.add('hidden');
-    document.getElementById('alarmSheet').classList.add('hidden');
+    document.getElementById('sheetWrapper').classList.add('hidden');
 }
 
 function syncSheet() {

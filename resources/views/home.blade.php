@@ -1,227 +1,166 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Beranda</title>
-    @include('partials.pwa-head')
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+@extends('layouts.app')
 
-    <!-- Leaflet.js for GPS map -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+@section('title', 'Beranda')
 
-    <style>
-        @keyframes badgePulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.15); }
-        }
-        .badge-pulse { animation: badgePulse 1.5s ease-in-out infinite; }
-        
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(16px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .anim { animation: slideUp 0.4s ease forwards; opacity: 0; }
-        .delay-1 { animation-delay: 0.05s; }
-        .delay-2 { animation-delay: 0.13s; }
-        .delay-3 { animation-delay: 0.21s; }
-        .delay-4 { animation-delay: 0.30s; }
-        .delay-5 { animation-delay: 0.38s; }
-        
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+@push('styles')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<style>
+    @keyframes badgePulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.15); }
+    }
+    .badge-pulse { animation: badgePulse 1.5s ease-in-out infinite; }
 
-        .alert-card-enter {
-            animation: alertSlideIn 0.3s ease forwards;
-            margin-bottom: 12px;
-        }
+    #homeReminderSection:not(:empty),
+    #homeLowStockSection:not(:empty),
+    #homeSharedStockSection:not(:empty) {
+        display: block;
+    }
 
-        #homeReminderSection:not(:empty),
-        #homeLowStockSection:not(:empty),
-        #homeSharedStockSection:not(:empty) {
-            display: block;
-        }
+    #homeReminderSection:empty,
+    #homeLowStockSection:empty,
+    #homeSharedStockSection:empty {
+        display: none;
+    }
 
-        #homeReminderSection:empty,
-        #homeLowStockSection:empty,
-        #homeSharedStockSection:empty {
-            display: none;
-        }
+    @keyframes reminderIn {
+        from { opacity: 0; transform: translateY(-8px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .reminder-card-anim { animation: reminderIn 0.35s ease forwards; }
 
-        @keyframes reminderIn {
-            from { opacity: 0; transform: translateY(-8px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .reminder-card-anim { animation: reminderIn 0.35s ease forwards; }
+    @keyframes alertSlideIn {
+        from { opacity: 0; transform: translateY(-6px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+    .alert-card-enter { animation: alertSlideIn 0.3s ease forwards; margin-bottom: 12px; }
 
-        /* Reminder & Low Stock Cards */
-        @keyframes alertSlideIn {
-            from { opacity: 0; transform: translateY(-6px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-        .alert-card-enter { animation: alertSlideIn 0.3s ease forwards; }
+    /* GPS Tracker Card */
+    .gps-card {
+        background: #FFFFFF;
+        border-radius: 18px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+    .gps-mini-map {
+        width: 100%;
+        height: 260px;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #E5E1F0;
+    }
+    .gps-nanny-item {
+        background: #F8F8FB;
+        border: 1px solid #ECEAF4;
+        border-radius: 12px;
+        transition: transform 0.15s ease;
+    }
+    .gps-nanny-item:active { transform: scale(0.98); }
+    @keyframes pulse-dot {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(1.3); }
+    }
+    .gps-live-dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: #22C55E;
+        animation: pulse-dot 1.8s ease-in-out infinite;
+        display: inline-block;
+    }
+    .gps-live-dot.offline {
+        background: #A8A2C2;
+        animation: none;
+    }
+    .gps-refresh-btn {
+        transition: transform 0.3s ease;
+    }
+    .gps-refresh-btn.spinning {
+        transform: rotate(360deg);
+    }
+    .gps-mini-map .leaflet-control-zoom {
+        border: none !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+        border-radius: 8px !important;
+        overflow: hidden;
+    }
+    .gps-mini-map .leaflet-control-zoom a {
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        font-size: 16px;
+        font-weight: 700;
+        color: #4B5563;
+        background: white;
+        border: none !important;
+    }
+    .gps-mini-map .leaflet-control-zoom a:hover {
+        background: #F3F0FC;
+        color: #8B46D3;
+    }
+    .gps-mini-map .leaflet-control-zoom a.leaflet-control-zoom-in {
+        border-bottom: 1px solid #EDE9FE !important;
+    }
+    .gps-mini-map .leaflet-control-attribution {
+        font-size: 9px;
+        background: rgba(255,255,255,0.85);
+        padding: 2px 6px;
+        border-radius: 4px 0 0 0;
+    }
+    @keyframes marker-pulse {
+        0% { box-shadow: 0 0 0 0 rgba(139,70,211,0.5); }
+        70% { box-shadow: 0 0 0 14px rgba(139,70,211,0); }
+        100% { box-shadow: 0 0 0 0 rgba(139,70,211,0); }
+    }
+    .gps-marker-pulse {
+        animation: marker-pulse 2s ease-out infinite;
+    }
+    #gpsFullscreenOverlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: #fff;
+        display: none;
+        flex-direction: column;
+    }
+    #gpsFullscreenOverlay.active { display: flex; }
+    #gpsFullscreenMap {
+        flex: 1;
+        width: 100%;
+        min-height: 0;
+    }
+</style>
+@endpush
 
-        /* ── GPS Tracker Card ── */
-        .gps-card {
-            background: #FFFFFF;
-            border-radius: 18px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            overflow: hidden;
-        }
-        .gps-mini-map {
-            width: 100%;
-            height: 260px;
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid #E5E1F0;
-        }
-        .gps-nanny-item {
-            background: #F8F8FB;
-            border: 1px solid #ECEAF4;
-            border-radius: 12px;
-            transition: transform 0.15s ease;
-        }
-        .gps-nanny-item:active { transform: scale(0.98); }
-        @keyframes pulse-dot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.3); }
-        }
-        .gps-live-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: #22C55E;
-            animation: pulse-dot 1.8s ease-in-out infinite;
-            display: inline-block;
-        }
-        .gps-live-dot.offline {
-            background: #A8A2C2;
-            animation: none;
-        }
-        .gps-refresh-btn {
-            transition: transform 0.3s ease;
-        }
-        .gps-refresh-btn.spinning {
-            transform: rotate(360deg);
-        }
-        /* Leaflet zoom controls — styling lebih modern */
-        .gps-mini-map .leaflet-control-zoom {
-            border: none !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
-            border-radius: 8px !important;
-            overflow: hidden;
-        }
-        .gps-mini-map .leaflet-control-zoom a {
-            width: 32px;
-            height: 32px;
-            line-height: 32px;
-            font-size: 16px;
-            font-weight: 700;
-            color: #4B5563;
-            background: white;
-            border: none !important;
-        }
-        .gps-mini-map .leaflet-control-zoom a:hover {
-            background: #F3F0FC;
-            color: #8B46D3;
-        }
-        .gps-mini-map .leaflet-control-zoom a.leaflet-control-zoom-in {
-            border-bottom: 1px solid #EDE9FE !important;
-        }
-        /* Attribution lebih clean */
-        .gps-mini-map .leaflet-control-attribution {
-            font-size: 9px;
-            background: rgba(255,255,255,0.85);
-            padding: 2px 6px;
-            border-radius: 4px 0 0 0;
-        }
-        /* Pulse marker animation */
-        @keyframes marker-pulse {
-            0% { box-shadow: 0 0 0 0 rgba(139,70,211,0.5); }
-            70% { box-shadow: 0 0 0 14px rgba(139,70,211,0); }
-            100% { box-shadow: 0 0 0 0 rgba(139,70,211,0); }
-        }
-        .gps-marker-pulse {
-            animation: marker-pulse 2s ease-out infinite;
-        }
-        /* Fullscreen overlay */
-        #gpsFullscreenOverlay {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: #fff;
-            display: none;
-            flex-direction: column;
-        }
-        #gpsFullscreenOverlay.active { display: flex; }
-        #gpsFullscreenMap {
-            flex: 1;
-            width: 100%;
-            min-height: 0;
-        }
-    </style>
-</head>
-<body class="font-['Nunito'] bg-[#E5E2F5]">
-
-<div class="sm:flex sm:items-start sm:justify-center sm:min-h-screen sm:py-8 sm:pb-[60px]">
-<div class="sm:w-[390px] sm:min-h-[844px] sm:rounded-[44px] sm:shadow-[0_40px_80px_rgba(124,58,237,0.28),0_0_0_8px_#1a1030,0_0_0_10px_#2d1a50] sm:overflow-hidden bg-[#F8F7FF] min-h-screen flex flex-col relative">
-
-    <!-- STATUS BAR (desktop only) -->
-    <div class="hidden sm:flex sm:items-center sm:justify-between bg-[#8B46D3] px-6 pt-[14px] text-white text-xs font-bold">
-        <span id="statusTime">9:41</span>
-        <div class="flex items-center gap-1.5">
-            <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
-                <rect x="0" y="4" width="3" height="7" rx="0.6" fill="white" opacity="0.5"/>
-                <rect x="4.5" y="2.5" width="3" height="8.5" rx="0.6" fill="white" opacity="0.7"/>
-                <rect x="9" y="0.5" width="3" height="10.5" rx="0.6" fill="white"/>
-                <rect x="13.5" y="0" width="3" height="11" rx="0.6" fill="white" opacity="0.25"/>
-            </svg>
-            <svg width="16" height="12" viewBox="0 0 16 12" fill="white">
-                <path d="M8 3C5.5 3 3.3 4 1.7 5.6L0 3.8C2.1 1.7 5 0.5 8 0.5s5.9 1.2 8 3.3L14.3 5.6C12.7 4 10.5 3 8 3z" opacity="0.5"/>
-                <path d="M8 6.5c-1.5 0-2.8.6-3.8 1.5L2.5 6.2C3.9 4.8 5.9 4 8 4s4.1.8 5.5 2.2L11.8 8C10.8 7.1 9.5 6.5 8 6.5z" opacity="0.75"/>
-                <circle cx="8" cy="10.5" r="2"/>
-            </svg>
-            <div class="flex items-center">
-                <div class="w-[22px] h-[11px] border-[1.5px] border-white/70 rounded-[3px] p-[1.5px]">
-                    <div class="bg-white rounded-[1.5px] h-full"></div>
-                </div>
+@section('content')
+<!-- HEADER -->
+<div class="anim delay-1 relative z-10 bg-[#8B46D3] bg-[url('/assets/bg-texture.png')] bg-cover bg-center px-[30px] pt-[60px] pb-[70px] before:content-[''] before:absolute before:inset-0 before:bg-[#8B46D3] before:opacity-60 before:-z-10">
+    <div class="flex items-center justify-between relative z-10">
+        <div class="flex items-center gap-3">
+            <div class="w-[52px] h-[52px] rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 text-[26px]">
+                <img src="{{ asset('assets/logo-1.png') }}" alt="avatar" class="w-full h-full object-cover">
+            </div>
+            <div>
+                <p class="text-white/80 text-xs font-semibold mb-0.5" id="greetText">Good Morning,</p>
+                <h1 class="text-white text-lg font-extrabold leading-tight">{{ session('user')['name'] ?? 'Pengguna' }}</h1>
+                <p class="text-white/70 text-xs font-medium mt-0.5">Ready to find the best care?</p>
             </div>
         </div>
+
+        <!-- Notification / Chat button -->
+        <a href="{{ route('chat.list') }}"
+           id="chatBtn"
+           class="w-11 h-11 rounded-full bg-white/15 border-[1.5px] border-white/25 flex items-center justify-center relative cursor-pointer no-underline">
+            <ion-icon name="notifications" class="text-white text-xl"></ion-icon>
+            <span id="unreadBadge"
+                  class="badge-pulse hidden absolute top-[6px] right-[7px] min-w-[18px] h-[18px] bg-[#FCD34D] text-[#1E1B2E] text-[9px] font-extrabold rounded-full hidden items-center justify-center border-[1.5px] border-[#8B46D3] px-[3px]"
+                  style="display: none;">
+                0
+            </span>
+        </a>
     </div>
+</div>
 
-    <!-- HEADER -->
-    <div class="anim delay-1 relative z-10 bg-[#8B46D3] bg-[url('/assets/bg-texture.png')] bg-cover bg-center px-[30px] pt-[60px] pb-[70px] before:content-[''] before:absolute before:inset-0 before:bg-[#8B46D3] before:opacity-60 before:-z-10">
-        <div class="flex items-center justify-between relative z-10">
-            <div class="flex items-center gap-3">
-                <div class="w-[52px] h-[52px] rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 text-[26px]">
-                    <img src="{{ asset('assets/logo-1.png') }}" alt="avatar" class="w-full h-full object-cover">
-                </div>
-                <div>
-                    <p class="text-white/80 text-xs font-semibold mb-0.5" id="greetText">Good Morning,</p>
-                    <h1 class="text-white text-lg font-extrabold leading-tight">{{ session('user')['name'] ?? 'Pengguna' }}</h1>
-                    <p class="text-white/70 text-xs font-medium mt-0.5">Ready to find the best care?</p>
-                </div>
-            </div>
-
-            <!-- Notification / Chat button -->
-            <a href="{{ route('chat.list') }}"
-               id="chatBtn"
-               class="w-11 h-11 rounded-full bg-white/15 border-[1.5px] border-white/25 flex items-center justify-center relative cursor-pointer no-underline">
-                <ion-icon name="notifications" class="text-white text-xl"></ion-icon>
-                <span id="unreadBadge"
-                      class="badge-pulse hidden absolute top-[6px] right-[7px] min-w-[18px] h-[18px] bg-[#FCD34D] text-[#1E1B2E] text-[9px] font-extrabold rounded-full hidden items-center justify-center border-[1.5px] border-[#8B46D3] px-[3px]"
-                      style="display: none;">
-                    0
-                </span>
-            </a>
-        </div>
-    </div>
-
-    <!-- SCROLLABLE BODY -->
+<!-- SCROLLABLE BODY -->
     <div class="flex-1 overflow-y-auto px-[30px] pt-[30px] pb-20 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 flex flex-col gap-5 hide-scrollbar" id="mainScroll">
 
         {{-- UPCOMING REMINDER --}}
@@ -484,20 +423,19 @@
             </div>
         </div>
 
-        <div class="h-5"></div>
-    </div>
-
-    <!-- BOTTOM NAV -->
-    @include('partials.bottom-nav', ['active' => 'home'])
-    @include('partials.reminder')
-
-</div>
+    <div class="h-5"></div>
 </div>
 
-<!-- JAVASCRIPT -->
+<!-- BOTTOM NAV -->
+@include('partials.bottom-nav', ['active' => 'home'])
+@include('partials.reminder')
+@endsection
+
+@push('scripts')
+<script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const API_BASE  = '{{ rtrim(config("services.api.base_url", env("API_BASE_URL", "http://127.0.0.1:8000/api")), "/") }}';
-// ── Config dari Laravel (passed via Blade) ──────────────────────────────────
 @php
     $resolvedUserId = session('user_id') ?: data_get(session('user'), 'id_user');
 @endphp
@@ -509,20 +447,6 @@ const PUSHER_CLUSTER = "{{ config('services.pusher.options.cluster', 'ap1') }}";
 const PUSHER_AUTH_EP = "{{ url('/broadcasting/auth') }}";
 const UNREAD_API     = "{{ route('api.unread') }}";
 const CSRF           = "{{ csrf_token() }}";
-
-
-// Status bar clock
-(function() {
-    const el = document.getElementById('statusTime');
-    function tick() {
-        const now = new Date();
-        const h = String(now.getHours()).padStart(2,'0');
-        const m = String(now.getMinutes()).padStart(2,'0');
-        if (el) el.textContent = `${h}:${m}`;
-    }
-    tick();
-    setInterval(tick, 30000);
-})();
 
 // Greeting
 (function() {
@@ -1113,6 +1037,4 @@ async function toggleNannyGps() {
 
 @include('partials.auth-guard')
 @include('partials.permission-modals')
-
-</body>
-</html>
+@endpush

@@ -197,12 +197,16 @@
             position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 50;
             animation: fadeIn 0.2s ease;
         }
+        .bottom-sheet-wrapper {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            display: flex; justify-content: center; z-index: 51;
+            pointer-events: none;
+        }
         .bottom-sheet {
-            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
             width: 100%; max-width: 390px; background: white;
-            border-radius: 28px 28px 0 0; padding: 24px 24px 40px; z-index: 51;
+            border-radius: 28px 28px 0 0; padding: 24px 24px 40px;
             animation: sheetIn 0.32s cubic-bezier(0.32,0.72,0,1);
-            max-height: 85vh; overflow-y: auto;
+            max-height: 85vh; overflow-y: auto; pointer-events: auto;
         }
         .bottom-sheet::-webkit-scrollbar { display: none; }
 
@@ -469,7 +473,8 @@
 <!--  BOTTOM SHEET: Add My Stock                                   -->
 <!-- ============================================================ -->
 <div id="sheetOverlay" class="bottom-sheet-overlay hidden" onclick="closeSheet()"></div>
-<div id="stockSheet" class="bottom-sheet hidden">
+<div class="bottom-sheet-wrapper hidden" id="sheetWrapper">
+<div id="stockSheet" class="bottom-sheet">
     <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-2">
             <span class="iconify" data-icon="material-symbols:add-circle-outline-rounded" style="font-size:20px;color:#6C3FC5;"></span>
@@ -494,7 +499,8 @@
 <!--  BOTTOM SHEET: Add Shared Stock (nanny only)                 -->
 <!-- ============================================================ -->
 <div id="sharedSheetOverlay" class="bottom-sheet-overlay hidden" onclick="closeSharedSheet()"></div>
-<div id="sharedStockSheet" class="bottom-sheet hidden">
+<div class="bottom-sheet-wrapper hidden" id="sharedSheetWrapper">
+<div id="sharedStockSheet" class="bottom-sheet">
     <div class="flex items-center justify-between mb-4">
         <div class="flex items-center gap-2">
             <span class="iconify" data-icon="material-symbols:people-rounded" style="font-size:20px;color:#F59E0B;"></span>
@@ -647,11 +653,11 @@ function openAddSheet() {
     document.getElementById('itemName').value = '';
     document.getElementById('itemQty').value  = '';
     document.getElementById('sheetOverlay').classList.remove('hidden');
-    document.getElementById('stockSheet').classList.remove('hidden');
+    document.getElementById('sheetWrapper').classList.remove('hidden');
 }
 function closeSheet() {
     document.getElementById('sheetOverlay').classList.add('hidden');
-    document.getElementById('stockSheet').classList.add('hidden');
+    document.getElementById('sheetWrapper').classList.add('hidden');
 }
 async function submitAddStock() {
     const name = document.getElementById('itemName').value.trim();
@@ -827,11 +833,11 @@ function openSharedAddSheet() {
     document.getElementById('sharedItemName').value = '';
     document.getElementById('sharedItemQty').value  = '';
     document.getElementById('sharedSheetOverlay').classList.remove('hidden');
-    document.getElementById('sharedStockSheet').classList.remove('hidden');
+    document.getElementById('sharedSheetWrapper').classList.remove('hidden');
 }
 function closeSharedSheet() {
     document.getElementById('sharedSheetOverlay').classList.add('hidden');
-    document.getElementById('sharedStockSheet').classList.add('hidden');
+    document.getElementById('sharedSheetWrapper').classList.add('hidden');
 }
 async function submitAddSharedStock() {
     const name = document.getElementById('sharedItemName').value.trim();
