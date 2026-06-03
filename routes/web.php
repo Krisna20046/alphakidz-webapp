@@ -177,7 +177,14 @@ Route::post('/broadcasting/auth', function (\Illuminate\Http\Request $request) {
     $token = session('token');
     if (!$token) abort(403, 'Unauthenticated');
 
-    $apiBaseUrl = rtrim(str_replace('/api', '', config('services.api.base_url', env('API_BASE_URL'))), '/');
+    $apiBaseUrl = rtrim(
+        config('services.api.base_url', env('API_BASE_URL')),
+        '/'
+    );
+
+    if (str_ends_with($apiBaseUrl, '/api')) {
+        $apiBaseUrl = substr($apiBaseUrl, 0, -4);
+    }
 
     $response = \Illuminate\Support\Facades\Http::withToken($token)
         ->asForm()
