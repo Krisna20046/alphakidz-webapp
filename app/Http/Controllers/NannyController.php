@@ -201,6 +201,8 @@ class NannyController extends Controller
             'mood'          => 'nullable|string',
             'deskripsi'     => 'nullable|string',
             'foto'          => 'nullable|image|max:4096',
+            'lat'           => 'nullable|numeric',
+            'lng'           => 'nullable|numeric',
         ]);
 
         $multipart = [
@@ -211,6 +213,8 @@ class NannyController extends Controller
             ['name' => 'jam_selesai',   'contents' => (string) $request->jam_selesai],
             ['name' => 'mood',          'contents' => (string) ($request->mood ?? 'biasa')],
             ['name' => 'deskripsi',     'contents' => (string) ($request->deskripsi ?? '')],
+            ['name' => 'lat',           'contents' => (string) ($request->lat ?? '')],
+            ['name' => 'lng',           'contents' => (string) ($request->lng ?? '')],
         ];
 
         if ($request->hasFile('foto')) {

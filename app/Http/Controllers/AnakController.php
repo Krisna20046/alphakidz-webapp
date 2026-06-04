@@ -168,12 +168,14 @@ class AnakController extends Controller
         try {
             $http = Http::withToken($token)->acceptJson()->timeout(20);
 
+            $payload = $request->except(['_token', 'foto', 'foto_lama']);
+
             if ($request->hasFile('foto')) {
                 $file = $request->file('foto');
                 $http = $http->attach('foto', file_get_contents($file->getRealPath()), $file->getClientOriginalName(), ['Content-Type' => $file->getMimeType()]);
             }
 
-            $response = $http->post("{$this->apiBaseUrl}/user-anak-update", $request->except(['_token', 'foto']));
+            $response = $http->post("{$this->apiBaseUrl}/user-anak-update", $payload);
             $data     = $response->json();
 
             if ($response->successful() && ($data['status'] ?? '') === 'success') {

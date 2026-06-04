@@ -299,6 +299,10 @@ document.getElementById('anakForm').addEventListener('submit', async (e) => {
     setLoading(true);
     try {
         const fd = new FormData(document.getElementById('anakForm'));
+        // Jangan kirim field foto jika tidak ada file baru
+        if (!document.getElementById('fotoInput').files.length) {
+            fd.delete('foto');
+        }
         const url = isEdit ? '{{ route("profil.anak.update") }}' : '{{ route("profil.anak.store") }}';
 
         const res = await fetch(url, {

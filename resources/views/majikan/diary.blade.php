@@ -353,7 +353,7 @@
                         <img src="{{ $item['foto_url'] }}" class="akt-photo" alt=""
                             onclick="event.stopPropagation(); openImageModal('{{ $item['foto_url'] }}')">
                         @endif
-                        {{-- <div class="akt-footer">
+                        <div class="akt-footer">
                             <button class="loc-btn"
                                 onclick="event.stopPropagation(); openLocationModal(
                                     '{{ addslashes($item['lokasi'] ?? '') }}',
@@ -363,7 +363,7 @@
                                 <ion-icon name="location-outline" style="font-size:14px;"></ion-icon>
                                 Location
                             </button>
-                        </div> --}}
+                        </div>
                     </div>
                     <p class="tl-duration">Total Duration : {{ $item['durasi_fmt'] ?? '-' }}</p>
                 </div>

@@ -117,9 +117,18 @@
         cursor:pointer; transition:transform 0.2s ease, box-shadow 0.2s ease; }
     .akt-photo:hover { transform:scale(1.02); box-shadow:0 8px 20px rgba(139,70,211,0.2); }
     .tl-duration { font-size:11px; font-weight:700; color:#A8A2C2; margin-top:6px; }
+    .akt-footer { display:flex; align-items:center; justify-content:flex-end; margin-top:6px; }
+    .loc-btn {
+        display:flex; align-items:center; gap:4px;
+        font-size:12px; font-weight:700; color:#A8A2C2;
+        background:none; border:none; cursor:pointer;
+        transition:color .15s; padding:0;
+    }
+    .loc-btn:hover { color:#8B46D3; }
+    .map-placeholder { width:100%; height:180px; border-radius:14px; overflow:hidden; position:relative; }
 
     .fab {
-        position: absolute;
+        position: fixed;
         right: 20px;
         bottom: 90px;
         width: 56px; height: 56px;
@@ -129,7 +138,7 @@
         box-shadow: 0 8px 24px rgba(139,70,211,.45);
         cursor: pointer; border: none; z-index: 40;
         transition: transform .15s, box-shadow .15s;
-        text-decoration: none;
+        text-decoration: none;  
     }
     .fab:hover { transform:scale(1.07); box-shadow:0 12px 32px rgba(139,70,211,.55); }
     .fab:active { transform:scale(0.95); }
@@ -391,6 +400,17 @@
                             onclick="event.stopPropagation();openImageModal('{{ $item['foto_url'] }}')"
                             style="cursor:pointer;">
                         @endif
+                        <div class="akt-footer">
+                            <button class="loc-btn"
+                                onclick="event.stopPropagation(); openLocationModal(
+                                    '{{ addslashes($item['lokasi'] ?? '') }}',
+                                    '{{ $item['lat'] ?? '' }}',
+                                    '{{ $item['lng'] ?? '' }}'
+                                )">
+                                <ion-icon name="location-outline" style="font-size:14px;"></ion-icon>
+                                Location
+                            </button>
+                        </div>
                     </div>
                     <p class="tl-duration">Total Duration : {{ $item['durasi_fmt'] ?? '-' }}</p>
                 </div>
@@ -479,6 +499,37 @@
                        box-shadow:0 6px 18px rgba(139,70,211,.3);font-family:'Nunito',sans-serif;">
                 Tutup
             </button>
+        </div>
+    </div>
+</div>
+
+{{-- Location Modal --}}
+<div class="modal-overlay" id="modalLocation">
+    <div class="modal-box" style="padding:0;overflow:hidden;">
+        <div class="map-placeholder" id="mapPlaceholder"></div>
+        <div style="padding:16px 18px 18px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:1.5px solid #F0EDFB;">
+                <div style="width:42px;height:42px;border-radius:12px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    <ion-icon name="location" style="font-size:20px;color:#8B46D3;"></ion-icon>
+                </div>
+                <div>
+                    <p id="locModalName" style="font-size:15px;font-weight:900;color:#1E1B2E;margin-bottom:2px;">Lokasi Aktivitas</p>
+                    <p id="locModalSub" style="font-size:12px;font-weight:700;color:#A8A2C2;">Koordinat tersimpan</p>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <button onclick="closeLocationModal()"
+                    style="padding:13px;border-radius:12px;border:2px solid #EDE9FE;background:#fff;
+                           font-size:14px;font-weight:800;color:#5A556E;cursor:pointer;">
+                    Close
+                </button>
+                <button onclick="openInGMaps()"
+                    style="padding:13px;border-radius:12px;border:none;background:#8B46D3;
+                           font-size:14px;font-weight:800;color:#fff;cursor:pointer;
+                           box-shadow:0 6px 18px rgba(139,70,211,.35);">
+                    Open in GMaps
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -647,6 +698,8 @@ function openDetail(item){
     if(item.mood) rows.push({emoji:getMoodEmoji(item.mood),label:'Mood',value:item.mood.charAt(0).toUpperCase()+item.mood.slice(1)});
     if(item.deskripsi) rows.push({icon:'document-text-outline',label:'Deskripsi',value:item.deskripsi});
     if(item.nanny_name) rows.push({icon:'person-outline',label:'Dicatat oleh',value:item.nanny_name});
+    if(item.lat && item.lng) rows.push({icon:'location-outline',label:'Lokasi',value:item.lat+', '+item.lng});
+    else if(item.lokasi) rows.push({icon:'location-outline',label:'Lokasi',value:item.lokasi});
 
     let html=`<div style="display:flex;flex-direction:column;align-items:center;padding:20px;border-radius:16px;margin-bottom:20px;background:${bg};border:1.5px solid ${col}40;">
         <ion-icon name="${ic}" style="font-size:36px;color:${col};"></ion-icon>
@@ -676,6 +729,51 @@ function openDetail(item){
 }
 function closeDetail(){ document.getElementById('modalDetail').classList.remove('open'); }
 document.getElementById('modalDetail').addEventListener('click',e=>{ if(e.target.id==='modalDetail') closeDetail(); });
+
+// ── Location Modal ──
+let locLat = null, locLng = null;
+
+function openLocationModal(name, lat, lng) {
+    locLat = lat; locLng = lng;
+    document.getElementById('locModalName').textContent = name || 'Lokasi Aktivitas';
+    document.getElementById('locModalSub').textContent = lat && lng
+        ? lat + ', ' + lng
+        : 'Lokasi tercatat';
+
+    const mapContainer = document.getElementById('mapPlaceholder');
+    if (lat && lng && !isNaN(lat) && !isNaN(lng)) {
+        mapContainer.innerHTML = `
+            <iframe
+                width="100%"
+                height="180"
+                style="border:0;border-radius:14px;display:block;"
+                loading="lazy"
+                allowfullscreen
+                src="https://maps.google.com/maps?q=${lat},${lng}&z=16&output=embed">
+            </iframe>`;
+    } else {
+        mapContainer.innerHTML = `
+            <div style="width:100%;height:180px;border-radius:14px;background:#e8f4e8;
+                        display:flex;align-items:center;justify-content:center;
+                        font-size:13px;color:#666;font-weight:600;">
+                Koordinat tidak tersedia
+            </div>`;
+    }
+    document.getElementById('modalLocation').classList.add('open');
+}
+function closeLocationModal(){
+    document.getElementById('modalLocation').classList.remove('open');
+}
+function openInGMaps() {
+    if (locLat && locLng) {
+        window.open('https://www.google.com/maps?q=' + locLat + ',' + locLng, '_blank');
+    } else {
+        window.open('https://maps.google.com', '_blank');
+    }
+}
+document.getElementById('modalLocation').addEventListener('click',e=>{
+    if(e.target.id==='modalLocation') closeLocationModal();
+});
 
 function openImageModal(imageUrl){
     if(!imageUrl) return;

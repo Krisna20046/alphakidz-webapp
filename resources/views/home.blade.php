@@ -776,7 +776,7 @@ function buildGpsPopup(n) {
     const lat = parseFloat(n.latitude);
     const lng = parseFloat(n.longitude);
     const hasLoc = !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0;
-    const isLive = hasLoc && n.is_online !== false;
+    const isLive = hasLoc && n.is_online !== false && isLocationFresh(n.last_update);
     const statusColor = isLive ? '#22C55E' : '#A8A2C2';
     const statusText = isLive ? 'Online' : 'Offline';
     const coords = hasLoc ? `${lat.toFixed(6)}, ${lng.toFixed(6)}` : '-';
@@ -808,7 +808,7 @@ function updateGpsMarkers(map, markerStore, nannies) {
 
         bounds.push([lat, lng]);
         hasLocation = true;
-        const isLive = n.is_online !== false;
+        const isLive = hasLoc && n.is_online !== false && isLocationFresh(n.last_update);
         const icon = gpsMarkerIcon(n.name, isLive);
         const marker = L.marker([lat, lng], { icon }).addTo(map);
         marker.bindPopup(buildGpsPopup(n));
@@ -849,7 +849,7 @@ async function refreshGpsLocations() {
 
         section.classList.remove('hidden');
         gpsNanniesData = nannies;
-        const online = nannies.filter(n => n.is_online !== false && parseFloat(n.latitude) && parseFloat(n.longitude)).length;
+        const online = nannies.filter(n => isLocationFresh(n.last_update) && parseFloat(n.latitude) && parseFloat(n.longitude)).length;
         statusText.textContent = `${nannies.length} nanny${nannies.length > 1 ? 'ies' : ''} assigned · ${online} online`;
 
         // Init mini map dengan drag/zoom aktif
@@ -868,7 +868,7 @@ async function refreshGpsLocations() {
             const lat = parseFloat(n.latitude);
             const lng = parseFloat(n.longitude);
             const hasLoc = !isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0;
-            const isLive = hasLoc && n.is_online !== false;
+            const isLive = hasLoc && n.is_online !== false && isLocationFresh(n.last_update);
             const timeAgo = getTimeAgo(n.last_update);
 
             return `
@@ -953,6 +953,14 @@ function getTimeAgo(dateStr) {
     const diffHr = Math.floor(diffMin / 60);
     if (diffHr < 24) return diffHr + 'h ago';
     return Math.floor(diffHr / 24) + 'd ago';
+}
+
+function isLocationFresh(lastUpdate) {
+    if (!lastUpdate) return false;
+    const now = new Date();
+    const d = new Date(lastUpdate);
+    const diffMs = now - d;
+    return diffMs < 5 * 60 * 1000; // within 5 minutes
 }
 
 // ── NANNY GPS SHARING (UI local — logic global ada di nanny-gps-sharer) ──

@@ -309,6 +309,28 @@
         </div>
     </div>
 
+    {{-- LOCATION --}}
+    <div class="anim d55">
+        <p class="sec-label">Location</p>
+        <div style="background:#fff;border-radius:14px;border:1.5px solid #EDE9FE;padding:14px 16px;margin-bottom:24px;">
+            <div id="locationInfo" style="display:none;">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                    <ion-icon name="location" style="font-size:18px;color:#8B46D3;flex-shrink:0;"></ion-icon>
+                    <span style="font-size:13px;font-weight:700;color:#1E1B2E;" id="locationText">Detecting...</span>
+                </div>
+                <div style="display:flex;gap:12px;font-size:11px;font-weight:600;color:#A8A2C2;">
+                    <span id="displayLat"></span>
+                    <span id="displayLng"></span>
+                </div>
+            </div>
+            <button type="button" id="getLocationBtn" onclick="getLocation()"
+                    style="display:flex;align-items:center;gap:8px;width:100%;padding:6px 0;background:none;border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;color:#8B46D3;">
+                <ion-icon name="navigate-outline" style="font-size:18px;"></ion-icon>
+                <span id="locationBtnText">Detect Current Location</span>
+            </button>
+        </div>
+    </div>
+
     {{-- UPLOAD CHILD PHOTOS --}}
     <div class="anim d6">
         <p class="sec-label">Upload Child Photos</p>
@@ -401,6 +423,10 @@ let jamMulai   = '';
 let jamSelesai = '';
 let fotoFile   = null;
 let pickTarget = 'mulai';
+let userLat    = '';
+let userLng    = '';
+let locationName = '';
+let locationAttempted = false;
 
 function pad(n){ return String(n).padStart(2,'0'); }
 
@@ -476,6 +502,35 @@ function updateDurasi(){
     el.className='dur-val';
 }
 
+// ── Location ──
+function getLocation(){
+    if(!navigator.geolocation){
+        document.getElementById('locationBtnText').textContent = 'Geolocation not supported';
+        return;
+    }
+    const btn = document.getElementById('getLocationBtn');
+    btn.disabled = true;
+    document.getElementById('locationBtnText').textContent = 'Mendeteksi...';
+    locationAttempted = true;
+    navigator.geolocation.getCurrentPosition(
+        pos => {
+            userLat = pos.coords.latitude;
+            userLng = pos.coords.longitude;
+            document.getElementById('locationInfo').style.display = 'block';
+            document.getElementById('locationText').textContent = 'Lokasi terdeteksi';
+            document.getElementById('displayLat').textContent = 'Lat: ' + userLat.toFixed(6);
+            document.getElementById('displayLng').textContent = 'Lng: ' + userLng.toFixed(6);
+            document.getElementById('locationBtnText').textContent = 'Deteksi Ulang Lokasi';
+            btn.disabled = false;
+        },
+        err => {
+            document.getElementById('locationBtnText').textContent = 'Gagal deteksi lokasi, ketuk untuk coba lagi';
+            btn.disabled = false;
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+    );
+}
+
 // ── Photo ──
 function previewFoto(input){
     const file=input.files[0];
@@ -542,6 +597,8 @@ async function handleSubmit(){
     fd.append('jam_selesai',  `${ymd} ${jamSelesai}:00`);
     fd.append('mood',         selMood);
     if(fotoFile) fd.append('foto', fotoFile);
+    if(userLat)  fd.append('lat', userLat);
+    if(userLng)  fd.append('lng', userLng);
 
     try{
         const res  = await fetch(SUBMIT_URL,{method:'POST',body:fd});
