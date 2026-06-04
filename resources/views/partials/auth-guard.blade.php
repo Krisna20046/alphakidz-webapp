@@ -52,6 +52,12 @@
         /* Tampilkan overlay "Sesi berakhir" sebelum redirect */
         showSessionExpiredOverlay(reason);
 
+        /* Hapus FCM token dari localStorage agar tidak blocking user berikutnya */
+        try {
+            if (typeof removeFcmTokenOnLogout === 'function') removeFcmTokenOnLogout();
+            else localStorage.removeItem('fcm_web_token');
+        } catch (_) {}
+
         /* Hapus session server-side */
         try {
             const fd = new FormData();
