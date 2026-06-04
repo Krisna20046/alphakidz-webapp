@@ -216,7 +216,7 @@
     </div>
 </div>
 
-<div class="flex-1 overflow-y-auto px-[20px] pt-[40px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar flex flex-col gap-4">
+<div class="flex-1 overflow-y-auto px-[20px] pt-[40px] pb-24 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar flex flex-col gap-4">
 
     {{-- Alert --}}
     <div id="alertBar" class="alert-bar"></div>
@@ -357,11 +357,6 @@
         <input type="file" id="inputFoto" accept="image/*" class="hidden" onchange="previewFoto(this)">
         <input type="file" id="inputCamera" accept="image/*" capture="environment" class="hidden" onchange="previewFoto(this)">
     </div>
-
-</div>
-
-{{-- Footer submit --}}
-<div class="px-[20px] py-4 bg-gradient-to-b from-[#F0EDFB] to-[#E5E2F5]">
     <button id="submitBtn" class="submit-btn" onclick="handleSubmit()" disabled>
         <ion-icon name="save-outline" style="font-size:22px;color:#fff;"></ion-icon>
         Save Diary
