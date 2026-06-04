@@ -102,7 +102,7 @@ async function initFcm() {
         if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
         const messaging = firebase.messaging();
 
-        if (Notification.permission !== 'granted') return;
+        if (Notification.permission === 'denied') return;
 
         await getFcmTokenAndSend(messaging);
 
