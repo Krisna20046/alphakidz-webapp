@@ -135,8 +135,8 @@
             <div class="flex-1">
                 <label class="field-label">Date Of Birth <span class="req">*</span></label>
                 <div class="relative">
-                    <input type="date" name="tanggal_lahir" id="tanggalLahir" value="{{ $user['tanggal_lahir'] ?? '' }}" class="inp pr-10"/>
-                    <ion-icon name="calendar-outline" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:17px;color:#8B46D3;pointer-events:none;"></ion-icon>
+                    <input type="date" name="tanggal_lahir" id="tanggalLahir" value="{{ $user['tanggal_lahir'] ?? '' }}" class="inp"/>
+                    {{-- <ion-icon name="calendar-outline" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:17px;color:#8B46D3;pointer-events:none;"></ion-icon> --}}
                 </div>
             </div>
             <div class="flex-1">
