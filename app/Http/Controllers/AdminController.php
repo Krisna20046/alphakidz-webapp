@@ -22,17 +22,32 @@ class AdminController extends Controller
 
     // ─── Index ────────────────────────────────────────────────────────────────
 
-    public function index()
+    public function index(Request $request)
     {
-        $response = Http::withHeaders($this->headers())
-            ->get($this->apiUrl() . '/user-all');
+        $perPage = (int) $request->input('per_page', 10);
+        $page    = (int) $request->input('page', 1);
 
-        $users = [];
+        $response = Http::withHeaders($this->headers())
+            ->get($this->apiUrl() . '/user-all', [
+                'per_page' => $perPage,
+                'page'     => $page,
+            ]);
+
+        $users      = [];
+        $pagination = null;
         if ($response->successful() && $response->json('status') === 'success') {
-            $users = $response->json('data') ?? [];
+            $allUsers   = $response->json('data') ?? [];
+            $pagination = $response->json('pagination');
+
+            // Sembunyikan akun admin lain — hanya tampilkan admin yang sedang login
+            $currentUserId = session('user.id_user') ?? session('user.id') ?? null;
+            $users = array_values(array_filter($allUsers, function ($u) use ($currentUserId) {
+                return !(strtolower($u['role'] ?? '') === 'admin'
+                    && (int) ($u['id'] ?? 0) !== (int) $currentUserId);
+            }));
         }
 
-        return view('admin.kelola-akun.index', compact('users'));
+        return view('admin.kelola-akun.index', compact('users', 'pagination'));
     }
 
     // ─── Show Detail ──────────────────────────────────────────────────────────
