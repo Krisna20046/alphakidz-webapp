@@ -29,11 +29,13 @@
     /* Halaman yang boleh diakses meski profil belum lengkap */
     const PROFILE_WHITELIST = [
         '/logout',
+        '/profil',
     ];
 
     const POLL_MS = 120_000;   // polling interval
     let pollTimer   = null;
     let isChecking  = false;
+    let isLoggingOut = false;  // cegah multiple forceLogout
     let failCount   = 0;      // consecutive network failures
     const MAX_FAILS = 3;      // setelah 3x gagal network, baru anggap offline
 
@@ -47,6 +49,8 @@
      * agar session Laravel ikut dihapus, lalu redirect ke login.
      */
     function forceLogout(reason) {
+        if (isLoggingOut) return;
+        isLoggingOut = true;
         stopPolling();
 
         /* Tampilkan overlay "Sesi berakhir" sebelum redirect */
@@ -69,7 +73,11 @@
         setTimeout(() => window.location.replace(LOGIN_URL), 2200);
     }
 
+    let isRedirecting = false;
+
     function goProfile() {
+        if (isRedirecting) return;
+        isRedirecting = true;
         stopPolling();
         try { sessionStorage.setItem('profile_flash', 'Lengkapi profil Anda terlebih dahulu.'); } catch (_) {}
         window.location.replace(PROFILE_URL);
