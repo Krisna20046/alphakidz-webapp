@@ -92,7 +92,7 @@
         background: linear-gradient(to bottom, #F3F0FC 0%, #F3F0FC 100%);
         border-top:1px solid #D7BFF1;
         padding:12px 16px;
-        padding-bottom:max(12px, env(safe-area-inset-bottom));
+        padding-bottom:max(30px, env(safe-area-inset-bottom));
         flex-shrink:0;
     }
     #msgInput {

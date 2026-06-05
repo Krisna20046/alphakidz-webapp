@@ -341,21 +341,26 @@
                     <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
                 </button>
             </div>
-            <label id="uploadSlot" class="upload-slot" for="inputFoto">
-                <div style="width:40px;height:40px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
-                    <ion-icon name="camera-outline" style="font-size:20px;color:#8B46D3;"></ion-icon>
-                </div>
-                <span>Upload</span>
-            </label>
-            <button type="button" id="cameraSlot" class="upload-slot" onclick="capturePhoto()" style="display:none;">
-                <div style="width:40px;height:40px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
-                    <ion-icon name="camera" style="font-size:20px;color:#8B46D3;"></ion-icon>
-                </div>
-                <span>Camera</span>
-            </button>
+            <div id="photoActions" class="photo-actions" style="display:contents;">
+                <label id="uploadSlot" class="upload-slot" for="inputFoto">
+                    <div style="width:40px;height:40px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
+                        <ion-icon name="images-outline" style="font-size:20px;color:#8B46D3;"></ion-icon>
+                    </div>
+                    <span>Gallery</span>
+                </label>
+                <button type="button" id="cameraSlot" class="upload-slot" onclick="capturePhoto()">
+                    <div style="width:40px;height:40px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
+                        <ion-icon name="camera" style="font-size:20px;color:#8B46D3;"></ion-icon>
+                    </div>
+                    <span>Camera</span>
+                </button>
+            </div>
         </div>
         <input type="file" id="inputFoto" accept="image/*" class="hidden" onchange="previewFoto(this)">
         <input type="file" id="inputCamera" accept="image/*" capture="environment" class="hidden" onchange="previewFoto(this)">
+        <p style="font-size:11px;font-weight:600;color:#A8A2C2;text-align:center;margin-top:-16px;margin-bottom:24px;">
+            Choose <strong>Gallery</strong> to pick from photos or <strong>Camera</strong> to take a new photo
+        </p>
     </div>
     <button id="submitBtn" class="submit-btn" onclick="handleSubmit()" disabled>
         <ion-icon name="save-outline" style="font-size:22px;color:#fff;"></ion-icon>
@@ -535,8 +540,7 @@ function previewFoto(input){
     reader.onload=e=>{
         document.getElementById('fotoPreviewImg').src=e.target.result;
         document.getElementById('fotoPreviewSlot').style.display='block';
-        document.getElementById('uploadSlot').style.display='none';
-        document.getElementById('cameraSlot').style.display='flex';
+        document.getElementById('photoActions').style.display='none';
     };
     reader.readAsDataURL(file);
 }
@@ -544,8 +548,7 @@ function capturePhoto(){ document.getElementById('inputCamera').click(); }
 function removeFoto(){
     fotoFile=null;
     document.getElementById('fotoPreviewSlot').style.display='none';
-    document.getElementById('uploadSlot').style.display='flex';
-    document.getElementById('cameraSlot').style.display='none';
+    document.getElementById('photoActions').style.display='contents';
     document.getElementById('inputFoto').value='';
     document.getElementById('inputCamera').value='';
 }
