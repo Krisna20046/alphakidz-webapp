@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Nanny - {{ $nanny['name'] ?? 'Nanny' }}')
+@section('title', 'Detail Nanny - ' . ($nanny['name'] ?? 'Nanny'))
 
 @push('styles')
 <style>
