@@ -494,6 +494,7 @@
         Add Stock
     </button>
 </div>
+</div>
 
 <!-- ============================================================ -->
 <!--  BOTTOM SHEET: Add Shared Stock (nanny only)                 -->
@@ -524,6 +525,7 @@
         <span class="iconify" data-icon="material-symbols:add-circle-rounded" style="font-size:18px;"></span>
         Add Shared Item
     </button>
+</div>
 </div>
 
 <script>
