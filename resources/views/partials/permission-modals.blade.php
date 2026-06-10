@@ -329,7 +329,15 @@
     async function buildQueue() {
         const result = [];
 
+        // Ambil daftar step yang pernah di-skip user via Maybe Later
+        let skipped = [];
+        try {
+            skipped = JSON.parse(localStorage.getItem('permSkipped') || '[]');
+        } catch(e) {}
+
         for (const step of STEPS) {
+            // Lewati step yang sudah pernah di-skip user
+            if (skipped.includes(step)) continue;
 
             if (step === 'notification') {
                 // Notification API pakai 'default' (bukan 'prompt' seperti Permissions API)
@@ -340,12 +348,21 @@
 
             if (step === 'location') {
                 if ('geolocation' in navigator) {
+                    let shouldShow = true;
                     try {
                         const status = await navigator.permissions.query({ name: 'geolocation' });
-                        if (status.state === 'prompt') result.push(step);
+                        if (status.state === 'granted') shouldShow = false;
+                        else if (status.state === 'denied') shouldShow = false;
+                        // 'prompt' → iOS bug: selalu prompt meski sudah granted.
+                        //           fallback ke localStorage di bawah.
                     } catch (e) {
-                        // Browser tidak support permissions.query → tampilkan saja
-                        result.push(step);
+                        // permissions.query tidak support → fallback localStorage
+                    }
+                    if (shouldShow) {
+                        // iOS Safari: permissions.query untuk geolocation tidak reliable
+                        // karena WebKit bug. Pakai localStorage sebagai fallback.
+                        const locHandled = localStorage.getItem('permLocationHandled');
+                        if (!locHandled) result.push(step);
                     }
                 }
             }
@@ -430,6 +447,8 @@
                     { timeout: 5000 }
                 );
             }
+            // Tandai sudah pernah diproses agar modal tidak muncul lagi di iOS
+            try { localStorage.setItem('permLocationHandled', '1'); } catch(e) {}
         }
 
         if (step === 'camera') {
@@ -445,8 +464,15 @@
     };
 
     // ── Handler tombol Maybe Later ────────────────────────────────────────
-    // Tidak simpan apapun — next visit cek ulang via Permission API
-    window.skipPerm = function() {
+    window.skipPerm = function(step) {
+        // Simpan skip ke localStorage agar tidak muncul terus
+        try {
+            const skipped = JSON.parse(localStorage.getItem('permSkipped') || '[]');
+            if (!skipped.includes(step)) skipped.push(step);
+            localStorage.setItem('permSkipped', JSON.stringify(skipped));
+            // Untuk location: flag khusus iOS yang tidak bisa pakai Permissions API
+            if (step === 'location') localStorage.setItem('permLocationHandled', '1');
+        } catch(e) {}
         goToNextStep();
     };
 
