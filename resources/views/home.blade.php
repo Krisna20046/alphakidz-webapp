@@ -150,9 +150,9 @@
         <a href="{{ route('chat.list') }}"
            id="chatBtn"
            class="w-11 h-11 rounded-full bg-white/15 border-[1.5px] border-white/25 flex items-center justify-center relative cursor-pointer no-underline">
-            <ion-icon name="notifications" class="text-white text-xl"></ion-icon>
+            <ion-icon name="chatbox-ellipses" class="text-white text-xl"></ion-icon>
             <span id="unreadBadge"
-                  class="badge-pulse hidden absolute top-[6px] right-[7px] min-w-[18px] h-[18px] bg-[#FCD34D] text-[#1E1B2E] text-[9px] font-extrabold rounded-full hidden items-center justify-center border-[1.5px] border-[#8B46D3] px-[3px]"
+                  class="badge-pulse hidden absolute top-[3px] right-[2px] min-w-[16px] h-[16px] bg-[#FCD34D] text-[#1E1B2E] text-[9px] font-extrabold rounded-full hidden items-center justify-center border-[1.5px] border-[#8B46D3] px-[3px]"
                   style="display: none;">
                 0
             </span>
