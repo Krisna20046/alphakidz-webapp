@@ -6,6 +6,23 @@
     <title>Data Anak</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { screens: { sm: '1024px' } } } };
+    </script>
+    <script>
+        // Force mobile layout on phones even when "Desktop Site" mode is active
+        (function() {
+            var isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            var isPhoneScreen = window.screen.width <= 430 || window.screen.height <= 932;
+            if (isTouchDevice && isPhoneScreen && window.innerWidth >= 1024) {
+                var meta = document.querySelector('meta[name="viewport"]');
+                if (meta) meta.content = 'width=430, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+                var s = document.createElement('style');
+                s.textContent = '.phone-wrapper{min-height:100vh!important;display:block!important;padding:0!important;background:#F0EDFB!important}.phone-frame{min-height:100vh!important;width:100%!important;border-radius:0!important;box-shadow:none!important}';
+                document.head.appendChild(s);
+            }
+        })();
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>

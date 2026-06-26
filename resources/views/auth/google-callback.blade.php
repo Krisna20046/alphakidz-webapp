@@ -7,14 +7,31 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Memproses Login...</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { screens: { sm: '1024px' } } } };
+    </script>
+    <script>
+        // Force mobile layout on phones even when "Desktop Site" mode is active
+        (function() {
+            var isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            var isPhoneScreen = window.screen.width <= 430 || window.screen.height <= 932;
+            if (isTouchDevice && isPhoneScreen && window.innerWidth >= 1024) {
+                var meta = document.querySelector('meta[name="viewport"]');
+                if (meta) meta.content = 'width=430, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+                var s = document.createElement('style');
+                s.textContent = '.phone-wrapper{min-height:100vh!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important}.phone-frame{min-height:100vh!important;width:100%!important;border-radius:0!important;box-shadow:none!important}';
+                document.head.appendChild(s);
+            }
+        })();
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Nunito', sans-serif; }
-        @media (min-width: 640px) {
+        @media (min-width: 1024px) {
             .phone-wrapper { display:flex;align-items:center;justify-content:center;min-height:100vh;background:#E5E2F5; }
             .phone-frame { width:390px;min-height:844px;border-radius:44px;box-shadow:0 40px 80px rgba(124,58,237,0.28),0 0 0 8px #1a1030,0 0 0 10px #2d1a50;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center; }
         }
-        @media (max-width: 639px) {
+        @media (max-width: 1023px) {
             .phone-wrapper { min-height:100vh;display:flex;align-items:center;justify-content:center;background:#E5E2F5; }
             .phone-frame  { min-height:100vh;width:100%;display:flex;align-items:center;justify-content:center; }
         }

@@ -7,12 +7,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tidak Ada Koneksi - NannyApp</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { theme: { extend: { screens: { sm: '1024px' } } } };
+    </script>
+    <script>
+        // Force mobile layout on phones even when "Desktop Site" mode is active
+        (function() {
+            var isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            var isPhoneScreen = window.screen.width <= 430 || window.screen.height <= 932;
+            if (isTouchDevice && isPhoneScreen && window.innerWidth >= 1024) {
+                var meta = document.querySelector('meta[name="viewport"]');
+                if (meta) meta.content = 'width=430, initial-scale=1.0, maximum-scale=1.0, user-scalable=no';
+                var s = document.createElement('style');
+                s.textContent = '.phone-wrapper{min-height:100vh!important;display:flex!important;align-items:center!important;justify-content:center!important;padding:0!important}.phone-frame{min-height:100vh!important;width:100%!important;border-radius:0!important;box-shadow:none!important}';
+                document.head.appendChild(s);
+            }
+        })();
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { -webkit-tap-highlight-color: transparent; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #FFF9FB; }
 
-        @media (min-width: 640px) {
+        @media (min-width: 1024px) {
             .phone-wrapper {
                 display: flex; align-items: center; justify-content: center;
                 min-height: 100vh; padding: 32px 0;
@@ -25,7 +42,7 @@
                 display: flex; align-items: center; justify-content: center;
             }
         }
-        @media (max-width: 639px) {
+        @media (max-width: 1023px) {
             .phone-wrapper { min-height: 100vh; display:flex; align-items:center; justify-content:center; }
             .phone-frame { width:100%; }
         }
