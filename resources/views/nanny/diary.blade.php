@@ -299,6 +299,8 @@
                     ['value'=>'main','label'=>'⚽ Main'],
                     ['value'=>'belajar','label'=>'📖 Belajar'],
                     ['value'=>'mandi','label'=>'🛁 Mandi'],
+                    ['value'=>'bab','label'=>'🟤 BAB'],
+                    ['value'=>'bak','label'=>'💧 BAK'],
                 ];
             @endphp
             @foreach($kats as $kat)
@@ -345,6 +347,12 @@
                 'main'    => ['bg'=>'#FFFBEE','border'=>'#FFD93D','dot'=>'#FFD93D','icon'=>'⚽'],
                 'belajar' => ['bg'=>'#F0F2FF','border'=>'#9BB8FF','dot'=>'#9BB8FF','icon'=>'📖'],
                 'mandi'   => ['bg'=>'#FFF0F7','border'=>'#FFB4D6','dot'=>'#FFB4D6','icon'=>'🛁'],
+                'bab'     => ['bg'=>'#EFEBE9','border'=>'#8D6E63','dot'=>'#5D4037','icon'=>'🟤'],
+                'bak'     => ['bg'=>'#FFF8E1','border'=>'#F9A825','dot'=>'#F9A825','icon'=>'💧'],
+            ];
+            $warnaColors = [
+                'coklat'=>'#6D4C41','hijau'=>'#2E7D32','kuning'=>'#F9A825',
+                'hitam'=>'#212121','merah'=>'#C62828','jernih'=>'#CFD8DC','keruh'=>'#8D6E63',
             ];
         @endphp
 
@@ -388,12 +396,37 @@
                                 <span style="font-size:18px;">{{ $c['icon'] }}</span>
                                 <span class="akt-title">{{ ucfirst($kat) }}</span>
                             </div>
-                            @if(!empty($item['mood']))
+                            @if(!empty($item['mood']) && !in_array($kat, ['bab','bak']))
                             <span style="font-size:20px;">{{ ['senang'=>'😊','sedih'=>'😢','marah'=>'😠','biasa'=>'😐'][$item['mood']] ?? '😊' }}</span>
                             @endif
                         </div>
                         @if(!empty($item['deskripsi']))
                         <p class="akt-desc">{{ $item['deskripsi'] }}</p>
+                        @endif
+                        @if(in_array($kat, ['bab','bak']))
+                        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+                            @if(!empty($item['warna']))
+                            <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:12px;background:#fff;font-size:11px;font-weight:700;color:#5A556E;">
+                                <span class="tl-dot" style="width:10px;height:10px;margin:0;background:{{ $warnaColors[$item['warna']] ?? '#999' }};"></span>
+                                {{ ucfirst($item['warna']) }}
+                            </span>
+                            @endif
+                            @if(!empty($item['tekstur']))
+                            <span style="padding:3px 10px;border-radius:12px;background:#fff;font-size:11px;font-weight:700;color:#5A556E;">
+                                {{ ucfirst($item['tekstur']) }}
+                            </span>
+                            @endif
+                            @if(!empty($item['volume']))
+                            <span style="padding:3px 10px;border-radius:12px;background:#fff;font-size:11px;font-weight:700;color:#5A556E;">
+                                Vol: {{ ucfirst($item['volume']) }}
+                            </span>
+                            @endif
+                            @if(!empty($item['frekuensi']) && $item['frekuensi'] > 0)
+                            <span style="padding:3px 10px;border-radius:12px;background:#fff;font-size:11px;font-weight:700;color:#5A556E;">
+                                {{ $item['frekuensi'] }}×
+                            </span>
+                            @endif
+                        </div>
                         @endif
                         @if(!empty($item['foto_url']))
                         <img src="{{ $item['foto_url'] }}" class="akt-photo" alt=""
@@ -671,10 +704,11 @@ function applyMonthYear(){
 document.getElementById('btnMonthYear').addEventListener('click',openMonthYearModal);
 document.getElementById('modalMonthYear').addEventListener('click',e=>{ if(e.target.id==='modalMonthYear') closeMonthYearModal(); });
 
-function getKatColor(k){ return{makan:'#FF9A6C',tidur:'#7BB4F0',main:'#FFD93D',belajar:'#9BB8FF',mandi:'#FFB4D6'}[k]||'#8B46D3'; }
-function getKatIcon(k) { return{makan:'restaurant',tidur:'moon',main:'football',belajar:'book',mandi:'water'}[k]||'calendar'; }
+function getKatColor(k){ return{makan:'#FF9A6C',tidur:'#7BB4F0',main:'#FFD93D',belajar:'#9BB8FF',mandi:'#FFB4D6',bab:'#8D6E63',bak:'#F9A825'}[k]||'#8B46D3'; }
+function getKatIcon(k) { return{makan:'restaurant',tidur:'moon',main:'football',belajar:'book',mandi:'water',bab:'ellipse',bak:'water'}[k]||'calendar'; }
 function getMoodEmoji(m){ return{senang:'😊',sedih:'😢',marah:'😠',biasa:'😐'}[m]||'😊'; }
-function getKatBg(k)   { return{makan:'#FFF4EC',tidur:'#EEF4FF',main:'#FFFBEE',belajar:'#F0F2FF',mandi:'#FFF0F7'}[k]||'#F0EDFB'; }
+function getKatBg(k)   { return{makan:'#FFF4EC',tidur:'#EEF4FF',main:'#FFFBEE',belajar:'#F0F2FF',mandi:'#FFF0F7',bab:'#EFEBE9',bak:'#FFF8E1'}[k]||'#F0EDFB'; }
+const WARNA_COLORS = {coklat:'#6D4C41',hijau:'#2E7D32',kuning:'#F9A825',hitam:'#212121',merah:'#C62828',jernih:'#CFD8DC',keruh:'#8D6E63'};
 
 function detailRow(iconName,label,value,isLast){
     return `<div style="display:flex;align-items:flex-start;${isLast?'':'margin-bottom:16px;padding-bottom:16px;border-bottom:1.5px solid #F0EDFB;'}">
@@ -695,11 +729,17 @@ function openDetail(item){
         {icon:'time-outline',label:'Waktu Selesai',value:item.jam_selesai_fmt},
         {icon:'hourglass',label:'Durasi',value:item.durasi_fmt},
     ];
-    if(item.mood) rows.push({emoji:getMoodEmoji(item.mood),label:'Mood',value:item.mood.charAt(0).toUpperCase()+item.mood.slice(1)});
+    if(item.mood && item.kategori!=='bab' && item.kategori!=='bak') rows.push({emoji:getMoodEmoji(item.mood),label:'Mood',value:item.mood.charAt(0).toUpperCase()+item.mood.slice(1)});
     if(item.deskripsi) rows.push({icon:'document-text-outline',label:'Deskripsi',value:item.deskripsi});
+    // BAB/BAK fields
+    if(item.kategori==='bab'||item.kategori==='bak'){
+        if(item.warna) rows.push({icon:'color-palette-outline',label:'Warna',value:item.warna.charAt(0).toUpperCase()+item.warna.slice(1)});
+        if(item.tekstur && item.kategori==='bab') rows.push({icon:'layers-outline',label:'Tekstur',value:item.tekstur.charAt(0).toUpperCase()+item.tekstur.slice(1)});
+        if(item.volume) rows.push({icon:'scale-outline',label:'Volume',value:item.volume.charAt(0).toUpperCase()+item.volume.slice(1)});
+        if(item.frekuensi) rows.push({icon:'repeat-outline',label:'Frekuensi',value:item.frekuensi+'×'});
+        if(item.catatan_kondisi) rows.push({icon:'document-text-outline',label:'Catatan',value:item.catatan_kondisi});
+    }
     if(item.nanny_name) rows.push({icon:'person-outline',label:'Dicatat oleh',value:item.nanny_name});
-    if(item.lat && item.lng) rows.push({icon:'location-outline',label:'Lokasi',value:item.lat+', '+item.lng});
-    else if(item.lokasi) rows.push({icon:'location-outline',label:'Lokasi',value:item.lokasi});
 
     let html=`<div style="display:flex;flex-direction:column;align-items:center;padding:20px;border-radius:16px;margin-bottom:20px;background:${bg};border:1.5px solid ${col}40;">
         <ion-icon name="${ic}" style="font-size:36px;color:${col};"></ion-icon>

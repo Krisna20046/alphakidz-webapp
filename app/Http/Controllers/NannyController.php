@@ -203,6 +203,11 @@ class NannyController extends Controller
             'foto'          => 'nullable|image|max:4096',
             'lat'           => 'nullable|numeric',
             'lng'           => 'nullable|numeric',
+            'warna'          => 'nullable|string',
+            'tekstur'        => 'nullable|string',
+            'volume'         => 'nullable|string',
+            'frekuensi'      => 'nullable|integer|min:0|max:99',
+            'catatan_kondisi'=> 'nullable|string',
         ]);
 
         $multipart = [
@@ -215,6 +220,11 @@ class NannyController extends Controller
             ['name' => 'deskripsi',     'contents' => (string) ($request->deskripsi ?? '')],
             ['name' => 'lat',           'contents' => (string) ($request->lat ?? '')],
             ['name' => 'lng',           'contents' => (string) ($request->lng ?? '')],
+            ['name' => 'warna',          'contents' => (string) ($request->warna ?? '')],
+            ['name' => 'tekstur',        'contents' => (string) ($request->tekstur ?? '')],
+            ['name' => 'volume',         'contents' => (string) ($request->volume ?? '')],
+            ['name' => 'frekuensi',      'contents' => (string) ($request->frekuensi ?? '0')],
+            ['name' => 'catatan_kondisi','contents' => (string) ($request->catatan_kondisi ?? '')],
         ];
 
         if ($request->hasFile('foto')) {
@@ -347,6 +357,11 @@ private function formatAktivitas(array $a): array
         'lat'             => $a['lat'] ?? '',
         'lng'             => $a['lng'] ?? '',
         'nanny_name'      => $a['nanny_name'] ?? ($a['nanny'] ?? ''),
+        'warna'           => $a['warna'] ?? '',
+        'tekstur'         => $a['tekstur'] ?? '',
+        'volume'          => $a['volume'] ?? '',
+        'frekuensi'       => $a['frekuensi'] ?? '',
+        'catatan_kondisi' => $a['catatan_kondisi'] ?? '',
     ];
 }
 }

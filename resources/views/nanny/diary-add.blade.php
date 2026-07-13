@@ -177,6 +177,41 @@
 
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* ── BAB / BAK Components ── */
+    .bab-section { background:#fff; border-radius:16px; border:1.5px solid #EDE9FE; padding:16px; margin-bottom:24px; }
+    .swatch-group { display:flex; gap:10px; flex-wrap:wrap; }
+    .swatch-btn {
+        display:flex; align-items:center; gap:6px; padding:8px 14px;
+        border-radius:20px; border:1.5px solid #EDE9FE; background:#fff;
+        cursor:pointer; font-family:'Nunito',sans-serif; font-size:13px;
+        font-weight:700; color:#5A556E; transition:all .15s;
+    }
+    .swatch-btn:active { transform:scale(0.95); }
+    .swatch-btn.sel { border-color:#8B46D3; background:#F8F7FF; color:#8B46D3; }
+    .swatch-dot { width:16px;height:16px;border-radius:50%;display:inline-block;border:1.5px solid rgba(0,0,0,.1);flex-shrink:0; }
+    .pill-group { display:flex; gap:8px; flex-wrap:wrap; }
+    .pill-btn {
+        padding:8px 18px; border-radius:20px; border:1.5px solid #EDE9FE;
+        background:#fff; cursor:pointer; font-family:'Nunito',sans-serif;
+        font-size:13px; font-weight:700; color:#5A556E; transition:all .15s;
+    }
+    .pill-btn:active { transform:scale(0.95); }
+    .pill-btn.sel { border-color:#8B46D3; background:#8B46D3; color:#fff; }
+    .stepper-wrap {
+        display:flex; align-items:center; gap:14px;
+        background:#fff; border-radius:12px; border:1.5px solid #EDE9FE;
+        padding:10px 16px; max-width:160px;
+    }
+    .stepper-btn {
+        width:36px; height:36px; border-radius:50%; border:none;
+        background:#EDE9FE; display:flex; align-items:center;
+        justify-content:center; cursor:pointer;
+        font-size:20px; font-weight:900; color:#8B46D3; transition:all .12s;
+    }
+    .stepper-btn:active { transform:scale(0.9); }
+    .stepper-btn:disabled { opacity:.3; cursor:not-allowed; }
+    .stepper-val { font-size:20px; font-weight:900; color:#1E1B2E; min-width:28px; text-align:center; }
+
     .modal-overlay {
         position:fixed; inset:0; background:rgba(0,0,0,.45);
         display:flex; align-items:center; justify-content:center;
@@ -232,6 +267,8 @@
                     ['value'=>'main',    'label'=>'Play',       'icon'=>'car-sport',      'bg'=>'#FFF0F7', 'color'=>'#FF6BA3'],
                     ['value'=>'belajar', 'label'=>'Study',      'icon'=>'book',           'bg'=>'#EEFFF3', 'color'=>'#4CAF7D'],
                     ['value'=>'mandi',   'label'=>'Take A Bath','icon'=>'water',          'bg'=>'#EEF7FF', 'color'=>'#7BB4F0'],
+                    ['value'=>'bab',     'label'=>'BAB',        'icon'=>'ellipse',        'bg'=>'#EFEBE9', 'color'=>'#5D4037'],
+                    ['value'=>'bak',     'label'=>'BAK',        'icon'=>'ellipse',        'bg'=>'#FFF8E1', 'color'=>'#F9A825'],
                 ];
             @endphp
             @foreach($katOptions as $k)
@@ -277,7 +314,7 @@
     </div>
 
     {{-- CHILD'S MOOD --}}
-    <div class="anim d4">
+    <div class="anim d4" data-section="mood">
         <p class="sec-label">Child's Mood</p>
         <div class="mood-box">
             @php
@@ -310,7 +347,7 @@
     </div>
 
     {{-- LOCATION --}}
-    <div class="anim d55">
+    <div class="anim d55" data-section="location">
         <p class="sec-label">Location</p>
         <div style="background:#fff;border-radius:14px;border:1.5px solid #EDE9FE;padding:14px 16px;margin-bottom:24px;">
             <div id="locationInfo" style="display:none;">
@@ -331,8 +368,70 @@
         </div>
     </div>
 
+    {{-- BAB / BAK DETAILS --}}
+    <div id="babBakSection" class="bab-section anim" style="display:none;">
+        <p class="sec-label" style="margin-bottom:16px;">BAB / BAK Details</p>
+
+        {{-- Warna (Color Swatches) --}}
+        <div style="margin-bottom:18px;">
+            <p class="time-field-label">Warna</p>
+            <div class="swatch-group" id="warnaGroupBab" style="display:none;">
+                <button type="button" class="swatch-btn" data-warna="coklat" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#6D4C41;"></span>Coklat</button>
+                <button type="button" class="swatch-btn" data-warna="hijau" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#2E7D32;"></span>Hijau</button>
+                <button type="button" class="swatch-btn" data-warna="kuning" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#F9A825;"></span>Kuning</button>
+                <button type="button" class="swatch-btn" data-warna="hitam" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#212121;"></span>Hitam</button>
+                <button type="button" class="swatch-btn" data-warna="merah" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#C62828;"></span>Merah</button>
+            </div>
+            <div class="swatch-group" id="warnaGroupBak" style="display:none;">
+                <button type="button" class="swatch-btn" data-warna="kuning" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#F9A825;"></span>Kuning</button>
+                <button type="button" class="swatch-btn" data-warna="jernih" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#CFD8DC;"></span>Jernih</button>
+                <button type="button" class="swatch-btn" data-warna="keruh" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#8D6E63;"></span>Keruh</button>
+            </div>
+        </div>
+
+        {{-- Tekstur (BAB only) --}}
+        <div id="teksturField" style="margin-bottom:18px;">
+            <p class="time-field-label">Tekstur</p>
+            <div class="pill-group">
+                @php $teksturOpts = ['Padat','Lembek','Cair','Keras','Berbusa']; @endphp
+                @foreach($teksturOpts as $t)
+                <button type="button" class="pill-btn" data-tekstur="{{ strtolower($t) }}" onclick="selectTekstur(this)">{{ $t }}</button>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Volume --}}
+        <div style="margin-bottom:18px;">
+            <p class="time-field-label">Volume</p>
+            <div class="pill-group">
+                @php $volOpts = ['Sedikit','Sedang','Banyak']; @endphp
+                @foreach($volOpts as $v)
+                <button type="button" class="pill-btn" data-volume="{{ strtolower($v) }}" onclick="selectVolume(this)">{{ $v }}</button>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Frekuensi (Stepper) --}}
+        <div style="margin-bottom:18px;">
+            <p class="time-field-label">Frekuensi (kali)</p>
+            <div class="stepper-wrap">
+                <button type="button" class="stepper-btn" onclick="adjustFrekuensi(-1)" id="frekuensiMin">−</button>
+                <span class="stepper-val" id="frekuensiDisplay">1</span>
+                <button type="button" class="stepper-btn" onclick="adjustFrekuensi(1)" id="frekuensiPlus">+</button>
+            </div>
+        </div>
+
+        {{-- Catatan Kondisi --}}
+        <div>
+            <p class="time-field-label">Catatan Kondisi</p>
+            <div class="desk-wrap">
+                <textarea id="catatanKondisi" class="desk-input" rows="3" placeholder="Catatan tambahan tentang kondisi..."></textarea>
+            </div>
+        </div>
+    </div>
+
     {{-- UPLOAD CHILD PHOTOS --}}
-    <div class="anim d6">
+    <div class="anim d6" data-section="photo">
         <p class="sec-label">Upload Child Photos</p>
         <div class="photo-grid">
             <div id="fotoPreviewSlot" class="photo-slot" style="display:none;">
@@ -427,6 +526,10 @@ let userLat    = '';
 let userLng    = '';
 let locationName = '';
 let locationAttempted = false;
+let selWarna   = '';
+let selTekstur = '';
+let selVolume  = '';
+let frekuensi  = 1;
 
 function pad(n){ return String(n).padStart(2,'0'); }
 
@@ -446,6 +549,33 @@ function selectKat(btn){
     document.querySelectorAll('.kat-btn').forEach(b=>{ b.classList.remove('sel'); });
     btn.classList.add('sel');
     selKat = btn.dataset.kat;
+
+    const isBabBak = selKat === 'bab' || selKat === 'bak';
+    const babSection = document.getElementById('babBakSection');
+    const moodSection = document.querySelector('[data-section="mood"]');
+    const locationSection = document.querySelector('[data-section="location"]');
+    const photoSection = document.querySelector('[data-section="photo"]');
+
+    if (isBabBak) {
+        babSection.style.display = 'block';
+        if (moodSection) moodSection.style.display = 'none';
+        if (locationSection) locationSection.style.display = 'none';
+        if (photoSection) photoSection.style.display = 'none';
+        // Reset mood
+        document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel'));
+        document.querySelector('.mood-btn[data-mood="biasa"]')?.classList.add('sel');
+        selMood = 'biasa';
+
+        // Show/hide BAB vs BAK specific fields
+        document.getElementById('warnaGroupBab').style.display = selKat === 'bab' ? 'flex' : 'none';
+        document.getElementById('warnaGroupBak').style.display = selKat === 'bak' ? 'flex' : 'none';
+        document.getElementById('teksturField').style.display = selKat === 'bab' ? 'block' : 'none';
+    } else {
+        babSection.style.display = 'none';
+        if (moodSection) moodSection.style.display = '';
+        if (locationSection) locationSection.style.display = '';
+        if (photoSection) photoSection.style.display = '';
+    }
     checkReady();
 }
 
@@ -553,6 +683,27 @@ function removeFoto(){
     document.getElementById('inputCamera').value='';
 }
 
+// ── BAB / BAK ──
+function selectWarna(btn){
+    document.querySelectorAll('.swatch-btn').forEach(b=>b.classList.remove('sel'));
+    btn.classList.add('sel');
+    selWarna = btn.dataset.warna;
+}
+function selectTekstur(btn){
+    document.querySelectorAll('.pill-btn[data-tekstur]').forEach(b=>b.classList.remove('sel'));
+    btn.classList.add('sel');
+    selTekstur = btn.dataset.tekstur;
+}
+function selectVolume(btn){
+    document.querySelectorAll('.pill-btn[data-volume]').forEach(b=>b.classList.remove('sel'));
+    btn.classList.add('sel');
+    selVolume = btn.dataset.volume;
+}
+function adjustFrekuensi(delta){
+    frekuensi = Math.max(1, Math.min(10, frekuensi + delta));
+    document.getElementById('frekuensiDisplay').textContent = frekuensi;
+}
+
 // ── Validation ──
 function checkReady(){
     const ok = selKat && jamMulai && jamSelesai;
@@ -593,10 +744,23 @@ async function handleSubmit(){
     fd.append('deskripsi',    document.getElementById('deskripsi').value);
     fd.append('jam_mulai',    `${ymd} ${jamMulai}:00`);
     fd.append('jam_selesai',  `${ymd} ${jamSelesai}:00`);
-    fd.append('mood',         selMood);
-    if(fotoFile) fd.append('foto', fotoFile);
-    if(userLat)  fd.append('lat', userLat);
-    if(userLng)  fd.append('lng', userLng);
+    // Mood hanya untuk non-BAB/BAK
+    const isBabBak = selKat === 'bab' || selKat === 'bak';
+    if (!isBabBak) {
+        fd.append('mood', selMood);
+        if(fotoFile) fd.append('foto', fotoFile);
+        if(userLat)  fd.append('lat', userLat);
+        if(userLng)  fd.append('lng', userLng);
+    }
+    // BAB/BAK fields
+    if (isBabBak) {
+        fd.append('warna',           selWarna);
+        fd.append('tekstur',         selTekstur);
+        fd.append('volume',          selVolume);
+        fd.append('frekuensi',       frekuensi);
+        fd.append('catatan_kondisi', document.getElementById('catatanKondisi').value);
+        fd.append('deskripsi',       document.getElementById('catatanKondisi').value);
+    }
 
     try{
         const res  = await fetch(SUBMIT_URL,{method:'POST',body:fd});
