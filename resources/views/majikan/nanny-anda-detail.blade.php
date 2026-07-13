@@ -294,8 +294,71 @@
     </div>
     @endif
 
+    {{-- ── CONSULTANT INFORMATION CARD ── --}}
+    @if(!empty($assignment['konsultan_name']))
+    <div class="section-card anim delay-4 p-5">
+        <div class="flex items-center gap-2">
+            <ion-icon name="people" style="font-size:16px;color:#8B46D3;"></ion-icon>
+            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Consultant Information</h3>
+        </div>
+        <div class="h-px bg-[#E5E1F0] my-4"></div>
+
+        <div class="space-y-2">
+            {{-- Consultant Photo + Name --}}
+            <div class="detail-item px-3 py-2.5 flex items-center gap-3">
+                @if(!empty($assignment['konsultan_foto']))
+                <img src="{{ $assignment['konsultan_foto'] }}" alt="{{ $assignment['konsultan_name'] }}"
+                     class="w-8 h-8 rounded-[7px] object-cover"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <div class="w-8 h-8 rounded-[7px] items-center justify-center hidden bg-[#F3F0FD] shrink-0">
+                    <ion-icon name="person" style="font-size:14px;color:#8B46D3;"></ion-icon>
+                </div>
+                @else
+                <div class="w-8 h-8 rounded-[7px] flex items-center justify-center bg-[#F3F0FD] shrink-0">
+                    <ion-icon name="person" style="font-size:14px;color:#8B46D3;"></ion-icon>
+                </div>
+                @endif
+                <div class="flex-1">
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Consultant</p>
+                    <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $assignment['konsultan_name'] }}</p>
+                </div>
+            </div>
+
+            {{-- Consultant Email --}}
+            <div class="detail-item px-3 py-2.5 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-[8px] bg-[#EFE9FB] flex items-center justify-center shrink-0">
+                    <ion-icon name="at-outline" style="font-size:16px;color:#8B46D3;"></ion-icon>
+                </div>
+                <div class="flex-1">
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Email</p>
+                    <p class="text-[#1E1B2E] text-[13px] font-extrabold truncate">{{ $assignment['konsultan_email'] ?? '-' }}</p>
+                </div>
+            </div>
+
+            {{-- Consultant Phone --}}
+            <div class="detail-item px-3 py-2.5 flex items-center gap-3">
+                <div class="w-8 h-8 rounded-[8px] bg-[#FDE8EF] flex items-center justify-center shrink-0">
+                    <ion-icon name="call-outline" style="font-size:16px;color:#EC4899;"></ion-icon>
+                </div>
+                <div class="flex-1">
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Phone Number</p>
+                    <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $assignment['konsultan_no_hp'] ?? '-' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     {{-- ── CONTACT BUTTON ── --}}
-    <div class="anim delay-5 pt-1">
+    <div class="anim delay-5 space-y-3 pt-1">
+        @if(!empty($assignment['konsultan_name']))
+        <a href="{{ route('chat.room', [$assignment['id_konsultan'], 'nama' =>($assignment['konsultan_name'])]) }}"
+           class="btn-contact shadow-[0_2px_10px_rgba(0,0,0,0.06)] w-full">
+            <ion-icon name="chatbubble-ellipses-outline" style="font-size:16px;"></ion-icon>
+            <span>Hubungi Konsultan</span>
+        </a>
+        @endif
+
         <a href="{{ route('chat.room', [$assignment['id_nanny'], 'nama' =>($assignment['nanny_name'])]) }}"
            class="btn-contact shadow-[0_2px_10px_rgba(0,0,0,0.06)] w-full">
             <ion-icon name="chatbubble-ellipses-outline" style="font-size:16px;"></ion-icon>

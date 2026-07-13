@@ -82,7 +82,7 @@ class AdminController extends Controller
             'name'     => 'required|string|max:255',
             'email'    => 'required|email',
             'password' => 'required|min:6',
-            'id_role'  => 'required|integer|in:1,2,3,4',
+            'id_role'  => 'required|integer|in:1,2,3,4,5',
         ]);
 
         $response = Http::withHeaders($this->headers())
@@ -128,7 +128,7 @@ class AdminController extends Controller
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|email',
-            'id_role'  => 'required|integer|in:1,2,3,4',
+            'id_role'  => 'required|integer|in:1,2,3,4,5',
             'password' => 'nullable|min:6',
         ]);
 

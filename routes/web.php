@@ -11,6 +11,7 @@ use App\Http\Controllers\MajikanController;
 use App\Http\Controllers\NannyController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\KonsultanController;
+use App\Http\Controllers\NexusController;
 use App\Http\Controllers\KonsultanTugaskanController;
 
 
@@ -78,6 +79,14 @@ Route::middleware('auth.api')->group(function () {
     // Artikel (placeholder)
     Route::get('/artikel', fn() => view('artikel.index'))->name('artikel.index');
 
+    // ── Nexus ────────────────────────────────────────────────────────────────
+    Route::prefix('nexus')->name('nexus.')->group(function () {
+        Route::get('/',           [NexusController::class, 'index'] )->name('nexus-index');
+        Route::get('/create',     [NexusController::class, 'create'])->name('create');
+        Route::post('/',          [NexusController::class, 'store'] )->name('store');
+        Route::get('/{id}',       [NexusController::class, 'show']  )->name('show');
+    });
+
     // ── Profil ────────────────────────────────────────────────────────────────
     Route::prefix('profil')->name('profil.')->group(function () {
         Route::get('/',               [ProfileController::class, 'index']    )->name('index');
@@ -110,6 +119,7 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/nanny/{id}', [MajikanController::class, 'showNanny'])->name('majikan-nanny-detail');
         Route::get('/konsultan',    [MajikanController::class, 'indexKonsultan'])->name('majikan-konsultan-list');
         Route::get('/konsultan/{id}', [MajikanController::class, 'showKonsultan'])->name('majikan-konsultan-detail');
+        Route::get('/konsultan-anda', [MajikanController::class, 'indexKonsultanAnda'])->name('majikan-konsultan-anda');
         Route::get('/nanny-anda',      [MajikanController::class, 'indexNannyAnda'])->name('majikan-nanny');
         Route::get('/nanny-anda/{id}', [MajikanController::class, 'showNannyAnda'] )->name('majikan-nanny-anda-detail');
         Route::get('/diary',        [MajikanController::class, 'chooseDiary'])->name('majikan-diary-choose');

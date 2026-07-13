@@ -93,6 +93,23 @@ class MajikanController extends Controller
         return view('majikan.konsultan-detail', compact('konsultan'));
     }
 
+    public function indexKonsultanAnda(Request $request)
+    {
+        $token  = session('token');
+
+        try {
+            $response = Http::withToken($token)
+                ->get("{$this->apiUrl}/nanny-assignments-konsultan-for-majikan");
+
+            $json    = $response->json();
+            $konsultans = ($json['status'] ?? '') === 'success' ? ($json['data'] ?? []) : [];
+        } catch (\Exception $e) {
+            $konsultans = [];
+        }
+
+        return view('majikan.konsultan-anda', compact('konsultans'));
+    }
+
     public function indexNannyAnda(Request $request)
     {
         $token  = session('token');

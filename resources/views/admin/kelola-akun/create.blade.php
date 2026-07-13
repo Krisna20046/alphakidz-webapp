@@ -142,7 +142,7 @@
             <input type="hidden" name="id_role" id="idRoleInput" value="{{ old('id_role', 4) }}">
 
             <div class="space-y-3">
-                @foreach([1=>'Admin', 2=>'Majikan', 3=>'Nanny', 4=>'Konsultan'] as $rId => $rLabel)
+                @foreach([1=>'Admin', 2=>'Majikan', 3=>'Nanny', 4=>'Konsultan', 5=>'Nexus'] as $rId => $rLabel)
                 <button type="button" id="role-btn-{{ $rId }}"
                         onclick="selectRole({{ $rId }})"
                         class="role-row w-full {{ (int)old('id_role', 4) === $rId ? 'sel' : '' }}">

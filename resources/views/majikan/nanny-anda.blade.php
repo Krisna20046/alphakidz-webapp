@@ -134,6 +134,27 @@
                             <ion-icon name="call-outline" style="font-size:11px;color:#F59E0B;flex-shrink:0;"></ion-icon>
                             <span class="text-[#8B86A5] text-[11px] font-semibold truncate">{{ $item['nanny_no_hp'] ?? $item['no_hp'] ?? '-' }}</span>
                         </div>
+
+                        {{-- KONSULTAN — hanya tampil jika ada konsultan --}}
+                        @if(!empty($item['konsultan_name']))
+                        <div class="flex items-center gap-1 mt-1.5 pt-1.5 border-t border-[#EAE6F5]">
+                            <div class="flex items-center gap-1.5 flex-1 min-w-0">
+                                @if(!empty($item['konsultan_foto']))
+                                <img src="{{ $item['konsultan_foto'] }}" alt="{{ $item['konsultan_name'] }}"
+                                     class="w-[14px] h-[14px] rounded-full object-cover shrink-0"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="w-[14px] h-[14px] rounded-full items-center justify-center hidden bg-[#EDE9FE] shrink-0">
+                                    <ion-icon name="person" style="font-size:10px;color:#8B46D3;"></ion-icon>
+                                </div>
+                                @else
+                                <div class="w-[14px] h-[14px] rounded-full flex items-center justify-center bg-[#EDE9FE] shrink-0">
+                                    <ion-icon name="person" style="font-size:10px;color:#8B46D3;"></ion-icon>
+                                </div>
+                                @endif
+                                <span class="text-[#8B46D3] text-[10px] font-bold truncate">Konsultan: {{ $item['konsultan_name'] }}</span>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
 
