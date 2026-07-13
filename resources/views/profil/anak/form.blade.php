@@ -85,6 +85,59 @@
             font-weight: 800 !important;
             padding: 10px 22px !important;
         }
+
+        /* ── Medical Information (form) ───────────────────────── */
+        .med-section-label {
+            display:flex; align-items:center; gap:8px; margin-bottom:10px;
+        }
+        .med-section-label .med-section-icon {
+            width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+        }
+        .med-section-label .txt { font-weight:800; font-size:13.5px; color:#2C293A; }
+        .med-add-btn {
+            margin-left:auto; display:flex; align-items:center; gap:4px;
+            background:#F1EAFE; color:#8B46D3; font-weight:800; font-size:12px;
+            padding:6px 12px; border-radius:20px; border:none; cursor:pointer;
+            transition:all .15s;
+        }
+        .med-add-btn:active { transform:scale(0.95); }
+
+        .med-entry-card {
+            background:#FBFAFF; border:1.5px solid #F0ECF9; border-radius:16px;
+            padding:14px; margin-bottom:10px; position:relative;
+        }
+        .med-entry-head {
+            display:flex; align-items:center; margin-bottom:10px;
+        }
+        .med-entry-title {
+            font-size:11.5px; font-weight:800; color:#8B46D3; text-transform:uppercase; letter-spacing:0.5px;
+            background:#EDE9FE; padding:3px 10px; border-radius:20px;
+        }
+        .med-remove-btn {
+            margin-left:auto; width:28px; height:28px; border-radius:50%; background:#FEE2E2; border:none;
+            color:#EF4444; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;
+        }
+        .med-field { margin-bottom:8px; }
+        .med-field:last-of-type { margin-bottom:0; }
+        .med-field label {
+            display:block; font-size:10.5px; font-weight:800; color:#A79BC7; text-transform:uppercase;
+            letter-spacing:0.4px; margin-bottom:3px;
+        }
+        .med-field input, .med-field select, .med-field textarea {
+            width:100%; background:white; border:1.5px solid #E7E1F5; border-radius:10px;
+            padding:9px 12px; font-size:12.5px; font-weight:700; color:#1E1B2E;
+            font-family:'Nunito',sans-serif; outline:none; transition:border-color .15s;
+        }
+        .med-field input::placeholder, .med-field textarea::placeholder { color:#B7B0D1; font-weight:600; }
+        .med-field input:focus, .med-field select:focus, .med-field textarea:focus { border-color:#8B46D3; }
+        .med-field-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+
+        .med-empty-state {
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            padding:22px 10px; text-align:center; border:1.5px dashed #E1D9F5; border-radius:14px;
+        }
+        .med-empty-state ion-icon { font-size:26px; color:#D9D0F0; margin-bottom:6px; }
+        .med-empty-state p { font-size:12px; font-weight:700; color:#A79BC7; }
     </style>
 </head>
 <body class="font-['Nunito'] bg-[#E5E2F5]">
@@ -182,6 +235,12 @@
                         <input type="hidden" name="gender" id="genderInput" value="{{ $anak['gender'] ?? '' }}">
                     </div>
                 </div>
+
+                <div>
+                    <label class="block text-[#2C293A] text-[13px] font-extrabold mb-2">Tempat Lahir</label>
+                    <input type="text" name="tempat_lahir" value="{{ $anak['tempat_lahir'] ?? '' }}" placeholder="Contoh: Jakarta"
+                           class="input-field w-full px-4 py-3"/>
+                </div>
             </div>
 
             <div class="anim delay-4 bg-white rounded-[24px] p-[18px] shadow-[0_2px_12px_rgba(0,0,0,0.07)] space-y-4">
@@ -206,6 +265,176 @@
                     <label class="block text-[#2C293A] text-[13px] font-extrabold mb-2">Hobby</label>
                     <input type="text" name="hobi" value="{{ $anak['hobi'] ?? '' }}" placeholder="Ex : Singing"
                            class="input-field w-full px-4 py-3"/>
+                </div>
+            </div>
+
+            {{-- ══════════════════════════════════════════════════════════════
+                 MEDICAL INFORMATION (RS, Dokter, Vaksin)
+                 ══════════════════════════════════════════════════════════════ --}}
+            <div class="anim delay-4 bg-white rounded-[24px] p-[18px] shadow-[0_2px_12px_rgba(0,0,0,0.07)] space-y-5">
+                <div>
+                    <p class="text-[#5A556E] text-[16px] font-extrabold tracking-wide uppercase">Medical Information</p>
+                    <p class="text-[#8B46D3] text-[12px] font-bold">Optional - Rumah Sakit, Dokter, Vaksin</p>
+                </div>
+
+                {{-- Rumah Sakit --}}
+                <div>
+                    <div class="med-section-label">
+                        <div class="med-section-icon" style="background:#E0F2FE;">
+                            <ion-icon name="business-outline" style="font-size:15px;color:#0284C7;"></ion-icon>
+                        </div>
+                        <span class="txt">Rumah Sakit Langganan</span>
+                        <button type="button" onclick="addMedItem('rs')" class="med-add-btn">
+                            <ion-icon name="add-circle" style="font-size:15px;"></ion-icon> Tambah
+                        </button>
+                    </div>
+                    <div id="rsContainer">
+                        @if($isEdit && !empty($rumahSakit))
+                            @foreach($rumahSakit as $i => $rs)
+                            <div class="med-entry med-entry-card" data-type="rs" data-index="{{ $i }}">
+                                <div class="med-entry-head">
+                                    <span class="med-entry-title">Rumah Sakit {{ $i + 1 }}</span>
+                                    <input type="hidden" name="rs[{{ $i }}][id]" value="{{ $rs['id'] ?? '' }}">
+                                    <button type="button" onclick="this.closest('.med-entry').remove()" class="med-remove-btn">
+                                        <ion-icon name="trash-outline" style="font-size:14px;"></ion-icon>
+                                    </button>
+                                </div>
+                                <div class="med-field">
+                                    <label>Nama Rumah Sakit</label>
+                                    <input type="text" name="rs[{{ $i }}][nama_rs]" value="{{ $rs['nama_rs'] }}" placeholder="Contoh: RKZ">
+                                </div>
+                                <div class="med-field">
+                                    <label>Kategori</label>
+                                    <select name="rs[{{ $i }}][kategori]">
+                                        <option value="rs" {{ ($rs['kategori']??'')=='rs'?'selected':'' }}>Rumah Sakit</option>
+                                        <option value="klinik" {{ ($rs['kategori']??'')=='klinik'?'selected':'' }}>Klinik</option>
+                                        <option value="puskesmas" {{ ($rs['kategori']??'')=='puskesmas'?'selected':'' }}>Puskesmas</option>
+                                    </select>
+                                </div>
+                                <div class="med-field-row">
+                                    <div class="med-field">
+                                        <label>Alamat</label>
+                                        <input type="text" name="rs[{{ $i }}][alamat]" value="{{ $rs['alamat'] ?? '' }}" placeholder="Alamat">
+                                    </div>
+                                    <div class="med-field">
+                                        <label>No. Telepon</label>
+                                        <input type="text" name="rs[{{ $i }}][no_telp]" value="{{ $rs['no_telp'] ?? '' }}" placeholder="0821...">
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        @endif
+                    </div>
+                    <div id="rsEmpty" class="med-empty-state {{ ($isEdit && !empty($rumahSakit)) ? 'hidden' : '' }}">
+                        <ion-icon name="business-outline"></ion-icon>
+                        <p>Belum ada rumah sakit.</p>
+                    </div>
+                </div>
+
+                {{-- Dokter --}}
+                <div>
+                    <div class="med-section-label">
+                        <div class="med-section-icon" style="background:#EDE9FE;">
+                            <ion-icon name="medkit-outline" style="font-size:15px;color:#8B46D3;"></ion-icon>
+                        </div>
+                        <span class="txt">Dokter Andalan</span>
+                        <button type="button" onclick="addMedItem('dokter')" class="med-add-btn">
+                            <ion-icon name="add-circle" style="font-size:15px;"></ion-icon> Tambah
+                        </button>
+                    </div>
+                    <div id="dokterContainer">
+                        @if($isEdit && !empty($dokter))
+                            @foreach($dokter as $i => $d)
+                            <div class="med-entry med-entry-card" data-type="dokter">
+                                <div class="med-entry-head">
+                                    <span class="med-entry-title">Dokter {{ $i + 1 }}</span>
+                                    <input type="hidden" name="dokter[{{ $i }}][id]" value="{{ $d['id'] ?? '' }}">
+                                    <button type="button" onclick="this.closest('.med-entry').remove()" class="med-remove-btn">
+                                        <ion-icon name="trash-outline" style="font-size:14px;"></ion-icon>
+                                    </button>
+                                </div>
+                                <div class="med-field">
+                                    <label>Nama Dokter</label>
+                                    <input type="text" name="dokter[{{ $i }}][nama_dokter]" value="{{ $d['nama_dokter'] }}" placeholder="Nama lengkap">
+                                </div>
+                                <div class="med-field">
+                                    <label>Spesialisasi</label>
+                                    <input type="text" name="dokter[{{ $i }}][spesialisasi]" value="{{ $d['spesialisasi'] ?? '' }}" placeholder="Contoh: Sp.A (Anak)">
+                                </div>
+                                <div class="med-field-row">
+                                    <div class="med-field">
+                                        <label>No. Telepon</label>
+                                        <input type="text" name="dokter[{{ $i }}][no_telp]" value="{{ $d['no_telp'] ?? '' }}" placeholder="0821...">
+                                    </div>
+                                    <div class="med-field">
+                                        <label>Alamat Praktek</label>
+                                        <input type="text" name="dokter[{{ $i }}][alamat_praktek]" value="{{ $d['alamat_praktek'] ?? '' }}" placeholder="Alamat praktek">
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        @endif
+                    </div>
+                    <div id="dokterEmpty" class="med-empty-state {{ ($isEdit && !empty($dokter)) ? 'hidden' : '' }}">
+                        <ion-icon name="medkit-outline"></ion-icon>
+                        <p>Belum ada dokter.</p>
+                    </div>
+                </div>
+
+                {{-- Vaksin --}}
+                <div>
+                    <div class="med-section-label">
+                        <div class="med-section-icon" style="background:#FDE8EF;">
+                            <ion-icon name="shield-checkmark-outline" style="font-size:15px;color:#EC4899;"></ion-icon>
+                        </div>
+                        <span class="txt">Daftar Vaksin</span>
+                        <button type="button" onclick="addMedItem('vaksin')" class="med-add-btn">
+                            <ion-icon name="add-circle" style="font-size:15px;"></ion-icon> Tambah
+                        </button>
+                    </div>
+                    <div id="vaksinContainer">
+                        @if($isEdit && !empty($vaksin))
+                            @foreach($vaksin as $i => $v)
+                            <div class="med-entry med-entry-card" data-type="vaksin">
+                                <div class="med-entry-head">
+                                    <span class="med-entry-title">Vaksin {{ $i + 1 }}</span>
+                                    <input type="hidden" name="vaksin[{{ $i }}][id]" value="{{ $v['id'] ?? '' }}">
+                                    <button type="button" onclick="this.closest('.med-entry').remove()" class="med-remove-btn">
+                                        <ion-icon name="trash-outline" style="font-size:14px;"></ion-icon>
+                                    </button>
+                                </div>
+                                <div class="med-field-row">
+                                    <div class="med-field">
+                                        <label>Nama Vaksin</label>
+                                        <input type="text" name="vaksin[{{ $i }}][nama_vaksin]" value="{{ $v['nama_vaksin'] }}" placeholder="BCG, Polio, dll">
+                                    </div>
+                                    <div class="med-field">
+                                        <label>Tanggal Vaksin</label>
+                                        <input type="date" name="vaksin[{{ $i }}][tanggal_vaksin]" value="{{ $v['tanggal_vaksin'] }}">
+                                    </div>
+                                </div>
+                                <div class="med-field-row">
+                                    <div class="med-field">
+                                        <label>Tempat Vaksin</label>
+                                        <input type="text" name="vaksin[{{ $i }}][tempat_vaksin]" value="{{ $v['tempat_vaksin'] ?? '' }}" placeholder="Contoh: Puskesmas A">
+                                    </div>
+                                    <div class="med-field">
+                                        <label>Dokter Pemberi</label>
+                                        <input type="text" name="vaksin[{{ $i }}][dokter_pemberi]" value="{{ $v['dokter_pemberi'] ?? '' }}" placeholder="Nama dokter">
+                                    </div>
+                                </div>
+                                <div class="med-field">
+                                    <label>Catatan</label>
+                                    <textarea name="vaksin[{{ $i }}][catatan]" placeholder="Efek samping, reaksi, dll" rows="2">{{ $v['catatan'] ?? '' }}</textarea>
+                                </div>
+                            </div>
+                            @endforeach
+                        @endif
+                    </div>
+                    <div id="vaksinEmpty" class="med-empty-state {{ ($isEdit && !empty($vaksin)) ? 'hidden' : '' }}">
+                        <ion-icon name="shield-checkmark-outline"></ion-icon>
+                        <p>Belum ada vaksin.</p>
+                    </div>
                 </div>
             </div>
 
@@ -298,8 +527,141 @@ function setLoading(v) {
     document.getElementById('btnText').textContent = v ? 'Saving...' : 'Save';
 }
 
+// ── Medical Entry Dynamic Add ──────────────────────────────
+let medCounters = { rs: 0, dokter: 0, vaksin: 0 };
+const medEntryTitles = { rs: 'Rumah Sakit', dokter: 'Dokter', vaksin: 'Vaksin' };
+
+function refreshEntryNumbers(type) {
+    const container = document.getElementById(type + 'Container');
+    container.querySelectorAll('.med-entry').forEach((el, i) => {
+        const titleEl = el.querySelector('.med-entry-title');
+        if (titleEl) titleEl.textContent = medEntryTitles[type] + ' ' + (i + 1);
+    });
+}
+
+function addMedItem(type) {
+    const container = document.getElementById(type + 'Container');
+    const emptyMsg = document.getElementById(type + 'Empty');
+    if (emptyMsg) emptyMsg.classList.add('hidden');
+
+    const idx = medCounters[type]++;
+    const num = container.querySelectorAll('.med-entry').length + 1;
+
+    let inner = '';
+
+    if (type === 'rs') {
+        inner = `
+            <div class="med-entry-head">
+                <span class="med-entry-title">Rumah Sakit ${num}</span>
+                <button type="button" onclick="removeMedItem(this,'rs')" class="med-remove-btn"><ion-icon name="trash-outline" style="font-size:14px;"></ion-icon></button>
+            </div>
+            <div class="med-field">
+                <label>Nama Rumah Sakit</label>
+                <input type="text" name="rs[new_${idx}][nama_rs]" placeholder="Contoh: RKZ">
+            </div>
+            <div class="med-field">
+                <label>Kategori</label>
+                <select name="rs[new_${idx}][kategori]">
+                    <option value="rs">Rumah Sakit</option>
+                    <option value="klinik">Klinik</option>
+                    <option value="puskesmas">Puskesmas</option>
+                </select>
+            </div>
+            <div class="med-field-row">
+                <div class="med-field">
+                    <label>Alamat</label>
+                    <input type="text" name="rs[new_${idx}][alamat]" placeholder="Alamat">
+                </div>
+                <div class="med-field">
+                    <label>No. Telepon</label>
+                    <input type="text" name="rs[new_${idx}][no_telp]" placeholder="0821...">
+                </div>
+            </div>`;
+    } else if (type === 'dokter') {
+        inner = `
+            <div class="med-entry-head">
+                <span class="med-entry-title">Dokter ${num}</span>
+                <button type="button" onclick="removeMedItem(this,'dokter')" class="med-remove-btn"><ion-icon name="trash-outline" style="font-size:14px;"></ion-icon></button>
+            </div>
+            <div class="med-field">
+                <label>Nama Dokter</label>
+                <input type="text" name="dokter[new_${idx}][nama_dokter]" placeholder="Nama lengkap">
+            </div>
+            <div class="med-field">
+                <label>Spesialisasi</label>
+                <input type="text" name="dokter[new_${idx}][spesialisasi]" placeholder="Contoh: Sp.A (Anak)">
+            </div>
+            <div class="med-field-row">
+                <div class="med-field">
+                    <label>No. Telepon</label>
+                    <input type="text" name="dokter[new_${idx}][no_telp]" placeholder="0821...">
+                </div>
+                <div class="med-field">
+                    <label>Alamat Praktek</label>
+                    <input type="text" name="dokter[new_${idx}][alamat_praktek]" placeholder="Alamat praktek">
+                </div>
+            </div>`;
+    } else if (type === 'vaksin') {
+        inner = `
+            <div class="med-entry-head">
+                <span class="med-entry-title">Vaksin ${num}</span>
+                <button type="button" onclick="removeMedItem(this,'vaksin')" class="med-remove-btn"><ion-icon name="trash-outline" style="font-size:14px;"></ion-icon></button>
+            </div>
+            <div class="med-field-row">
+                <div class="med-field">
+                    <label>Nama Vaksin</label>
+                    <input type="text" name="vaksin[new_${idx}][nama_vaksin]" placeholder="BCG, Polio, dll">
+                </div>
+                <div class="med-field">
+                    <label>Tanggal Vaksin</label>
+                    <input type="date" name="vaksin[new_${idx}][tanggal_vaksin]">
+                </div>
+            </div>
+            <div class="med-field-row">
+                <div class="med-field">
+                    <label>Tempat Vaksin</label>
+                    <input type="text" name="vaksin[new_${idx}][tempat_vaksin]" placeholder="Contoh: Puskesmas A">
+                </div>
+                <div class="med-field">
+                    <label>Dokter Pemberi</label>
+                    <input type="text" name="vaksin[new_${idx}][dokter_pemberi]" placeholder="Nama dokter">
+                </div>
+            </div>
+            <div class="med-field">
+                <label>Catatan</label>
+                <textarea name="vaksin[new_${idx}][catatan]" placeholder="Efek samping, reaksi, dll" rows="2"></textarea>
+            </div>`;
+    }
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'med-entry med-entry-card';
+    wrapper.setAttribute('data-type', type);
+    wrapper.innerHTML = inner;
+    container.appendChild(wrapper);
+}
+
+function removeMedItem(btn, type) {
+    btn.closest('.med-entry').remove();
+    refreshEntryNumbers(type);
+    const container = document.getElementById(type + 'Container');
+    const emptyMsg = document.getElementById(type + 'Empty');
+    if (emptyMsg && container.querySelectorAll('.med-entry').length === 0) {
+        emptyMsg.classList.remove('hidden');
+    }
+}
+
 const isEdit = {{ $isEdit ? 'true' : 'false' }};
 const CSRF = "{{ csrf_token() }}";
+
+// Track existing medical entry IDs for delete detection on save
+const existingMedIds = { rs: [], dokter: [], vaksin: [] };
+if (isEdit) {
+    ['rs', 'dokter', 'vaksin'].forEach(function(type) {
+        document.querySelectorAll('#' + type + 'Container .med-entry input[name$="[id]"]').forEach(function(el) {
+            if (el.value) existingMedIds[type].push(el.value);
+        });
+    });
+}
 
 document.getElementById('anakForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -330,6 +692,11 @@ document.getElementById('anakForm').addEventListener('submit', async (e) => {
         const data = await res.json();
 
         if (data.success) {
+            // Save medical data after child is saved
+            const childId = isEdit ? {{ $anak['id'] ?? 'null' }} : (data.data?.id || data.user_anak?.id || null);
+            if (childId) {
+                await saveMedicalData(childId);
+            }
             showSuccessAlert(data.message || 'Data berhasil disimpan!', data.redirect || '{{ route("profil.data-anak") }}');
         } else {
             const err = data.errors ? Object.values(data.errors)[0] : data.message;
@@ -341,6 +708,85 @@ document.getElementById('anakForm').addEventListener('submit', async (e) => {
         setLoading(false);
     }
 });
+
+async function saveMedicalData(childId) {
+    const token = '{{ csrf_token() }}';
+    const headers = {'Content-Type':'application/json','X-CSRF-TOKEN': token};
+
+    const medConfig = {
+        rs: {
+            containerId: 'rsContainer',
+            storeUrl:    '{{ route("profil.anak.medical.store", ["type" => "rumah-sakit"]) }}',
+            updateUrl:   '{{ route("profil.anak.medical.update", ["type" => "rumah-sakit"]) }}',
+            deleteUrl:   '{{ route("profil.anak.medical.delete", ["type" => "rumah-sakit"]) }}',
+            required:    'nama_rs',
+        },
+        dokter: {
+            containerId: 'dokterContainer',
+            storeUrl:    '{{ route("profil.anak.medical.store", ["type" => "dokter"]) }}',
+            updateUrl:   '{{ route("profil.anak.medical.update", ["type" => "dokter"]) }}',
+            deleteUrl:   '{{ route("profil.anak.medical.delete", ["type" => "dokter"]) }}',
+            required:    'nama_dokter',
+        },
+        vaksin: {
+            containerId: 'vaksinContainer',
+            storeUrl:    '{{ route("profil.anak.medical.store", ["type" => "vaksin"]) }}',
+            updateUrl:   '{{ route("profil.anak.medical.update", ["type" => "vaksin"]) }}',
+            deleteUrl:   '{{ route("profil.anak.medical.delete", ["type" => "vaksin"]) }}',
+            required:    'nama_vaksin',
+        },
+    };
+
+    for (const [type, cfg] of Object.entries(medConfig)) {
+        const container = document.getElementById(cfg.containerId);
+        if (!container) continue;
+
+        // Collect IDs currently in the DOM for this section
+        const currentIds = [];
+
+        for (const el of container.querySelectorAll('.med-entry')) {
+            const payload = { id_anak: childId };
+            let hasValue = false;
+            let entryId = null;
+
+            el.querySelectorAll('input, select, textarea').forEach(inp => {
+                const parts = inp.name.match(/\[(.+?)\]/g);
+                const key = parts ? parts[parts.length-1].replace(/[\[\]]/g, '') : null;
+                if (key) {
+                    payload[key] = inp.value;
+                    if (key === 'id' && inp.value) entryId = inp.value;
+                    if (inp.value?.trim()) hasValue = true;
+                }
+            });
+
+            if (!hasValue) continue;
+
+            if (entryId) {
+                // ── Existing record — UPDATE ──
+                currentIds.push(entryId);
+                await fetch(cfg.updateUrl, { method: 'POST', headers, body: JSON.stringify(payload) });
+            } else {
+                // ── New record (no id) — CREATE ──
+                delete payload.id; // remove empty id key if present
+                if (payload[cfg.required]) {
+                    await fetch(cfg.storeUrl, { method: 'POST', headers, body: JSON.stringify(payload) });
+                }
+            }
+        }
+
+        // ── DELETE entries that were removed from the DOM ──
+        const existing = existingMedIds[type] || [];
+        for (const id of existing) {
+            if (!currentIds.includes(id)) {
+                await fetch(cfg.deleteUrl, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({ id, id_anak: childId }),
+                });
+            }
+        }
+    }
+}
 </script>
 </body>
 </html>

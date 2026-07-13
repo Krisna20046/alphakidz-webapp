@@ -49,6 +49,64 @@
 
         #deleteModal { transition:opacity .2s ease; }
         #deleteModalBox { transition:transform .3s cubic-bezier(0.34,1.56,0.64,1); }
+
+        /* ── Medical Info Tabs ─────────────────────────────── */
+        .med-wrap {
+            background: #FFFFFF;
+            border-radius: 18px;
+            padding: 14px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .tab-nav {
+            display:flex; gap:6px; margin-bottom:14px; background:#F3F0FD;
+            padding:4px; border-radius:14px;
+        }
+        .med-tab {
+            flex:1; padding:9px 10px; border-radius:10px; border:none; font-weight:800; font-size:12.5px;
+            background:transparent; color:#8B86A5; white-space:nowrap; cursor:pointer;
+            transition:all .18s; font-family:'Nunito',sans-serif;
+            display:flex; align-items:center; justify-content:center; gap:5px;
+        }
+        .med-tab ion-icon { font-size:15px; }
+        .med-tab.active { background:#8B46D3; color:white; box-shadow:0 4px 10px rgba(139,70,211,0.35); }
+        .tab-content { display:none; }
+        .tab-content.active { display:block; animation: slideUp .25s ease forwards; }
+
+        .med-count {
+            font-size:11px; font-weight:800; color:#8B46D3; background:#EDE9FE;
+            padding:2px 9px; border-radius:20px; margin-left:auto;
+        }
+
+        .med-card {
+            background:#FBFAFF; border-radius:14px; padding:13px 14px; margin-bottom:8px;
+            border:1.5px solid #F0ECF9; display:flex; gap:12px; align-items:flex-start;
+        }
+        .med-icon {
+            width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+            flex-shrink:0; margin-top:1px;
+        }
+        .med-body { flex:1; min-width:0; }
+        .med-card .name { font-weight:800; font-size:14px; color:#1E1B2E; line-height:1.25; }
+        .med-card .badge {
+            display:inline-block; font-size:10.5px; font-weight:800; color:#8B46D3; background:#EDE9FE;
+            padding:2px 8px; border-radius:20px; margin-top:5px;
+        }
+        .med-row {
+            display:flex; align-items:flex-start; gap:6px; margin-top:6px; font-size:12.5px; color:#1E1B2E; font-weight:600;
+        }
+        .med-row ion-icon { font-size:14px; color:#A79BC7; flex-shrink:0; margin-top:1px; }
+        .med-row .lbl { color:#8B86A5; font-weight:700; }
+        .med-note {
+            margin-top:6px; font-size:12px; color:#8B86A5; font-weight:600; font-style:italic;
+            background:#F5F3FB; padding:6px 10px; border-radius:8px; line-height:1.4;
+        }
+        .med-note .lbl { font-style:normal; font-weight:800; color:#6B6589; }
+        .med-empty {
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            padding:36px 20px; text-align:center;
+        }
+        .med-empty ion-icon { font-size:38px; color:#D9D0F0; margin-bottom:10px; }
+        .med-empty p { font-size:13px; font-weight:700; color:#A79BC7; }
     </style>
 </head>
 <body class="font-['Nunito'] bg-[#E5E2F5]">
@@ -124,6 +182,18 @@
                     <p class="text-[#1E1B2E] text-[18px] font-extrabold leading-none mt-1">{{ $anak['gender'] === 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
                 </div>
             </div>
+
+            @if($anak['tempat_lahir'] ?? null)
+            <div class="info-card p-4 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-[8px] bg-[#E0F2FE] flex items-center justify-center shrink-0">
+                    <ion-icon name="location-outline" style="font-size:18px;color:#0284C7;"></ion-icon>
+                </div>
+                <div>
+                    <p class="text-[#8B86A5] text-[13px] font-extrabold uppercase tracking-[1.8px]">Tempat Lahir</p>
+                    <p class="text-[#1E1B2E] text-[18px] font-extrabold leading-none mt-1">{{ $anak['tempat_lahir'] }}</p>
+                </div>
+            </div>
+            @endif
         </div>
 
         @php
@@ -170,6 +240,151 @@
             @endif
         </div>
         @endif
+
+        {{-- ═══════════════════════════════════════════════════════════════════
+             MEDICAL INFORMATION (RS, Dokter, Vaksin)
+             ═══════════════════════════════════════════════════════════════════ --}}
+        <div class="anim delay-4 space-y-3">
+            <p class="text-[#5A556E] text-[16px] font-extrabold tracking-wide uppercase">Medical Information</p>
+
+            <div class="med-wrap">
+                {{-- Tab Nav --}}
+                <div class="tab-nav">
+                    <button class="med-tab active" data-tab="rs">
+                        <ion-icon name="business-outline"></ion-icon> Rumah Sakit
+                    </button>
+                    <button class="med-tab" data-tab="dokter">
+                        <ion-icon name="medkit-outline"></ion-icon> Dokter
+                    </button>
+                    <button class="med-tab" data-tab="vaksin">
+                        <ion-icon name="shield-checkmark-outline"></ion-icon> Vaksin
+                    </button>
+                </div>
+
+                {{-- Tab: Rumah Sakit --}}
+                <div class="tab-content active" id="tab-rs">
+                    <div id="rsList">
+                        @forelse($rumahSakit as $rs)
+                        <div class="med-card">
+                            <div class="med-icon" style="background:#E0F2FE;">
+                                <ion-icon name="business-outline" style="font-size:18px;color:#0284C7;"></ion-icon>
+                            </div>
+                            <div class="med-body">
+                                <div class="med-row" style="margin-top:0;">
+                                    <ion-icon name="business-outline"></ion-icon>
+                                    <span><span class="lbl">Nama Rumah Sakit:</span> <strong style="color:#1E1B2E;">{{ $rs['nama_rs'] }}</strong></span>
+                                </div>
+                                <div class="med-row">
+                                    <ion-icon name="pricetag-outline"></ion-icon>
+                                    <span><span class="lbl">Kategori:</span> {{ ['rs' => 'Rumah Sakit', 'klinik' => 'Klinik', 'puskesmas' => 'Puskesmas'][$rs['kategori'] ?? 'rs'] ?? ucfirst($rs['kategori']) }}</span>
+                                </div>
+                                @if($rs['alamat'] ?? null)
+                                <div class="med-row">
+                                    <ion-icon name="location-outline"></ion-icon>
+                                    <span><span class="lbl">Alamat:</span> {{ $rs['alamat'] }}</span>
+                                </div>
+                                @endif
+                                @if($rs['no_telp'] ?? null)
+                                <div class="med-row">
+                                    <ion-icon name="call-outline"></ion-icon>
+                                    <span><span class="lbl">No. Telepon:</span> {{ $rs['no_telp'] }}</span>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                        @empty
+                        <div class="med-empty">
+                            <ion-icon name="business-outline"></ion-icon>
+                            <p>Belum ada data rumah sakit.</p>
+                        </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                {{-- Tab: Dokter --}}
+                <div class="tab-content" id="tab-dokter">
+                    <div id="dokterList">
+                        @forelse($dokter as $d)
+                        <div class="med-card">
+                            <div class="med-icon" style="background:#EDE9FE;">
+                                <ion-icon name="medkit-outline" style="font-size:18px;color:#8B46D3;"></ion-icon>
+                            </div>
+                            <div class="med-body">
+                                <div class="med-row" style="margin-top:0;">
+                                    <ion-icon name="person-outline"></ion-icon>
+                                    <span><span class="lbl">Nama Dokter:</span> <strong style="color:#1E1B2E;">{{ $d['nama_dokter'] }}</strong></span>
+                                </div>
+                                <div class="med-row">
+                                    <ion-icon name="pricetag-outline"></ion-icon>
+                                    <span><span class="lbl">Spesialisasi:</span> {{ $d['spesialisasi'] ?? 'Umum' }}</span>
+                                </div>
+                                @if($d['no_telp'] ?? null)
+                                <div class="med-row">
+                                    <ion-icon name="call-outline"></ion-icon>
+                                    <span><span class="lbl">No. Telepon:</span> {{ $d['no_telp'] }}</span>
+                                </div>
+                                @endif
+                                @if($d['alamat_praktek'] ?? null)
+                                <div class="med-row">
+                                    <ion-icon name="location-outline"></ion-icon>
+                                    <span><span class="lbl">Alamat Praktek:</span> {{ $d['alamat_praktek'] }}</span>
+                                </div>
+                                @endif
+                            </div>
+                        </div>
+                        @empty
+                        <div class="med-empty">
+                            <ion-icon name="medkit-outline"></ion-icon>
+                            <p>Belum ada data dokter.</p>
+                        </div>
+                        @endforelse
+                    </div>
+                </div>
+
+                {{-- Tab: Vaksin --}}
+                <div class="tab-content" id="tab-vaksin">
+                    <div id="vaksinList">
+                        @forelse($vaksin as $v)
+                        <div class="med-card">
+                            <div class="med-icon" style="background:#FDE8EF;">
+                                <ion-icon name="shield-checkmark-outline" style="font-size:18px;color:#EC4899;"></ion-icon>
+                            </div>
+                            <div class="med-body">
+                                <div class="med-row" style="margin-top:0;">
+                                    <ion-icon name="shield-checkmark-outline"></ion-icon>
+                                    <span><span class="lbl">Nama Vaksin:</span> <strong style="color:#1E1B2E;">{{ $v['nama_vaksin'] }}</strong></span>
+                                </div>
+                                <div class="med-row">
+                                    <ion-icon name="calendar-outline"></ion-icon>
+                                    <span><span class="lbl">Tanggal:</span> {{ $v['tanggal_vaksin'] }}</span>
+                                </div>
+                                @if($v['tempat_vaksin'] ?? null)
+                                <div class="med-row">
+                                    <ion-icon name="location-outline"></ion-icon>
+                                    <span><span class="lbl">Tempat:</span> {{ $v['tempat_vaksin'] }}</span>
+                                </div>
+                                @endif
+                                @if($v['dokter_pemberi'] ?? null)
+                                <div class="med-row">
+                                    <ion-icon name="person-outline"></ion-icon>
+                                    <span><span class="lbl">Dokter Pemberi:</span> {{ $v['dokter_pemberi'] }}</span>
+                                </div>
+                                @endif
+                                @if($v['catatan'] ?? null)
+                                <div class="med-note"><span class="lbl">Catatan:</span> {{ $v['catatan'] }}</div>
+                                @endif
+                            </div>
+                        </div>
+                        @empty
+                        <div class="med-empty">
+                            <ion-icon name="shield-checkmark-outline"></ion-icon>
+                            <p>Belum ada data vaksin.</p>
+                        </div>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="anim delay-4 space-y-3 pt-2">
             <a href="{{ route('profil.anak.ubah', $anak['id']) }}"
@@ -247,6 +462,16 @@ function hideDeleteModal() {
 }
 modal.addEventListener('click', (e) => {
     if (e.target === modal) hideDeleteModal();
+});
+
+// ── Medical Tab Navigation ─────────────────────────────────
+document.querySelectorAll('.med-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.med-tab').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
 });
 </script>
 </body>

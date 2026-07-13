@@ -102,6 +102,11 @@ Route::middleware('auth.api')->group(function () {
         Route::post('/data-anak/update',    [AnakController::class, 'update'] )->name('anak.update');
         Route::delete('/data-anak/{id}',    [AnakController::class, 'hapus']  )->name('anak.hapus');
 
+        // Medical CRUD (RS, Dokter, Vaksin) — proxy via AnakController
+        Route::post('/data-anak/medical/{type}',                [AnakController::class, 'medicalStore'])->name('anak.medical.store');
+        Route::post('/data-anak/medical/{type}/update',         [AnakController::class, 'medicalUpdate'])->name('anak.medical.update');
+        Route::post('/data-anak/medical/{type}/delete',         [AnakController::class, 'medicalDelete'])->name('anak.medical.delete');
+
         // Dropdown AJAX
         Route::get('/provinsi',       [ProfileController::class, 'getProvinsi'])->name('provinsi');
         Route::get('/kota/{id}',      [ProfileController::class, 'getKota']    )->name('kota');

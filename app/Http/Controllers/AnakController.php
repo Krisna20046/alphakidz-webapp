@@ -16,6 +16,24 @@ class AnakController extends Controller
     }
 
     // ─────────────────────────────────────────────────────────────────────────
+    // Proxy helper — call backend API
+    // ─────────────────────────────────────────────────────────────────────────
+
+    private function apiGet(string $path)
+    {
+        $token = session('token');
+        if (!$token) return null;
+        try {
+            $response = Http::withToken($token)->acceptJson()->timeout(10)->get("{$this->apiBaseUrl}{$path}");
+            $data = $response->json();
+            return ($response->successful() && ($data['status'] ?? '') === 'success') ? ($data['data'] ?? null) : null;
+        } catch (\Exception $e) {
+            Log::error("AnakController::apiGet({$path}) - " . $e->getMessage());
+            return null;
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
     // LIST  GET /profil/data-anak
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -48,6 +66,9 @@ class AnakController extends Controller
     {
         $token = session('token');
         $anak  = null;
+        $rumahSakit = [];
+        $dokter = [];
+        $vaksin = [];
 
         try {
             $response = Http::withToken($token)->acceptJson()->timeout(10)
@@ -67,7 +88,12 @@ class AnakController extends Controller
                 ->with('error', 'Data anak tidak ditemukan.');
         }
 
-        return view('profil.anak.detail', compact('anak'));
+        // Fetch medical data
+        $rumahSakit = $this->apiGet("/anak/medical/{$id}/rumah-sakit") ?? [];
+        $dokter     = $this->apiGet("/anak/medical/{$id}/dokter") ?? [];
+        $vaksin     = $this->apiGet("/anak/medical/{$id}/vaksin") ?? [];
+
+        return view('profil.anak.detail', compact('anak', 'rumahSakit', 'dokter', 'vaksin'));
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -131,6 +157,9 @@ class AnakController extends Controller
     {
         $token = session('token');
         $anak  = [];
+        $rumahSakit = [];
+        $dokter = [];
+        $vaksin = [];
 
         try {
             $response = Http::withToken($token)->acceptJson()->timeout(10)
@@ -150,8 +179,13 @@ class AnakController extends Controller
                 ->with('error', 'Data anak tidak ditemukan.');
         }
 
+        // Fetch medical data for edit form
+        $rumahSakit = $this->apiGet("/anak/medical/{$id}/rumah-sakit") ?? [];
+        $dokter     = $this->apiGet("/anak/medical/{$id}/dokter") ?? [];
+        $vaksin     = $this->apiGet("/anak/medical/{$id}/vaksin") ?? [];
+
         $isEdit = true;
-        return view('profil.anak.form', compact('anak', 'isEdit'));
+        return view('profil.anak.form', compact('anak', 'isEdit', 'rumahSakit', 'dokter', 'vaksin'));
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -225,6 +259,77 @@ class AnakController extends Controller
         } catch (\Exception $e) {
             Log::error('AnakController@hapus - ' . $e->getMessage());
             return redirect()->back()->with('error', 'Server error');
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // MEDICAL — proxy CRUD untuk RS, Dokter, Vaksin
+    // ─────────────────────────────────────────────────────────────────────────
+
+    public function medicalStore(Request $request, string $type)
+    {
+        $valid = ['rumah-sakit', 'dokter', 'vaksin'];
+        if (!in_array($type, $valid)) {
+            return response()->json(['success' => false, 'message' => 'Tipe tidak valid'], 400);
+        }
+        $token = session('token');
+        if (!$token) return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
+        try {
+            $http = Http::withToken($token)->acceptJson()->timeout(10);
+            $response = $http->post("{$this->apiBaseUrl}/anak/medical/{$type}", $request->all());
+            $result = $response->json();
+            if ($response->successful() && ($result['status'] ?? '') === 'success') {
+                return response()->json(['success' => true, 'message' => $result['message'] ?? 'Berhasil']);
+            }
+            return response()->json(['success' => false, 'message' => $result['message'] ?? 'Gagal'], 422);
+        } catch (\Exception $e) {
+            Log::error("AnakController@medicalStore - " . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Server error'], 500);
+        }
+    }
+
+    public function medicalUpdate(Request $request, string $type)
+    {
+        $valid = ['rumah-sakit', 'dokter', 'vaksin'];
+        if (!in_array($type, $valid)) {
+            return response()->json(['success' => false, 'message' => 'Tipe tidak valid'], 400);
+        }
+        $token = session('token');
+        if (!$token) return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
+        try {
+            $http = Http::withToken($token)->acceptJson()->timeout(10);
+            $response = $http->put("{$this->apiBaseUrl}/anak/medical/{$type}", $request->all());
+            $result = $response->json();
+            if ($response->successful() && ($result['status'] ?? '') === 'success') {
+                return response()->json(['success' => true, 'message' => $result['message'] ?? 'Berhasil']);
+            }
+            return response()->json(['success' => false, 'message' => $result['message'] ?? 'Gagal'], 422);
+        } catch (\Exception $e) {
+            Log::error("AnakController@medicalUpdate - " . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Server error'], 500);
+        }
+    }
+
+    public function medicalDelete(string $type)
+    {
+        $valid = ['rumah-sakit', 'dokter', 'vaksin'];
+        if (!in_array($type, $valid)) {
+            return response()->json(['success' => false, 'message' => 'Tipe tidak valid'], 400);
+        }
+        $token = session('token');
+        if (!$token) return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
+        try {
+            $id = request('id');
+            $response = Http::withToken($token)->acceptJson()->timeout(10)
+                ->delete("{$this->apiBaseUrl}/anak/medical/{$type}/{$id}");
+            $result = $response->json();
+            if ($response->successful() && ($result['status'] ?? '') === 'success') {
+                return response()->json(['success' => true, 'message' => $result['message'] ?? 'Berhasil dihapus']);
+            }
+            return response()->json(['success' => false, 'message' => $result['message'] ?? 'Gagal'], 422);
+        } catch (\Exception $e) {
+            Log::error("AnakController@medicalDelete - " . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Server error'], 500);
         }
     }
 }
