@@ -56,21 +56,22 @@
         /* Tampilkan overlay "Sesi berakhir" sebelum redirect */
         showSessionExpiredOverlay(reason);
 
+        /* Bersihkan local state — PERHATIAN: jangan clear sessionStorage dulu
+           karena kita masih perlu nyimpen auth_flash */
         try { removeFcmTokenOnLogout(); } catch (_) {}
-        try { localStorage.clear(); } catch (_) {}
-        try { sessionStorage.clear(); } catch (_) {}
-
-        /* Hapus session server-side */
         try {
-            const fd = new FormData();
-            fd.append('_token', CSRF);
-            navigator.sendBeacon('/logout', fd);
+            // Hapus key tertentu aja, jangan semua localStorage
+            localStorage.removeItem('fcm_web_token');
+            localStorage.removeItem('pwa_update_shown');
         } catch (_) {}
 
-        /* Simpan pesan untuk halaman login */
+        /* Simpan pesan untuk halaman login (sebelum clear sessionStorage) */
         try { sessionStorage.setItem('auth_flash', reason); } catch (_) {}
 
-        setTimeout(() => window.location.replace(LOGIN_URL), 2200);
+        /* Redirect ke /force-logout — route GET yang guaranteed hapus session
+           sendBeacon TIDAK dipakai karena unreliable; dengan redirect langsung
+           ke endpoint ini, session server PASTI terhapus sebelum login page dirender. */
+        setTimeout(() => window.location.replace('/force-logout'), 2200);
     }
 
     let isRedirecting = false;

@@ -29,6 +29,21 @@ Route::middleware('guest.api')->group(function () {
 
 Route::post('/auth/store-token', [AuthController::class, 'storeToken'])->name('auth.store-token');
 
+/**
+ * GET /force-logout
+ * Endpoint khusus dipanggil oleh auth-guard JS saat token expired.
+ * BERBEDA dengan POST /logout (yang butuh CSRF & method POST):
+ *   - Ini GET, jadi gak gagal gara-gara sendBeacon/hang
+ *   - Guaranteed hapus semua session
+ *   - Redirect ke login page
+ */
+Route::get('/force-logout', function () {
+    session()->flush();
+    session()->invalidate();
+    session()->regenerateToken();
+    return redirect()->route('login')->with('auth_flash', 'Sesi berakhir. Silakan login kembali.');
+})->name('force-logout')->withoutMiddleware(['auth.api', 'guest.api']);
+
 Route::get('/sw.js', function () {
     return response()->file(public_path('sw.js'), [
         'Content-Type' => 'application/javascript',

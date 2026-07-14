@@ -287,4 +287,18 @@ document.getElementById('googleBtn').addEventListener('click', async () => {
     }
 });
 </script>
+
+<script>
+// ── Tampilkan flash message dari server (force-logout, dll) ──
+(function() {
+    const flashMsg = @json(session('auth_flash'));
+    const flashStorage = sessionStorage.getItem('auth_flash');
+    if (flashMsg) {
+        showToast(flashMsg);
+    } else if (flashStorage) {
+        showToast(flashStorage);
+        sessionStorage.removeItem('auth_flash');
+    }
+})();
+</script>
 @endpush
