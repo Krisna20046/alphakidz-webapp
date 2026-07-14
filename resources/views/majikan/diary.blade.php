@@ -381,6 +381,66 @@
                             @endif
                         </div>
                         @endif
+                        @if(in_array($kat, ['makan','minum']))
+                        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+                            @if(!empty($item['porsi']))
+                            <span style="padding:3px 10px;border-radius:12px;background:#fff;font-size:11px;font-weight:700;color:
+                                {{ ['habis'=>'#166534','setengah'=>'#B45309','sedikit'=>'#DC2626','tidak_makan'=>'#DC2626'][$item['porsi']] ?? '#5A556E' }};">
+                                {{ str_replace('_',' ',ucfirst($item['porsi'])) }}
+                            </span>
+                            @endif
+                            @if(!empty($item['nafsu_makan']))
+                            <span style="padding:3px 10px;border-radius:12px;background:#fff;font-size:11px;font-weight:700;color:#5A556E;">
+                                @php $nafsuIcons = ['lapar'=>'🍽️','biasa'=>'😐','tidak_nafsu'=>'😫']; @endphp
+                                {{ $nafsuIcons[$item['nafsu_makan']] ?? '' }} {{ str_replace('_',' ',ucfirst($item['nafsu_makan'])) }}
+                            </span>
+                            @endif
+                        </div>
+                        @if(!empty($item['foto_sebelum_url']) || !empty($item['foto_sesudah_url']))
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                            @if(!empty($item['foto_sebelum_url']))
+                            <img src="{{ $item['foto_sebelum_url'] }}" class="akt-photo" alt="Sebelum"
+                                onclick="event.stopPropagation();openImageModal('{{ $item['foto_sebelum_url'] }}')"
+                                style="cursor:pointer;">
+                            @endif
+                            @if(!empty($item['foto_sesudah_url']))
+                            <img src="{{ $item['foto_sesudah_url'] }}" class="akt-photo" alt="Sesudah"
+                                onclick="event.stopPropagation();openImageModal('{{ $item['foto_sesudah_url'] }}')"
+                                style="cursor:pointer;">
+                            @endif
+                        </div>
+                        @endif
+                        @endif
+                        @if(in_array($kat, ['makan','minum']))
+                        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
+                            @if(!empty($item['porsi']))
+                            <span style="padding:3px 10px;border-radius:12px;background:#fff;font-size:11px;font-weight:700;color:
+                                {{ ['habis'=>'#166534','setengah'=>'#B45309','sedikit'=>'#DC2626','tidak_makan'=>'#DC2626'][$item['porsi']] ?? '#5A556E' }};">
+                                {{ str_replace('_',' ',ucfirst($item['porsi'])) }}
+                            </span>
+                            @endif
+                            @if(!empty($item['nafsu_makan']))
+                            <span style="padding:3px 10px;border-radius:12px;background:#fff;font-size:11px;font-weight:700;color:#5A556E;">
+                                @php $nafsuIcons = ['lapar'=>'🍽️','biasa'=>'😐','tidak_nafsu'=>'😫']; @endphp
+                                {{ $nafsuIcons[$item['nafsu_makan']] ?? '' }} {{ str_replace('_',' ',ucfirst($item['nafsu_makan'])) }}
+                            </span>
+                            @endif
+                        </div>
+                        @if(!empty($item['foto_sebelum_url']) || !empty($item['foto_sesudah_url']))
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                            @if(!empty($item['foto_sebelum_url']))
+                            <img src="{{ $item['foto_sebelum_url'] }}" class="akt-photo" alt="Sebelum"
+                                onclick="event.stopPropagation();openImageModal('{{ $item['foto_sebelum_url'] }}')"
+                                style="cursor:pointer;">
+                            @endif
+                            @if(!empty($item['foto_sesudah_url']))
+                            <img src="{{ $item['foto_sesudah_url'] }}" class="akt-photo" alt="Sesudah"
+                                onclick="event.stopPropagation();openImageModal('{{ $item['foto_sesudah_url'] }}')"
+                                style="cursor:pointer;">
+                            @endif
+                        </div>
+                        @endif
+                        @endif
                         @if(!empty($item['foto_url']))
                         <img src="{{ $item['foto_url'] }}" class="akt-photo" alt=""
                             onclick="event.stopPropagation(); openImageModal('{{ $item['foto_url'] }}')">
@@ -708,6 +768,11 @@ function openDetail(item){
         if(item.volume) rows.push({icon:'scale-outline',label:'Volume',value:item.volume.charAt(0).toUpperCase()+item.volume.slice(1)});
         if(item.frekuensi) rows.push({icon:'repeat-outline',label:'Frekuensi',value:item.frekuensi+'×'});
     }
+    // Makan/Minum fields
+    if(item.kategori==='makan'||item.kategori==='minum'){
+        if(item.porsi) rows.push({icon:'fast-food-outline',label:'Porsi',value:item.porsi.charAt(0).toUpperCase()+item.porsi.slice(1)});
+        if(item.nafsu_makan) rows.push({icon:'happy-outline',label:'Nafsu Makan',value:item.nafsu_makan.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())});
+    }
     if(item.nanny_name) rows.push({icon:'person-outline',label:'Dicatat oleh',value:item.nanny_name});
 
     let html=`<div style="display:flex;flex-direction:column;align-items:center;padding:20px;border-radius:16px;margin-bottom:20px;background:${bg};border:1.5px solid ${col}40;">
@@ -732,6 +797,15 @@ function openDetail(item){
                  style="width:100%;height:180px;border-radius:14px;object-fit:cover;border:1.5px solid #EDE9FE;cursor:pointer;transition:transform .2s ease;"
                  onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
         </div>`;
+    }
+    // Foto sebelum/sesudah untuk makan/minum
+    if((item.kategori==='makan'||item.kategori==='minum') && (item.foto_sebelum_url||item.foto_sesudah_url)){
+        html+=`<div style="margin-top:10px;">
+            <p style="font-size:12px;color:#A8A2C2;font-weight:700;margin-bottom:8px;">Foto Makanan</p>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">`;
+        if(item.foto_sebelum_url) html+=`<img src="${item.foto_sebelum_url}" onclick="closeDetail();openImageModal('${item.foto_sebelum_url}')" style="height:160px;border-radius:14px;object-fit:cover;border:1.5px solid #EDE9FE;cursor:pointer;" title="Sebelum">`;
+        if(item.foto_sesudah_url) html+=`<img src="${item.foto_sesudah_url}" onclick="closeDetail();openImageModal('${item.foto_sesudah_url}')" style="height:160px;border-radius:14px;object-fit:cover;border:1.5px solid #EDE9FE;cursor:pointer;" title="Sesudah">`;
+        html+=`</div></div>`;
     }
     document.getElementById('detailBody').innerHTML=html;
     document.getElementById('modalDetail').classList.add('open');

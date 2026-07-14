@@ -12,7 +12,7 @@
 
     .kat-row {
         display: grid;
-        grid-template-columns: repeat(5, 1fr);
+        grid-template-columns: repeat(4, 1fr);
         gap: 8px;
         margin-bottom: 24px;
     }
@@ -263,6 +263,7 @@
             @php
                 $katOptions = [
                     ['value'=>'makan',   'label'=>'Eat',        'icon'=>'restaurant',    'bg'=>'#FFF0E6', 'color'=>'#FF9A6C'],
+                    ['value'=>'minum',   'label'=>'Drink',      'icon'=>'cafe',          'bg'=>'#E0F7FA', 'color'=>'#00BCD4'],
                     ['value'=>'tidur',   'label'=>'Sleep',      'icon'=>'moon',           'bg'=>'#EEF4FF', 'color'=>'#7BB4F0'],
                     ['value'=>'main',    'label'=>'Play',       'icon'=>'car-sport',      'bg'=>'#FFF0F7', 'color'=>'#FF6BA3'],
                     ['value'=>'belajar', 'label'=>'Study',      'icon'=>'book',           'bg'=>'#EEFFF3', 'color'=>'#4CAF7D'],
@@ -343,6 +344,72 @@
         <div class="desk-wrap">
             <textarea id="deskripsi" class="desk-input" rows="4"
                       placeholder="Write down the details of your child's activities today...."></textarea>
+        </div>
+    </div>
+
+    {{-- MAKAN / MINUM DETAILS --}}
+    <div class="bab-section anim" id="makanMinumSection" style="display:none;" data-section="makan-minum">
+        <p class="sec-label" style="margin-bottom:16px;">Makan & Minum Details</p>
+
+        {{-- Porsi --}}
+        <div style="margin-bottom:18px;">
+            <p class="time-field-label">Porsi</p>
+            <div class="pill-group">
+                @php $porsiOpts = ['Habis','Setengah','Sedikit','Tidak Makan']; @endphp
+                @foreach($porsiOpts as $p)
+                <button type="button" class="pill-btn" data-porsi="{{ strtolower(str_replace(' ','_',$p)) }}" onclick="selectPorsi(this)">{{ $p }}</button>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Nafsu Makan --}}
+        <div style="margin-bottom:18px;">
+            <p class="time-field-label">Nafsu Makan</p>
+            <div class="pill-group">
+                @php $nafsuOpts = ['Lapar','Biasa','Tidak Nafsu']; @endphp
+                @foreach($nafsuOpts as $n)
+                <button type="button" class="pill-btn" data-nafsu="{{ strtolower(str_replace(' ','_',$n)) }}" onclick="selectNafsu(this)">{{ $n }}</button>
+                @endforeach
+            </div>
+        </div>
+
+        {{-- Foto Sebelum & Sesudah --}}
+        <div style="margin-bottom:12px;">
+            <p class="time-field-label">Foto Makanan</p>
+        </div>
+        <div class="photo-grid" style="margin-bottom:0;">
+            <div>
+                <p style="font-size:11px;font-weight:700;color:#A8A2C2;margin-bottom:6px;">Sebelum</p>
+                <div id="fotoSebelumPreview" class="photo-slot" style="display:none;">
+                    <img id="fotoSebelumImg" src="" alt="Sebelum">
+                    <button type="button" class="photo-remove" onclick="removeFotoSebelum()">
+                        <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
+                    </button>
+                </div>
+                <label id="uploadSebelum" class="upload-slot" for="inputFotoSebelum" style="height:100px;">
+                    <div style="width:32px;height:32px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
+                        <ion-icon name="camera-outline" style="font-size:16px;color:#8B46D3;"></ion-icon>
+                    </div>
+                    <span style="font-size:11px;">Add Photo</span>
+                </label>
+                <input type="file" id="inputFotoSebelum" accept="image/*" class="hidden" onchange="previewFotoSebelum(this)">
+            </div>
+            <div>
+                <p style="font-size:11px;font-weight:700;color:#A8A2C2;margin-bottom:6px;">Sesudah</p>
+                <div id="fotoSesudahPreview" class="photo-slot" style="display:none;">
+                    <img id="fotoSesudahImg" src="" alt="Sesudah">
+                    <button type="button" class="photo-remove" onclick="removeFotoSesudah()">
+                        <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
+                    </button>
+                </div>
+                <label id="uploadSesudah" class="upload-slot" for="inputFotoSesudah" style="height:100px;">
+                    <div style="width:32px;height:32px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
+                        <ion-icon name="camera-outline" style="font-size:16px;color:#8B46D3;"></ion-icon>
+                    </div>
+                    <span style="font-size:11px;">Add Photo</span>
+                </label>
+                <input type="file" id="inputFotoSesudah" accept="image/*" class="hidden" onchange="previewFotoSesudah(this)">
+            </div>
         </div>
     </div>
 
@@ -530,6 +597,10 @@ let selWarna   = '';
 let selTekstur = '';
 let selVolume  = '';
 let frekuensi  = 1;
+let selPorsi  = '';
+let selNafsu  = '';
+let fotoSebelumFile = null;
+let fotoSesudahFile = null;
 
 const KAT_DURASI = {
     makan:   30,
@@ -565,11 +636,17 @@ function selectKat(btn){
     setDurasi(KAT_DURASI[selKat] || 30);
 
     const isBabBak = selKat === 'bab' || selKat === 'bak';
+    const isMakanMinum = selKat === 'makan' || selKat === 'minum';
     const babSection = document.getElementById('babBakSection');
+    const makanSection = document.getElementById('makanMinumSection');
     const moodSection = document.querySelector('[data-section="mood"]');
     const descSection = document.querySelector('[data-section="description"]');
     const locationSection = document.querySelector('[data-section="location"]');
     const photoSection = document.querySelector('[data-section="photo"]');
+
+    // All categories: hide BAB and Makan sections first
+    if (babSection) babSection.style.display = 'none';
+    if (makanSection) makanSection.style.display = 'none';
 
     if (isBabBak) {
         babSection.style.display = 'block';
@@ -586,8 +663,13 @@ function selectKat(btn){
         document.getElementById('warnaGroupBab').style.display = selKat === 'bab' ? 'flex' : 'none';
         document.getElementById('warnaGroupBak').style.display = selKat === 'bak' ? 'flex' : 'none';
         document.getElementById('teksturField').style.display = selKat === 'bab' ? 'block' : 'none';
+    } else if (isMakanMinum) {
+        if (makanSection) makanSection.style.display = 'block';
+        if (moodSection) moodSection.style.display = '';
+        if (descSection) descSection.style.display = '';
+        if (locationSection) locationSection.style.display = '';
+        if (photoSection) photoSection.style.display = 'none'; // hide general photo, use makan-specific ones
     } else {
-        babSection.style.display = 'none';
         if (moodSection) moodSection.style.display = '';
         if (descSection) descSection.style.display = '';
         if (locationSection) locationSection.style.display = '';
@@ -700,6 +782,54 @@ function removeFoto(){
     document.getElementById('inputCamera').value='';
 }
 
+// ── MAKAN / MINUM ──
+function selectPorsi(btn){
+    document.querySelectorAll('.pill-btn[data-porsi]').forEach(b=>b.classList.remove('sel'));
+    btn.classList.add('sel');
+    selPorsi = btn.dataset.porsi;
+}
+function selectNafsu(btn){
+    document.querySelectorAll('.pill-btn[data-nafsu]').forEach(b=>b.classList.remove('sel'));
+    btn.classList.add('sel');
+    selNafsu = btn.dataset.nafsu;
+}
+function previewFotoSebelum(input){
+    const file=input.files[0];
+    if(!file) return;
+    fotoSebelumFile=file;
+    const reader=new FileReader();
+    reader.onload=e=>{
+        document.getElementById('fotoSebelumImg').src=e.target.result;
+        document.getElementById('fotoSebelumPreview').style.display='block';
+        document.getElementById('uploadSebelum').style.display='none';
+    };
+    reader.readAsDataURL(file);
+}
+function removeFotoSebelum(){
+    fotoSebelumFile=null;
+    document.getElementById('fotoSebelumPreview').style.display='none';
+    document.getElementById('uploadSebelum').style.display='flex';
+    document.getElementById('inputFotoSebelum').value='';
+}
+function previewFotoSesudah(input){
+    const file=input.files[0];
+    if(!file) return;
+    fotoSesudahFile=file;
+    const reader=new FileReader();
+    reader.onload=e=>{
+        document.getElementById('fotoSesudahImg').src=e.target.result;
+        document.getElementById('fotoSesudahPreview').style.display='block';
+        document.getElementById('uploadSesudah').style.display='none';
+    };
+    reader.readAsDataURL(file);
+}
+function removeFotoSesudah(){
+    fotoSesudahFile=null;
+    document.getElementById('fotoSesudahPreview').style.display='none';
+    document.getElementById('uploadSesudah').style.display='flex';
+    document.getElementById('inputFotoSesudah').value='';
+}
+
 // ── BAB / BAK ──
 function selectWarna(btn){
     document.querySelectorAll('.swatch-btn').forEach(b=>b.classList.remove('sel'));
@@ -763,6 +893,7 @@ async function handleSubmit(){
     fd.append('jam_selesai',  `${ymd} ${jamSelesai}:00`);
     // Mood hanya untuk non-BAB/BAK
     const isBabBak = selKat === 'bab' || selKat === 'bak';
+    const isMakanMinum = selKat === 'makan' || selKat === 'minum';
     if (!isBabBak) {
         fd.append('mood', selMood);
         if(fotoFile) fd.append('foto', fotoFile);
@@ -776,6 +907,13 @@ async function handleSubmit(){
         fd.append('volume',          selVolume);
         fd.append('frekuensi',       frekuensi);
         fd.append('deskripsi',       document.getElementById('catatanKondisi').value);
+    }
+    // Makan/Minum fields
+    if (isMakanMinum) {
+        fd.append('porsi',            selPorsi);
+        fd.append('nafsu_makan',      selNafsu);
+        if(fotoSebelumFile) fd.append('foto_sebelum', fotoSebelumFile);
+        if(fotoSesudahFile) fd.append('foto_sesudah', fotoSesudahFile);
     }
 
     try{

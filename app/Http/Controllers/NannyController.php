@@ -201,13 +201,16 @@ class NannyController extends Controller
             'mood'          => 'nullable|string',
             'deskripsi'     => 'nullable|string',
             'foto'          => 'nullable|image|max:4096',
+            'foto_sebelum'  => 'nullable|image|max:4096',
+            'foto_sesudah'  => 'nullable|image|max:4096',
+            'porsi'         => 'nullable|string',
+            'nafsu_makan'   => 'nullable|string',
             'lat'           => 'nullable|numeric',
             'lng'           => 'nullable|numeric',
             'warna'          => 'nullable|string',
             'tekstur'        => 'nullable|string',
             'volume'         => 'nullable|string',
             'frekuensi'      => 'nullable|integer|min:0|max:99',
-            'catatan_kondisi'=> 'nullable|string',
         ]);
 
         $multipart = [
@@ -216,21 +219,58 @@ class NannyController extends Controller
             ['name' => 'kategori',      'contents' => (string) $request->kategori],
             ['name' => 'jam_mulai',     'contents' => (string) $request->jam_mulai],
             ['name' => 'jam_selesai',   'contents' => (string) $request->jam_selesai],
-            ['name' => 'mood',          'contents' => (string) ($request->mood ?? 'biasa')],
             ['name' => 'deskripsi',     'contents' => (string) ($request->deskripsi ?? '')],
             ['name' => 'lat',           'contents' => (string) ($request->lat ?? '')],
             ['name' => 'lng',           'contents' => (string) ($request->lng ?? '')],
-            ['name' => 'warna',          'contents' => (string) ($request->warna ?? '')],
-            ['name' => 'tekstur',        'contents' => (string) ($request->tekstur ?? '')],
-            ['name' => 'volume',         'contents' => (string) ($request->volume ?? '')],
-            ['name' => 'frekuensi',      'contents' => (string) ($request->frekuensi ?? '0')],
-            ['name' => 'catatan_kondisi','contents' => (string) ($request->catatan_kondisi ?? '')],
         ];
+
+        // Mood: semua kecuali BAB/BAK
+        if (!in_array($request->kategori, ['bab', 'bak'])) {
+            $multipart[] = ['name' => 'mood', 'contents' => (string) ($request->mood ?? 'biasa')];
+        }
+
+        // BAB/BAK specific fields
+        if (in_array($request->kategori, ['bab', 'bak'])) {
+            $multipart[] = ['name' => 'warna',   'contents' => (string) ($request->warna ?? '')];
+            $multipart[] = ['name' => 'tekstur', 'contents' => (string) ($request->tekstur ?? '')];
+            $multipart[] = ['name' => 'volume',  'contents' => (string) ($request->volume ?? '')];
+            if ($request->filled('frekuensi')) {
+                $multipart[] = ['name' => 'frekuensi', 'contents' => (string) $request->frekuensi];
+            }
+        }
+
+        // Makan/Minum specific fields
+        if (in_array($request->kategori, ['makan', 'minum'])) {
+            if ($request->filled('porsi')) {
+                $multipart[] = ['name' => 'porsi', 'contents' => (string) $request->porsi];
+            }
+            if ($request->filled('nafsu_makan')) {
+                $multipart[] = ['name' => 'nafsu_makan', 'contents' => (string) $request->nafsu_makan];
+            }
+        }
 
         if ($request->hasFile('foto')) {
             $file = $request->file('foto');
             $multipart[] = [
                 'name'     => 'foto',
+                'contents' => fopen($file->getRealPath(), 'r'),
+                'filename' => $file->getClientOriginalName(),
+            ];
+        }
+
+        if ($request->hasFile('foto_sebelum')) {
+            $file = $request->file('foto_sebelum');
+            $multipart[] = [
+                'name'     => 'foto_sebelum',
+                'contents' => fopen($file->getRealPath(), 'r'),
+                'filename' => $file->getClientOriginalName(),
+            ];
+        }
+
+        if ($request->hasFile('foto_sesudah')) {
+            $file = $request->file('foto_sesudah');
+            $multipart[] = [
+                'name'     => 'foto_sesudah',
                 'contents' => fopen($file->getRealPath(), 'r'),
                 'filename' => $file->getClientOriginalName(),
             ];
@@ -353,6 +393,10 @@ private function formatAktivitas(array $a): array
         'mood'            => $a['mood'] ?? '',
         'deskripsi'       => $a['deskripsi'] ?? '',
         'foto_url'        => $a['foto_url'] ?? ($a['foto'] ?? ''),
+        'foto_sebelum_url' => $a['foto_sebelum_url'] ?? ($a['foto_sebelum'] ?? ''),
+        'foto_sesudah_url' => $a['foto_sesudah_url'] ?? ($a['foto_sesudah'] ?? ''),
+        'porsi'           => $a['porsi'] ?? '',
+        'nafsu_makan'     => $a['nafsu_makan'] ?? '',
         'lokasi'          => $a['lokasi'] ?? '',
         'lat'             => $a['lat'] ?? '',
         'lng'             => $a['lng'] ?? '',
@@ -361,7 +405,6 @@ private function formatAktivitas(array $a): array
         'tekstur'         => $a['tekstur'] ?? '',
         'volume'          => $a['volume'] ?? '',
         'frekuensi'       => $a['frekuensi'] ?? '',
-        'catatan_kondisi' => $a['catatan_kondisi'] ?? '',
     ];
 }
 }
