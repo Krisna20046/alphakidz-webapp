@@ -17,6 +17,46 @@
         50%     { transform: translateY(-6px); }
     }
     .float-anim { animation: floatEmpty 3s ease-in-out infinite; }
+
+    .wp-excerpt p { margin: 0; }
+
+    /* Pagination custom */
+    .pagination {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .pagination li a,
+    .pagination li span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 32px;
+        height: 32px;
+        padding: 0 8px;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #6B7280;
+        background: #F3F0FF;
+        text-decoration: none;
+        transition: all 0.15s ease;
+    }
+    .pagination li a:hover {
+        background: #EDE9FE;
+        color: #8B46D3;
+    }
+    .pagination li.active span {
+        background: #8B46D3;
+        color: #fff;
+    }
+    .pagination li.disabled span {
+        opacity: 0.4;
+        cursor: default;
+    }
 </style>
 @endpush
 
@@ -32,7 +72,7 @@
         </a>
         <div>
             <span class="text-white text-[17px] font-extrabold tracking-wide">Articles</span>
-            <p class="text-white/70 text-xs font-semibold mt-0.5 leading-[1.3]">Tips & Parenting Information</p>
+            <p class="text-white/70 text-xs font-semibold mt-0.5 leading-[1.3]">Tips &amp; Parenting Information</p>
         </div>
     </div>
 </div>
@@ -70,71 +110,32 @@
         </div>
     </div>
 
-    {{-- ARTIKEL POPULER --}}
+    {{-- SEMUA ARTIKEL DARI WP API --}}
     <div class="anim delay-3">
-        <div class="flex items-center justify-between mb-3 px-1">
-            <div class="flex items-center gap-2">
-                <ion-icon name="trending-up-outline" style="font-size:14px;color:#8B46D3;"></ion-icon>
-                <span class="text-[#1E1B2E] text-[15px] font-extrabold">Popular Articles</span>
-            </div>
-            <span class="text-[#9CA3AF] text-[10px] font-bold bg-[#EDE9FE] px-2.5 py-1 rounded-full">Soon</span>
-        </div>
-
-        <div class="space-y-3">
-            @php
-            $articles = [
-                ['title'=>'Cara Tepat Memperkenalkan Makanan Padat pada Bayi',    'cat'=>'Nutrisi',   'icon'=>'leaf-outline',     'time'=>'5 min read', 'bg'=>'bg-[#EDE9FE]', 'iconColor'=>'#8B46D3'],
-                ['title'=>'7 Aktivitas Stimulasi Terbaik untuk Balita 1-3 Tahun', 'cat'=>'Aktivitas', 'icon'=>'game-controller-outline', 'time'=>'7 min read', 'bg'=>'bg-[#FDF2F8]', 'iconColor'=>'#EC4899'],
-                ['title'=>'Jadwal Imunisasi Lengkap yang Wajib Diketahui Orang Tua','cat'=>'Imunisasi','icon'=>'medkit-outline',  'time'=>'4 min read', 'bg'=>'bg-[#EEF2FF]', 'iconColor'=>'#4F46E5'],
-            ];
-            @endphp
-            @foreach($articles as $i => $art)
-            <div class="anim section-card p-4 flex items-center gap-3 relative overflow-hidden"
-                 style="animation-delay: {{ 0.21 + $i * 0.08 }}s;">
-                <div class="absolute inset-0 bg-white/70 backdrop-blur-[1px] flex items-center justify-center z-10 rounded-[18px]">
-                    <div class="flex items-center gap-1.5 bg-[#EDE9FE] rounded-full px-3 py-1">
-                        <ion-icon name="lock-closed" style="font-size:11px;color:#8B46D3;"></ion-icon>
-                        <span class="text-[#8B46D3] text-[10px] font-bold">Coming Soon</span>
-                    </div>
-                </div>
-                <div class="w-12 h-12 rounded-xl {{ $art['bg'] }} flex items-center justify-center shrink-0">
-                    <ion-icon name="{{ $art['icon'] }}" style="font-size:22px;color:{{ $art['iconColor'] }};"></ion-icon>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-[#1E1B2E] font-bold text-xs leading-snug line-clamp-2 mb-1">{{ $art['title'] }}</p>
-                    <div class="flex items-center gap-2">
-                        <span class="text-[#9CA3AF] text-[10px] font-semibold">{{ $art['cat'] }}</span>
-                        <span class="text-[#E5E1F0] text-[10px]">•</span>
-                        <span class="text-[#9CA3AF] text-[10px]">{{ $art['time'] }}</span>
-                    </div>
-                </div>
-                <ion-icon name="chevron-forward" style="font-size:14px;color:#C4B5FD;flex-shrink:0;"></ion-icon>
-            </div>
-            @endforeach
-        </div>
-    </div>
-
-    {{-- SEMUA ARTIKEL --}}
-    <div class="anim delay-4">
         <div class="flex items-center gap-2 mb-3 px-1">
             <ion-icon name="layers-outline" style="font-size:14px;color:#8B46D3;"></ion-icon>
             <span class="text-[#1E1B2E] text-[15px] font-extrabold">All Articles</span>
         </div>
 
-        @if(isset($artikels) && count($artikels) > 0)
+        @if($paginator instanceof \Illuminate\Pagination\LengthAwarePaginator && $paginator->count() > 0)
             <div class="space-y-3">
-                @foreach($artikels as $i => $artikel)
-                <div class="anim section-card p-4 flex items-center gap-3 relative overflow-hidden"
-                     style="animation-delay: {{ 0.29 + $i * 0.06 }}s;">
-                    <div class="absolute inset-0 bg-white/70 backdrop-blur-[1px] flex items-center justify-center z-10 rounded-[18px]">
-                        <div class="flex items-center gap-1.5 bg-[#EDE9FE] rounded-full px-3 py-1">
-                            <ion-icon name="lock-closed" style="font-size:11px;color:#8B46D3;"></ion-icon>
-                            <span class="text-[#8B46D3] text-[10px] font-bold">Coming Soon</span>
-                        </div>
-                    </div>
-                    @if(!empty($artikel['thumbnail']))
-                    <div class="w-16 h-16 rounded-xl overflow-hidden shrink-10">
-                        <img src="{{ $artikel['thumbnail'] }}" alt="" class="w-full h-full object-cover">
+                @foreach($paginator as $i => $post)
+                @php
+                    $title = $post['title']['rendered'] ?? '';
+                    $excerpt = strip_tags($post['excerpt']['rendered'] ?? '');
+                    $date = \Carbon\Carbon::parse($post['date'] ?? now())->translatedFormat('d F Y');
+                    $link = $post['link'] ?? '#';
+                    $thumbnail = $post['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null;
+                @endphp
+                <a href="{{ route('artikel.show', $post['id']) }}"
+                   class="block anim section-card p-4 flex items-center gap-3 relative overflow-hidden"
+                   style="animation-delay: {{ 0.21 + $i * 0.06 }}s;">
+                    @if($thumbnail)
+                    <div class="w-16 h-16 rounded-xl overflow-hidden shrink-0">
+                        <img src="{{ $thumbnail }}"
+                             alt="{{ $title }}"
+                             class="w-full h-full object-cover"
+                             loading="lazy">
                     </div>
                     @else
                     <div class="w-16 h-16 rounded-xl bg-[#EDE9FE] flex items-center justify-center shrink-0">
@@ -142,22 +143,83 @@
                     </div>
                     @endif
                     <div class="flex-1 min-w-0">
-                        <span class="inline-block px-2 py-[2px] rounded-full bg-[#FDF2F8] text-[#EC4899] text-[9px] font-bold mb-1.5">{{ $artikel['kategori'] ?? 'Artikel' }}</span>
-                        <p class="text-[#1E1B2E] font-bold text-xs leading-snug line-clamp-2">{{ $artikel['judul'] }}</p>
+                        <p class="text-[#1E1B2E] font-bold text-xs leading-snug line-clamp-2 mb-1">
+                            {{ $title }}
+                        </p>
+                        <p class="text-[#9CA3AF] text-[10px] leading-relaxed line-clamp-2 wp-excerpt">
+                            {!! $excerpt !!}
+                        </p>
                         <div class="flex items-center gap-2 mt-1">
                             <span class="flex items-center gap-[3px] text-[9px] text-[#9CA3AF] font-semibold">
                                 <ion-icon name="time-outline" style="font-size:10px;"></ion-icon>
-                                {{ $artikel['read_time'] ?? '5' }} min
-                            </span>
-                            <span class="flex items-center gap-[3px] text-[9px] text-[#9CA3AF] font-semibold">
-                                <ion-icon name="eye-outline" style="font-size:10px;"></ion-icon>
-                                {{ $artikel['views'] ?? '0' }}
+                                {{ $date }}
                             </span>
                         </div>
                     </div>
                     <ion-icon name="chevron-forward" style="font-size:14px;color:#C4B5FD;flex-shrink:0;"></ion-icon>
-                </div>
+                </a>
                 @endforeach
+            </div>
+
+            {{-- PAGINATION --}}
+            <div class="flex justify-center pt-4">
+                @php
+                    $paginator->onEachSide(1);
+                    $currentPage = $paginator->currentPage();
+                    $lastPage = $paginator->lastPage();
+                @endphp
+                <ul class="pagination">
+                    {{-- FIRST --}}
+                    @if($currentPage > 2)
+                    <li>
+                        <a href="{{ $paginator->url(1) }}" aria-label="First">
+                            <ion-icon name="play-skip-back" style="font-size:12px;"></ion-icon>
+                        </a>
+                    </li>
+                    @else
+                    <li class="disabled">
+                        <span><ion-icon name="play-skip-back" style="font-size:12px;"></ion-icon></span>
+                    </li>
+                    @endif
+
+                    {{-- PREV --}}
+                    @if($paginator->onFirstPage())
+                    <li class="disabled"><span><ion-icon name="chevron-back" style="font-size:12px;"></ion-icon></span></li>
+                    @else
+                    <li><a href="{{ $paginator->previousPageUrl() }}" rel="prev"><ion-icon name="chevron-back" style="font-size:12px;"></ion-icon></a></li>
+                    @endif
+
+                    {{-- PAGE NUMBERS --}}
+                    @foreach($paginator->getUrlRange(max(1, $currentPage - 1), min($lastPage, $currentPage + 1)) as $pageNum => $url)
+                    <li class="{{ $pageNum == $currentPage ? 'active' : '' }}">
+                        @if($pageNum == $currentPage)
+                            <span>{{ $pageNum }}</span>
+                        @else
+                            <a href="{{ $url }}">{{ $pageNum }}</a>
+                        @endif
+                    </li>
+                    @endforeach
+
+                    {{-- NEXT --}}
+                    @if($paginator->hasMorePages())
+                    <li><a href="{{ $paginator->nextPageUrl() }}" rel="next"><ion-icon name="chevron-forward" style="font-size:12px;"></ion-icon></a></li>
+                    @else
+                    <li class="disabled"><span><ion-icon name="chevron-forward" style="font-size:12px;"></ion-icon></span></li>
+                    @endif
+
+                    {{-- LAST --}}
+                    @if($currentPage < $lastPage - 1)
+                    <li>
+                        <a href="{{ $paginator->url($lastPage) }}" aria-label="Last">
+                            <ion-icon name="play-skip-forward" style="font-size:12px;"></ion-icon>
+                        </a>
+                    </li>
+                    @else
+                    <li class="disabled">
+                        <span><ion-icon name="play-skip-forward" style="font-size:12px;"></ion-icon></span>
+                    </li>
+                    @endif
+                </ul>
             </div>
         @else
             <div class="flex flex-col items-center justify-center py-12 px-8">

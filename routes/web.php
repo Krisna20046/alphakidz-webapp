@@ -13,6 +13,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\KonsultanController;
 use App\Http\Controllers\NexusController;
 use App\Http\Controllers\KonsultanTugaskanController;
+use App\Http\Controllers\ArtikelController;
 
 
 // ─── Guest Routes ─────────────────────────────────────────────────────────────
@@ -76,8 +77,9 @@ Route::middleware('auth.api')->group(function () {
     Route::get( '/api/chat',      [ChatController::class, 'apiGetChat'] )->name('api.chat.get');
     Route::post('/api/chat',      [ChatController::class, 'apiSendChat'])->name('api.chat.send');
 
-    // Artikel (placeholder)
-    Route::get('/artikel', fn() => view('artikel.index'))->name('artikel.index');
+    // Artikel
+    Route::get('/artikel', [ArtikelController::class, 'index'])->name('artikel.index');
+    Route::get('/artikel/{id}', [ArtikelController::class, 'show'])->name('artikel.show');
 
     // ── Nexus ────────────────────────────────────────────────────────────────
     Route::prefix('nexus')->name('nexus.')->group(function () {
