@@ -13,7 +13,7 @@
     const STORAGE_KEY  = 'nanny_gps_sharing_active';
     const NANNY_ID     = @json($nannyUserId);
     const NANNY_TOKEN  = "{{ session('token') }}";
-    const NANNY_API    = "{{ rtrim(config('services.api.base_url', env('API_BASE_URL', 'http://127.0.0.1:8000/api')), '/') }}";
+    const NANNY_API    = "{{ rtrim(config('services.api.base_url', env('API_BASE_URL', 'https://api.alpha-kidz.com/api')), '/') }}";
     const NANNY_CSRF   = "{{ csrf_token() }}";
 
     let _interval = null;

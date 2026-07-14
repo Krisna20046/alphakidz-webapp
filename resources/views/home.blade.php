@@ -435,7 +435,7 @@
 <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const API_BASE  = '{{ rtrim(config("services.api.base_url", env("API_BASE_URL", "http://127.0.0.1:8000/api")), "/") }}';
+const API_BASE  = '{{ rtrim(config("services.api.base_url", env("API_BASE_URL", "https://api.alpha-kidz.com/api")), "/") }}';
 @php
     $resolvedUserId = session('user_id') ?: data_get(session('user'), 'id_user');
 @endphp

@@ -688,7 +688,7 @@
 // ================================================================
 // CONFIG & STATE
 // ================================================================
-const API_BASE  = '{{ rtrim(config("services.api.base_url", env("API_BASE_URL", "http://127.0.0.1:8000/api")), "/") }}';
+const API_BASE  = '{{ rtrim(config("services.api.base_url", env("API_BASE_URL", "https://api.alpha-kidz.com/api")), "/") }}';
 @php
     $resolvedUserId = session('user_id') ?: data_get(session('user'), 'id_user');
 @endphp
