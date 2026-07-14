@@ -91,6 +91,15 @@
     .day-cell.today.has-dot::after,
     .day-cell.selected.has-dot::after { background:#fff; }
 
+    .filter-chip {
+        cursor:pointer; transition:background .15s,color .15s;
+        white-space:nowrap; flex-shrink:0;
+        padding:7px 14px; border-radius:20px;
+        font-size:13px; font-weight:700;
+        font-family:'Nunito',sans-serif;
+    }
+    .filter-chip:active { transform:scale(0.95); }
+
     /* ── Timeline ── */
     .timeline-section { display:flex; flex-direction:column; gap:12px; }
     .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
@@ -301,6 +310,34 @@
                 Belum ada data nanny
             </div>
             @endforelse
+        </div>
+    </div>
+
+    {{-- Filter kategori --}}
+    <div class="anim d2">
+        <div class="hide-scrollbar flex" style="overflow-x:auto;gap:8px;padding-bottom:2px;">
+            @php
+                $kats = [
+                    ['value'=>'','label'=>'Semua'],
+                    ['value'=>'makan','label'=>'🍽️ Makan'],
+                    ['value'=>'tidur','label'=>'🌙 Tidur'],
+                    ['value'=>'main','label'=>'⚽ Main'],
+                    ['value'=>'belajar','label'=>'📖 Belajar'],
+                    ['value'=>'mandi','label'=>'🛁 Mandi'],
+                    ['value'=>'bab','label'=>'🟤 BAB'],
+                    ['value'=>'bak','label'=>'💧 BAK'],
+                ];
+            @endphp
+            @foreach($kats as $kat)
+            @php $isActive = ($activeKat ?? '') === $kat['value']; @endphp
+            <a href="{{ $id_nanny
+                ? url('/konsultan/nanny/'.$id_nanny.'/diary?tanggal='.($tanggal ?? date('Y-m-d')).($kat['value'] ? '&kategori='.$kat['value'] : '').($id_anak ? '&id_anak='.$id_anak : ''))
+                : '#' }}"
+               class="filter-chip"
+               style="border:2px solid {{ $isActive?'#8B46D3':'#EDE9FE' }};background:{{ $isActive?'#8B46D3':'#fff' }};color:{{ $isActive?'#fff':'#5A556E' }};text-decoration:none;">
+                {{ $kat['label'] }}
+            </a>
+            @endforeach
         </div>
     </div>
 
