@@ -367,7 +367,7 @@
 
             <div class="flex gap-3 overflow-x-auto pb-1 hide-scrollbar">
                 @forelse($artikels ?? [] as $artikel)
-                <a class="min-w-[200px] bg-white rounded-[15px] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.07)] flex-shrink-0 no-underline flex flex-col transition-transform duration-150 ease-in-out active:scale-[0.96]" href="{{ route('artikel.show', $artikel['id']) }}">
+                <a class="w-[200px] bg-white rounded-[15px] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.07)] flex-shrink-0 no-underline flex flex-col transition-transform duration-150 ease-in-out active:scale-[0.96]" href="{{ route('artikel.show', $artikel['id']) }}">
                     @if(!empty($artikel['thumbnail']))
                         <img class="w-full h-[110px] object-cover"
                              src="{{ $artikel['thumbnail'] }}"

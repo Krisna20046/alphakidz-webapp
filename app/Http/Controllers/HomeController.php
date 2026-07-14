@@ -36,7 +36,10 @@ class HomeController extends Controller
 
         $menus = $menuRes ?? [];
 
-        return view('home', compact('menus'));
+        // Ambil artikel dari WP API
+        $artikels = $this->fetchArticles();
+
+        return view('home', compact('menus', 'artikels'));
     }
 
     /**
@@ -78,6 +81,39 @@ class HomeController extends Controller
     // ─────────────────────────────────────────────────────────────────────────
     // PRIVATE HELPERS
     // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Ambil artikel dari WP API untuk section di dashboard
+     */
+    private function fetchArticles(): array
+    {
+        try {
+            $response = Http::timeout(8)
+                ->get('https://pnpro.id/wp-json/wp/v2/posts', [
+                    'per_page' => 5,
+                    '_embed'   => 'wp:featuredmedia',
+                ]);
+
+            if (!$response->successful()) {
+                return [];
+            }
+
+            return $response->collect()->map(function ($post) {
+                return [
+                    'id'        => $post['id'],
+                    'judul'     => $post['title']['rendered'] ?? '',
+                    'thumbnail' => $post['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
+                    'kategori'  => $post['_embedded']['wp:term'][0][0]['name'] ?? 'Artikel',
+                    'read_time' => '3',
+                    'views'     => '0',
+                    'link'      => $post['link'] ?? '#',
+                ];
+            })->toArray();
+        } catch (\Exception $e) {
+            Log::error('HomeController@fetchArticles - ' . $e->getMessage());
+            return [];
+        }
+    }
 
     /**
      * Fetch user detail & menu role secara parallel
