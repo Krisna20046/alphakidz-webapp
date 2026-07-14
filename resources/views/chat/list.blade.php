@@ -263,11 +263,19 @@ function applyFilters() {
 // ── Fetch Chat List ───────────────────────────────────────────────────────────
 async function fetchChatList() {
     try {
+        // Cache chat list 1 menit — cukup karena realtime lewat Pusher update
+        var data = window.apiCache.get('chat_list');
+        if (data) {
+            allChats = processChatData(data.data || []);
+            applyFilters();
+            return;
+        }
         const res  = await fetch('{{ url("/api/chat-list") }}', {
             headers:{ 'Accept':'application/json', 'Authorization':`Bearer ${AUTH_TOKEN}` }
         });
-        const data = await res.json();
+        data = await res.json();
         if (data.success && Array.isArray(data.data)) {
+            window.apiCache.set('chat_list', data, 60 * 1000);
             allChats = processChatData(data.data);
             applyFilters();
         } else {
@@ -276,6 +284,11 @@ async function fetchChatList() {
     } catch(e) {
         renderChats([]);
     }
+}
+
+// Hapus cache chat_list saat terima pesan realtime agar fresh
+function invalidateChatCache() {
+    window.apiCache.delete('chat_list');
 }
 
 fetchChatList();
@@ -292,6 +305,10 @@ fetchChatList();
     channel.bind('chat.new', (event) => {
         const chat = event?.chat;
         if (!chat || chat.id_penerima != USER_ID) return;
+
+        // Invalidate cache so next page load gets fresh data
+        invalidateChatCache();
+
         const existing = allChats.find(c => c.otherUserId == chat.id_pengirim);
         if (existing) {
             existing.unread++;

@@ -166,6 +166,8 @@ function hideLogoutModal() {
 }
 function doLogout() {
     if (typeof removeFcmTokenOnLogout === 'function') removeFcmTokenOnLogout();
+    // Hapus semua cache aplikasi saat logout
+    if (window.apiCache) window.apiCache.clear();
     document.getElementById('logoutForm').submit();
 }
 modal.addEventListener('click', (e) => { if (e.target === modal) hideLogoutModal(); });

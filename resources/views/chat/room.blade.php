@@ -502,6 +502,9 @@ async function sendMessage(){
         const data = await res.json();
 
         if(data.status==='success' && data.chat){
+            // Invalidate chat_list cache so list page shows updated preview
+            if (window.apiCache) window.apiCache.delete('chat_list');
+
             const hasTempMsg = messages.some(m => m.id === tempId);
             const hasRealMsg = messages.some(m => m.id === data.chat.id);
 

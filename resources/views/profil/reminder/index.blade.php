@@ -681,6 +681,15 @@ setInterval(() => {
 }, 10000);
 
 // ================================================================
+// CACHE HELPER — clear reminders cache after any mutation
+// ================================================================
+function invalidateRemindersCache() {
+    if (window.apiCache) {
+        window.apiCache.delete('reminders_list');
+    }
+}
+
+// ================================================================
 // FETCH
 // ================================================================
 async function fetchReminders() {
@@ -688,11 +697,23 @@ async function fetchReminders() {
         const endpoint = USER_ID
             ? `${API_BASE}/reminders/${USER_ID}`
             : `${API_BASE}/reminders`;
+        // Coba cache dulu — 2 menit
+        if (window.apiCache) {
+            const cached = window.apiCache.get('reminders_list');
+            if (cached) {
+                reminders = cached.data || [];
+                renderList();
+                return;
+            }
+        }
         const res  = await fetch(endpoint, {
             headers: { 'Authorization': `Bearer ${API_TOKEN}`, 'Accept': 'application/json' }
         });
         const data = await res.json();
         reminders  = data.data || [];
+        if (window.apiCache) {
+            window.apiCache.set('reminders_list', data, 2 * 60 * 1000);
+        }
         renderList();
     } catch (e) {
         showBanner('Failed to load reminders. Please try again.', 'error');
@@ -866,6 +887,7 @@ async function confirmDelete() {
         const data = await res.json();
         if (data.success) {
             reminders = reminders.filter(r => r.id !== pendingDeleteId);
+            invalidateRemindersCache();
             renderList();
             showBanner('Alarm deleted successfully.', 'success');
         } else {
@@ -1223,6 +1245,7 @@ async function saveAlarm() {
             if (data.success) {
                 const idx = reminders.findIndex(r => r.id === editingId);
                 if (idx !== -1) reminders[idx] = { ...reminders[idx], ...data.data };
+                invalidateRemindersCache();
                 showBanner('Alarm updated successfully!', 'success');
             } else {
                 showBanner(data.message || 'Failed to update alarm.', 'error');
@@ -1236,6 +1259,7 @@ async function saveAlarm() {
             data = await res.json();
             if (data.success) {
                 reminders.push(data.data);
+                invalidateRemindersCache();
                 showBanner('Alarm created successfully!', 'success');
             } else {
                 showBanner(data.message || 'Failed to create alarm.', 'error');

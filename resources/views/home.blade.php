@@ -499,11 +499,12 @@ const CSRF           = "{{ csrf_token() }}";
 (async function loadUpcomingReminder() {
     if (!AUTH_TOKEN || !USER_ID) return;
     try {
-        const res  = await fetch(`${API_BASE}/reminders/${USER_ID}`, {
-            headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN, 'Accept': 'application/json' }
+        const remindersUrl = `${API_BASE}/reminders/${USER_ID}`;
+        const data = await window.apiCache.fetch(remindersUrl, {
+            ttl: 3 * 60 * 1000, // cache 3 menit
+            headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN }
         });
-        const data = await res.json();
-        const reminders = data.data || [];
+        const reminders = data && data.data ? data.data : [];
         if (!reminders.length) return;
 
         const now = new Date();
@@ -564,11 +565,12 @@ const CSRF           = "{{ csrf_token() }}";
 (async function loadLowStock() {
     if (!AUTH_TOKEN || !USER_ID) return;
     try {
-        const res  = await fetch(`${API_BASE}/stock/${USER_ID}`, {
-            headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN, 'Accept': 'application/json' }
+        const stockUrl = `${API_BASE}/stock/${USER_ID}`;
+        const data = await window.apiCache.fetch(stockUrl, {
+            ttl: 3 * 60 * 1000, // cache 3 menit
+            headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN }
         });
-        const data = await res.json();
-        const items = (data.data || []).filter(item =>
+        const items = (data && data.data || []).filter(item =>
             item.low_stock_alert &&
             (item.quantity ?? 0) <= (item.alert_threshold ?? 1)
         );
@@ -610,20 +612,25 @@ const CSRF           = "{{ csrf_token() }}";
 (async function loadSharedLowStock() {
     if (!AUTH_TOKEN || !USER_ID) return;
     try {
-        const assignmentRes = await fetch(`${API_BASE}/shared-stock/my-assignments?user_id=${USER_ID}`, {
-            headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN, 'Accept': 'application/json' }
+        // Cache assignment list — jarang berubah
+        const assignUrl = `${API_BASE}/shared-stock/my-assignments?user_id=${USER_ID}`;
+        const assignmentData = await window.apiCache.fetch(assignUrl, {
+            ttl: 5 * 60 * 1000, // cache 5 menit
+            headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN }
         });
-        const assignmentData = await assignmentRes.json();
-        const assignments = assignmentData.data || [];
+        const assignments = assignmentData && assignmentData.data || [];
         if (!assignments.length) return;
 
         const lowSharedItems = [];
 
         for (const assignment of assignments) {
-            const sharedRes = await fetch(`${API_BASE}/shared-stock/assignment/${assignment.assignment_id}?user_id=${USER_ID}`, {
-                headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN, 'Accept': 'application/json' }
+            // Cache per assignment data — data jarang berubah
+            const detailUrl = `${API_BASE}/shared-stock/assignment/${assignment.assignment_id}?user_id=${USER_ID}`;
+            const sharedData = await window.apiCache.fetch(detailUrl, {
+                ttl: 5 * 60 * 1000,
+                cacheKey: `shared_stock_${assignment.assignment_id}`,
+                headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN }
             });
-            const sharedData = await sharedRes.json();
             const partner = assignment.role === 'nanny' ? assignment.majikan : assignment.nanny;
             const partnerName = partner?.name || (assignment.role === 'nanny' ? 'Majikan' : 'Nanny');
 
@@ -713,11 +720,18 @@ function clearUnread() { updateBadge(0); }
 async function fetchUnreadCount() {
     if (!AUTH_TOKEN) return;
     try {
-        const res  = await fetch(UNREAD_API, {
-            headers: { 'Authorization': `Bearer ${AUTH_TOKEN}`, 'Accept': 'application/json' }
-        });
-        const data = await res.json();
-        if (data.success && data.data) updateBadge(data.data.unread_count || 0);
+        // Unread count: TTL pendek (30 detik) karena real-time
+        var data = window.apiCache.get('unread_count');
+        if (!data) {
+            var res  = await fetch(UNREAD_API, {
+                headers: { 'Authorization': `Bearer ${AUTH_TOKEN}`, 'Accept': 'application/json' }
+            });
+            data = await res.json();
+            if (data.success && data.data) {
+                window.apiCache.set('unread_count', data, 30 * 1000);
+            }
+        }
+        if (data && data.success && data.data) updateBadge(data.data.unread_count || 0);
     } catch (e) { /* silent */ }
 }
 
@@ -836,11 +850,12 @@ async function refreshGpsLocations() {
     });
 
     try {
-        const res = await fetch(`${API_BASE}/majikan/nanny-locations?user_id=${USER_ID}`, {
-            headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN, 'Accept': 'application/json' }
+        const gpsUrl = `${API_BASE}/majikan/nanny-locations?user_id=${USER_ID}`;
+        const data = await window.apiCache.fetch(gpsUrl, {
+            ttl: 55 * 1000, // cache ~55 detik (sama dengan refresh interval 60s)
+            headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN }
         });
-        const data = await res.json();
-        const nannies = data.data || [];
+        const nannies = data && data.data || [];
 
         if (!nannies.length) {
             section.classList.add('hidden');
@@ -1033,11 +1048,19 @@ async function toggleNannyGps() {
 
     const channel = pusher.subscribe(`private-chat.${USER_ID}`);
     channel.bind('chat.new', (event) => {
-        if (event?.chat?.id_penerima == USER_ID) updateBadge(unreadCount + 1);
+        if (event?.chat?.id_penerima == USER_ID) {
+            // Clear unread cache so next fetch is fresh
+            window.apiCache.delete('unread_count');
+            updateBadge(unreadCount + 1);
+        }
     });
 
     // Real-time nanny location update via Pusher
     channel.bind('nanny.location', (event) => {
+        // Clear GPS cache so next refresh gets fresh data
+        window.apiCache.delete(`ak_cache_${API_BASE}/majikan/nanny-locations?user_id=${USER_ID}`);
+        // Map key juga bisa pakai clearByPrefix
+        window.apiCache.clearByPrefix('nanny-locations');
         refreshGpsLocations();
     });
 })();

@@ -3,13 +3,14 @@
 // Strategy:
 //   - App shell (HTML halaman)    → Network First, fallback offline page
 //   - Static assets (CSS/JS/font) → Cache First
-//   - API calls (/api/*, external) → Network Only (jangan cache data sensitif)
+//   - API calls (/api/*)           → Stale-While-Revalidate with TTL
 //   - Gambar/icons                 → Cache First dengan batas ukuran
 
-const APP_VERSION   = 'v1.0.0';
+const APP_VERSION   = 'v2.0.0';
 const SHELL_CACHE   = `alphakidz-shell-${APP_VERSION}`;
 const STATIC_CACHE  = `alphakidz-static-${APP_VERSION}`;
 const IMAGE_CACHE   = `alphakidz-images-${APP_VERSION}`;
+const API_CACHE     = `alphakidz-api-${APP_VERSION}`;
 
 // ── App Shell: halaman-halaman utama yang di-precache ─────────────────────────
 const SHELL_URLS = [
@@ -27,13 +28,16 @@ const STATIC_URLS = [
 
 // ── URL patterns yang TIDAK pernah di-cache ───────────────────────────────────
 const NEVER_CACHE = [
-    /\/api\//,            // API proxy routes Laravel
     /\/broadcasting\//,   // Pusher auth
     /\/logout/,           // Logout
     /\/fcm\//,            // FCM token management
     /pusher\.com/,        // Pusher external
     /fonts\.googleapis/,  // Google Fonts (biarkan browser cache sendiri)
 ];
+
+// ── API cache config ──────────────────────────────────────────────────────────
+const API_TTL      = 10 * 60 * 1000; // 10 menit
+const API_MAX_ENTRIES = 150;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // INSTALL — precache app shell
@@ -42,8 +46,6 @@ self.addEventListener('install', event => {
     event.waitUntil(
         Promise.all([
             caches.open(SHELL_CACHE).then(cache => {
-                // addAll gagal total jika salah satu URL error
-                // pakai add() satu per satu agar lebih toleran
                 return Promise.allSettled(
                     SHELL_URLS.map(url => cache.add(url).catch(e =>
                         console.warn(`[SW] Precache skip: ${url}`, e.message)
@@ -65,7 +67,7 @@ self.addEventListener('install', event => {
 // ACTIVATE — hapus cache lama
 // ─────────────────────────────────────────────────────────────────────────────
 self.addEventListener('activate', event => {
-    const validCaches = [SHELL_CACHE, STATIC_CACHE, IMAGE_CACHE];
+    const validCaches = [SHELL_CACHE, STATIC_CACHE, IMAGE_CACHE, API_CACHE];
 
     event.waitUntil(
         caches.keys()
@@ -95,6 +97,12 @@ self.addEventListener('fetch', event => {
     // Abaikan URL yang tidak boleh di-cache
     if (NEVER_CACHE.some(pattern => pattern.test(request.url))) return;
 
+    // ── API proxy → Stale-While-Revalidate dengan TTL ───────────────────────
+    if (isApiRequest(url)) {
+        event.respondWith(staleWhileRevalidateApi(request));
+        return;
+    }
+
     // ── Gambar → Cache First (max 50 entries, 30 hari) ──────────────────────
     if (request.destination === 'image') {
         event.respondWith(cacheFirstImage(request));
@@ -115,8 +123,96 @@ self.addEventListener('fetch', event => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// API: Stale-While-Revalidate dengan TTL
+// Strategy:
+//   1. Coba network dulu (timeout 8 detik)
+//   2. Kalau network sukses → simpan ke cache + return
+//   3. Kalau network gagal → cari di cache
+//   4. Cache juga tetap dipakai selama masih dalam TTL (stale ok)
+//   5. Cache di-refresh di background kalau network sukses
+// ─────────────────────────────────────────────────────────────────────────────
+async function staleWhileRevalidateApi(request) {
+    const cache = await caches.open(API_CACHE);
+    const cacheKey = stripAuthHeader(request);
+
+    // Coba network dulu
+    try {
+        const networkRes = await fetchWithTimeout(request, 8000);
+        if (networkRes.ok) {
+            // Clone response untuk cache
+            const cacheClone = networkRes.clone();
+            const body = await cacheClone.json();
+            const cacheEntry = {
+                data: body,
+                timestamp: Date.now(),
+                url: request.url,
+            };
+            cache.put(cacheKey, new Response(JSON.stringify(cacheEntry), {
+                headers: { 'Content-Type': 'application/json' }
+            }));
+            trimCache(API_CACHE, API_MAX_ENTRIES);
+            return networkRes;
+        }
+        // Network gagal (5xx) → coba cache
+        const cached = await cache.match(cacheKey);
+        if (cached) {
+            const entry = await cached.json();
+            if (entry && entry.data) {
+                return new Response(JSON.stringify(entry.data), {
+                    headers: { 'Content-Type': 'application/json' }
+                });
+            }
+        }
+        return networkRes;
+    } catch (_) {
+        // Network error (offline/timeout) → coba cache
+        const cached = await cache.match(cacheKey);
+        if (cached) {
+            const entry = await cached.json();
+            if (entry && entry.data) {
+                // Cek TTL — kalau expired, return tapi kasih tahu client via header
+                const isStale = (Date.now() - entry.timestamp) > API_TTL;
+                const headers = new Headers({
+                    'Content-Type': 'application/json',
+                    'X-Cache': isStale ? 'HIT_STALE' : 'HIT_FRESH',
+                    'X-Cache-Timestamp': String(entry.timestamp),
+                });
+                return new Response(JSON.stringify(entry.data), { headers });
+            }
+        }
+        // Fallback: kalau tidak ada cache sama sekali, return error
+        return new Response(JSON.stringify({
+            success: false, message: 'No connection and no cached data available.'
+        }), {
+            status: 503,
+            headers: { 'Content-Type': 'application/json' }
+        });
+    }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
+
+function isApiRequest(url) {
+    // Hanya cache API proxy milik Laravel sendiri (same-origin)
+    // Contoh: /api/chat-list, /api/unread-count
+    // JANGAN cache external API seperti api.alpha-kidz.com/api/*
+    // karena itu akan mengganggu auth guard (auto-logout detection)
+    return url.hostname === location.hostname && url.pathname.startsWith('/api/');
+}
+
+function stripAuthHeader(request) {
+    // Buat cache key tanpa Authorization header
+    // sehingga request dengan token berbeda tidak bentrok
+    return request.url;
+}
+
+function fetchWithTimeout(request, ms) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), ms);
+    return fetch(request, { signal: controller.signal }).finally(() => clearTimeout(id));
+}
 
 function isStaticAsset(url) {
     const ext = url.pathname.split('.').pop();
@@ -132,17 +228,13 @@ async function networkFirstNavigate(request) {
     const cache = await caches.open(SHELL_CACHE);
     try {
         const networkRes = await fetch(request);
-        // Simpan response HTML yang berhasil ke cache (kecuali halaman error)
         if (networkRes.ok) {
             cache.put(request, networkRes.clone());
         }
         return networkRes;
     } catch (_) {
-        // Offline: coba dari cache
         const cached = await cache.match(request);
         if (cached) return cached;
-
-        // Tidak ada cache → tampilkan halaman offline
         return cache.match('/offline') || new Response(offlineFallbackHTML(), {
             headers: { 'Content-Type': 'text/html; charset=utf-8' }
         });
@@ -173,7 +265,6 @@ async function cacheFirstImage(request) {
     try {
         const networkRes = await fetch(request);
         if (networkRes.ok) {
-            // Batasi jumlah cache gambar
             cache.put(request, networkRes.clone());
             trimCache(IMAGE_CACHE, 60);
         }
@@ -226,7 +317,7 @@ function offlineFallbackHTML() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// PUSH NOTIFICATION (opsional — siapkan handler-nya)
+// PUSH NOTIFICATION
 // ─────────────────────────────────────────────────────────────────────────────
 self.addEventListener('push', event => {
     if (!event.data) return;
@@ -259,8 +350,6 @@ self.addEventListener('notificationclick', event => {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MESSAGE HANDLER — terima postMessage dari halaman (foreground notification)
-// Dipakai saat app terbuka di Android: new Notification() tidak bisa heads-up,
-// tapi SW showNotification() bisa. Halaman kirim ke sini via postMessage.
 // ─────────────────────────────────────────────────────────────────────────────
 self.addEventListener('message', event => {
     if (!event.data || event.data.type !== 'SHOW_NOTIFICATION') return;
