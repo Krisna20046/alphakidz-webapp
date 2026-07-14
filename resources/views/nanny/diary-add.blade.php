@@ -338,7 +338,7 @@
     </div>
 
     {{-- ACTIVITY DESCRIPTION --}}
-    <div class="anim d5">
+    <div class="anim d5" data-section="description">
         <p class="sec-label">Activity Description</p>
         <div class="desk-wrap">
             <textarea id="deskripsi" class="desk-input" rows="4"
@@ -421,11 +421,11 @@
             </div>
         </div>
 
-        {{-- Catatan Kondisi --}}
+        {{-- Deskripsi --}}
         <div>
-            <p class="time-field-label">Catatan Kondisi</p>
+            <p class="time-field-label">Deskripsi</p>
             <div class="desk-wrap">
-                <textarea id="catatanKondisi" class="desk-input" rows="3" placeholder="Catatan tambahan tentang kondisi..."></textarea>
+                <textarea id="catatanKondisi" class="desk-input" rows="3" placeholder="Deskripsi tambahan tentang kondisi..."></textarea>
             </div>
         </div>
     </div>
@@ -531,34 +531,50 @@ let selTekstur = '';
 let selVolume  = '';
 let frekuensi  = 1;
 
+const KAT_DURASI = {
+    makan:   30,
+    minum:   10,
+    tidur:   120,
+    main:    60,
+    belajar: 45,
+    mandi:   15,
+    bab:     10,
+    bak:     2,
+};
+
 function pad(n){ return String(n).padStart(2,'0'); }
 
-// ── Default times ──
-(function(){
+function setDurasi(menit){
     const now=new Date();
     jamMulai=pad(now.getHours())+':'+pad(now.getMinutes());
-    const end=new Date(now.getTime()+30*60000);
+    const end=new Date(now.getTime()+menit*60000);
     jamSelesai=pad(end.getHours())+':'+pad(end.getMinutes());
     document.getElementById('displayMulai').textContent=jamMulai;
     document.getElementById('displaySelesai').textContent=jamSelesai;
     updateDurasi();
-})();
+}
+
+// ── Default times ──
+(function(){ setDurasi(30); })();
 
 // ── Category ──
 function selectKat(btn){
     document.querySelectorAll('.kat-btn').forEach(b=>{ b.classList.remove('sel'); });
     btn.classList.add('sel');
     selKat = btn.dataset.kat;
+    setDurasi(KAT_DURASI[selKat] || 30);
 
     const isBabBak = selKat === 'bab' || selKat === 'bak';
     const babSection = document.getElementById('babBakSection');
     const moodSection = document.querySelector('[data-section="mood"]');
+    const descSection = document.querySelector('[data-section="description"]');
     const locationSection = document.querySelector('[data-section="location"]');
     const photoSection = document.querySelector('[data-section="photo"]');
 
     if (isBabBak) {
         babSection.style.display = 'block';
         if (moodSection) moodSection.style.display = 'none';
+        if (descSection) descSection.style.display = 'none';
         if (locationSection) locationSection.style.display = 'none';
         if (photoSection) photoSection.style.display = 'none';
         // Reset mood
@@ -573,6 +589,7 @@ function selectKat(btn){
     } else {
         babSection.style.display = 'none';
         if (moodSection) moodSection.style.display = '';
+        if (descSection) descSection.style.display = '';
         if (locationSection) locationSection.style.display = '';
         if (photoSection) photoSection.style.display = '';
     }
@@ -758,7 +775,6 @@ async function handleSubmit(){
         fd.append('tekstur',         selTekstur);
         fd.append('volume',          selVolume);
         fd.append('frekuensi',       frekuensi);
-        fd.append('catatan_kondisi', document.getElementById('catatanKondisi').value);
         fd.append('deskripsi',       document.getElementById('catatanKondisi').value);
     }
 

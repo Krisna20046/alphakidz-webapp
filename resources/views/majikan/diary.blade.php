@@ -707,7 +707,6 @@ function openDetail(item){
         if(item.tekstur && item.kategori==='bab') rows.push({icon:'layers-outline',label:'Tekstur',value:item.tekstur.charAt(0).toUpperCase()+item.tekstur.slice(1)});
         if(item.volume) rows.push({icon:'scale-outline',label:'Volume',value:item.volume.charAt(0).toUpperCase()+item.volume.slice(1)});
         if(item.frekuensi) rows.push({icon:'repeat-outline',label:'Frekuensi',value:item.frekuensi+'×'});
-        if(item.catatan_kondisi) rows.push({icon:'document-text-outline',label:'Catatan',value:item.catatan_kondisi});
     }
     if(item.nanny_name) rows.push({icon:'person-outline',label:'Dicatat oleh',value:item.nanny_name});
 
