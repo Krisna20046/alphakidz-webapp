@@ -314,6 +314,11 @@
                 Shared Stock
                 <span class="tab-badge" id="sharedBadge" style="display:none">0</span>
             </button>
+            <button class="tab-btn" id="tabExpiry" onclick="switchTab('expiry')">
+                <span class="iconify" data-icon="material-symbols:warning-outline-rounded" style="font-size:14px;"></span>
+                Expiry Alerts
+                <span class="tab-badge" id="expiryBadge" style="display:none">0</span>
+            </button>
         </div>
     </div>
 
@@ -435,6 +440,48 @@
             </div><!-- /sharedContent -->
         </div><!-- /panelSharedStock -->
 
+        <!-- ══════════════════════════════════════════════ -->
+        <!--  PANEL C — EXPIRY ALERTS                      -->
+        <!-- ══════════════════════════════════════════════ -->
+        <div id="panelExpiry" class="tab-panel hidden flex flex-col gap-4">
+
+            <!-- Loading -->
+            <div id="expiryLoading" class="flex flex-col gap-3">
+                <div class="bg-white rounded-[18px] p-4 skeleton h-[100px]"></div>
+                <div class="bg-white rounded-[18px] p-4 skeleton h-[80px]"></div>
+            </div>
+
+            <!-- ═══ EXPIRED ═══ -->
+            <div id="expiredSection" class="hidden flex flex-col gap-3">
+                <div class="flex items-center gap-2 px-1">
+                    <span class="w-3 h-3 rounded-full bg-red-500 shrink-0"></span>
+                    <span class="text-white font-extrabold text-sm tracking-wide">Expired</span>
+                    <span class="text-white/50 text-xs font-bold ml-auto" id="expiredCount">0 items</span>
+                </div>
+                <div id="expiredList" class="flex flex-col gap-2"></div>
+            </div>
+
+            <!-- ═══ EXPIRING SOON ═══ -->
+            <div id="expiringSection" class="hidden flex flex-col gap-3">
+                <div class="flex items-center gap-2 px-1">
+                    <span class="w-3 h-3 rounded-full bg-amber-400 shrink-0"></span>
+                    <span class="text-white font-extrabold text-sm tracking-wide">Expiring Soon</span>
+                    <span class="text-white/50 text-xs font-bold ml-auto" id="expiringCount">0 items</span>
+                </div>
+                <div id="expiringList" class="flex flex-col gap-2"></div>
+            </div>
+
+            <!-- Empty state -->
+            <div id="emptyExpiry" class="hidden empty-state">
+                <div class="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
+                    <span class="iconify" data-icon="material-symbols:check-circle-outline-rounded" style="font-size:32px;color:white;"></span>
+                </div>
+                <p class="text-white/80 font-bold text-base">All items are fresh</p>
+                <p class="text-white/50 text-sm font-medium">No expired or expiring items found</p>
+            </div>
+
+        </div><!-- /panelExpiry -->
+
     </div><!-- /mainBody -->
 
     @include('partials.bottom-nav', ['active' => 'profil'])
@@ -506,6 +553,38 @@
     <input type="text"    id="itemName" class="stock-input mb-5" placeholder="e.g. Diapers (Size 4)">
     <label class="text-[13px] font-bold text-gray-700 mb-2 block">Quantity</label>
     <input type="number"  id="itemQty"  class="stock-input mb-6" placeholder="e.g. 4" min="0">
+
+    <!-- ═══ Expiry Fields ═══ -->
+    <div class="border-t border-gray-100 pt-4 mb-4">
+        <div class="flex items-center gap-1 mb-4">
+            <span class="iconify" data-icon="material-symbols:calendar-clock-rounded" style="font-size:16px;color:#6C3FC5;"></span>
+            <span class="text-[13px] font-extrabold text-gray-800">Expiry Info (optional)</span>
+        </div>
+        <label class="text-[13px] font-bold text-gray-700 mb-2 block">Product Description</label>
+        <textarea id="itemDeskripsi" class="stock-input mb-4" placeholder="e.g. Size 4, 64 pcs per pack" rows="2" style="resize:none;"></textarea>
+        <label class="text-[13px] font-bold text-gray-700 mb-2 block">Expiry Date</label>
+        <input type="date" id="itemExpiryDate" class="stock-input mb-4">
+        <div class="flex items-center justify-between mb-3">
+            <div>
+                <p class="text-[13px] font-extrabold text-gray-800">Expiry Alert</p>
+                <p class="text-[11px] text-gray-400 font-semibold">Notify me before expiry</p>
+            </div>
+            <div class="toggle-switch" id="expiryAlertToggle" onclick="toggleExpiryAlert()"></div>
+        </div>
+        <div id="expiryAlertSliderWrap" class="hidden">
+            <label class="text-[13px] font-bold text-gray-700 mb-2 block">Notify <span id="expiryAlertDaysLabel">7</span> days before</label>
+            <input type="range" id="expiryAlertDays"
+                   class="alert-slider active-track"
+                   min="1" max="30" value="7"
+                   style="--val:23.3%;"
+                   oninput="updateExpiryAlertDays(this)">
+            <div class="flex justify-between text-[10px] text-gray-400 font-bold mt-1 px-0.5">
+                <span>1 day</span>
+                <span id="expiryAlertDaysVal">7 days</span>
+            </div>
+        </div>
+    </div>
+
     <button class="btn-save-all" id="addStockBtn" onclick="submitAddStock()">
         <span class="iconify" data-icon="material-symbols:add-circle-rounded" style="font-size:18px;"></span>
         Add Stock
@@ -545,6 +624,66 @@
 </div>
 </div>
 
+<!-- ============================================================ -->
+<!--  BOTTOM SHEET: Edit Stock (My Stock)                         -->
+<!-- ============================================================ -->
+<div id="editSheetOverlay" class="bottom-sheet-overlay hidden" onclick="closeEditSheet()"></div>
+<div class="bottom-sheet-wrapper hidden" id="editSheetWrapper">
+<div id="editStockSheet" class="bottom-sheet">
+    <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+            <span class="iconify" data-icon="material-symbols:edit-outline-rounded" style="font-size:20px;color:#3B82F6;"></span>
+            <h3 class="text-[16px] font-extrabold text-gray-900">Edit Stock</h3>
+        </div>
+        <button onclick="closeEditSheet()" class="w-8 h-8 flex items-center justify-center text-gray-400">
+            <span class="iconify" data-icon="material-symbols:close-rounded" style="font-size:20px;"></span>
+        </button>
+    </div>
+    <div class="border-b border-gray-100 mb-5"></div>
+    <label class="text-[13px] font-bold text-gray-700 mb-2 block">Children's Needs</label>
+    <input type="text"    id="editItemName" class="stock-input mb-5" placeholder="e.g. Diapers (Size 4)">
+    <label class="text-[13px] font-bold text-gray-700 mb-2 block">Quantity</label>
+    <input type="number"  id="editItemQty"  class="stock-input mb-6" placeholder="e.g. 4" min="0">
+
+    <!-- ═══ Expiry Fields ═══ -->
+    <div class="border-t border-gray-100 pt-4 mb-4">
+        <div class="flex items-center gap-1 mb-4">
+            <span class="iconify" data-icon="material-symbols:calendar-clock-rounded" style="font-size:16px;color:#3B82F6;"></span>
+            <span class="text-[13px] font-extrabold text-gray-800">Expiry Info (optional)</span>
+        </div>
+        <label class="text-[13px] font-bold text-gray-700 mb-2 block">Product Description</label>
+        <textarea id="editItemDeskripsi" class="stock-input mb-4" placeholder="e.g. Size 4, 64 pcs per pack" rows="2" style="resize:none;"></textarea>
+        <label class="text-[13px] font-bold text-gray-700 mb-2 block">Expiry Date</label>
+        <input type="date" id="editItemExpiryDate" class="stock-input mb-4">
+        <div class="flex items-center justify-between mb-3">
+            <div>
+                <p class="text-[13px] font-extrabold text-gray-800">Expiry Alert</p>
+                <p class="text-[11px] text-gray-400 font-semibold">Notify me before expiry</p>
+            </div>
+            <div class="toggle-switch" id="editExpiryAlertToggle" onclick="toggleEditExpiryAlert()"></div>
+        </div>
+        <div id="editExpiryAlertSliderWrap" class="hidden">
+            <label class="text-[13px] font-bold text-gray-700 mb-2 block">Notify <span id="editExpiryAlertDaysLabel">7</span> days before</label>
+            <input type="range" id="editExpiryAlertDays"
+                   class="alert-slider active-track"
+                   min="1" max="30" value="7"
+                   style="--val:23.3%;"
+                   oninput="updateEditExpiryAlertDays(this)">
+            <div class="flex justify-between text-[10px] text-gray-400 font-bold mt-1 px-0.5">
+                <span>1 day</span>
+                <span id="editExpiryAlertDaysVal">7 days</span>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn-save-all" id="editStockBtn" onclick="submitEditStock()"
+        style="background:linear-gradient(135deg,#3B82F6,#2563EB);color:white;">
+        <span class="iconify" data-icon="material-symbols:save-rounded" style="font-size:18px;"></span>
+        Save Changes
+    </button>
+</div>
+</div>
+
 <script>
 // ================================================================
 // CONFIG & STATE
@@ -562,6 +701,7 @@ let activeTab        = 'my';
 let stockItems       = [];
 let localQty         = {};
 let localAlert       = {};
+let localExpiry      = {}; // { [id]: { tanggal_expired, expiry_alert, expiry_alert_days } }
 
 // Shared Stock state
 let assignments      = [];
@@ -570,11 +710,24 @@ let activeAssignRole = null;
 let sharedItems      = [];
 let sharedLocalQty   = {};
 let sharedLocalAlert = {};
+let sharedLocalExpiry = {}; // { [id]: { tanggal_expired, expiry_alert, expiry_alert_days } }
+
+// Expiry Alert state
+let expiredItems     = [];
+let expiringItems    = [];
+
+// Add Stock sheet expiry state
+let expiryAlertEnabled = false;
+let expiryAlertDays    = 7;
 
 // Modal state (tracks which mode: 'my' | 'shared')
 let modalMode        = 'my';
 let pendingUpdateId  = null;
 let pendingDeleteId  = null;
+
+// Edit state
+let editMode         = false;
+let editItemId       = null; // null = add mode, number = edit mode
 
 // Status bar clock
 setInterval(() => {
@@ -589,10 +742,13 @@ function switchTab(tab) {
     activeTab = tab;
     document.getElementById('tabMyStock').classList.toggle('active',      tab === 'my');
     document.getElementById('tabSharedStock').classList.toggle('active',  tab === 'shared');
+    document.getElementById('tabExpiry').classList.toggle('active',       tab === 'expiry');
     document.getElementById('panelMyStock').classList.toggle('hidden',    tab !== 'my');
     document.getElementById('panelSharedStock').classList.toggle('hidden',tab !== 'shared');
+    document.getElementById('panelExpiry').classList.toggle('hidden',     tab !== 'expiry');
 
     if (tab === 'shared' && assignments.length === 0) fetchAssignments();
+    if (tab === 'expiry') fetchExpiryData();
 }
 
 // ================================================================
@@ -605,10 +761,15 @@ async function fetchStock() {
         });
         const data = await res.json();
         stockItems = data.data || [];
-        localQty = {}; localAlert = {};
+        localQty = {}; localAlert = {}; localExpiry = {};
         stockItems.forEach(item => {
             localQty[item.id]   = item.quantity ?? 0;
             localAlert[item.id] = { enabled: item.low_stock_alert ?? false, threshold: item.alert_threshold ?? 1 };
+            localExpiry[item.id] = {
+                tanggal_expired: item.tanggal_expired ?? '',
+                expiry_alert: item.expiry_alert ?? false,
+                expiry_alert_days: item.expiry_alert_days ?? 7
+            };
         });
         renderMyList();
     } catch {
@@ -646,6 +807,75 @@ function updateSlider(id, input) {
     if (lbl) lbl.textContent = `${val} UNIT`;
 }
 
+// ── Expiry Accordion Toggle ───────────────────────────────────
+function toggleExpiryAccordion(id) {
+    if (!window._expOpen) window._expOpen = {};
+    window._expOpen[id] = !window._expOpen[id];
+    const body = document.getElementById(`expBody-my-${id}`);
+    if (body) body.classList.toggle('hidden');
+}
+function toggleExpiryAccordionShared(id) {
+    if (!window._expOpenShared) window._expOpenShared = {};
+    window._expOpenShared[id] = !window._expOpenShared[id];
+    const body = document.getElementById(`expBody-shared-${id}`);
+    if (body) body.classList.toggle('hidden');
+}
+
+// ── Low Stock Accordion Toggle ────────────────────────────────
+function toggleLsAccordion(id) {
+    if (!window._lsOpen) window._lsOpen = {};
+    window._lsOpen[id] = !window._lsOpen[id];
+    const body = document.getElementById(`lsBody-my-${id}`);
+    if (body) body.classList.toggle('hidden');
+}
+function toggleLsAccordionShared(id) {
+    if (!window._lsOpenShared) window._lsOpenShared = {};
+    window._lsOpenShared[id] = !window._lsOpenShared[id];
+    const body = document.getElementById(`lsBody-shared-${id}`);
+    if (body) body.classList.toggle('hidden');
+}
+
+// ── Inline Expiry Edit (My Stock) ─────────────────────────────
+function updateExpiryDate(id, val) {
+    if (!localExpiry[id]) localExpiry[id] = { tanggal_expired: '', expiry_alert: false, expiry_alert_days: 7 };
+    localExpiry[id].tanggal_expired = val;
+    // Re-render the card to show/hide expiry alert toggle + slider section
+    renderMyList();
+}
+function toggleExpiryAlert(id) {
+    if (!localExpiry[id]) localExpiry[id] = { tanggal_expired: '', expiry_alert: false, expiry_alert_days: 7 };
+    localExpiry[id].expiry_alert = !localExpiry[id].expiry_alert;
+    renderMyList();
+}
+function updateExpiryDays(id, input) {
+    const val = parseInt(input.value);
+    if (!localExpiry[id]) localExpiry[id] = { tanggal_expired: '', expiry_alert: false, expiry_alert_days: 7 };
+    localExpiry[id].expiry_alert_days = val;
+    input.style.setProperty('--val', Math.round(val / parseInt(input.max) * 100) + '%');
+    const lbl = document.getElementById(`expDaysVal-my-${id}`);
+    if (lbl) lbl.textContent = `${val} days`;
+}
+
+// ── Inline Expiry Edit (Shared Stock) ─────────────────────────
+function updateExpiryDateShared(id, val) {
+    if (!sharedLocalExpiry[id]) sharedLocalExpiry[id] = { tanggal_expired: '', expiry_alert: false, expiry_alert_days: 7 };
+    sharedLocalExpiry[id].tanggal_expired = val;
+    renderSharedList();
+}
+function toggleExpiryAlertShared(id) {
+    if (!sharedLocalExpiry[id]) sharedLocalExpiry[id] = { tanggal_expired: '', expiry_alert: false, expiry_alert_days: 7 };
+    sharedLocalExpiry[id].expiry_alert = !sharedLocalExpiry[id].expiry_alert;
+    renderSharedList();
+}
+function updateExpiryDaysShared(id, input) {
+    const val = parseInt(input.value);
+    if (!sharedLocalExpiry[id]) sharedLocalExpiry[id] = { tanggal_expired: '', expiry_alert: false, expiry_alert_days: 7 };
+    sharedLocalExpiry[id].expiry_alert_days = val;
+    input.style.setProperty('--val', Math.round(val / parseInt(input.max) * 100) + '%');
+    const lbl = document.getElementById(`expDaysVal-shared-${id}`);
+    if (lbl) lbl.textContent = `${val} days`;
+}
+
 async function saveAllChanges() {
     const btn = document.getElementById('saveAllBtn');
     btn.style.opacity = '0.6'; btn.style.pointerEvents = 'none';
@@ -654,6 +884,9 @@ async function saveAllChanges() {
             id: item.id, quantity: localQty[item.id] ?? 0,
             low_stock_alert: localAlert[item.id]?.enabled ?? false,
             alert_threshold: localAlert[item.id]?.threshold ?? 1,
+            expiry_alert: localExpiry[item.id]?.expiry_alert ?? item.expiry_alert ?? false,
+            expiry_alert_days: localExpiry[item.id]?.expiry_alert_days ?? item.expiry_alert_days ?? 7,
+            tanggal_expired: localExpiry[item.id]?.tanggal_expired ?? item.tanggal_expired ?? null,
         }));
         const res  = await fetch(`${API_BASE}/stock/batch-update`, {
             method: 'PUT',
@@ -677,18 +910,153 @@ function openAddSheet() {
 function closeSheet() {
     document.getElementById('sheetOverlay').classList.add('hidden');
     document.getElementById('sheetWrapper').classList.add('hidden');
+    // Reset expiry fields
+    expiryAlertEnabled = false;
+    expiryAlertDays = 7;
+    document.getElementById('expiryAlertToggle').classList.remove('active');
+    document.getElementById('expiryAlertSliderWrap').classList.add('hidden');
+}
+
+// ── Edit Stock sheet ──────────────────────────────────────────
+let editModeIsShared = false;
+
+function openEditSheet(id, mode) {
+    editModeIsShared = (mode === 'shared');
+    const list = editModeIsShared ? sharedItems : stockItems;
+    const item = list.find(x => x.id === id);
+    if (!item) return;
+
+    editItemId = id;
+    editMode = true;
+
+    document.getElementById('editItemName').value = item.name || '';
+    document.getElementById('editItemQty').value  = item.quantity ?? 0;
+    document.getElementById('editItemDeskripsi').value = item.deskripsi_produk || '';
+    document.getElementById('editItemExpiryDate').value = item.tanggal_expired || '';
+
+    // Expiry alert toggle state
+    const hasExpiry = !!item.tanggal_expired;
+    const expAlert  = item.expiry_alert ?? false;
+    const expDays   = item.expiry_alert_days ?? 7;
+
+    const toggleEl = document.getElementById('editExpiryAlertToggle');
+    const sliderWrap = document.getElementById('editExpiryAlertSliderWrap');
+    if (hasExpiry && expAlert) {
+        toggleEl.classList.add('active');
+        sliderWrap.classList.remove('hidden');
+    } else {
+        toggleEl.classList.remove('active');
+        sliderWrap.classList.add('hidden');
+    }
+
+    document.getElementById('editExpiryAlertDays').value = expDays;
+    document.getElementById('editExpiryAlertDaysLabel').textContent = expDays;
+    document.getElementById('editExpiryAlertDaysVal').textContent = expDays + ' days';
+    const pct = Math.round(expDays / 30 * 100);
+    document.getElementById('editExpiryAlertDays').style.setProperty('--val', pct + '%');
+
+    window._editExpiryAlertEnabled = hasExpiry && expAlert;
+    window._editExpiryAlertDays = expDays;
+
+    document.getElementById('editSheetOverlay').classList.remove('hidden');
+    document.getElementById('editSheetWrapper').classList.remove('hidden');
+}
+function closeEditSheet() {
+    document.getElementById('editSheetOverlay').classList.add('hidden');
+    document.getElementById('editSheetWrapper').classList.add('hidden');
+    editItemId = null;
+    editMode = false;
+}
+function toggleEditExpiryAlert() {
+    window._editExpiryAlertEnabled = !window._editExpiryAlertEnabled;
+    document.getElementById('editExpiryAlertToggle').classList.toggle('active', window._editExpiryAlertEnabled);
+    document.getElementById('editExpiryAlertSliderWrap').classList.toggle('hidden', !window._editExpiryAlertEnabled);
+}
+function updateEditExpiryAlertDays(input) {
+    window._editExpiryAlertDays = parseInt(input.value);
+    input.style.setProperty('--val', Math.round(window._editExpiryAlertDays / parseInt(input.max) * 100) + '%');
+    document.getElementById('editExpiryAlertDaysLabel').textContent = window._editExpiryAlertDays;
+    document.getElementById('editExpiryAlertDaysVal').textContent = window._editExpiryAlertDays + ' days';
+}
+async function submitEditStock() {
+    if (editItemId === null) return;
+    const name = document.getElementById('editItemName').value.trim();
+    const qty  = parseInt(document.getElementById('editItemQty').value) || 0;
+    if (!name) { flashBorder('editItemName'); return; }
+
+    const deskripsi = document.getElementById('editItemDeskripsi').value.trim();
+    const tanggalExpired = document.getElementById('editItemExpiryDate').value || null;
+
+    const btn = document.getElementById('editStockBtn');
+    btn.style.opacity = '0.6'; btn.style.pointerEvents = 'none';
+
+    try {
+        const body = { name, quantity: qty };
+        body.deskripsi_produk = deskripsi || null;
+        body.tanggal_expired = tanggalExpired;
+        if (tanggalExpired) {
+            body.expiry_alert = window._editExpiryAlertEnabled ?? false;
+            body.expiry_alert_days = window._editExpiryAlertDays ?? 7;
+        } else {
+            body.expiry_alert = false;
+            body.expiry_alert_days = 7;
+        }
+
+        const url = editModeIsShared
+            ? `${API_BASE}/shared-stock/${editItemId}`
+            : `${API_BASE}/stock/${editItemId}`;
+
+        if (!editModeIsShared) {
+            body.user_id = USER_ID;
+        }
+
+        const res  = await fetch(url, {
+            method: 'PUT',
+            headers: { 'Authorization': `Bearer ${API_TOKEN}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify(body)
+        });
+        const data = await res.json();
+        if (data.success) {
+            showBanner('Stock updated!', 'success');
+            if (editModeIsShared) {
+                // Update local shared state
+                const idx = sharedItems.findIndex(x => x.id === editItemId);
+                if (idx !== -1) sharedItems[idx] = data.data;
+                sharedLocalQty[editItemId] = qty;
+                renderSharedList();
+            } else {
+                const idx = stockItems.findIndex(x => x.id === editItemId);
+                if (idx !== -1) stockItems[idx] = data.data;
+                localQty[editItemId] = qty;
+                renderMyList();
+            }
+            closeEditSheet();
+        } else {
+            showBanner(data.message || 'Failed to update.', 'error');
+        }
+    } catch { showBanner('Network error.', 'error'); }
+    finally { btn.style.opacity = ''; btn.style.pointerEvents = ''; }
 }
 async function submitAddStock() {
     const name = document.getElementById('itemName').value.trim();
     const qty  = parseInt(document.getElementById('itemQty').value) || 0;
     if (!name) { flashBorder('itemName'); return; }
+    const deskripsi = document.getElementById('itemDeskripsi').value.trim();
+    const tanggalExpired = document.getElementById('itemExpiryDate').value || null;
     const btn = document.getElementById('addStockBtn');
     btn.style.opacity = '0.6'; btn.style.pointerEvents = 'none';
     try {
+        const body = { user_id: USER_ID, name, quantity: qty };
+        if (deskripsi) body.deskripsi_produk = deskripsi;
+        if (tanggalExpired) {
+            body.tanggal_expired = tanggalExpired;
+            body.expiry_alert = expiryAlertEnabled;
+            body.expiry_alert_days = expiryAlertDays;
+        }
         const res  = await fetch(`${API_BASE}/stock`, {
             method: 'POST',
             headers: { 'Authorization': `Bearer ${API_TOKEN}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: USER_ID, name, quantity: qty })
+            body: JSON.stringify(body)
         });
         const data = await res.json();
         if (data.success) {
@@ -782,10 +1150,15 @@ async function fetchSharedItems(assignId) {
         });
         const data = await res.json();
         sharedItems      = data.data || [];
-        sharedLocalQty   = {}; sharedLocalAlert = {};
+        sharedLocalQty   = {}; sharedLocalAlert = {}; sharedLocalExpiry = {};
         sharedItems.forEach(item => {
             sharedLocalQty[item.id]   = item.quantity ?? 0;
             sharedLocalAlert[item.id] = { enabled: item.low_stock_alert ?? false, threshold: item.alert_threshold ?? 1 };
+            sharedLocalExpiry[item.id] = {
+                tanggal_expired: item.tanggal_expired ?? '',
+                expiry_alert: item.expiry_alert ?? false,
+                expiry_alert_days: item.expiry_alert_days ?? 7
+            };
         });
         renderSharedList();
     } catch {
@@ -831,6 +1204,9 @@ async function saveSharedChanges() {
             id: item.id, quantity: sharedLocalQty[item.id] ?? 0,
             low_stock_alert: sharedLocalAlert[item.id]?.enabled ?? false,
             alert_threshold: sharedLocalAlert[item.id]?.threshold ?? 1,
+            expiry_alert: sharedLocalExpiry[item.id]?.expiry_alert ?? item.expiry_alert ?? false,
+            expiry_alert_days: sharedLocalExpiry[item.id]?.expiry_alert_days ?? item.expiry_alert_days ?? 7,
+            tanggal_expired: sharedLocalExpiry[item.id]?.tanggal_expired ?? item.tanggal_expired ?? null,
         }));
         const res  = await fetch(`${API_BASE}/shared-stock/batch-update`, {
             method: 'PUT',
@@ -908,6 +1284,20 @@ function buildCard(item, i, isShared) {
     const sliderEvent = readonly ? '' : (isShared ? `oninput="updateSliderShared(${id},this)"` : `oninput="updateSlider(${id},this)"`);
     const renewClick  = readonly ? '' : (isShared ? `onclick="openRenewModal(${id},'shared')"` : `onclick="openRenewModal(${id},'my')"`);
     const delClick    = readonly ? '' : (isShared ? `onclick="openDeleteMod(${id},'shared')"` : `onclick="openDeleteMod(${id},'my')"`);
+    const editClick   = readonly ? '' : (isShared ? `onclick="openEditSheet(${id},'shared')"` : `onclick="openEditSheet(${id},'my')"`);
+
+    // Inline expiry state
+    const expiry     = isShared ? (sharedLocalExpiry[id] ?? { tanggal_expired: '', expiry_alert: false, expiry_alert_days: 7 })
+                                 : (localExpiry[id] ?? { tanggal_expired: '', expiry_alert: false, expiry_alert_days: 7 });
+    const expToggle  = `toggle-switch${expiry.expiry_alert ? ' active' : ''}${readonly ? ' tog-disabled' : ''}`;
+    const expSliderWrap = expiry.expiry_alert && expiry.tanggal_expired ? '' : 'hidden';
+    const expDateVal = expiry.tanggal_expired || '';
+    const expDaysVal = expiry.expiry_alert_days || 7;
+    const expPct     = Math.round(expDaysVal / 30 * 100);
+
+    // Accordion open state per card
+    const expOpen    = (isShared ? (window._expOpenShared && window._expOpenShared[id]) : (window._expOpen && window._expOpen[id])) ?? false;
+    const lsOpen    = (isShared ? (window._lsOpenShared && window._lsOpenShared[id]) : (window._lsOpen && window._lsOpen[id])) ?? false;
 
     const nannyBadge = isShared && item.nanny
         ? `<span class="nanny-badge">
@@ -937,6 +1327,10 @@ function buildCard(item, i, isShared) {
             </div>
             ${!readonly ? `
             <div class="flex items-center gap-1.5 shrink-0">
+                <button ${editClick}
+                    class="w-8 h-8 rounded-full bg-blue-50 border-2 border-blue-400 text-blue-500 flex items-center justify-center">
+                    <span class="iconify" data-icon="material-symbols:edit-rounded" style="font-size:15px;"></span>
+                </button>
                 <button ${renewClick}
                     class="w-8 h-8 rounded-full bg-green-50 border-2 border-green-400 text-green-500 flex items-center justify-center">
                     <span class="iconify" data-icon="material-symbols:autorenew-rounded" style="font-size:15px;"></span>
@@ -962,32 +1356,99 @@ function buildCard(item, i, isShared) {
             </div>
         </div>
 
-        <div class="flex items-start gap-3 mb-2">
-            <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center shrink-0">
-                <span class="iconify" data-icon="material-symbols:notifications-active-rounded" style="font-size:18px;color:#F59E0B;"></span>
-            </div>
-            <div class="flex-1">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-[13px] font-extrabold text-gray-800">Low Stock Alerts</p>
-                        <p class="text-[11px] text-gray-400 font-semibold">Notify me when items run low</p>
-                    </div>
-                    <div class="${tCls}" id="alertToggle-${pfx}-${id}" ${togClick}></div>
+        <!-- ═══ INLINE LOW STOCK (ACCORDION) ═══ -->
+        <div class="border-t border-gray-100 mt-3 pt-2">
+            <div class="flex items-center justify-between cursor-pointer select-none"
+                 onclick="${readonly ? '' : (isShared ? `toggleLsAccordionShared(${id})` : `toggleLsAccordion(${id})`)}">
+                <div class="flex items-center gap-2">
+                    <span class="iconify" data-icon="material-symbols:notifications-active-rounded" style="font-size:16px;color:#F59E0B;"></span>
+                    <span class="text-[13px] font-extrabold text-gray-700">Low Stock Alerts</span>
+                    ${alert.enabled ? `<span class="text-[10px] font-bold text-green-600 bg-green-100 rounded-full px-2 py-0.5">ON</span>` : ''}
                 </div>
-                <div class="mt-3">
-                    <input type="range" id="slider-${pfx}-${id}"
-                           class="alert-slider active-track"
-                           min="1" max="${maxT}" value="${alert.threshold}"
-                           style="--val:${pct}%;"
-                           ${readonly ? 'disabled' : ''}
-                           ${sliderEvent}>
-                    <div class="flex justify-between text-[10px] text-gray-400 font-bold mt-1 px-0.5">
-                        <span>1 UNIT</span>
-                        <span id="sliderVal-${pfx}-${id}">${alert.threshold} UNIT</span>
+                <div class="flex items-center gap-2">
+                    <span class="iconify transition-transform duration-200" style="font-size:18px;color:#9CA3AF;${lsOpen ? 'transform:rotate(180deg)' : ''}"
+                          data-icon="material-symbols:expand-more-rounded"></span>
+                </div>
+            </div>
+            <div id="lsBody-${pfx}-${id}" class="${lsOpen ? '' : 'hidden'} mt-3">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-[#FEF3C7] flex items-center justify-center shrink-0">
+                        <span class="iconify" data-icon="material-symbols:notifications-active-rounded" style="font-size:18px;color:#F59E0B;"></span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between mb-2">
+                            <p class="text-[12px] font-bold text-gray-600">Alert when stock below</p>
+                            <div class="${tCls}" id="alertToggle-${pfx}-${id}" ${togClick}></div>
+                        </div>
+                        <input type="range" id="slider-${pfx}-${id}"
+                               class="alert-slider active-track"
+                               min="1" max="${maxT}" value="${alert.threshold}"
+                               style="--val:${pct}%;"
+                               ${readonly ? 'disabled' : ''}
+                               ${sliderEvent}>
+                        <div class="flex justify-between text-[10px] text-gray-400 font-bold mt-1 px-0.5">
+                            <span>1 UNIT</span>
+                            <span id="sliderVal-${pfx}-${id}">${alert.threshold} UNIT</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- ═══ INLINE EXPIRY EDIT (ACCORDION) ═══ -->
+        <div class="border-t border-gray-100 mt-3 pt-2">
+            <div class="flex items-center justify-between cursor-pointer select-none"
+                 onclick="${readonly ? '' : (isShared ? `toggleExpiryAccordionShared(${id})` : `toggleExpiryAccordion(${id})`)}">
+                <div class="flex items-center gap-2">
+                    <span class="iconify" data-icon="material-symbols:calendar-clock-rounded" style="font-size:16px;color:#0284C7;"></span>
+                    <span class="text-[13px] font-extrabold text-gray-700">Expiry Date</span>
+                    ${expDateVal ?
+                        (expiry.expiry_alert
+                            ? `<span class="text-[10px] font-bold text-green-600 bg-green-100 rounded-full px-2 py-0.5">ON</span>`
+                            : `<span class="text-[10px] font-bold text-gray-400 bg-gray-200 rounded-full px-2 py-0.5">OFF</span>`)
+                    : ''}
+                </div>
+                <span class="iconify transition-transform duration-200" style="font-size:18px;color:#9CA3AF;${expOpen ? 'transform:rotate(180deg)' : ''}"
+                      data-icon="material-symbols:expand-more-rounded"></span>
+            </div>
+            <div id="expBody-${pfx}-${id}" class="${expOpen ? '' : 'hidden'} mt-3">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 rounded-full bg-[#E0F2FE] flex items-center justify-center shrink-0">
+                        <span class="iconify" data-icon="material-symbols:calendar-clock-rounded" style="font-size:18px;color:#0284C7;"></span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-[12px] font-bold text-gray-600 mb-1">Expiry Date</p>
+                        <input type="date" id="expDate-${pfx}-${id}"
+                               class="stock-input mb-2" value="${expDateVal}"
+                               ${readonly ? 'disabled' : ''}
+                               onchange="${readonly ? '' : (isShared ? `updateExpiryDateShared(${id},this.value)` : `updateExpiryDate(${id},this.value)`)}"
+                               style="font-size:13px;padding:8px 12px;">
+                        ${expDateVal ? `
+                        <div class="flex items-center justify-between mt-2">
+                            <div>
+                                <p class="text-[12px] font-extrabold text-gray-700">Expiry Alert</p>
+                                <p class="text-[10px] text-gray-400 font-semibold">Notify before expiry</p>
+                            </div>
+                            <div class="${expToggle}" id="expToggle-${pfx}-${id}"
+                                 ${readonly ? '' : (isShared ? `onclick="toggleExpiryAlertShared(${id})"` : `onclick="toggleExpiryAlert(${id})"`)}></div>
+                        </div>
+                        <div class="mt-2 ${expSliderWrap}" id="expSliderWrap-${pfx}-${id}">
+                            <input type="range" id="expSlider-${pfx}-${id}"
+                                   class="alert-slider active-track"
+                                   min="1" max="30" value="${expDaysVal}"
+                                   style="--val:${expPct}%;"
+                                   ${readonly ? 'disabled' : ''}
+                                   ${readonly ? '' : (isShared ? `oninput="updateExpiryDaysShared(${id},this)"` : `oninput="updateExpiryDays(${id},this)"`)}>
+                            <div class="flex justify-between text-[10px] text-gray-400 font-bold mt-1 px-0.5">
+                                <span>1 day</span>
+                                <span id="expDaysVal-${pfx}-${id}">${expDaysVal} days</span>
+                            </div>
+                        </div>` : `<p class="text-[11px] text-gray-400 font-semibold italic">Set a date to enable expiry alerts</p>`}
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>`;
 }
 
@@ -1099,6 +1560,138 @@ function flashBorder(elId) {
     const el = document.getElementById(elId);
     el.style.borderColor = '#EF4444'; el.focus();
     setTimeout(() => el.style.borderColor = '', 1200);
+}
+
+// ================================================================
+// ── EXPIRY ALERTS ────────────────────────────────────────────────
+// ================================================================
+function toggleExpiryAlert() {
+    expiryAlertEnabled = !expiryAlertEnabled;
+    document.getElementById('expiryAlertToggle').classList.toggle('active', expiryAlertEnabled);
+    document.getElementById('expiryAlertSliderWrap').classList.toggle('hidden', !expiryAlertEnabled);
+}
+function updateExpiryAlertDays(input) {
+    expiryAlertDays = parseInt(input.value);
+    input.style.setProperty('--val', Math.round(expiryAlertDays / parseInt(input.max) * 100) + '%');
+    document.getElementById('expiryAlertDaysLabel').textContent = expiryAlertDays;
+    document.getElementById('expiryAlertDaysVal').textContent = expiryAlertDays + ' days';
+}
+
+async function fetchExpiryData() {
+    const loading = document.getElementById('expiryLoading');
+    const expiredSection = document.getElementById('expiredSection');
+    const expiringSection = document.getElementById('expiringSection');
+    const empty = document.getElementById('emptyExpiry');
+
+    loading.classList.remove('hidden');
+    expiredSection.classList.add('hidden');
+    expiringSection.classList.add('hidden');
+    empty.classList.add('hidden');
+
+    try {
+        const [expiredRes, expiringRes] = await Promise.all([
+            fetch(`${API_BASE}/stock/${USER_ID}/expired`, {
+                headers: { 'Authorization': `Bearer ${API_TOKEN}`, 'Accept': 'application/json' }
+            }),
+            fetch(`${API_BASE}/stock/${USER_ID}/expiring`, {
+                headers: { 'Authorization': `Bearer ${API_TOKEN}`, 'Accept': 'application/json' }
+            })
+        ]);
+        const expiredData  = await expiredRes.json();
+        const expiringData = await expiringRes.json();
+        expiredItems  = expiredData.data || [];
+        expiringItems = expiringData.data || [];
+    } catch {
+        expiredItems  = [];
+        expiringItems = [];
+        showBanner('Failed to load expiry data.', 'error');
+    }
+
+    loading.classList.add('hidden');
+
+    // Update badge on tab
+    const total = expiredItems.length + expiringItems.length;
+    const badge = document.getElementById('expiryBadge');
+    badge.textContent = total;
+    badge.style.display = total ? '' : 'none';
+
+    if (!total) {
+        empty.classList.remove('hidden');
+        return;
+    }
+
+    // Render expired
+    if (expiredItems.length) {
+        document.getElementById('expiredCount').textContent = expiredItems.length + ' item' + (expiredItems.length > 1 ? 's' : '');
+        document.getElementById('expiredList').innerHTML = expiredItems.map((item, i) => buildExpiryCard(item, i, 'expired')).join('');
+        expiredSection.classList.remove('hidden');
+    }
+
+    // Render expiring
+    if (expiringItems.length) {
+        document.getElementById('expiringCount').textContent = expiringItems.length + ' item' + (expiringItems.length > 1 ? 's' : '');
+        document.getElementById('expiringList').innerHTML = expiringItems.map((item, i) => buildExpiryCard(item, i, 'expiring')).join('');
+        expiringSection.classList.remove('hidden');
+    }
+
+    if (window.Iconify) Iconify.scan();
+}
+
+function buildExpiryCard(item, i, type) {
+    const expired = type === 'expired';
+    const expiryDate = item.tanggal_expired ? new Date(item.tanggal_expired + 'T00:00:00') : null;
+    const now = new Date();
+    now.setHours(0,0,0,0);
+
+    let daysRemaining = 0;
+    if (expiryDate) {
+        daysRemaining = Math.floor((expiryDate - now) / (1000 * 60 * 60 * 24));
+        if (expired) daysRemaining = Math.abs(daysRemaining);
+    }
+
+    const daysText = expired
+        ? `<span class="font-extrabold text-red-600">${daysRemaining} day${daysRemaining > 1 ? 's' : ''} overdue</span>`
+        : `<span class="font-extrabold text-amber-600">${daysRemaining} day${daysRemaining > 1 ? 's' : ''} remaining</span>`;
+
+    const borderCls = expired ? 'border-l-red-500' : 'border-l-amber-400';
+    const iconColor = expired ? '#EF4444' : '#F59E0B';
+
+    return `
+    <div class="stock-card bg-white rounded-[18px] px-4 py-4 shadow-sm border-l-4 ${borderCls} anim" style="animation-delay:${0.05 + i * 0.08}s">
+        <div class="flex items-center gap-3 mb-2">
+            <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center shrink-0">
+                <span class="iconify" data-icon="material-symbols:inventory-2-rounded" style="font-size:20px;color:${iconColor};"></span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-[15px] font-extrabold text-gray-900 truncate">${escHtml(item.name)}</p>
+                <div class="flex items-center gap-2 mt-0.5 text-gray-400 text-[11px] font-semibold">
+                    <span class="iconify" data-icon="material-symbols:calendar-today-rounded" style="font-size:12px;"></span>
+                    <span>Exp: ${item.tanggal_expired || '—'}</span>
+                </div>
+            </div>
+            <div class="shrink-0 text-right">
+                ${daysText}
+            </div>
+        </div>
+        ${item.deskripsi_produk ? `
+        <div class="flex items-center gap-2 mt-2 pt-2 border-t border-gray-100">
+            <span class="iconify" data-icon="material-symbols:description-outline-rounded" style="font-size:14px;color:#9CA3AF;"></span>
+            <span class="text-[12px] text-gray-500 font-semibold">${escHtml(item.deskripsi_produk)}</span>
+        </div>` : ''}
+        ${expired ? `
+        <div class="mt-2 pt-2 border-t border-gray-100">
+            <span class="text-[11px] font-bold text-red-500 bg-red-50 rounded-lg px-2 py-1 inline-flex items-center gap-1">
+                <span class="iconify" data-icon="material-symbols:warning-rounded" style="font-size:12px;"></span>
+                EXPIRED — discard or replace
+            </span>
+        </div>` : `
+        <div class="mt-2 pt-2 border-t border-gray-100">
+            <span class="text-[11px] font-bold text-amber-500 bg-amber-50 rounded-lg px-2 py-1 inline-flex items-center gap-1">
+                <span class="iconify" data-icon="material-symbols:schedule-rounded" style="font-size:12px;"></span>
+                EXPIRING SOON — restock in time
+            </span>
+        </div>`}
+    </div>`;
 }
 
 // ================================================================
