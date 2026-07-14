@@ -73,6 +73,15 @@
     .day-cell.other-month { color:#C4B5FD; font-weight:600; }
     .day-cell { position:relative; }
 
+    .filter-chip {
+        cursor:pointer; transition:background .15s,color .15s;
+        white-space:nowrap; flex-shrink:0;
+        padding:7px 14px; border-radius:20px;
+        font-size:13px; font-weight:700;
+        font-family:'Nunito',sans-serif;
+    }
+    .filter-chip:active { transform:scale(0.95); }
+
     /* ── Timeline ── */
     .timeline-section { display:flex; flex-direction:column; gap:12px; }
     .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
@@ -266,7 +275,35 @@
         </div>
     </div>
 
-    <!-- CALENDAR -->
+    {{-- Filter kategori --}}
+    <div class="anim d2">
+        <div class="hide-scrollbar flex" style="overflow-x:auto;gap:8px;padding-bottom:2px;">
+            @php
+                $kats = [
+                    ['value'=>'','label'=>'Semua'],
+                    ['value'=>'makan','label'=>'🍽️ Makan'],
+                    ['value'=>'tidur','label'=>'🌙 Tidur'],
+                    ['value'=>'main','label'=>'⚽ Main'],
+                    ['value'=>'belajar','label'=>'📖 Belajar'],
+                    ['value'=>'mandi','label'=>'🛁 Mandi'],
+                    ['value'=>'bab','label'=>'🟤 BAB'],
+                    ['value'=>'bak','label'=>'💧 BAK'],
+                ];
+            @endphp
+            @foreach($kats as $kat)
+            @php $isActive = ($activeKat ?? '') === $kat['value']; @endphp
+            <a href="{{ $idAnak
+                ? url('/majikan/diary/'.$idAnak.'?tanggal='.($tanggal ?? date('Y-m-d')).($kat['value'] ? '&kategori='.$kat['value'] : ''))
+                : '#' }}"
+               class="filter-chip"
+               style="border:2px solid {{ $isActive?'#8B46D3':'#EDE9FE' }};background:{{ $isActive?'#8B46D3':'#fff' }};color:{{ $isActive?'#fff':'#5A556E' }};text-decoration:none;">
+                {{ $kat['label'] }}
+            </a>
+            @endforeach
+        </div>
+    </div>
+
+    {{-- Calendar --}}
     <div class="cal-wrap anim d2">
         <div class="cal-month-row">
             <button class="cal-month-btn" id="btnMonthYear">{{ \Carbon\Carbon::parse($tanggal ?? now())->format('F Y') }}</button>
@@ -280,7 +317,7 @@
         <div class="days-grid" id="calGrid"></div>
     </div>
 
-    <!-- TIMELINE HEADER -->
+    {{-- Timeline header --}}
     <div class="anim d3" style="padding:20px 0px 12px;">
         <div class="section-header">
             <span class="section-title">Today's Timeline</span>
@@ -354,7 +391,6 @@
                         </div>
                         @if(!empty($item['deskripsi']))
                         <p class="akt-desc">{{ $item['deskripsi'] }}</p>
-                        @endif
                         @endif
                         @if(in_array($kat, ['bab','bak']))
                         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
