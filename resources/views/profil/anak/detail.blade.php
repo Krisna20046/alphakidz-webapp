@@ -169,7 +169,7 @@
                 </div>
                 <div>
                     <p class="text-[#8B86A5] text-[13px] font-extrabold uppercase tracking-[1.8px]">Date Of Birth</p>
-                    <p class="text-[#1E1B2E] text-[18px] font-extrabold leading-none mt-1">{{ $anak['tanggal_lahir'] }}</p>
+                    <p class="text-[#1E1B2E] text-[18px] font-extrabold leading-none mt-1">{{ $anak['tanggal_lahir'] ? \Illuminate\Support\Str::substr($anak['tanggal_lahir'], 0, 10) : '-' }}</p>
                 </div>
             </div>
 
@@ -356,7 +356,7 @@
                                 </div>
                                 <div class="med-row">
                                     <ion-icon name="calendar-outline"></ion-icon>
-                                    <span><span class="lbl">Tanggal:</span> {{ $v['tanggal_vaksin'] }}</span>
+                                    <span><span class="lbl">Tanggal:</span> {{ $v['tanggal_vaksin'] ? \Illuminate\Support\Str::substr($v['tanggal_vaksin'], 0, 10) : '-' }}</span>
                                 </div>
                                 @if($v['tempat_vaksin'] ?? null)
                                 <div class="med-row">

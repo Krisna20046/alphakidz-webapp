@@ -224,10 +224,8 @@ class NannyController extends Controller
             ['name' => 'lng',           'contents' => (string) ($request->lng ?? '')],
         ];
 
-        // Mood: semua kecuali BAB/BAK
-        if (!in_array($request->kategori, ['bab', 'bak'])) {
-            $multipart[] = ['name' => 'mood', 'contents' => (string) ($request->mood ?? 'biasa')];
-        }
+        // Mood untuk semua kategori termasuk BAB/BAK
+        $multipart[] = ['name' => 'mood', 'contents' => (string) ($request->mood ?? 'biasa')];
 
         // BAB/BAK specific fields
         if (in_array($request->kategori, ['bab', 'bak'])) {

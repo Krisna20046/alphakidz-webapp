@@ -143,6 +143,7 @@
         display: flex; align-items: center; justify-content: center;
     }
     .upload-slot {
+        width: 100%;
         height: 120px;
         border-radius: 14px;
         border: 2px dashed #C4B5FD;
@@ -151,6 +152,7 @@
         gap: 6px;
         cursor: pointer;
         transition: border-color .15s, background .15s;
+        margin-bottom: 5px;
     }
     .upload-slot:hover { border-color: #8B46D3; background: #EDE9FE; }
     .upload-slot span { font-size: 12px; font-weight: 700; color: #A8A2C2; }
@@ -386,13 +388,22 @@
                         <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
                     </button>
                 </div>
-                <label id="uploadSebelum" class="upload-slot" for="inputFotoSebelum" style="height:100px;">
-                    <div style="width:32px;height:32px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
-                        <ion-icon name="camera-outline" style="font-size:16px;color:#8B46D3;"></ion-icon>
-                    </div>
-                    <span style="font-size:11px;">Add Photo</span>
-                </label>
+                <div id="fotoSebelumActions" style="display:contents;">
+                    <label class="upload-slot" for="inputFotoSebelum">
+                        <div style="width:40px;height:40px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
+                            <ion-icon name="images-outline" style="font-size:20px;color:#8B46D3;"></ion-icon>
+                        </div>
+                        <span>Gallery</span>
+                    </label>
+                    <button type="button" class="upload-slot" onclick="captureFotoSebelum()">
+                        <div style="width:40px;height:40px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
+                            <ion-icon name="camera" style="font-size:20px;color:#8B46D3;"></ion-icon>
+                        </div>
+                        <span>Camera</span>
+                    </button>
+                </div>
                 <input type="file" id="inputFotoSebelum" accept="image/*" class="hidden" onchange="previewFotoSebelum(this)">
+                <input type="file" id="inputCameraSebelum" accept="image/*" capture="environment" class="hidden" onchange="previewFotoSebelum(this)">
             </div>
             <div>
                 <p style="font-size:11px;font-weight:700;color:#A8A2C2;margin-bottom:6px;">Sesudah</p>
@@ -402,13 +413,22 @@
                         <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
                     </button>
                 </div>
-                <label id="uploadSesudah" class="upload-slot" for="inputFotoSesudah" style="height:100px;">
-                    <div style="width:32px;height:32px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
-                        <ion-icon name="camera-outline" style="font-size:16px;color:#8B46D3;"></ion-icon>
-                    </div>
-                    <span style="font-size:11px;">Add Photo</span>
-                </label>
+                <div id="fotoSesudahActions" style="display:contents;">
+                    <label class="upload-slot" for="inputFotoSesudah">
+                        <div style="width:40px;height:40px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
+                            <ion-icon name="images-outline" style="font-size:20px;color:#8B46D3;"></ion-icon>
+                        </div>
+                        <span>Gallery</span>
+                    </label>
+                    <button type="button" class="upload-slot" onclick="captureFotoSesudah()">
+                        <div style="width:40px;height:40px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
+                            <ion-icon name="camera" style="font-size:20px;color:#8B46D3;"></ion-icon>
+                        </div>
+                        <span>Camera</span>
+                    </button>
+                </div>
                 <input type="file" id="inputFotoSesudah" accept="image/*" class="hidden" onchange="previewFotoSesudah(this)">
+                <input type="file" id="inputCameraSesudah" accept="image/*" capture="environment" class="hidden" onchange="previewFotoSesudah(this)">
             </div>
         </div>
     </div>
@@ -522,7 +542,7 @@
                 </button>
             </div>
         </div>
-        <input type="file" id="inputFoto" accept="image/*" class="hidden" onchange="previewFoto(this)">
+        <input type="file" id="inputFoto" accept="image/*" capture="environment" class="hidden" onchange="previewFoto(this)">
         <input type="file" id="inputCamera" accept="image/*" capture="environment" class="hidden" onchange="previewFoto(this)">
         <p style="font-size:11px;font-weight:600;color:#A8A2C2;text-align:center;margin-top:-16px;margin-bottom:24px;">
             Choose <strong>Gallery</strong> to pick from photos or <strong>Camera</strong> to take a new photo
@@ -650,14 +670,9 @@ function selectKat(btn){
 
     if (isBabBak) {
         babSection.style.display = 'block';
-        if (moodSection) moodSection.style.display = 'none';
         if (descSection) descSection.style.display = 'none';
         if (locationSection) locationSection.style.display = 'none';
         if (photoSection) photoSection.style.display = 'none';
-        // Reset mood
-        document.querySelectorAll('.mood-btn').forEach(b=>b.classList.remove('sel'));
-        document.querySelector('.mood-btn[data-mood="biasa"]')?.classList.add('sel');
-        selMood = 'biasa';
 
         // Show/hide BAB vs BAK specific fields
         document.getElementById('warnaGroupBab').style.display = selKat === 'bab' ? 'flex' : 'none';
@@ -801,15 +816,17 @@ function previewFotoSebelum(input){
     reader.onload=e=>{
         document.getElementById('fotoSebelumImg').src=e.target.result;
         document.getElementById('fotoSebelumPreview').style.display='block';
-        document.getElementById('uploadSebelum').style.display='none';
+        document.getElementById('fotoSebelumActions').style.display='none';
     };
     reader.readAsDataURL(file);
 }
+function captureFotoSebelum(){ document.getElementById('inputCameraSebelum').click(); }
 function removeFotoSebelum(){
     fotoSebelumFile=null;
     document.getElementById('fotoSebelumPreview').style.display='none';
-    document.getElementById('uploadSebelum').style.display='flex';
+    document.getElementById('fotoSebelumActions').style.display='contents';
     document.getElementById('inputFotoSebelum').value='';
+    document.getElementById('inputCameraSebelum').value='';
 }
 function previewFotoSesudah(input){
     const file=input.files[0];
@@ -819,15 +836,17 @@ function previewFotoSesudah(input){
     reader.onload=e=>{
         document.getElementById('fotoSesudahImg').src=e.target.result;
         document.getElementById('fotoSesudahPreview').style.display='block';
-        document.getElementById('uploadSesudah').style.display='none';
+        document.getElementById('fotoSesudahActions').style.display='none';
     };
     reader.readAsDataURL(file);
 }
+function captureFotoSesudah(){ document.getElementById('inputCameraSesudah').click(); }
 function removeFotoSesudah(){
     fotoSesudahFile=null;
     document.getElementById('fotoSesudahPreview').style.display='none';
-    document.getElementById('uploadSesudah').style.display='flex';
+    document.getElementById('fotoSesudahActions').style.display='contents';
     document.getElementById('inputFotoSesudah').value='';
+    document.getElementById('inputCameraSesudah').value='';
 }
 
 // ── BAB / BAK ──
@@ -891,11 +910,10 @@ async function handleSubmit(){
     fd.append('deskripsi',    document.getElementById('deskripsi').value);
     fd.append('jam_mulai',    `${ymd} ${jamMulai}:00`);
     fd.append('jam_selesai',  `${ymd} ${jamSelesai}:00`);
-    // Mood hanya untuk non-BAB/BAK
-    const isBabBak = selKat === 'bab' || selKat === 'bak';
+    fd.append('mood', selMood);
     const isMakanMinum = selKat === 'makan' || selKat === 'minum';
+    const isBabBak = selKat === 'bab' || selKat === 'bak';
     if (!isBabBak) {
-        fd.append('mood', selMood);
         if(fotoFile) fd.append('foto', fotoFile);
         if(userLat)  fd.append('lat', userLat);
         if(userLng)  fd.append('lng', userLng);

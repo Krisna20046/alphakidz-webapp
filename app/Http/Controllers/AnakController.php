@@ -134,6 +134,8 @@ class AnakController extends Controller
                     'success'  => true,
                     'message'  => $data['message'] ?? 'Data anak berhasil ditambahkan!',
                     'redirect' => route('profil.data-anak'),
+                    'data'     => $data['data'] ?? null,
+                    'id_anak'  => $data['data']['id'] ?? ($data['data'][0]['id'] ?? null),
                 ]);
             }
 

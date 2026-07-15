@@ -177,7 +177,6 @@
 
     <div class="flex-1 overflow-y-auto px-[20px] pt-[20px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar">
         <form id="anakForm" enctype="multipart/form-data" novalidate class="space-y-5">
-            @csrf
             @if($isEdit)
             <input type="hidden" name="id" value="{{ $anak['id'] }}">
             @endif
@@ -217,7 +216,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[#2C293A] text-[13px] font-extrabold mb-2">Date Of Birth <span class="text-red-500">*</span></label>
-                        <input type="date" name="tanggal_lahir" id="tanggalLahir" value="{{ $anak['tanggal_lahir'] ?? '' }}" max="{{ date('Y-m-d') }}"
+                        <input type="date" name="tanggal_lahir" id="tanggalLahir" value="{{ $anak['tanggal_lahir'] ? \Illuminate\Support\Str::substr($anak['tanggal_lahir'], 0, 10) : '' }}" max="{{ date('Y-m-d') }}"
                                class="input-field w-full px-3 py-3"/>
                     </div>
                     <div>
@@ -410,7 +409,7 @@
                                     </div>
                                     <div class="med-field">
                                         <label>Tanggal Vaksin</label>
-                                        <input type="date" name="vaksin[{{ $i }}][tanggal_vaksin]" value="{{ $v['tanggal_vaksin'] }}">
+                                        <input type="date" name="vaksin[{{ $i }}][tanggal_vaksin]" value="{{ $v['tanggal_vaksin'] ? \Illuminate\Support\Str::substr($v['tanggal_vaksin'], 0, 10) : '' }}">
                                     </div>
                                 </div>
                                 <div class="med-field-row">
@@ -525,6 +524,11 @@ function setLoading(v) {
     document.getElementById('btnIcon').style.display = v ? 'none' : '';
     document.getElementById('btnSpinner').classList.toggle('hidden', !v);
     document.getElementById('btnText').textContent = v ? 'Saving...' : 'Save';
+}
+
+function setLoadingText(text) {
+    const btnText = document.getElementById('btnText');
+    if (btnText) btnText.textContent = text;
 }
 
 // ── Medical Entry Dynamic Add ──────────────────────────────
@@ -651,7 +655,64 @@ function removeMedItem(btn, type) {
 }
 
 const isEdit = {{ $isEdit ? 'true' : 'false' }};
-const CSRF = "{{ csrf_token() }}";
+const API_BASE_URL = '{{ rtrim(config('services.api.base_url', env('API_BASE_URL', 'http://127.0.0.1:8001/api')), '/') }}';
+const AUTH_TOKEN = '{{ session('token') }}';
+
+// ── API Headers ──────────────────────────────────────────────
+function apiHeaders(hasFile = false) {
+    const headers = {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ' + AUTH_TOKEN,
+    };
+    if (!hasFile) {
+        headers['Content-Type'] = 'application/json';
+    }
+    return headers;
+}
+
+async function apiPost(url, body, hasFile = false) {
+    const opts = {
+        method: 'POST',
+        headers: apiHeaders(hasFile),
+    };
+    if (hasFile) {
+        delete opts.headers['Content-Type']; // biar browser set boundary
+        opts.body = body;
+    } else {
+        opts.body = JSON.stringify(body);
+    }
+    const res = await fetch(url, opts);
+    const data = await res.json();
+    if (!res.ok || data.status !== 'success') {
+        throw { response: data, status: res.status };
+    }
+    return data;
+}
+
+async function apiPut(url, body) {
+    const res = await fetch(url, {
+        method: 'PUT',
+        headers: apiHeaders(false),
+        body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (!res.ok || data.status !== 'success') {
+        throw { response: data, status: res.status };
+    }
+    return data;
+}
+
+async function apiDelete(url) {
+    const res = await fetch(url, {
+        method: 'DELETE',
+        headers: apiHeaders(false),
+    });
+    const data = await res.json();
+    if (!res.ok || data.status !== 'success') {
+        throw { response: data, status: res.status };
+    }
+    return data;
+}
 
 // Track existing medical entry IDs for delete detection on save
 const existingMedIds = { rs: [], dokter: [], vaksin: [] };
@@ -666,6 +727,7 @@ if (isEdit) {
 document.getElementById('anakForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    // ── Validasi ──
     const nama = document.getElementById('nama').value.trim();
     const gender = document.getElementById('genderInput').value;
     const tgl = document.getElementById('tanggalLahir').value;
@@ -675,117 +737,141 @@ document.getElementById('anakForm').addEventListener('submit', async (e) => {
     if (!tgl) return showAlert('Tanggal lahir wajib diisi!');
     if (new Date(tgl) > new Date()) return showAlert('Tanggal lahir tidak boleh melebihi hari ini!');
 
+    // ── Kirim ──
     setLoading(true);
     try {
         const fd = new FormData(document.getElementById('anakForm'));
-        // Jangan kirim field foto jika tidak ada file baru
-        if (!document.getElementById('fotoInput').files.length) {
-            fd.delete('foto');
-        }
-        const url = isEdit ? '{{ route("profil.anak.update") }}' : '{{ route("profil.anak.store") }}';
 
-        const res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Accept': 'application/json', 'X-CSRF-TOKEN': CSRF },
-            body: fd
-        });
-        const data = await res.json();
-
-        if (data.success) {
-            // Save medical data after child is saved
-            const childId = isEdit ? {{ $anak['id'] ?? 'null' }} : (data.data?.id || data.user_anak?.id || null);
-            if (childId) {
-                await saveMedicalData(childId);
-            }
-            showSuccessAlert(data.message || 'Data berhasil disimpan!', data.redirect || '{{ route("profil.data-anak") }}');
-        } else {
-            const err = data.errors ? Object.values(data.errors)[0] : data.message;
-            showAlert(Array.isArray(err) ? err[0] : (err || 'Gagal menyimpan.'));
+        // Hanya kirim field utama anak (buang medical fields)
+        const mainFields = ['id', 'nama', 'gender', 'tanggal_lahir', 'tempat_lahir', 'catatan_khusus', 'alergi', 'hobi', 'foto'];
+        const mainFd = new FormData();
+        for (const field of mainFields) {
+            const val = fd.get(field);
+            if (val) mainFd.append(field, val);
         }
+        // Foto: kirim hanya jika ada file baru
+        const fotoInput = document.getElementById('fotoInput');
+        if (!fotoInput.files.length) {
+            mainFd.delete('foto');
+        }
+
+        const isCreate = !isEdit;
+        const url = isCreate
+            ? `${API_BASE_URL}/user-anak`
+            : `${API_BASE_URL}/user-anak-update`;
+
+        console.log('🚀 API Call:', url);
+        console.log('📦 Data:', Object.fromEntries(mainFd.entries()));
+
+        const data = await apiPost(url, mainFd, true);
+        console.log('✅ API Response:', data);
+
+        const childId = isEdit
+            ? {{ $anak['id'] ?? 'null' }}
+            : data.user_anak?.id;
+
+        console.log('👶 Child ID:', childId);
+
+        if (childId) {
+            setLoadingText('Saving Medical Data...');
+            const medResult = await saveMedicalData(childId);
+            console.log('🏥 Medical result:', medResult);
+        }
+
+        showSuccessAlert(
+            data.message || 'Data berhasil disimpan!',
+            '{{ route("profil.data-anak") }}'
+        );
+
     } catch (err) {
-        showAlert('Terjadi kesalahan. Coba lagi.');
+        console.error('❌ Error:', err);
+        const msg = err.response?.message || err.message || 'Terjadi kesalahan. Coba lagi.';
+        const detail = err.response?.errors
+            ? Object.values(err.response.errors).flat().join(', ')
+            : null;
+        showAlert(detail || msg);
     } finally {
         setLoading(false);
     }
 });
 
 async function saveMedicalData(childId) {
-    const token = '{{ csrf_token() }}';
-    const headers = {'Content-Type':'application/json','X-CSRF-TOKEN': token};
+    console.log('\n=== 🏥 Medical Data Save ===');
+    console.log('Child ID:', childId);
 
-    const medConfig = {
-        rs: {
-            containerId: 'rsContainer',
-            storeUrl:    '{{ route("profil.anak.medical.store", ["type" => "rumah-sakit"]) }}',
-            updateUrl:   '{{ route("profil.anak.medical.update", ["type" => "rumah-sakit"]) }}',
-            deleteUrl:   '{{ route("profil.anak.medical.delete", ["type" => "rumah-sakit"]) }}',
-            required:    'nama_rs',
-        },
-        dokter: {
-            containerId: 'dokterContainer',
-            storeUrl:    '{{ route("profil.anak.medical.store", ["type" => "dokter"]) }}',
-            updateUrl:   '{{ route("profil.anak.medical.update", ["type" => "dokter"]) }}',
-            deleteUrl:   '{{ route("profil.anak.medical.delete", ["type" => "dokter"]) }}',
-            required:    'nama_dokter',
-        },
-        vaksin: {
-            containerId: 'vaksinContainer',
-            storeUrl:    '{{ route("profil.anak.medical.store", ["type" => "vaksin"]) }}',
-            updateUrl:   '{{ route("profil.anak.medical.update", ["type" => "vaksin"]) }}',
-            deleteUrl:   '{{ route("profil.anak.medical.delete", ["type" => "vaksin"]) }}',
-            required:    'nama_vaksin',
-        },
+    const medTypes = {
+        rs:     { path: 'rumah-sakit', required: 'nama_rs' },
+        dokter: { path: 'dokter',      required: 'nama_dokter' },
+        vaksin: { path: 'vaksin',      required: 'nama_vaksin' },
     };
 
-    for (const [type, cfg] of Object.entries(medConfig)) {
-        const container = document.getElementById(cfg.containerId);
+    const results = { created: [], updated: [], deleted: [], errors: [] };
+
+    for (const [type, cfg] of Object.entries(medTypes)) {
+        const container = document.getElementById(type + 'Container');
         if (!container) continue;
 
-        // Collect IDs currently in the DOM for this section
+        const baseUrl = `${API_BASE_URL}/anak/medical/${cfg.path}`;
         const currentIds = [];
+        const entries = container.querySelectorAll('.med-entry');
+        console.log(`\n--- ${type} (${entries.length} entries) ---`);
 
-        for (const el of container.querySelectorAll('.med-entry')) {
-            const payload = { id_anak: childId };
+        for (const el of entries) {
+            const payload = {};
             let hasValue = false;
             let entryId = null;
 
             el.querySelectorAll('input, select, textarea').forEach(inp => {
                 const parts = inp.name.match(/\[(.+?)\]/g);
-                const key = parts ? parts[parts.length-1].replace(/[\[\]]/g, '') : null;
-                if (key) {
-                    payload[key] = inp.value;
-                    if (key === 'id' && inp.value) entryId = inp.value;
-                    if (inp.value?.trim()) hasValue = true;
-                }
+                const key = parts ? parts[parts.length - 1].replace(/[\[\]]/g, '') : null;
+                if (!key) return;
+                payload[key] = inp.value;
+                if (key === 'id' && inp.value) entryId = inp.value;
+                if (inp.value?.trim()) hasValue = true;
             });
 
             if (!hasValue) continue;
 
-            if (entryId) {
-                // ── Existing record — UPDATE ──
-                currentIds.push(entryId);
-                await fetch(cfg.updateUrl, { method: 'POST', headers, body: JSON.stringify(payload) });
-            } else {
-                // ── New record (no id) — CREATE ──
-                delete payload.id; // remove empty id key if present
-                if (payload[cfg.required]) {
-                    await fetch(cfg.storeUrl, { method: 'POST', headers, body: JSON.stringify(payload) });
+            try {
+                if (entryId) {
+                    // UPDATE — PUT /api/anak/medical/{type} with { id, ... } in body
+                    currentIds.push(entryId);
+                    await apiPut(baseUrl, { ...payload, id_anak: childId });
+                    results.updated.push(`${type}:${entryId}`);
+                    console.log(`✓ Updated ${type} ${entryId}`);
+                } else {
+                    // CREATE — POST /api/anak/medical/{type}
+                    delete payload.id;
+                    if (payload[cfg.required]) {
+                        const res = await apiPost(baseUrl, { ...payload, id_anak: childId });
+                        if (res.data?.id) currentIds.push(String(res.data.id));
+                        results.created.push(type);
+                        console.log(`✓ Created ${type}`);
+                    }
                 }
+            } catch (err) {
+                console.error(`✗ Error ${type}:`, err.response?.message || err.message);
+                results.errors.push({ type, entryId, error: err.response?.message });
             }
         }
 
-        // ── DELETE entries that were removed from the DOM ──
+        // DELETE removed entries
         const existing = existingMedIds[type] || [];
-        for (const id of existing) {
-            if (!currentIds.includes(id)) {
-                await fetch(cfg.deleteUrl, {
-                    method: 'POST',
-                    headers,
-                    body: JSON.stringify({ id, id_anak: childId }),
-                });
+        const toDelete = existing.filter(id => !currentIds.includes(id));
+        for (const id of toDelete) {
+            try {
+                await apiDelete(`${baseUrl}/${id}?id_anak=${childId}`);
+                results.deleted.push(`${type}:${id}`);
+                console.log(`✓ Deleted ${type} ${id}`);
+            } catch (err) {
+                console.error(`✗ Delete error ${type}:${id}`, err.response?.message || err.message);
+                results.errors.push({ type, entryId: id, error: err.response?.message });
             }
         }
     }
+
+    console.log('=== ✅ Medical Save Complete ===', results);
+    return results;
 }
 </script>
 </body>
