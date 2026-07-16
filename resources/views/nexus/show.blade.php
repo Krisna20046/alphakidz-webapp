@@ -178,6 +178,12 @@
         background:#F3E5F5; border-radius:12px;
         font-size:13px; font-weight:700; color:#7B1FA2;
     }
+
+    #phoneFrame {
+        height: 100vh;
+        height: 100dvh;
+        min-height: unset;
+    }
 </style>
 @endpush
 
