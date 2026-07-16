@@ -686,6 +686,8 @@ setInterval(() => {
 function invalidateRemindersCache() {
     if (window.apiCache) {
         window.apiCache.delete('reminders_list');
+        // Hapus juga cache endpoint yang dipakai halaman Home
+        window.apiCache.delete(`${API_BASE}/reminders/${USER_ID}`);
     }
 }
 
@@ -825,7 +827,7 @@ async function onToggleActive(id, currentlyActive) {
             const data = await res.json();
             if (data.success) {
                 const r = reminders.find(x => x.id === id);
-                if (r) { r.is_active = true; renderList(); }
+                if (r) { r.is_active = true; invalidateRemindersCache(); renderList(); }
             } else {
                 showToast('Terjadi kesalahan. Coba lagi.');
             }
@@ -852,7 +854,7 @@ async function confirmNonactive() {
             const data = await res.json();
             if (data.success) {
                 const r = reminders.find(x => x.id === pendingToggleId);
-                if (r) { r.is_active = false; renderList(); }
+                if (r) { r.is_active = false; invalidateRemindersCache(); renderList(); }
             } else {
                 showToast('Terjadi kesalahan. Coba lagi.');
             }

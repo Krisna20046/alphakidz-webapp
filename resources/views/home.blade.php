@@ -1057,10 +1057,8 @@ async function toggleNannyGps() {
 
     // Real-time nanny location update via Pusher
     channel.bind('nanny.location', (event) => {
-        // Clear GPS cache so next refresh gets fresh data
-        window.apiCache.delete(`ak_cache_${API_BASE}/majikan/nanny-locations?user_id=${USER_ID}`);
-        // Map key juga bisa pakai clearByPrefix
-        window.apiCache.clearByPrefix('nanny-locations');
+        // Clear GPS cache → apiCache.delete() already adds 'ak_cache_' prefix internally
+        window.apiCache.delete(`${API_BASE}/majikan/nanny-locations?user_id=${USER_ID}`);
         refreshGpsLocations();
     });
 })();
