@@ -48,9 +48,20 @@
         border: 1.5px solid #F0ECF9;
         transition: all .15s ease;
         cursor: default;
+        position: relative;
     }
     .q-card.clickable { cursor: pointer; }
     .q-card:active.clickable { transform: scale(0.98); }
+    /* Status strip */
+    .q-card .status-strip {
+        position: absolute;
+        left: 0; top: 8px; bottom: 8px; width: 4px;
+        border-radius: 0 4px 4px 0;
+    }
+    .q-card .status-strip.open { background: #FF9800; }
+    .q-card .status-strip.claimed { background: #4CAF50; }
+    .q-card .status-strip.answered { background: #2196F3; }
+    .q-card .status-strip.closed { background: #9C27B0; }
 
     .fab-add {
         position: fixed; bottom: 80px; right: 20px; z-index: 100;
@@ -206,8 +217,8 @@ function initials(name) {
 // ── Render ──
 function buildCardHTML(q, idx) {
     const link = `{{ route("nexus.show", "") }}/${q.id}`;
-    const isClickable = q.status !== 'open' || q.status === 'claimed';
-    const cardClass = isClickable ? 'q-card clickable' : 'q-card bg-white shadow-[0_1px_4px_rgba(0,0,0,.06)]';
+    const isClickable = q.status !== 'open' && q.status !== 'closed';
+    const cardClass = isClickable ? 'q-card bg-white shadow-[0_1px_4px_rgba(0,0,0,.06)]' : 'q-card clickable';
     const onclick = isClickable ? `onclick="window.location='${link}'"` : '';
 
     const canClaim = isNexus && q.status === 'open' && !q.claimed_by;
@@ -217,7 +228,8 @@ function buildCardHTML(q, idx) {
 
     return `
     <div class="${cardClass}" ${onclick} style="animation: slideUp .35s ease ${idx * 0.04}s both; opacity:0;">
-        <div class="flex items-start gap-3">
+        <div class="status-strip ${q.status}"></div>
+        <div class="flex items-start gap-3" style="position:relative;">
             <div class="w-[44px] h-[44px] rounded-[8px] flex items-center justify-center text-[#8B46D3] font-extrabold text-base bg-[#F3F0FD] shrink-0">${initials(askerName)}</div>
             <div class="flex-1 min-w-0">
                 <div class="flex items-start justify-between gap-2 mb-1">

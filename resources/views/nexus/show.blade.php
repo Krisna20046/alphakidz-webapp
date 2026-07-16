@@ -255,7 +255,7 @@
 </div>
 
 <!-- INPUT BAR -->
-<div id="inputBar" style="display:none;">
+<div id="inputBar" class="flex items-end gap-2">
     <textarea id="msgInput" rows="1"
               placeholder="Ketik pesan..."
               oninput="autoGrow(this); toggleSendBtn()"
@@ -419,17 +419,6 @@ function renderDetail(q) {
 
     renderMessages();
     if (messages.length > 0) scrollToBottom();
-
-    // Chat input
-    const inputBar = document.getElementById('inputBar');
-    const isAsker = q.asked_by?.id === USER_ID;
-    const canChat = (isAsker || isClaimer) && q.claimed_by && q.status !== 'closed';
-
-    if (canChat) {
-        inputBar.style.display = 'flex';
-    } else if (q.status === 'closed') {
-        inputBar.style.display = 'none';
-    }
 }
 
 // ─── Send Message ───
@@ -527,6 +516,27 @@ async function closeQuestion() {
         loadDetail();
     } catch(e) { showToast('Gagal menutup pertanyaan'); }
 }
+
+// ── VisualViewport handler (mobile keyboard support) ──────────────────────────
+(function initViewport(){
+    if(!window.visualViewport) return;
+
+    const phoneFrame = document.getElementById('phoneFrame');
+
+    function adjustViewport(){
+        const vv = window.visualViewport;
+        const isMobile = window.innerWidth < 640;
+        if(!isMobile) return;
+        phoneFrame.style.height = vv.height + 'px';
+    }
+
+    window.visualViewport.addEventListener('resize', () => {
+        adjustViewport();
+        requestAnimationFrame(() => scrollToBottom());
+    });
+
+    adjustViewport();
+})();
 
 // ─── Init ───
 loadDetail();
