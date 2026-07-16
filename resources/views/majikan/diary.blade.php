@@ -447,36 +447,6 @@
                         </div>
                         @endif
                         @endif
-                        @if(in_array($kat, ['makan','minum']))
-                        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
-                            @if(!empty($item['porsi']))
-                            <span style="padding:3px 10px;border-radius:12px;background:#fff;font-size:11px;font-weight:700;color:
-                                {{ ['habis'=>'#166534','setengah'=>'#B45309','sedikit'=>'#DC2626','tidak_makan'=>'#DC2626'][$item['porsi']] ?? '#5A556E' }};">
-                                {{ str_replace('_',' ',ucfirst($item['porsi'])) }}
-                            </span>
-                            @endif
-                            @if(!empty($item['nafsu_makan']))
-                            <span style="padding:3px 10px;border-radius:12px;background:#fff;font-size:11px;font-weight:700;color:#5A556E;">
-                                @php $nafsuIcons = ['lapar'=>'🍽️','biasa'=>'😐','tidak_nafsu'=>'😫']; @endphp
-                                {{ $nafsuIcons[$item['nafsu_makan']] ?? '' }} {{ str_replace('_',' ',ucfirst($item['nafsu_makan'])) }}
-                            </span>
-                            @endif
-                        </div>
-                        @if(!empty($item['foto_sebelum_url']) || !empty($item['foto_sesudah_url']))
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
-                            @if(!empty($item['foto_sebelum_url']))
-                            <img src="{{ $item['foto_sebelum_url'] }}" class="akt-photo" alt="Sebelum"
-                                onclick="event.stopPropagation();openImageModal('{{ $item['foto_sebelum_url'] }}')"
-                                style="cursor:pointer;">
-                            @endif
-                            @if(!empty($item['foto_sesudah_url']))
-                            <img src="{{ $item['foto_sesudah_url'] }}" class="akt-photo" alt="Sesudah"
-                                onclick="event.stopPropagation();openImageModal('{{ $item['foto_sesudah_url'] }}')"
-                                style="cursor:pointer;">
-                            @endif
-                        </div>
-                        @endif
-                        @endif
                         @if(!empty($item['foto_url']))
                         <img src="{{ $item['foto_url'] }}" class="akt-photo" alt=""
                             onclick="event.stopPropagation(); openImageModal('{{ $item['foto_url'] }}')">
