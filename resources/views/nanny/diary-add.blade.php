@@ -775,18 +775,139 @@ function getLocation(){
     );
 }
 
+const MAX_PHOTO_SIZE = 10 * 1024 * 1024; // 10 MB
+const COMPRESS_MAX_DIM = 1200; // max pixel (longest edge)
+const COMPRESS_QUALITY = 0.7;  // JPEG quality 0-1
+
+/**
+ * Jika file > 10MB, tunjukkan tombol "Kompres Foto" via alert bar.
+ * Kompresi via Canvas API — resize + turunkan kualitas JPEG.
+ * Returns Promise<File | null> — null berarti user batal.
+ */
+function handleOversizedFile(file) {
+    return new Promise(resolve => {
+        if (!file || file.size <= MAX_PHOTO_SIZE) {
+            resolve(file);
+            return;
+        }
+
+        const el = document.getElementById('alertBar');
+        el.className = 'alert-bar err';
+        el.style.display = 'flex';
+        el.style.justifyContent = 'space-between';
+        el.style.alignItems = 'center';
+        el.innerHTML = [
+            '<span style="font-size:13px;">Ukuran foto ' + (file.size / 1048576).toFixed(1) + ' MB (max 10 MB)</span>',
+            '<div style="display:flex;gap:6px;flex-shrink:0;">',
+            '<button id="btnCompress"',
+            '  style="background:#8B46D3;color:#fff;border:none;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:800;cursor:pointer;">',
+            '  ✦ Kompres Foto',
+            '</button>',
+            '<button onclick="cancelOversized()"',
+            '  style="background:transparent;color:#B91C1C;border:1.5px solid #B91C1C;border-radius:20px;padding:6px 12px;font-size:12px;font-weight:800;cursor:pointer;">',
+            '  Ganti Foto',
+            '</button>',
+            '</div>'
+        ].join('');
+
+        // Prevent auto-hide
+        if (window._alertTimeout) clearTimeout(window._alertTimeout);
+
+        window._oversizedFile = file;
+        window._oversizedResolve = resolve;
+
+        // Attach listener for the compress button
+        document.getElementById('btnCompress').addEventListener('click', compressAndResolve);
+    });
+}
+
+async function compressAndResolve() {
+    const file = window._oversizedFile;
+    if (!file) return;
+
+    const el = document.getElementById('alertBar');
+    el.innerHTML = [
+        '<span style="font-size:13px;">⏳ Mengompres foto...</span>',
+        '<div style="width:20px;height:20px;border:3px solid #8B46D3;border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite;"></div>'
+    ].join('');
+
+    try {
+        const compressed = await compressImage(file);
+        window._oversizedResolve(compressed);
+    } catch (e) {
+        window._oversizedResolve(null);
+    }
+    el.style.display = 'none';
+    window._oversizedFile = null;
+    window._oversizedResolve = null;
+}
+
+function cancelOversized() {
+    document.getElementById('alertBar').style.display = 'none';
+    if (window._oversizedResolve) {
+        window._oversizedResolve(null);
+    }
+    window._oversizedFile = null;
+    window._oversizedResolve = null;
+}
+
+/**
+ * Compress image via Canvas API.
+ * Resize longest edge to COMPRESS_MAX_DIM, output JPEG at COMPRESS_QUALITY.
+ */
+function compressImage(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const img = new Image();
+            img.onload = function () {
+                // Calculate new dimensions
+                let w = img.width, h = img.height;
+                if (w > COMPRESS_MAX_DIM || h > COMPRESS_MAX_DIM) {
+                    const ratio = Math.min(COMPRESS_MAX_DIM / w, COMPRESS_MAX_DIM / h);
+                    w = Math.round(w * ratio);
+                    h = Math.round(h * ratio);
+                }
+
+                // Draw onto canvas
+                const canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, w, h);
+
+                // Export as JPEG blob
+                canvas.toBlob(function (blob) {
+                    if (!blob) { reject(new Error('Compression failed')); return; }
+                    const compressedFile = new File([blob], file.name, {
+                        type: 'image/jpeg',
+                        lastModified: Date.now(),
+                    });
+                    resolve(compressedFile);
+                }, 'image/jpeg', COMPRESS_QUALITY);
+            };
+            img.onerror = reject;
+            img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
 // ── Photo ──
-function previewFoto(input){
+async function previewFoto(input){
     const file=input.files[0];
     if(!file) return;
-    fotoFile=file;
+    const safeFile = await handleOversizedFile(file);
+    if (!safeFile) { input.value = ''; return; }
+    fotoFile=safeFile;
     const reader=new FileReader();
     reader.onload=e=>{
         document.getElementById('fotoPreviewImg').src=e.target.result;
         document.getElementById('fotoPreviewSlot').style.display='block';
         document.getElementById('photoActions').style.display='none';
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(safeFile);
 }
 function capturePhoto(){ document.getElementById('inputCamera').click(); }
 function removeFoto(){
@@ -808,17 +929,19 @@ function selectNafsu(btn){
     btn.classList.add('sel');
     selNafsu = btn.dataset.nafsu;
 }
-function previewFotoSebelum(input){
+async function previewFotoSebelum(input){
     const file=input.files[0];
     if(!file) return;
-    fotoSebelumFile=file;
+    const safeFile = await handleOversizedFile(file);
+    if (!safeFile) { input.value = ''; return; }
+    fotoSebelumFile=safeFile;
     const reader=new FileReader();
     reader.onload=e=>{
         document.getElementById('fotoSebelumImg').src=e.target.result;
         document.getElementById('fotoSebelumPreview').style.display='block';
         document.getElementById('fotoSebelumActions').style.display='none';
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(safeFile);
 }
 function captureFotoSebelum(){ document.getElementById('inputCameraSebelum').click(); }
 function removeFotoSebelum(){
@@ -828,17 +951,19 @@ function removeFotoSebelum(){
     document.getElementById('inputFotoSebelum').value='';
     document.getElementById('inputCameraSebelum').value='';
 }
-function previewFotoSesudah(input){
+async function previewFotoSesudah(input){
     const file=input.files[0];
     if(!file) return;
-    fotoSesudahFile=file;
+    const safeFile = await handleOversizedFile(file);
+    if (!safeFile) { input.value = ''; return; }
+    fotoSesudahFile=safeFile;
     const reader=new FileReader();
     reader.onload=e=>{
         document.getElementById('fotoSesudahImg').src=e.target.result;
         document.getElementById('fotoSesudahPreview').style.display='block';
         document.getElementById('fotoSesudahActions').style.display='none';
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(safeFile);
 }
 function captureFotoSesudah(){ document.getElementById('inputCameraSesudah').click(); }
 function removeFotoSesudah(){
