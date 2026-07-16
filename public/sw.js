@@ -33,6 +33,8 @@ const NEVER_CACHE = [
     /\/fcm\//,            // FCM token management
     /pusher\.com/,        // Pusher external
     /fonts\.googleapis/,  // Google Fonts (biarkan browser cache sendiri)
+    /\/api\/chat-list/,   // Chat list harus selalu fresh (unread count)
+    /\/api\/unread-count/,// Unread count harus selalu fresh
 ];
 
 // ── API cache config ──────────────────────────────────────────────────────────

@@ -262,6 +262,11 @@ function applyFilters() {
 
 // ── Fetch Chat List ───────────────────────────────────────────────────────────
 async function fetchChatList() {
+    // If returning from a chat room, invalidate cache so unread counts are fresh
+    if (sessionStorage.getItem('chat_read') === '1') {
+        invalidateChatCache();
+        sessionStorage.removeItem('chat_read');
+    }
     try {
         // Cache chat list 1 menit — cukup karena realtime lewat Pusher update
         var data = window.apiCache.get('chat_list');

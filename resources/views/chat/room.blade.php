@@ -616,6 +616,8 @@ async function sendMessage(){
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 (async function init(){
+    // Tandai bahwa room sudah dikunjungi — list akan refresh cache saat kembali
+    try { sessionStorage.setItem('chat_read', '1'); } catch(_) {}
     await fetchChat(1, true);
     initScrollListener();
     setTimeout(() => scrollToBottom(), 300);
