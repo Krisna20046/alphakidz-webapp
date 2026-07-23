@@ -84,7 +84,7 @@
             hide-scrollbar space-y-4">
 
     {{-- KATEGORI --}}
-    <div class="anim delay-2">
+    {{-- <div class="anim delay-2">
         <div class="flex items-center gap-2 mb-3 px-1">
             <ion-icon name="grid-outline" style="font-size:14px;color:#8B46D3;"></ion-icon>
             <span class="text-[#1E1B2E] text-[15px] font-extrabold">Category</span>
@@ -108,7 +108,7 @@
             </div>
             @endforeach
         </div>
-    </div>
+    </div> --}}
 
     {{-- SEMUA ARTIKEL DARI WP API --}}
     <div class="anim delay-3">

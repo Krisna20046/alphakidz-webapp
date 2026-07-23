@@ -72,6 +72,11 @@
         cursor: pointer; transition: transform .12s;
     }
     .fab-add:active { transform: scale(.9); }
+
+    /* Modal */
+    #waitModal { backdrop-filter: blur(4px); }
+    @keyframes modalIn { from { opacity:0; transform:scale(.85) translateY(20px); } to { opacity:1; transform:scale(1) translateY(0); } }
+    .animate-modal-in { animation: modalIn .25s ease-out; }
 </style>
 @endpush
 
@@ -147,6 +152,23 @@
 @if(!$isNexus)
     <a href="{{ route('nexus.create') }}" class="fab-add">+</a>
 @endif
+
+{{-- Modal peringatan untuk status open yang belum di-claim --}}
+<div id="waitModal" class="fixed inset-0 z-[200] hidden items-center justify-center bg-black/40" style="display:none;">
+    <div class="animate-modal-in bg-white rounded-[24px] px-6 py-8 mx-6 max-w-sm w-full shadow-2xl text-center">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-[#FFF3E0] flex items-center justify-center">
+            <ion-icon name="hourglass-outline" style="font-size:36px;color:#E65100;"></ion-icon>
+        </div>
+        <h3 class="text-[#1E1B2E] text-lg font-extrabold mb-2">Menunggu Nexus</h3>
+        <p class="text-[#7C7893] text-sm font-semibold leading-relaxed mb-6">
+            Pertanyaan ini masih menunggu Nexus untuk mengambil antrian Anda. Silakan tunggu sebentar.
+        </p>
+        <button onclick="closeWaitModal()"
+                class="bg-[#8B46D3] text-white font-extrabold text-sm px-8 py-3 rounded-[14px] border-none cursor-pointer transition-transform active:scale-95 w-full">
+            Mengerti
+        </button>
+    </div>
+</div>
 @endsection
 
 @push('scripts')
@@ -217,9 +239,18 @@ function initials(name) {
 // ── Render ──
 function buildCardHTML(q, idx) {
     const link = `{{ route("nexus.show", "") }}/${q.id}`;
-    const isClickable = q.status !== 'open' && q.status !== 'closed';
-    const cardClass = isClickable ? 'q-card bg-white shadow-[0_1px_4px_rgba(0,0,0,.06)]' : 'q-card clickable';
-    const onclick = isClickable ? `onclick="window.location='${link}'"` : '';
+    const isUnclaimedOpen = q.status === 'open' && !q.claimed_by;
+    const isClickable = isUnclaimedOpen || (q.status !== 'open' && q.status !== 'closed');
+    const cardClass = isClickable ? 'q-card clickable' : 'q-card bg-white shadow-[0_1px_4px_rgba(0,0,0,.06)]';
+
+    let onclick;
+    if (isUnclaimedOpen) {
+        onclick = `onclick="showWaitModal(event)"`;
+    } else if (isClickable) {
+        onclick = `onclick="window.location='${link}'"`;
+    } else {
+        onclick = '';
+    }
 
     const canClaim = isNexus && q.status === 'open' && !q.claimed_by;
     const askerName = q.asked_by?.name || 'User';
@@ -350,6 +381,21 @@ async function loadQuestions() {
 }
 
 loadQuestions();
+
+// ── Modal wait ──
+function showWaitModal(e) {
+    if (e) e.stopPropagation();
+    const modal = document.getElementById('waitModal');
+    modal.style.display = 'flex';
+}
+function closeWaitModal() {
+    document.getElementById('waitModal').style.display = 'none';
+}
+// Tutup modal kalau klik backdrop
+document.addEventListener('click', function(e) {
+    const modal = document.getElementById('waitModal');
+    if (e.target === modal) closeWaitModal();
+});
 
 // ── Claim ──
 async function claimQuestion(id) {

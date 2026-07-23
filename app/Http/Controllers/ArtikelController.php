@@ -9,7 +9,7 @@ class ArtikelController extends Controller
 {
     public function index(Request $request)
     {
-        $perPage = 3;
+        $perPage = 4;
         $page = $request->input('page', 1);
 
         $response = Http::get('https://pnpro.id/wp-json/wp/v2/posts', [
