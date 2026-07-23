@@ -175,7 +175,7 @@
     <div class="flex-1 min-w-0">
         <p class="text-white font-semibold text-[20px] leading-none truncate">{{ $namaPenerima ?? 'Chat' }}</p>
         <div class="flex items-center gap-1.5 mt-0.5">
-            <span id="statusText" class="text-white/80 text-[14px] leading-none font-semibold">Online now</span>
+            <span id="statusText" class="text-white/80 text-[14px] leading-none font-semibold">...</span>
         </div>
     </div>
 </div>
@@ -547,10 +547,41 @@ async function sendMessage(){
 
     const channel = pusher.subscribe(`private-chat.${USER_ID}`);
 
-    channel.bind('pusher:subscription_succeeded', ()=>{
-        document.getElementById('onlineDot').className =
-            'absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dot-online';
-        document.getElementById('statusText').textContent = 'Online now';
+    // ── Online status lawan bicara ────────────────────────────────────────────
+    // JANGAN set status dari pusher:subscription_succeeded — itu cuma artinya
+    // user SENDIRI subscribe ke channel-nya sendiri, BUKAN status lawan bicara.
+
+    function updatePartnerStatus() {
+        const STATUS_URL = "{{ url('/api/user') }}" + "/" + ID_PENERIMA + "/status";
+        fetch(STATUS_URL, {
+            headers: {'Accept':'application/json','Authorization':`Bearer ${AUTH_TOKEN}`}
+        })
+        .then(r => r.json())
+        .then(data => {
+            const dot = document.getElementById('onlineDot');
+            const text = document.getElementById('statusText');
+            if (data.is_online) {
+                dot.className = 'absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dot-online';
+                text.textContent = 'Online';
+            } else {
+                dot.className = 'absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dot-offline';
+                text.textContent = 'Offline';
+            }
+        })
+        .catch(function() {});
+    }
+
+    // Cek status saat halaman dimuat
+    updatePartnerStatus();
+
+    // Refresh status setiap 60 detik
+    setInterval(updatePartnerStatus, 60000);
+
+    // Cek status saat tab kembali aktif
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            updatePartnerStatus();
+        }
     });
 
     channel.bind('chat.new', (event)=>{
@@ -586,10 +617,11 @@ async function sendMessage(){
         scrollToBottom(true);
     });
 
-    pusher.connection.bind('disconnected', ()=>{
-        document.getElementById('onlineDot').className =
-            'absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white dot-offline';
-        document.getElementById('statusText').textContent = 'Offline';
+    // Pusher koneksi terputus — tidak ubah status partner, karena partner
+    // bisa saja tetap online via ping mechanism. Biarkan updatePartnerStatus()
+    // yang menentukan status sebenarnya.
+    pusher.connection.bind('disconnected', function() {
+        console.warn('Pusher disconnected — realtime chat nonaktif');
     });
 })();
 

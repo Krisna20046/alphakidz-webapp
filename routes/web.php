@@ -92,6 +92,11 @@ Route::middleware('auth.api')->group(function () {
     Route::get( '/api/chat',      [ChatController::class, 'apiGetChat'] )->name('api.chat.get');
     Route::post('/api/chat',      [ChatController::class, 'apiSendChat'])->name('api.chat.send');
 
+    // ── Online Status API Proxy ───────────────────────────────────────────────
+    Route::post('/api/user/ping',         [ChatController::class, 'apiPing'])->name('api.user.ping');
+    Route::post('/api/user/offline',      [ChatController::class, 'apiOffline'])->name('api.user.offline');
+    Route::get('/api/user/{id}/status',   [ChatController::class, 'apiUserStatus'])->name('api.user.status');
+
     // Artikel
     Route::get('/artikel', [ArtikelController::class, 'index'])->name('artikel.index');
     Route::get('/artikel/{id}', [ArtikelController::class, 'show'])->name('artikel.show');

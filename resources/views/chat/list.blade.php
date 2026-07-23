@@ -27,6 +27,9 @@
         color: white;
         box-shadow: 0 6px 14px rgba(139,70,211,0.28);
     }
+
+    .dot-online { background: #22C55E; }
+    .dot-offline { background: #A8A2C2; }
 </style>
 @endpush
 
@@ -151,6 +154,7 @@ function processChatData(raw) {
         timestamp   : c.created_at,
         unread      : c.unread_count || 0,
         roleType    : normalizeRole(c.role_penerima),
+        is_online   : c.is_online || false,
     }));
 }
 
@@ -172,6 +176,8 @@ function buildChatItemHTML(chat, idx) {
         ? '#10B981'
         : (chat.roleType === 'nanny' ? '#06B6D4' : '#A78BFA');
 
+    const onlineDotClass = chat.is_online ? 'dot-online' : 'dot-offline';
+
     const timeText = chat.unread > 0 ? formatTime(chat.timestamp) : (new Date(chat.timestamp) > (new Date(Date.now() - 24*3600000)) ? formatTime(chat.timestamp) : 'Friday');
 
     return `
@@ -181,7 +187,7 @@ function buildChatItemHTML(chat, idx) {
        <div class="flex items-center gap-3">
         <div class="relative shrink-0">
             ${av}
-            <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white" style="background:${roleDot};"></span>
+            <span class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-white ${onlineDotClass}"></span>
         </div>
         <div class="flex-1 min-w-0">
             <div class="flex items-start justify-between gap-2">
@@ -334,5 +340,10 @@ fetchChatList();
         applyFilters();
     });
 })();
+
+// ── Periodic refresh untuk update online indicator ───────────────────
+setInterval(function() {
+    fetchChatList();
+}, 60000); // refresh setiap 60 detik
 </script>
 @endpush

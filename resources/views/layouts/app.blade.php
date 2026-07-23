@@ -111,6 +111,68 @@
     })();
 </script>
 
+<script>
+    // ── Online Status Heartbeat ────────────────────────────────────────────────
+    (function() {
+        const PING_URL = '{{ route("api.user.ping") }}';
+        const OFFLINE_URL = '{{ route("api.user.offline") }}';
+        const PING_INTERVAL = 120000; // 2 menit
+
+        function sendPing() {
+            fetch(PING_URL, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                keepalive: true,
+            }).catch(function() {});
+        }
+
+        function sendOffline() {
+            try {
+                navigator.sendBeacon(OFFLINE_URL, new URLSearchParams({
+                    '_token': '{{ csrf_token() }}'
+                }));
+            } catch(e) {
+                fetch(OFFLINE_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    keepalive: true,
+                }).catch(function() {});
+            }
+        }
+
+        // Ping saat halaman pertama kali dimuat
+        sendPing();
+
+        // Ping periodik
+        setInterval(sendPing, PING_INTERVAL);
+
+        // Deteksi visibility change — offline saat tab tersembunyi, online saat kembali
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                sendOffline();
+            } else {
+                sendPing();
+            }
+        });
+
+        // Deteksi beforeunload — offline saat tab ditutup
+        window.addEventListener('beforeunload', function() {
+            sendOffline();
+        });
+
+        // Deteksi online/offline koneksi — ping saat koneksi kembali
+        window.addEventListener('online', function() {
+            sendPing();
+        });
+    })();
+</script>
+
 @stack('scripts')
 
 @include('partials.auth-guard')

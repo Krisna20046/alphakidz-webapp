@@ -133,4 +133,64 @@ class ChatController extends Controller
     // API PROXY: GET unread count  GET /api/unread-count
     // Already handled in HomeController@unreadCount — kept here for reference
     // ─────────────────────────────────────────────────────────────────────────
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // ONLINE STATUS PROXY  POST /api/user/ping
+    // ─────────────────────────────────────────────────────────────────────────
+
+    public function apiPing()
+    {
+        $token = session('token');
+        if (!$token) return response()->json(['success' => false], 401);
+
+        try {
+            $response = Http::withToken($token)->acceptJson()->timeout(10)
+                ->post("{$this->apiBaseUrl}/user/ping");
+
+            return response()->json($response->json());
+        } catch (\Exception $e) {
+            Log::error('ChatController@apiPing - ' . $e->getMessage());
+            return response()->json(['success' => false], 500);
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // ONLINE STATUS PROXY  POST /api/user/offline
+    // ─────────────────────────────────────────────────────────────────────────
+
+    public function apiOffline()
+    {
+        $token = session('token');
+        if (!$token) return response()->json(['success' => false], 401);
+
+        try {
+            $response = Http::withToken($token)->acceptJson()->timeout(10)
+                ->post("{$this->apiBaseUrl}/user/offline");
+
+            return response()->json($response->json());
+        } catch (\Exception $e) {
+            Log::error('ChatController@apiOffline - ' . $e->getMessage());
+            return response()->json(['success' => false], 500);
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // ONLINE STATUS PROXY  GET /api/user/{id}/status
+    // ─────────────────────────────────────────────────────────────────────────
+
+    public function apiUserStatus(int $id)
+    {
+        $token = session('token');
+        if (!$token) return response()->json(['success' => false], 401);
+
+        try {
+            $response = Http::withToken($token)->acceptJson()->timeout(10)
+                ->get("{$this->apiBaseUrl}/user/{$id}/status");
+
+            return response()->json($response->json());
+        } catch (\Exception $e) {
+            Log::error('ChatController@apiUserStatus - ' . $e->getMessage());
+            return response()->json(['success' => false], 500);
+        }
+    }
 }
