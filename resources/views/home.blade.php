@@ -179,7 +179,6 @@
 
                     @php
                         $banners = [
-                            ['src' => asset('image/banner1.jpeg'), 'title' => 'Expert Care for your Loved Ones',   'sub' => 'Trusted by 27,000+ happy families worldwide.'],
                             ['src' => asset('image/banner2.jpeg'), 'title' => 'Find Trusted Nannies Near You',     'sub' => 'Verified & background checked professionals.'],
                             ['src' => asset('image/banner3.jpeg'), 'title' => 'Book a Consultation Today',         'sub' => 'Expert advice for every parenting challenge.'],
                         ];
