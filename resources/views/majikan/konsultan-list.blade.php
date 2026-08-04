@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Daftar Konsultan')
+@section('title', 'Consultant List')
 
 @push('styles')
 <style>
@@ -34,8 +34,8 @@
             <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
         </a>
         <div>
-            <span class="text-white text-[17px] font-extrabold tracking-wide">List Konsultan</span>
-            <p class="text-white/60 text-xs font-medium mt-0.5">{{ count($konsultans ?? []) }} konsultan tersedia</p>
+            <span class="text-white text-[17px] font-extrabold tracking-wide">Consultant List</span>
+            <p class="text-white/60 text-xs font-medium mt-0.5">{{ count($konsultans ?? []) }} consultants available</p>
         </div>
     </div>
 </div>
@@ -51,7 +51,7 @@
                     type="text"
                     name="search"
                     value="{{ request('search') }}"
-                    placeholder="Cari konsultan..."
+                    placeholder="Search consultants..."
                     class="search-input flex-1 text-[13px] font-semibold text-[#4B5563] placeholder-[#9CA3AF] bg-transparent"
                 >
                 @if(request('search'))
@@ -67,9 +67,9 @@
     <div class="anim delay-3">
         @if(isset($konsultans) && count($konsultans) > 0)
         <div class="flex items-center justify-between mb-2">
-            <h2 class="text-[#5A556E] text-[18px] font-extrabold">Rekomendasi Konsultan</h2>
+            <h2 class="text-[#5A556E] text-[18px] font-extrabold">Consultant Recommendations</h2>
             <div class="bg-[#EDE9FE] px-3 py-1 rounded-full">
-                <span class="text-[#8B46D3] text-xs font-bold">{{ count($konsultans) }} Konsultan</span>
+                <span class="text-[#8B46D3] text-xs font-bold">{{ count($konsultans) }} Consultants</span>
             </div>
         </div>
 
@@ -82,7 +82,7 @@
                 $badgeText  = $isHired ? 'HIRED' : 'AVAILABLE';
                 $rating     = $konsultan['rating']     ?? '4.9';
                 $reviews    = $konsultan['reviews']    ?? 42;
-                $role       = $konsultan['role']       ?? 'Konsultan Parenting';
+                $role       = $konsultan['role']       ?? 'Parenting Consultant';
             @endphp
             <a href="{{ route('majikan-konsultan-detail', $konsultan['id']) }}"
                class="konsultan-card block bg-white rounded-[14px] px-3 py-2.5 shadow-[0_2px_10px_rgba(0,0,0,0.10)] border border-[#EAE6F5]"
@@ -133,14 +133,14 @@
             <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-5">
                 <ion-icon name="search-outline" style="font-size:44px;color:#C4B5FD;"></ion-icon>
             </div>
-            <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">Konsultan tidak ditemukan</h3>
+            <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">Consultant not found</h3>
             <p class="text-[#9CA3AF] text-sm text-center leading-relaxed">
-                Tidak ada konsultan sesuai pencarian
+                No consultants match your search
                 "<span class="font-semibold text-[#8B46D3]">{{ request('search') }}</span>"
             </p>
             <a href="{{ route('majikan-konsultan-list') }}"
                class="mt-6 bg-[#8B46D3] text-white text-sm font-bold px-6 py-3 rounded-2xl shadow-[0_8px_18px_rgba(139,70,211,0.35)]">
-                Lihat Semua Konsultan
+                View All Consultants
             </a>
         </div>
 
@@ -149,9 +149,9 @@
             <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-5">
                 <ion-icon name="people-outline" style="font-size:44px;color:#C4B5FD;"></ion-icon>
             </div>
-            <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">Belum ada konsultan</h3>
+            <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">No consultants yet</h3>
             <p class="text-[#9CA3AF] text-sm text-center leading-relaxed">
-                Daftar konsultan akan muncul di sini
+                The consultant list will appear here
             </p>
         </div>
         @endif

@@ -351,39 +351,39 @@
 
     {{-- MAKAN / MINUM DETAILS --}}
     <div class="bab-section anim" id="makanMinumSection" style="display:none;" data-section="makan-minum">
-        <p class="sec-label" style="margin-bottom:16px;">Makan & Minum Details</p>
+        <p class="sec-label" style="margin-bottom:16px;">Food & Drink Details</p>
 
         {{-- Porsi --}}
         <div style="margin-bottom:18px;">
-            <p class="time-field-label">Porsi</p>
+            <p class="time-field-label">Portion</p>
             <div class="pill-group">
-                @php $porsiOpts = ['Habis','Setengah','Sedikit','Tidak Makan']; @endphp
-                @foreach($porsiOpts as $p)
-                <button type="button" class="pill-btn" data-porsi="{{ strtolower(str_replace(' ','_',$p)) }}" onclick="selectPorsi(this)">{{ $p }}</button>
+                @php $porsiOpts = ['Habis'=>'Finished','Setengah'=>'Half','Sedikit'=>'Little','Tidak Makan'=>'Not Eating']; @endphp
+                @foreach($porsiOpts as $pVal => $pLbl)
+                <button type="button" class="pill-btn" data-porsi="{{ strtolower(str_replace(' ','_',$pVal)) }}" onclick="selectPorsi(this)">{{ $pLbl }}</button>
                 @endforeach
             </div>
         </div>
 
         {{-- Nafsu Makan --}}
         <div style="margin-bottom:18px;">
-            <p class="time-field-label">Nafsu Makan</p>
+            <p class="time-field-label">Appetite</p>
             <div class="pill-group">
-                @php $nafsuOpts = ['Lapar','Biasa','Tidak Nafsu']; @endphp
-                @foreach($nafsuOpts as $n)
-                <button type="button" class="pill-btn" data-nafsu="{{ strtolower(str_replace(' ','_',$n)) }}" onclick="selectNafsu(this)">{{ $n }}</button>
+                @php $nafsuOpts = ['Lapar'=>'Hungry','Biasa'=>'Normal','Tidak Nafsu'=>'No Appetite']; @endphp
+                @foreach($nafsuOpts as $nVal => $nLbl)
+                <button type="button" class="pill-btn" data-nafsu="{{ strtolower(str_replace(' ','_',$nVal)) }}" onclick="selectNafsu(this)">{{ $nLbl }}</button>
                 @endforeach
             </div>
         </div>
 
         {{-- Foto Sebelum & Sesudah --}}
         <div style="margin-bottom:12px;">
-            <p class="time-field-label">Foto Makanan</p>
+            <p class="time-field-label">Food Photo</p>
         </div>
         <div class="photo-grid" style="margin-bottom:0;">
             <div>
-                <p style="font-size:11px;font-weight:700;color:#A8A2C2;margin-bottom:6px;">Sebelum</p>
+                <p style="font-size:11px;font-weight:700;color:#A8A2C2;margin-bottom:6px;">Before</p>
                 <div id="fotoSebelumPreview" class="photo-slot" style="display:none;">
-                    <img id="fotoSebelumImg" src="" alt="Sebelum">
+                    <img id="fotoSebelumImg" src="" alt="Before">
                     <button type="button" class="photo-remove" onclick="removeFotoSebelum()">
                         <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
                     </button>
@@ -406,9 +406,9 @@
                 <input type="file" id="inputCameraSebelum" accept="image/*" capture="environment" class="hidden" onchange="previewFotoSebelum(this)">
             </div>
             <div>
-                <p style="font-size:11px;font-weight:700;color:#A8A2C2;margin-bottom:6px;">Sesudah</p>
+                <p style="font-size:11px;font-weight:700;color:#A8A2C2;margin-bottom:6px;">After</p>
                 <div id="fotoSesudahPreview" class="photo-slot" style="display:none;">
-                    <img id="fotoSesudahImg" src="" alt="Sesudah">
+                    <img id="fotoSesudahImg" src="" alt="After">
                     <button type="button" class="photo-remove" onclick="removeFotoSesudah()">
                         <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
                     </button>
@@ -461,28 +461,28 @@
 
         {{-- Warna (Color Swatches) --}}
         <div style="margin-bottom:18px;">
-            <p class="time-field-label">Warna</p>
+            <p class="time-field-label">Color</p>
             <div class="swatch-group" id="warnaGroupBab" style="display:none;">
-                <button type="button" class="swatch-btn" data-warna="coklat" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#6D4C41;"></span>Coklat</button>
-                <button type="button" class="swatch-btn" data-warna="hijau" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#2E7D32;"></span>Hijau</button>
-                <button type="button" class="swatch-btn" data-warna="kuning" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#F9A825;"></span>Kuning</button>
-                <button type="button" class="swatch-btn" data-warna="hitam" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#212121;"></span>Hitam</button>
-                <button type="button" class="swatch-btn" data-warna="merah" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#C62828;"></span>Merah</button>
+                <button type="button" class="swatch-btn" data-warna="coklat" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#6D4C41;"></span>Brown</button>
+                <button type="button" class="swatch-btn" data-warna="hijau" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#2E7D32;"></span>Green</button>
+                <button type="button" class="swatch-btn" data-warna="kuning" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#F9A825;"></span>Yellow</button>
+                <button type="button" class="swatch-btn" data-warna="hitam" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#212121;"></span>Black</button>
+                <button type="button" class="swatch-btn" data-warna="merah" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#C62828;"></span>Red</button>
             </div>
             <div class="swatch-group" id="warnaGroupBak" style="display:none;">
-                <button type="button" class="swatch-btn" data-warna="kuning" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#F9A825;"></span>Kuning</button>
-                <button type="button" class="swatch-btn" data-warna="jernih" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#CFD8DC;"></span>Jernih</button>
-                <button type="button" class="swatch-btn" data-warna="keruh" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#8D6E63;"></span>Keruh</button>
+                <button type="button" class="swatch-btn" data-warna="kuning" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#F9A825;"></span>Yellow</button>
+                <button type="button" class="swatch-btn" data-warna="jernih" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#CFD8DC;"></span>Clear</button>
+                <button type="button" class="swatch-btn" data-warna="keruh" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#8D6E63;"></span>Cloudy</button>
             </div>
         </div>
 
         {{-- Tekstur (BAB only) --}}
         <div id="teksturField" style="margin-bottom:18px;">
-            <p class="time-field-label">Tekstur</p>
+            <p class="time-field-label">Texture</p>
             <div class="pill-group">
-                @php $teksturOpts = ['Padat','Lembek','Cair','Keras','Berbusa']; @endphp
-                @foreach($teksturOpts as $t)
-                <button type="button" class="pill-btn" data-tekstur="{{ strtolower($t) }}" onclick="selectTekstur(this)">{{ $t }}</button>
+                @php $teksturOpts = ['Padat'=>'Solid','Lembek'=>'Soft','Cair'=>'Liquid','Keras'=>'Hard','Berbusa'=>'Frothy']; @endphp
+                @foreach($teksturOpts as $tVal => $tLbl)
+                <button type="button" class="pill-btn" data-tekstur="{{ strtolower($tVal) }}" onclick="selectTekstur(this)">{{ $tLbl }}</button>
                 @endforeach
             </div>
         </div>
@@ -491,16 +491,16 @@
         <div style="margin-bottom:18px;">
             <p class="time-field-label">Volume</p>
             <div class="pill-group">
-                @php $volOpts = ['Sedikit','Sedang','Banyak']; @endphp
-                @foreach($volOpts as $v)
-                <button type="button" class="pill-btn" data-volume="{{ strtolower($v) }}" onclick="selectVolume(this)">{{ $v }}</button>
+                @php $volOpts = ['Sedikit'=>'Small','Sedang'=>'Medium','Banyak'=>'Large']; @endphp
+                @foreach($volOpts as $vVal => $vLbl)
+                <button type="button" class="pill-btn" data-volume="{{ strtolower($vVal) }}" onclick="selectVolume(this)">{{ $vLbl }}</button>
                 @endforeach
             </div>
         </div>
 
         {{-- Frekuensi (Stepper) --}}
         <div style="margin-bottom:18px;">
-            <p class="time-field-label">Frekuensi (kali)</p>
+            <p class="time-field-label">Frequency (times)</p>
             <div class="stepper-wrap">
                 <button type="button" class="stepper-btn" onclick="adjustFrekuensi(-1)" id="frekuensiMin">−</button>
                 <span class="stepper-val" id="frekuensiDisplay">1</span>
@@ -510,9 +510,9 @@
 
         {{-- Deskripsi --}}
         <div>
-            <p class="time-field-label">Deskripsi</p>
+            <p class="time-field-label">Description</p>
             <div class="desk-wrap">
-                <textarea id="catatanKondisi" class="desk-input" rows="3" placeholder="Deskripsi tambahan tentang kondisi..."></textarea>
+                <textarea id="catatanKondisi" class="desk-input" rows="3" placeholder="Additional notes about the condition..."></textarea>
             </div>
         </div>
     </div>
@@ -560,7 +560,7 @@
 <div class="modal-overlay" id="modalTime">
     <div class="modal-box">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
-            <span style="font-size:17px;font-weight:900;color:#1E1B2E;" id="modalTimeTitle">Pilih Waktu</span>
+            <span style="font-size:17px;font-weight:900;color:#1E1B2E;" id="modalTimeTitle">Select Time</span>
             <button onclick="closeTimePicker()"
                 style="width:32px;height:32px;border-radius:16px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;">
                 <ion-icon name="close" style="font-size:18px;color:#8B46D3;"></ion-icon>
@@ -568,13 +568,13 @@
         </div>
         <div style="display:flex;align-items:flex-end;justify-content:center;gap:10px;margin-bottom:24px;">
             <div style="display:flex;flex-direction:column;align-items:center;">
-                <p style="font-size:12px;color:#A8A2C2;font-weight:800;margin-bottom:8px;">Jam</p>
+                <p style="font-size:12px;color:#A8A2C2;font-weight:800;margin-bottom:8px;">Hours</p>
                 <input type="number" id="inputJam" min="0" max="23" class="time-input"
                        oninput="clampTime(this,0,23);updateDurasi()">
             </div>
             <span style="font-size:28px;font-weight:900;color:#1E1B2E;padding-bottom:10px;">:</span>
             <div style="display:flex;flex-direction:column;align-items:center;">
-                <p style="font-size:12px;color:#A8A2C2;font-weight:800;margin-bottom:8px;">Menit</p>
+                <p style="font-size:12px;color:#A8A2C2;font-weight:800;margin-bottom:8px;">Minutes</p>
                 <input type="number" id="inputMenit" min="0" max="59" class="time-input"
                        oninput="clampTime(this,0,59);updateDurasi()">
             </div>
@@ -583,13 +583,13 @@
             <button onclick="closeTimePicker()"
                 style="padding:13px;border-radius:13px;border:2px solid #FFCACA;background:#FFF9F9;
                        font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:#FF0000;cursor:pointer;">
-                Batal
+                Cancel
             </button>
             <button onclick="confirmTime()"
                 style="padding:13px;border-radius:13px;border:none;background:#8B46D3;
                        font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;color:#fff;cursor:pointer;
                        box-shadow:0 4px 12px rgba(139,70,211,.3);">
-                Pilih
+                Select
             </button>
         </div>
     </div>
@@ -708,7 +708,7 @@ function openTimePicker(target){
     document.getElementById('inputJam').value   = parseInt(h)||0;
     document.getElementById('inputMenit').value = parseInt(m)||0;
     document.getElementById('modalTimeTitle').textContent =
-        'Pilih Waktu ' + (target==='mulai' ? 'Mulai' : 'Selesai');
+        'Select Time ' + (target==='mulai' ? 'Start' : 'End');
     document.getElementById('modalTime').classList.add('open');
 }
 function closeTimePicker(){ document.getElementById('modalTime').classList.remove('open'); }
@@ -742,7 +742,7 @@ function updateDurasi(){
     const total=(h2*60+m2)-(h1*60+m1);
     if(total<=0){ el.textContent='—'; el.className='dur-placeholder'; return; }
     const jam=Math.floor(total/60), mnt=total%60;
-    el.textContent=(jam>0?jam+' Jam ':'')+mnt+' Menit';
+    el.textContent=(jam>0?jam+' hr ':'')+mnt+' min';
     el.className='dur-val';
 }
 
@@ -754,21 +754,21 @@ function getLocation(){
     }
     const btn = document.getElementById('getLocationBtn');
     btn.disabled = true;
-    document.getElementById('locationBtnText').textContent = 'Mendeteksi...';
+    document.getElementById('locationBtnText').textContent = 'Detecting...';
     locationAttempted = true;
     navigator.geolocation.getCurrentPosition(
         pos => {
             userLat = pos.coords.latitude;
             userLng = pos.coords.longitude;
             document.getElementById('locationInfo').style.display = 'block';
-            document.getElementById('locationText').textContent = 'Lokasi terdeteksi';
+            document.getElementById('locationText').textContent = 'Location detected';
             document.getElementById('displayLat').textContent = 'Lat: ' + userLat.toFixed(6);
             document.getElementById('displayLng').textContent = 'Lng: ' + userLng.toFixed(6);
-            document.getElementById('locationBtnText').textContent = 'Deteksi Ulang Lokasi';
+            document.getElementById('locationBtnText').textContent = 'Detect Location Again';
             btn.disabled = false;
         },
         err => {
-            document.getElementById('locationBtnText').textContent = 'Gagal deteksi lokasi, ketuk untuk coba lagi';
+            document.getElementById('locationBtnText').textContent = 'Location detection failed, tap to try again';
             btn.disabled = false;
         },
         { enableHighAccuracy: true, timeout: 10000 }
@@ -797,15 +797,15 @@ function handleOversizedFile(file) {
         el.style.justifyContent = 'space-between';
         el.style.alignItems = 'center';
         el.innerHTML = [
-            '<span style="font-size:13px;">Ukuran foto ' + (file.size / 1048576).toFixed(1) + ' MB (max 10 MB)</span>',
+            '<span style="font-size:13px;">Photo size ' + (file.size / 1048576).toFixed(1) + ' MB (max 10 MB)</span>',
             '<div style="display:flex;gap:6px;flex-shrink:0;">',
             '<button id="btnCompress"',
             '  style="background:#8B46D3;color:#fff;border:none;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:800;cursor:pointer;">',
-            '  ✦ Kompres Foto',
+            '  ✦ Compress Photo',
             '</button>',
             '<button onclick="cancelOversized()"',
             '  style="background:transparent;color:#B91C1C;border:1.5px solid #B91C1C;border-radius:20px;padding:6px 12px;font-size:12px;font-weight:800;cursor:pointer;">',
-            '  Ganti Foto',
+            '  Change Photo',
             '</button>',
             '</div>'
         ].join('');
@@ -827,7 +827,7 @@ async function compressAndResolve() {
 
     const el = document.getElementById('alertBar');
     el.innerHTML = [
-        '<span style="font-size:13px;">⏳ Mengompres foto...</span>',
+        '<span style="font-size:13px;">⏳ Compressing photo...</span>',
         '<div style="width:20px;height:20px;border:3px solid #8B46D3;border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite;"></div>'
     ].join('');
 
@@ -1011,21 +1011,21 @@ function showAlert(msg, type='err'){
 
 // ── Submit ──
 async function handleSubmit(){
-    if(!selKat)             { showAlert('Pilih kategori aktivitas.'); return; }
-    if(!jamMulai||!jamSelesai) { showAlert('Isi waktu mulai dan selesai.'); return; }
+    if(!selKat)             { showAlert('Select an activity category.'); return; }
+    if(!jamMulai||!jamSelesai) { showAlert('Fill in the start and end time.'); return; }
 
     const [h1,m1]=jamMulai.split(':').map(Number);
     const [h2,m2]=jamSelesai.split(':').map(Number);
-    if((h2*60+m2)-(h1*60+m1)<=0){ showAlert('Waktu selesai harus setelah waktu mulai.'); return; }
+    if((h2*60+m2)-(h1*60+m1)<=0){ showAlert('End time must be after start time.'); return; }
 
-    if(!ID_ANAK||!ID_ASSIGNMENT){ showAlert('Data tidak lengkap, kembali dan coba lagi.'); return; }
+    if(!ID_ANAK||!ID_ASSIGNMENT){ showAlert('Incomplete data, go back and try again.'); return; }
 
     const today=new Date();
     const ymd=today.getFullYear()+'-'+pad(today.getMonth()+1)+'-'+pad(today.getDate());
 
     const btn=document.getElementById('submitBtn');
     btn.disabled=true;
-    btn.innerHTML='<ion-icon name="sync-outline" style="font-size:22px;color:#fff;animation:spin 1s linear infinite;"></ion-icon> Menyimpan...';
+    btn.innerHTML='<ion-icon name="sync-outline" style="font-size:22px;color:#fff;animation:spin 1s linear infinite;"></ion-icon> Saving...';
 
     const fd=new FormData();
     fd.append('_token',       CSRF);
@@ -1063,17 +1063,17 @@ async function handleSubmit(){
         const res  = await fetch(SUBMIT_URL,{method:'POST',body:fd});
         const data = await res.json();
         if(data.status==='success'||data.success){
-            showAlert('Aktivitas berhasil ditambahkan!','ok');
+            showAlert('Activity added successfully!','ok');
             setTimeout(()=>{
                 window.location.href='{{ route("nanny-diary", ["id_anak"=>$idAnak??0]) }}?id_assignment={{ $idAssignment ?? "" }}';
             },1200);
         } else {
-            showAlert(data.message||'Gagal menyimpan aktivitas.');
+            showAlert(data.message||'Failed to save activity.');
             btn.disabled=false;
             btn.innerHTML='<ion-icon name="save-outline" style="font-size:22px;color:#fff;"></ion-icon> Save Diary';
         }
     } catch(err){
-        showAlert('Terjadi kesalahan koneksi.');
+        showAlert('A connection error occurred.');
         btn.disabled=false;
         btn.innerHTML='<ion-icon name="save-outline" style="font-size:22px;color:#fff;"></ion-icon> Save Diary';
     }

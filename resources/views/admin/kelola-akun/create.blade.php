@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Akun')
+@section('title', 'Add Account')
 
 @push('styles')
 <style>
@@ -56,8 +56,8 @@
             <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
         </a>
         <div>
-            <span class="text-white text-[17px] font-extrabold tracking-wide">Tambah Akun</span>
-            <p class="text-white/60 text-xs font-medium mt-0.5">Buat akun pengguna baru</p>
+            <span class="text-white text-[17px] font-extrabold tracking-wide">Add Account</span>
+            <p class="text-white/60 text-xs font-medium mt-0.5">Create a new user account</p>
         </div>
     </div>
 </div>
@@ -67,7 +67,7 @@
     {{-- Loading overlay --}}
     <div id="loadingOverlay" class="overlay hidden" style="border-radius:0;">
         <div class="spinner mb-3"></div>
-        <p class="text-sm font-bold text-[#8B46D3]">Sedang membuat akun...</p>
+        <p class="text-sm font-bold text-[#8B46D3]">Creating account...</p>
     </div>
 
     {{-- Server error flash --}}
@@ -84,14 +84,14 @@
 
         {{-- Informasi Akun --}}
         <div class="bg-white rounded-2xl p-5 border border-[#DDD6EF]">
-            <p class="text-[#1E1B2E] font-extrabold text-lg mb-4">Informasi Akun</p>
+            <p class="text-[#1E1B2E] font-extrabold text-lg mb-4">Account Information</p>
 
             <div class="mb-4">
                 <label class="block text-sm font-bold text-[#1E1B2E] mb-2">
-                    Nama Lengkap <span class="text-red-400">*</span>
+                    Full Name <span class="text-red-400">*</span>
                 </label>
                 <input type="text" name="name" id="fName"
-                       value="{{ old('name') }}" placeholder="Masukkan nama lengkap"
+                       value="{{ old('name') }}" placeholder="Enter full name"
                        class="inp {{ $errors->has('name') ? 'err' : '' }}"
                        oninput="clearErr('name','fName')">
                 <p id="err-name" class="text-red-500 text-xs mt-1 {{ $errors->has('name') ? '' : 'hidden' }}">
@@ -104,7 +104,7 @@
                     Email <span class="text-red-400">*</span>
                 </label>
                 <input type="email" name="email" id="fEmail"
-                       value="{{ old('email') }}" placeholder="Masukkan email"
+                       value="{{ old('email') }}" placeholder="Enter email"
                        class="inp {{ $errors->has('email') ? 'err' : '' }}"
                        oninput="clearErr('email','fEmail')">
                 <p id="err-email" class="text-red-500 text-xs mt-1 {{ $errors->has('email') ? '' : 'hidden' }}">
@@ -118,7 +118,7 @@
                 </label>
                 <div class="relative">
                     <input type="password" name="password" id="fPassword"
-                           placeholder="Masukkan password"
+                           placeholder="Enter password"
                            class="inp pr-12 {{ $errors->has('password') ? 'err' : '' }}"
                            oninput="clearErr('password','fPassword')">
                     <button type="button" onclick="togglePwd('fPassword','eyeIcon1')"
@@ -130,19 +130,19 @@
                 <p id="err-password" class="text-red-500 text-xs mt-1 {{ $errors->has('password') ? '' : 'hidden' }}">
                     {{ $errors->first('password') }}
                 </p>
-                <p class="text-[#8B46D3] text-xs mt-1.5 italic font-medium">Password minimal 6 karakter</p>
+                <p class="text-[#8B46D3] text-xs mt-1.5 italic font-medium">Password must be at least 6 characters</p>
             </div>
         </div>
 
         {{-- Peran Pengguna --}}
         <div class="bg-white rounded-2xl p-5 border border-[#DDD6EF]">
             <p class="text-[#1E1B2E] font-extrabold text-lg mb-4">
-                Peran Pengguna <span class="text-red-400">*</span>
+                User Role <span class="text-red-400">*</span>
             </p>
             <input type="hidden" name="id_role" id="idRoleInput" value="{{ old('id_role', 4) }}">
 
             <div class="space-y-3">
-                @foreach([1=>'Admin', 2=>'Majikan', 3=>'Nanny', 4=>'Konsultan', 5=>'Nexus'] as $rId => $rLabel)
+                @foreach([1=>'Admin', 2=>'Employer', 3=>'Nanny', 4=>'Consultant', 5=>'Nexus'] as $rId => $rLabel)
                 <button type="button" id="role-btn-{{ $rId }}"
                         onclick="selectRole({{ $rId }})"
                         class="role-row w-full {{ (int)old('id_role', 4) === $rId ? 'sel' : '' }}">
@@ -152,7 +152,7 @@
                 @endforeach
             </div>
             <p id="err-id_role" class="text-red-500 text-xs mt-2 {{ $errors->has('id_role') ? '' : 'hidden' }}">
-                {{ $errors->first('id_role', 'Role harus dipilih') }}
+                {{ $errors->first('id_role', 'Role must be selected') }}
             </p>
         </div>
 
@@ -160,11 +160,11 @@
         <div class="flex gap-3 pb-2">
             <a href="{{ route('admin-kelola-akun') }}"
                class="act-btn flex-1 py-4 rounded-2xl bg-[#EDE9FE] text-[#8B46D3] text-sm font-bold text-center">
-                Batal
+                Cancel
             </a>
             <button type="submit" id="submitBtn"
                     class="act-btn flex-1 py-4 rounded-2xl bg-[#8B46D3] text-white text-sm font-bold shadow-lg shadow-[#8B46D3]/30">
-                Buat Akun
+                Create Account
             </button>
         </div>
 
@@ -214,14 +214,14 @@ function handleSubmit(e) {
     const password = document.getElementById('fPassword').value;
     const idRole   = document.getElementById('idRoleInput').value;
 
-    if (!name)                              fail('name',     'fName',     'Nama harus diisi');
-    if (!email)                             fail('email',    'fEmail',    'Email harus diisi');
-    else if (!/\S+@\S+\.\S+/.test(email))  fail('email',    'fEmail',    'Format email tidak valid');
-    if (!password)                          fail('password', 'fPassword', 'Password harus diisi');
-    else if (password.length < 6)          fail('password', 'fPassword', 'Password minimal 6 karakter');
+    if (!name)                              fail('name',     'fName',     'Name is required');
+    if (!email)                             fail('email',    'fEmail',    'Email is required');
+    else if (!/\S+@\S+\.\S+/.test(email))  fail('email',    'fEmail',    'Invalid email format');
+    if (!password)                          fail('password', 'fPassword', 'Password is required');
+    else if (password.length < 6)          fail('password', 'fPassword', 'Password must be at least 6 characters');
     if (!idRole) {
         const ep = document.getElementById('err-id_role');
-        if (ep) { ep.textContent = 'Role harus dipilih'; ep.classList.remove('hidden'); }
+        if (ep) { ep.textContent = 'Role must be selected'; ep.classList.remove('hidden'); }
         ok = false;
     }
 

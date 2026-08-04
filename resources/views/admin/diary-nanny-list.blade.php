@@ -38,12 +38,12 @@
             <ion-icon name="book" style="font-size:30px; color:#8B46D3;"></ion-icon>
         </div>
         <h1 class="font-extrabold text-white mb-1" style="font-size:22px; letter-spacing:.4px;">Diary Nanny</h1>
-        <p style="font-size:13px; color:#E5DEFF; font-weight:500;">Pilih nanny untuk melihat diary</p>
+        <p style="font-size:13px; color:#E5DEFF; font-weight:500;">Select a nanny to view the diary</p>
 
         <!-- Search -->
         <div class="search-box flex items-center bg-white rounded-2xl mt-5 px-4" style="height:46px; gap:10px; width:100%;">
             <ion-icon name="search-outline" style="font-size:18px; color:#8B86A5; flex-shrink:0;"></ion-icon>
-            <input id="searchInput" type="text" placeholder="Cari nanny..."
+            <input id="searchInput" type="text" placeholder="Search nanny..."
                    class="flex-1 bg-transparent outline-none text-sm font-bold text-[#1E1B2E] placeholder-[#8B86A5]"
                    oninput="filterNanny(this.value)">
             <button id="btnClearSearch" onclick="clearSearch()" class="hidden flex-shrink-0">
@@ -57,7 +57,7 @@
 
     <div class="flex items-center justify-between anim delay-2">
         <div class="flex items-center gap-2">
-            <span style="font-size:17px; font-weight:700; color:#1E1B2E;">Daftar Nanny</span>
+            <span style="font-size:17px; font-weight:700; color:#1E1B2E;">Nanny List</span>
             <span id="nannyCount" style="background:#EDE9FE; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:700; color:#8B46D3;">–</span>
         </div>
         <button onclick="fetchNanny()" class="flex items-center gap-1 bg-[#EDE9FE] py-2 px-3 rounded-xl border-none cursor-pointer">
@@ -88,15 +88,15 @@
         <div class="float-anim flex items-center justify-center" style="width:110px; height:110px; border-radius:55px; background:#EDE9FE; margin-bottom:20px;">
             <ion-icon name="people-outline" style="font-size:54px; color:#C4B5FD;"></ion-icon>
         </div>
-        <p style="font-size:17px; font-weight:700; color:#1E1B2E; margin-bottom:6px;" id="emptyTitle">Tidak ada nanny</p>
-        <p style="font-size:13px; color:#8B86A5; text-align:center;" id="emptyDesc">Belum ada data nanny tersedia</p>
+        <p style="font-size:17px; font-weight:700; color:#1E1B2E; margin-bottom:6px;" id="emptyTitle">No nannies</p>
+        <p style="font-size:13px; color:#8B86A5; text-align:center;" id="emptyDesc">No nanny data available</p>
     </div>
 
     <!-- Error -->
     <div id="errorState" class="hidden flex flex-col items-center" style="padding:40px 20px; gap:12px;">
         <ion-icon name="cloud-offline-outline" style="font-size:48px; color:#C4B5FD;"></ion-icon>
-        <p style="font-size:15px; font-weight:700; color:#1E1B2E;">Gagal memuat data</p>
-        <button onclick="fetchNanny()" style="background:#8B46D3; color:#fff; padding:10px 24px; border-radius:12px; font-size:14px; font-weight:600; border:none; cursor:pointer;">Coba Lagi</button>
+        <p style="font-size:15px; font-weight:700; color:#1E1B2E;">Failed to load data</p>
+        <button onclick="fetchNanny()" style="background:#8B46D3; color:#fff; padding:10px 24px; border-radius:12px; font-size:14px; font-weight:600; border:none; cursor:pointer;">Try Again</button>
     </div>
 
 </div>
@@ -167,9 +167,9 @@ function renderNanny(list) {
         const phone = nanny.no_hp || nanny.phone || '';
         const statusRaw = (nanny.status || '').toLowerCase();
 
-        let badgeClass = 'badge-pending', badgeLabel = 'Menunggu';
-        if (statusRaw === 'active' || statusRaw === 'aktif') { badgeClass='badge-active'; badgeLabel='Aktif'; }
-        else if (statusRaw === 'inactive' || statusRaw === 'nonaktif') { badgeClass='badge-inactive'; badgeLabel='Nonaktif'; }
+        let badgeClass = 'badge-pending', badgeLabel = 'Pending';
+        if (statusRaw === 'active' || statusRaw === 'aktif') { badgeClass='badge-active'; badgeLabel='Active'; }
+        else if (statusRaw === 'inactive' || statusRaw === 'nonaktif') { badgeClass='badge-inactive'; badgeLabel='Inactive'; }
 
         const avatarHtml = foto
             ? `<img src="${foto}" alt="${nama}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
@@ -227,8 +227,8 @@ function filterNanny(q) {
         document.getElementById('nannyList').classList.add('hidden');
         empty.classList.remove('hidden');
         empty.classList.add('flex');
-        document.getElementById('emptyTitle').textContent = 'Nanny tidak ditemukan';
-        document.getElementById('emptyDesc').textContent  = `Tidak ada hasil untuk "${q}"`;
+        document.getElementById('emptyTitle').textContent = 'Nanny not found';
+        document.getElementById('emptyDesc').textContent  = `No results for "${q}"`;
     } else {
         renderNanny(filtered);
         document.getElementById('emptyTitle').textContent = 'Tidak ada nanny';

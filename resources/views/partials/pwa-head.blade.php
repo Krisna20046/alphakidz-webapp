@@ -154,7 +154,7 @@ function attachForegroundListener(messaging) {
     messaging.onMessage(function (payload) {
         const n        = payload.notification || {};
         const d        = payload.data         || {};
-        const title    = d.title     || n.title || 'Pesan Baru';
+        const title    = d.title     || n.title || 'New Message';
         const body     = d.body      || n.body  || '';
         const senderId = d.sender_id || 'msg';
         const chatUrl  = d.url
@@ -243,11 +243,11 @@ function showPwaUpdateBanner() {
                     display:flex;align-items:center;gap:12px;z-index:9999;
                     font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:600;
                     box-shadow:0 8px 24px rgba(74,14,53,0.35);white-space:nowrap;">
-            🔄 Versi baru tersedia!
+            🔄 New version available!
             <button onclick="window.location.reload(true)"
                 style="background:#7B1E5A;border:none;color:#fff;padding:6px 14px;
                        border-radius:10px;cursor:pointer;font-weight:700;font-size:12px;
-                       font-family:inherit;">Perbarui</button>
+                       font-family:inherit;">Update</button>
             <button onclick="this.closest('#__pwaUpdateBanner').remove()"
                 style="background:none;border:none;color:rgba(255,255,255,.6);
                        cursor:pointer;font-size:20px;line-height:1;padding:0 2px;">×</button>

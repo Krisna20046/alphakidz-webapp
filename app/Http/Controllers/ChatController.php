@@ -72,7 +72,7 @@ class ChatController extends Controller
         $page       = $request->query('page', 1);
 
         if (!$token || !$idPenerima) {
-            return response()->json(['success' => false, 'message' => 'Parameter tidak lengkap.'], 400);
+            return response()->json(['success' => false, 'message' => 'Missing parameters.'], 400);
         }
 
         try {
@@ -121,7 +121,7 @@ class ChatController extends Controller
                 return response()->json(['status' => 'success', 'chat' => $data['data'] ?? $data['chat'] ?? null]);
             }
 
-            return response()->json(['status' => 'error', 'message' => $data['message'] ?? 'Gagal mengirim pesan.'], 422);
+            return response()->json(['status' => 'error', 'message' => $data['message'] ?? 'Failed to send message.'], 422);
 
         } catch (\Exception $e) {
             Log::error('ChatController@apiSendChat - ' . $e->getMessage());

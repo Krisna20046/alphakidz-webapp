@@ -1,11 +1,11 @@
 {{-- resources/views/offline.blade.php --}}
 {{-- Route: GET /offline (tanpa middleware auth) --}}
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tidak Ada Koneksi - NannyApp</title>
+    <title>No Connection - NannyApp</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { theme: { extend: { screens: { sm: '1024px' } } } };
@@ -102,10 +102,10 @@
 
         <!-- Text -->
         <h1 class="anim-up d1 text-2xl font-extrabold text-[#4A0E35] mb-3 leading-tight">
-            Tidak Ada Koneksi
+            No Connection
         </h1>
         <p class="anim-up d2 text-[#A2397B] text-sm leading-relaxed mb-8 max-w-xs">
-            Halaman ini tidak tersedia secara offline. Periksa koneksi internet Anda dan coba lagi.
+            This page is not available offline. Check your internet connection and try again.
         </p>
 
         <!-- Status indicator -->
@@ -113,7 +113,7 @@
             <div id="statusDot" class="w-3 h-3 rounded-full bg-red-400 flex-shrink-0"></div>
             <div class="flex-1 text-left">
                 <p id="statusTitle" class="text-[#4A0E35] font-bold text-sm">Offline</p>
-                <p id="statusDesc" class="text-[#A2397B] text-xs mt-0.5">Tidak terhubung ke internet</p>
+                <p id="statusDesc" class="text-[#A2397B] text-xs mt-0.5">Not connected to the internet</p>
             </div>
         </div>
 
@@ -128,13 +128,13 @@
                     <polyline points="23 4 23 10 17 10"/>
                     <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
                 </svg>
-                <span id="retryText">Coba Lagi</span>
+                <span id="retryText">Try Again</span>
             </button>
 
             <button onclick="history.back()"
                     class="w-full py-3.5 rounded-2xl border-2 border-[#F3E6FA] text-[#7B1E5A]
                            font-bold text-sm active:bg-[#F3E6FA] transition-all">
-                Kembali
+                Back
             </button>
         </div>
 
@@ -149,8 +149,8 @@ let isRetrying = false;
 // Monitor koneksi secara real-time
 window.addEventListener('online', () => {
     document.getElementById('statusDot').className   = 'w-3 h-3 rounded-full bg-green-400 flex-shrink-0';
-    document.getElementById('statusTitle').textContent = 'Terhubung!';
-    document.getElementById('statusDesc').textContent  = 'Koneksi kembali tersedia, mengalihkan...';
+    document.getElementById('statusTitle').textContent = 'Connected!';
+    document.getElementById('statusDesc').textContent  = 'Connection restored, redirecting...';
     // Auto redirect setelah koneksi kembali
     setTimeout(() => { window.location.href = '/dashboard'; }, 1200);
 });
@@ -158,7 +158,7 @@ window.addEventListener('online', () => {
 window.addEventListener('offline', () => {
     document.getElementById('statusDot').className   = 'w-3 h-3 rounded-full bg-red-400 flex-shrink-0';
     document.getElementById('statusTitle').textContent = 'Offline';
-    document.getElementById('statusDesc').textContent  = 'Tidak terhubung ke internet';
+    document.getElementById('statusDesc').textContent  = 'Not connected to the internet';
 });
 
 async function retryConnection() {
@@ -171,7 +171,7 @@ async function retryConnection() {
 
     btn.disabled    = true;
     btn.style.opacity = '0.7';
-    text.textContent = 'Memeriksa...';
+    text.textContent = 'Checking...';
     icon.style.animation = 'spin .7s linear infinite';
 
     // Tambahkan style spin
@@ -183,14 +183,14 @@ async function retryConnection() {
         // Cek koneksi dengan fetch ke endpoint ringan
         const res = await fetch('/login', { method: 'HEAD', cache: 'no-store' });
         if (res.ok || res.status === 302 || res.status === 200) {
-            text.textContent = 'Terhubung!';
+            text.textContent = 'Connected!';
             setTimeout(() => { window.location.href = '/dashboard'; }, 800);
             return;
         }
     } catch (_) {}
 
     // Gagal
-    text.textContent  = 'Coba Lagi';
+    text.textContent  = 'Try Again';
     icon.style.animation = '';
     btn.disabled       = false;
     btn.style.opacity  = '1';

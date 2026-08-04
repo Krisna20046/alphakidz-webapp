@@ -2,7 +2,7 @@
 
 @php $activeNav = 'artikel' @endphp
 
-@section('title', 'Artikel')
+@section('title', 'Articles')
 
 @push('styles')
 <style>

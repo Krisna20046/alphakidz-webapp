@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Konsultan — ' . ($konsultan['name'] ?? 'Konsultan'))
+@section('title', 'Consultant Details — ' . ($konsultan['name'] ?? 'Consultant'))
 
 @push('styles')
 <style>
@@ -50,7 +50,7 @@
             <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
         </a>
         <div>
-            <span class="text-white text-[17px] font-extrabold tracking-wide">Konsultan Details</span>
+            <span class="text-white text-[17px] font-extrabold tracking-wide">Consultant Details</span>
             <p class="text-white/70 text-xs font-semibold mt-0.5 leading-[1.3]">Complete Profile Information and<br>Expertise</p>
         </div>
     </div>
@@ -61,12 +61,12 @@
 <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar">
     <x-empty-state
         icon="person-circle-outline"
-        title="Data tidak ditemukan"
-        description="Data yang Anda cari tidak tersedia"
+        title="Data not found"
+        description="The data you are looking for is unavailable"
     >
         <a href="{{ route('majikan-konsultan-list') }}"
            class="mt-6 bg-[#8B46D3] text-white text-sm font-bold px-8 py-3 rounded-2xl shadow-[0_8px_20px_rgba(139,70,211,0.35)]">
-            Kembali ke Daftar
+            Back to List
         </a>
     </x-empty-state>
 </div>
@@ -75,7 +75,7 @@
 @php
     $rating         = $konsultan['rating'] ?? '4.9';
     $experienceYears = $konsultan['pengalaman_tahun'] ?? ($konsultan['lama_pengalaman'] ?? '-');
-    $genderText     = ($konsultan['gender'] ?? '') === 'L' ? 'Laki-laki' : (($konsultan['gender'] ?? '') === 'P' ? 'Perempuan' : '-');
+    $genderText     = ($konsultan['gender'] ?? '') === 'L' ? 'Male' : (($konsultan['gender'] ?? '') === 'P' ? 'Female' : '-');
     $locationText   = (!empty($konsultan['kota']) && !empty($konsultan['provinsi']))
                         ? $konsultan['kota'].', '.$konsultan['provinsi']
                         : ($konsultan['kota'] ?? $konsultan['provinsi'] ?? '-');
@@ -120,7 +120,7 @@
             <div>
                 <p class="text-[#7C7893] text-[10px] uppercase tracking-[1.2px] font-extrabold">Experience</p>
                 <p class="text-[#1E1B2E] text-[13px] font-extrabold mt-1">
-                    {{ $experienceYears !== '-' ? $experienceYears.' Thn' : '-' }}
+                    {{ $experienceYears !== '-' ? $experienceYears.' Yrs' : '-' }}
                 </p>
             </div>
             <div>
@@ -274,7 +274,7 @@
         <a href="{{ route('chat.room', [$konsultan['id_user'] ?? $konsultan['id'], 'nama' =>($konsultan['name'])]) }}"
            class="btn-contact shadow-[0_2px_10px_rgba(0,0,0,0.06)] w-full">
             <ion-icon name="chatbubble-ellipses-outline" style="font-size:16px;"></ion-icon>
-            <span>Hubungi Konsultan</span>
+            <span>Contact Consultant</span>
         </a>
     </div>
 

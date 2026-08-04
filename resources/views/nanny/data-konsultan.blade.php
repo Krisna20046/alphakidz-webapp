@@ -60,7 +60,7 @@
 
 @if($data)
 @php
-    $genderText   = ($data['gender'] ?? '') === 'L' ? 'Laki-laki' : (($data['gender'] ?? '') === 'P' ? 'Perempuan' : '-');
+    $genderText   = ($data['gender'] ?? '') === 'L' ? 'Male' : (($data['gender'] ?? '') === 'P' ? 'Female' : '-');
     $isMale       = ($data['gender'] ?? '') === 'L';
     $locationText = (!empty($data['kota']) && !empty($data['provinsi']))
                     ? $data['kota'].', '.$data['provinsi']
@@ -134,7 +134,7 @@
                     <ion-icon name="call-outline" style="font-size:16px;color:#EC4899;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Nomor HP</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Phone Number</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $data['no_hp'] ?? '-' }}</p>
                 </div>
             </div>
@@ -155,7 +155,7 @@
                     <ion-icon name="calendar-outline" style="font-size:16px;color:#4F46E5;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Tanggal Lahir</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Date of Birth</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $data['tanggal_lahir'] ?? '-' }}</p>
                 </div>
             </div>
@@ -173,7 +173,7 @@
                     <ion-icon name="location-outline" style="font-size:16px;color:#4F46E5;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Lokasi</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Location</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $locationText }}</p>
                 </div>
             </div>
@@ -183,7 +183,7 @@
                     <ion-icon name="home-outline" style="font-size:16px;color:#F59E0B;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Alamat</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Address</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold leading-snug">{{ $data['alamat'] }}</p>
                 </div>
             </div>
@@ -196,7 +196,7 @@
     <div class="section-card anim delay-5 p-5">
         <div class="flex items-center gap-2">
             <ion-icon name="briefcase" style="font-size:16px;color:#8B46D3;"></ion-icon>
-            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Informasi Profesional</h3>
+            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Professional Information</h3>
         </div>
         <div class="h-px bg-[#E5E1F0] my-4"></div>
 
@@ -218,7 +218,7 @@
                     <ion-icon name="time-outline" style="font-size:16px;color:#4F46E5;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Pengalaman</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Experience</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold leading-snug">{{ $data['pengalaman'] }}</p>
                 </div>
             </div>
@@ -229,7 +229,7 @@
                     <ion-icon name="ribbon-outline" style="font-size:16px;color:#F59E0B;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Sertifikasi</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Certification</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold leading-snug">{{ $data['sertifikasi'] }}</p>
                 </div>
             </div>
@@ -242,7 +242,7 @@
     <div class="anim delay-5 pt-1 pb-4">
         <a href="{{ route('chat.room', ['id' => $data['id_user'] ?? 0]) }}" class="btn-chat">
             <ion-icon name="chatbubble-ellipses-outline" style="font-size:18px;"></ion-icon>
-            Hubungi Konsultan
+            Contact Consultant
         </a>
     </div>
 
@@ -253,8 +253,8 @@
 <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar">
     <x-empty-state
         icon="person-circle-outline"
-        title="Data konsultan tidak ditemukan"
-        description="Belum ada konsultan yang ditugaskan untuk Anda"
+        title="Consultant data not found"
+        description="No consultant has been assigned to you yet"
     />
 </div>
 @endif

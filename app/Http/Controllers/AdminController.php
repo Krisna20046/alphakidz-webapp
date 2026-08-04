@@ -59,7 +59,7 @@ class AdminController extends Controller
 
         if (!$response->successful() || $response->json('status') !== 'success') {
             return redirect()->route('admin.kelola-akun.index')
-                ->with('error', 'Gagal memuat data pengguna.');
+                ->with('error', 'Failed to load user data.');
         }
 
         $user = $response->json('data');
@@ -96,11 +96,11 @@ class AdminController extends Controller
 
         if ($response->successful() && $response->json('status') === 'success') {
             return redirect()->route('admin-kelola-akun')
-                ->with('success', 'Akun berhasil dibuat.');
+                ->with('success', 'Account created successfully.');
         }
 
         return back()
-            ->with('error', $response->json('message') ?? 'Gagal membuat akun.')
+            ->with('error', $response->json('message') ?? 'Failed to create account.')
             ->withInput();
     }
 
@@ -113,7 +113,7 @@ class AdminController extends Controller
 
         if (!$response->successful() || $response->json('status') !== 'success') {
             return redirect()->route('admin-kelola-akun')
-                ->with('error', 'Gagal memuat data pengguna.');
+                ->with('error', 'Failed to load user data.');
         }
 
         $user = $response->json('data');
@@ -148,11 +148,11 @@ class AdminController extends Controller
 
         if ($response->successful() && $response->json('status') === 'success') {
             return redirect()->route('admin-kelola-akun')
-                ->with('success', 'Data akun berhasil diubah.');
+                ->with('success', 'Account data updated successfully.');
         }
 
         return back()
-            ->with('error', $response->json('message') ?? 'Gagal mengubah data akun.')
+            ->with('error', $response->json('message') ?? 'Failed to update account data.')
             ->withInput();
     }
 
@@ -169,12 +169,12 @@ class AdminController extends Controller
             ]);
 
         if ($response->successful() && $response->json('status') === 'success') {
-            $label = $status ? 'diaktifkan' : 'dinonaktifkan';
+            $label = $status ? 'activated' : 'deactivated';
             return redirect()->route('admin-kelola-akun')
-                ->with('success', "Akun berhasil {$label}.");
+                ->with('success', "Account successfully {$label}.");
         }
 
-        return back()->with('error', $response->json('message') ?? 'Gagal mengubah status akun.');
+        return back()->with('error', $response->json('message') ?? 'Failed to update account status.');
     }
 
     // ─── Delete ───────────────────────────────────────────────────────────────
@@ -186,9 +186,9 @@ class AdminController extends Controller
 
         if ($response->successful() && $response->json('status') === 'success') {
             return redirect()->route('admin-kelola-akun')
-                ->with('success', 'Akun berhasil dihapus.');
+                ->with('success', 'Account deleted successfully.');
         }
 
-        return back()->with('error', $response->json('message') ?? 'Gagal menghapus akun.');
+        return back()->with('error', $response->json('message') ?? 'Failed to delete account.');
     }
 }

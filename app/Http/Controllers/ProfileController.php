@@ -55,7 +55,7 @@ class ProfileController extends Controller
         $id   = $user['id'] ?? null;
 
         if (!$id) {
-            return response()->json(['success' => false, 'message' => 'ID user tidak ditemukan'], 400);
+        return response()->json(['success' => false, 'message' => 'User ID not found'], 400);
         }
 
         try {
@@ -92,13 +92,13 @@ class ProfileController extends Controller
 
                 return response()->json([
                     'success' => true,
-                    'message' => $data['message'] ?? 'Profil berhasil disimpan!',
+                    'message' => $data['message'] ?? 'Profile saved successfully!',
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => $data['message'] ?? 'Gagal menyimpan profil.',
+                'message' => $data['message'] ?? 'Failed to save profile.',
                 'errors'  => $data['errors'] ?? null,
             ], 422);
 
@@ -186,12 +186,12 @@ class ProfileController extends Controller
 
             if ($response->successful() && ($data['status'] ?? '') === 'success') {
                 $this->refreshSessionUser();
-                return response()->json(['success' => true, 'message' => $data['message'] ?? 'Akun berhasil diperbarui.']);
+                return response()->json(['success' => true, 'message' => $data['message'] ?? 'Account updated successfully.']);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => $data['message'] ?? 'Gagal memperbarui akun.',
+                'message' => $data['message'] ?? 'Failed to update account.',
                 'errors'  => $data['errors'] ?? null,
             ], 422);
 

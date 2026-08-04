@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pilih Diary Anak')
+@section('title', 'Choose Child Diary')
 
 @push('styles')
 <style>
@@ -30,8 +30,8 @@
              style="width:64px;height:64px;">
             <ion-icon name="book" style="font-size:30px;color:#8B46D3;"></ion-icon>
         </div>
-        <h1 class="font-bold text-white mb-1" style="font-size:24px;letter-spacing:0.5px;">Pilih Diary Anak</h1>
-        <p style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;">Pilih anak untuk melihat diary</p>
+        <h1 class="font-bold text-white mb-1" style="font-size:24px;letter-spacing:0.5px;">Choose Child Diary</h1>
+        <p style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;">Select a child to view the diary</p>
     </div>
 </div>
 
@@ -39,7 +39,7 @@
 <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar">
     <!-- LIST HEADER -->
     <div class="flex items-center justify-between anim delay-2 mb-3">
-        <span style="font-size:18px;font-weight:700;color:#1E1B2E;">Daftar Anak</span>
+        <span style="font-size:18px;font-weight:700;color:#1E1B2E;">Child List</span>
         <span style="background:#EDE9FE;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:700;color:#8B46D3;">
             {{ count($anakList) }}
         </span>
@@ -82,7 +82,7 @@
                     <div class="flex items-center" style="gap:4px;">
                         @php $m = ($anak['gender']??'') === 'L'; @endphp
                         <ion-icon name="{{ $m ? 'male' : 'female' }}" style="font-size:13px;color:#8B46D3;flex-shrink:0;"></ion-icon>
-                        <span style="font-size:13px;color:#8B86A5;font-weight:500;">{{ $m ? 'Laki-laki' : 'Perempuan' }}</span>
+                        <span style="font-size:13px;color:#8B86A5;font-weight:500;">{{ $m ? 'Male' : 'Female' }}</span>
                     </div>
                 </div>
             </div>
@@ -104,8 +104,8 @@
              style="width:120px;height:120px;border-radius:60px;background:#EDE9FE;margin-bottom:24px;">
             <ion-icon name="body-outline" style="font-size:60px;color:#C4B5FD;"></ion-icon>
         </div>
-        <p class="text-center" style="font-size:18px;font-weight:700;color:#1E1B2E;margin-bottom:8px;">Belum ada data anak</p>
-        <p class="text-center" style="font-size:14px;color:#9CA3AF;line-height:20px;">Anda belum menambahkan data anak</p>
+        <p class="text-center" style="font-size:18px;font-weight:700;color:#1E1B2E;margin-bottom:8px;">No child data yet</p>
+        <p class="text-center" style="font-size:14px;color:#9CA3AF;line-height:20px;">You have not added any child data yet</p>
     </div>
 </div>
 @endif

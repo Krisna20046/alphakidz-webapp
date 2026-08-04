@@ -59,6 +59,6 @@ class ArtikelController extends Controller
         }
 
         // Fallback jika post tidak ditemukan
-        abort(404, 'Artikel tidak ditemukan');
+        abort(404, 'Article not found');
     }
 }

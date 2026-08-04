@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tugaskan Nanny')
+@section('title', 'Assign Nanny')
 
 @push('styles')
 <style>
@@ -60,9 +60,9 @@
     {{-- Error State --}}
     <div id="errorState" class="hidden flex-col items-center justify-center pt-14 px-6 text-center">
         <div class="float-anim w-24 h-24 rounded-full bg-[#FEE2E2] flex items-center justify-center mb-5"><ion-icon name="alert-circle" style="font-size:48px;color:#DC2626;"></ion-icon></div>
-        <h3 class="text-[#1E1B2E] font-extrabold text-lg mb-2">Data tidak ditemukan</h3>
-        <p class="text-[#8B86A5] text-sm mb-6">Data nanny yang Anda cari tidak tersedia.</p>
-        <a href="{{ url('/konsultan/tugaskan-nanny') }}" class="bg-[#8B46D3] text-white text-sm font-extrabold px-8 py-3 rounded-2xl shadow-[0_8px_20px_rgba(139,70,211,0.35)]">Kembali</a>
+        <h3 class="text-[#1E1B2E] font-extrabold text-lg mb-2">Data not found</h3>
+        <p class="text-[#8B86A5] text-sm mb-6">The nanny data you are looking for is unavailable.</p>
+        <a href="{{ url('/konsultan/tugaskan-nanny') }}" class="bg-[#8B46D3] text-white text-sm font-extrabold px-8 py-3 rounded-2xl shadow-[0_8px_20px_rgba(139,70,211,0.35)]">Back</a>
     </div>
 
     {{-- Form Section --}}
@@ -74,14 +74,14 @@
                 <div>
                     <div class="flex items-center gap-1.5 mb-1.5"><span class="text-[#1E1B2E] text-[12px] font-bold">Choose An Employer</span><span class="text-[#EF4444] text-[12px] font-black">*</span></div>
                     <button type="button" onclick="openMajikanModal()" class="action-card field-card w-full px-3 py-2.5 flex items-center justify-between text-left">
-                        <div id="majikanDisplay" class="min-w-0"><span class="text-[#8B86A5] text-[12px] font-semibold">Pilih Majikan</span></div>
+                        <div id="majikanDisplay" class="min-w-0"><span class="text-[#8B86A5] text-[12px] font-semibold">Choose Employer</span></div>
                         <ion-icon name="chevron-down" style="font-size:16px;color:#7C748F;"></ion-icon>
                     </button>
                 </div>
                 <div>
                     <div class="flex items-center gap-1.5 mb-1.5"><span class="text-[#1E1B2E] text-[12px] font-bold">Choose A Child</span><span class="text-[#EF4444] text-[12px] font-black">*</span></div>
                     <button type="button" onclick="openAnakModal()" class="action-card field-card w-full px-3 py-2.5 flex items-center justify-between text-left">
-                        <div id="anakDisplay" class="min-w-0"><span class="text-[#8B86A5] text-[12px] font-semibold">Pilih Anak</span></div>
+                        <div id="anakDisplay" class="min-w-0"><span class="text-[#8B86A5] text-[12px] font-semibold">Choose Child</span></div>
                         <ion-icon name="chevron-down" style="font-size:16px;color:#7C748F;"></ion-icon>
                     </button>
                 </div>
@@ -139,13 +139,13 @@
     <div class="modal-overlay absolute inset-0" onclick="closeMajikanModal()"></div>
     <div class="sheet-anim relative bg-white w-full sm:w-[390px] rounded-t-[28px] sm:rounded-[24px] max-h-[85vh] flex flex-col shadow-2xl z-10 pb-16">
         <div class="flex items-center justify-between px-5 py-4 border-b border-[#F0EDF8] shrink-0">
-            <div class="flex items-center gap-2"><ion-icon name="briefcase-outline" style="font-size:16px;color:#8B46D3;"></ion-icon><span class="text-[#1E1B2E] font-extrabold text-[15px]">Pilih Majikan</span></div>
+            <div class="flex items-center gap-2"><ion-icon name="briefcase-outline" style="font-size:16px;color:#8B46D3;"></ion-icon><span class="text-[#1E1B2E] font-extrabold text-[15px]">Choose Employer</span></div>
             <button onclick="closeMajikanModal()" class="w-8 h-8 rounded-full bg-[#EDE9FE] flex items-center justify-center"><ion-icon name="close" style="font-size:15px;color:#8B46D3;"></ion-icon></button>
         </div>
         <div class="px-4 py-3 border-b border-[#F0EDF8] shrink-0">
             <div class="search-wrap flex items-center bg-[#F8F8FB] rounded-xl border border-[#ECEAF4] px-3 gap-2">
                 <ion-icon name="search" style="font-size:15px;color:#8B46D3;flex-shrink:0;"></ion-icon>
-                <input type="text" id="searchMajikan" class="flex-1 py-2.5 text-[13px] text-[#1E1B2E] bg-transparent focus:outline-none placeholder-[#C4B5FD] font-semibold" placeholder="Cari nama atau email..." oninput="filterMajikan(this.value)">
+                <input type="text" id="searchMajikan" class="flex-1 py-2.5 text-[13px] text-[#1E1B2E] bg-transparent focus:outline-none placeholder-[#C4B5FD] font-semibold" placeholder="Search name or email..." oninput="filterMajikan(this.value)">
             </div>
         </div>
         <div id="majikanListModal" class="overflow-y-auto hide-scrollbar flex-1 px-4 py-3 space-y-2"></div>
@@ -157,13 +157,13 @@
     <div class="modal-overlay absolute inset-0" onclick="closeAnakModal()"></div>
     <div class="sheet-anim relative bg-white w-full sm:w-[390px] rounded-t-[28px] sm:rounded-[24px] max-h-[85vh] flex flex-col shadow-2xl z-10 pb-16">
         <div class="flex items-center justify-between px-5 py-4 border-b border-[#F0EDF8] shrink-0">
-            <div class="flex items-center gap-2"><ion-icon name="happy-outline" style="font-size:16px;color:#8B46D3;"></ion-icon><span class="text-[#1E1B2E] font-extrabold text-[15px]">Pilih Anak</span></div>
+            <div class="flex items-center gap-2"><ion-icon name="happy-outline" style="font-size:16px;color:#8B46D3;"></ion-icon><span class="text-[#1E1B2E] font-extrabold text-[15px]">Choose Child</span></div>
             <button onclick="closeAnakModal()" class="w-8 h-8 rounded-full bg-[#EDE9FE] flex items-center justify-center"><ion-icon name="close" style="font-size:15px;color:#8B46D3;"></ion-icon></button>
         </div>
         <div id="anakListModal" class="overflow-y-auto hide-scrollbar flex-1 px-4 py-3 space-y-2"></div>
         <div class="px-4 py-4 border-t border-[#F0EDF8] bg-[#F8F7FF] shrink-0 flex items-center justify-between">
-            <div class="flex items-center gap-1.5"><ion-icon name="checkmark-circle" style="font-size:15px;color:#8B46D3;"></ion-icon><span class="text-[#8B46D3] text-sm font-extrabold" id="anakCountLabel">0 anak terpilih</span></div>
-            <button onclick="closeAnakModal()" class="bg-[#8B46D3] text-white text-[13px] font-extrabold px-5 py-2.5 rounded-xl shadow-[0_4px_12px_rgba(139,70,211,0.3)]">Konfirmasi</button>
+            <div class="flex items-center gap-1.5"><ion-icon name="checkmark-circle" style="font-size:15px;color:#8B46D3;"></ion-icon><span class="text-[#8B46D3] text-sm font-extrabold" id="anakCountLabel">0 children selected</span></div>
+            <button onclick="closeAnakModal()" class="bg-[#8B46D3] text-white text-[13px] font-extrabold px-5 py-2.5 rounded-xl shadow-[0_4px_12px_rgba(139,70,211,0.3)]">Confirm</button>
         </div>
     </div>
 </div>
@@ -173,11 +173,11 @@
     <div class="modal-overlay absolute inset-0" onclick="closeConfirmModal()"></div>
     <div class="sheet-anim relative bg-white w-full sm:w-[390px] rounded-t-[28px] sm:rounded-[24px] shadow-2xl z-10 p-6 text-center">
         <div class="w-16 h-16 rounded-full bg-[#EDE9FE] flex items-center justify-center mx-auto mb-4"><ion-icon name="help-circle" style="font-size:36px;color:#8B46D3;"></ion-icon></div>
-        <h3 class="text-[#1E1B2E] font-extrabold text-lg mb-2">Konfirmasi Penugasan</h3>
-        <p class="text-[#8B86A5] text-[13px] leading-relaxed mb-6">Apakah Anda yakin ingin membuat penugasan baru ini?</p>
+        <h3 class="text-[#1E1B2E] font-extrabold text-lg mb-2">Confirm Assignment</h3>
+        <p class="text-[#8B86A5] text-[13px] leading-relaxed mb-6">Are you sure you want to create this new assignment?</p>
         <div class="flex gap-3">
-            <button onclick="closeConfirmModal()" class="flex-1 h-[48px] rounded-2xl border border-[#ECEAF4] bg-[#F8F8FB] text-[#8B86A5] font-extrabold text-[13px] active:scale-[0.97] transition-transform">Batal</button>
-            <button onclick="handleSubmit()" class="flex-1 h-[48px] rounded-2xl bg-[#8B46D3] text-white font-extrabold text-[13px] shadow-[0_4px_12px_rgba(139,70,211,0.35)] active:scale-[0.97] transition-transform">Ya, Buat</button>
+            <button onclick="closeConfirmModal()" class="flex-1 h-[48px] rounded-2xl border border-[#ECEAF4] bg-[#F8F8FB] text-[#8B86A5] font-extrabold text-[13px] active:scale-[0.97] transition-transform">Cancel</button>
+            <button onclick="handleSubmit()" class="flex-1 h-[48px] rounded-2xl bg-[#8B46D3] text-white font-extrabold text-[13px] shadow-[0_4px_12px_rgba(139,70,211,0.35)] active:scale-[0.97] transition-transform">Yes, Create</button>
         </div>
     </div>
 </div>
@@ -251,7 +251,7 @@ function renderNannyCard(n) {
             <div class="w-full text-left pt-4 space-y-3">
                 ${infoRow('mail-outline', '#EC4899', '#FDE7EF', 'Email', n.email || '-')}
                 ${infoRow('call-outline', '#4F46E5', '#E8ECFF', 'Phone Number', n.no_hp || '-')}
-                ${infoRow('person-outline', '#8B46D3', '#EDE9FE', 'Gender', n.gender === 'L' ? 'Laki-laki' : 'Perempuan')}
+                ${infoRow('person-outline', '#8B46D3', '#EDE9FE', 'Gender', n.gender === 'L' ? 'Male' : 'Female')}
             </div>
         </div>`;
 
@@ -295,14 +295,14 @@ function closeMajikanModal() { document.getElementById('modalMajikan').classList
 
 async function loadMajikan() {
     const list = document.getElementById('majikanListModal');
-    list.innerHTML = `<p class="text-center text-[#8B86A5] text-sm py-8 font-semibold">Memuat...</p>`;
+    list.innerHTML = `<p class="text-center text-[#8B86A5] text-sm py-8 font-semibold">Loading...</p>`;
     try {
         const fd = new FormData(); fd.append('search', '');
         const res = await fetch(`${API_BASE_URL}/user-majikan`, {
             method:'POST', headers:{ 'Accept':'application/json', 'Authorization':`Bearer ${API_TOKEN}` }, body:fd
         });
         const json = await res.json(); allMajikan = json.data || []; renderMajikan(allMajikan);
-    } catch (e) { list.innerHTML = `<p class="text-center text-red-500 text-sm py-8 font-semibold">Gagal memuat</p>`; }
+    } catch (e) { list.innerHTML = `<p class="text-center text-red-500 text-sm py-8 font-semibold">Failed to load</p>`; }
 }
 
 function filterMajikan(q) {
@@ -312,7 +312,7 @@ function filterMajikan(q) {
 
 function renderMajikan(items) {
     const list = document.getElementById('majikanListModal');
-    if (!items.length) { list.innerHTML = `<p class="text-center text-[#8B86A5] text-sm py-8 font-semibold">Tidak ditemukan</p>`; return; }
+    if (!items.length) { list.innerHTML = `<p class="text-center text-[#8B86A5] text-sm py-8 font-semibold">Not found</p>`; return; }
     list.innerHTML = items.map(m => `<button type="button" onclick="selectMajikan(${m.id}, '${esc(m.name)}', '${esc(m.email || '')}')" class="w-full flex items-center gap-3 p-3.5 rounded-2xl border border-[#ECEAF4] bg-[#F8F8FB] text-left active:bg-[#EDE9FE] transition-colors"><div class="w-9 h-9 rounded-full bg-[#EDE9FE] flex items-center justify-center flex-shrink-0"><ion-icon name="person-circle" style="font-size:20px;color:#8B46D3;"></ion-icon></div><div class="flex-1 min-w-0"><p class="text-[#1E1B2E] font-extrabold text-[13px] truncate">${m.name}</p><p class="text-[#8B86A5] text-[11px] font-semibold truncate">${m.email || ''}</p></div><div class="w-6 h-6 rounded-full bg-white border border-[#ECEAF4] flex items-center justify-center flex-shrink-0"><ion-icon name="chevron-forward" style="font-size:12px;color:#8B46D3;"></ion-icon></div></button>`).join('');
 }
 
@@ -338,13 +338,13 @@ async function loadAnak(idMajikan) {
 
 function renderAnak() {
     const list = document.getElementById('anakListModal');
-    if (!anakList.length) { list.innerHTML = `<p class="text-center text-[#8B86A5] text-sm py-8 font-semibold">Belum ada data anak</p>`; return; }
+    if (!anakList.length) { list.innerHTML = `<p class="text-center text-[#8B86A5] text-sm py-8 font-semibold">No child data yet</p>`; return; }
     list.innerHTML = anakList.map(a => {
         const sel = !!selectedAnak[a.id];
         const today = new Date(); const b = new Date(a.tanggal_lahir);
         let age = today.getFullYear() - b.getFullYear();
         if (today.getMonth() - b.getMonth() < 0 || (today.getMonth() === b.getMonth() && today.getDate() < b.getDate())) age--;
-        return `<button type="button" onclick="toggleAnak(${a.id}, '${esc(a.nama || '')}')" id="anakRow_${a.id}" class="anak-row w-full flex items-center gap-3 p-3.5 rounded-2xl border-2 text-left ${sel ? 'selected border-[#8B46D3] bg-[#F8F5FF]' : 'border-[#ECEAF4] bg-[#F8F8FB]'}"><div id="cb_${a.id}" class="w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 ${sel ? 'bg-[#8B46D3] border-[#8B46D3]' : 'border-[#C4B5FD] bg-white'}">${sel ? '<ion-icon name="checkmark" style="font-size:11px;color:white;"></ion-icon>' : ''}</div><div class="flex-1 min-w-0"><p class="text-[#1E1B2E] font-extrabold text-[13px]">${a.nama || '-'}</p><div class="flex gap-3 mt-0.5"><span class="text-[#8B86A5] text-[11px] font-semibold">${a.gender === 'L' ? 'Laki-laki' : 'Perempuan'}</span><span class="text-[#8B86A5] text-[11px] font-semibold">${age} tahun</span></div></div></button>`;
+        return `<button type="button" onclick="toggleAnak(${a.id}, '${esc(a.nama || '')}')" id="anakRow_${a.id}" class="anak-row w-full flex items-center gap-3 p-3.5 rounded-2xl border-2 text-left ${sel ? 'selected border-[#8B46D3] bg-[#F8F5FF]' : 'border-[#ECEAF4] bg-[#F8F8FB]'}"><div id="cb_${a.id}" class="w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 ${sel ? 'bg-[#8B46D3] border-[#8B46D3]' : 'border-[#C4B5FD] bg-white'}">${sel ? '<ion-icon name="checkmark" style="font-size:11px;color:white;"></ion-icon>' : ''}</div><div class="flex-1 min-w-0"><p class="text-[#1E1B2E] font-extrabold text-[13px]">${a.nama || '-'}</p><div class="flex gap-3 mt-0.5"><span class="text-[#8B86A5] text-[11px] font-semibold">${a.gender === 'L' ? 'Male' : 'Female'}</span><span class="text-[#8B86A5] text-[11px] font-semibold">${age} years old</span></div></div></button>`;
     }).join('');
 }
 
@@ -359,10 +359,10 @@ function toggleAnak(id, nama) {
 
 function updateAnakDisplay() {
     const count = Object.keys(selectedAnak).length; const names = Object.values(selectedAnak).map(a => a.nama).join(', ');
-    document.getElementById('anakDisplay').innerHTML = count > 0 ? `<div class="min-w-0"><p class="text-[#A78BC6] text-[10px] font-bold truncate">${count} Selected Child${count > 1 ? 'ren' : ''}</p><p class="text-[#1E1B2E] text-[12px] font-extrabold truncate">${names}</p></div>` : `<span class="text-[#8B86A5] text-[12px] font-semibold">Pilih Anak</span>`;
+    document.getElementById('anakDisplay').innerHTML = count > 0 ? `<div class="min-w-0"><p class="text-[#A78BC6] text-[10px] font-bold truncate">${count} Selected Child${count > 1 ? 'ren' : ''}</p><p class="text-[#1E1B2E] text-[12px] font-extrabold truncate">${names}</p></div>` : `<span class="text-[#8B86A5] text-[12px] font-semibold">Choose Child</span>`;
 }
 
-function updateAnakCountLabel() { document.getElementById('anakCountLabel').textContent = `${Object.keys(selectedAnak).length} anak terpilih`; }
+function updateAnakCountLabel() { document.getElementById('anakCountLabel').textContent = `${Object.keys(selectedAnak).length} children selected`; }
 
 function renderStatusOptions() {
     document.getElementById('statusOptions').innerHTML = STATUS_OPTS.map(o => `<button type="button" onclick="selectStatus('${o.value}')" class="status-chip ${currentStatus === o.value ? 'active' : ''} flex flex-col items-center justify-center gap-1.5 h-[74px] px-1 text-center"><div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:${o.iconBg};"><ion-icon name="${o.icon}" style="font-size:16px;color:${o.iconColor};"></ion-icon></div><span class="text-[#5B4E73] text-[11px] font-bold leading-tight">${o.label}</span></button>`).join('');
@@ -378,13 +378,13 @@ async function handleSubmit() {
     const selesai = document.getElementById('tanggalSelesai').value;
     const catatan = document.getElementById('catatanInput').value;
 
-    if (!mulai || !selesai) { showResult(false, 'Data kurang', 'Isi tanggal mulai dan selesai.'); return; }
-    if (mulai >= selesai) { showResult(false, 'Tanggal tidak valid', 'Tanggal selesai harus setelah tanggal mulai.'); return; }
-    if (!selectedMajikan) { showResult(false, 'Data kurang', 'Pilih majikan terlebih dahulu.'); return; }
-    if (!Object.keys(selectedAnak).length) { showResult(false, 'Data kurang', 'Pilih minimal satu anak.'); return; }
+    if (!mulai || !selesai) { showResult(false, 'Incomplete data', 'Fill in the start and end dates.'); return; }
+    if (mulai >= selesai) { showResult(false, 'Invalid date', 'The end date must be after the start date.'); return; }
+    if (!selectedMajikan) { showResult(false, 'Incomplete data', 'Choose an employer first.'); return; }
+    if (!Object.keys(selectedAnak).length) { showResult(false, 'Incomplete data', 'Choose at least one child.'); return; }
 
     const btn = document.getElementById('btnSubmit');
-    btn.innerHTML = `<ion-icon name="sync" style="font-size:16px;" class="spin"></ion-icon><span>Menyimpan...</span>`;
+    btn.innerHTML = `<ion-icon name="sync" style="font-size:16px;" class="spin"></ion-icon><span>Saving...</span>`;
     btn.disabled = true;
 
     try {
@@ -400,9 +400,9 @@ async function handleSubmit() {
         const json = await res.json();
 
         if (json.status === 'success') {
-            showResult(true, 'Berhasil!', 'Penugasan berhasil dibuat.', () => { location.href = '{{ url("/konsultan/tugaskan-nanny") }}'; });
-        } else { showResult(false, 'Gagal', json.message || 'Gagal membuat penugasan.'); resetBtn(); }
-    } catch (e) { showResult(false, 'Kesalahan', 'Terjadi kesalahan jaringan.'); resetBtn(); }
+            showResult(true, 'Success!', 'Assignment created successfully.', () => { location.href = '{{ url("/konsultan/tugaskan-nanny") }}'; });
+        } else { showResult(false, 'Failed', json.message || 'Failed to create the assignment.'); resetBtn(); }
+    } catch (e) { showResult(false, 'Error', 'A network error occurred.'); resetBtn(); }
 }
 
 function resetBtn() {
@@ -414,7 +414,7 @@ function showResult(success, title, msg, onOk = null) {
     document.getElementById('resultIcon').className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${success ? 'bg-[#DCFCE7]' : 'bg-[#FEE2E2]'}`;
     document.getElementById('resultIcon').innerHTML = `<ion-icon name="${success ? 'checkmark-circle' : 'alert-circle'}" style="font-size:36px;color:${success ? '#16A34A' : '#DC2626'};"></ion-icon>`;
     document.getElementById('resultTitle').textContent = title; document.getElementById('resultMsg').textContent = msg;
-    const rbtn = document.getElementById('resultBtn'); rbtn.textContent = success ? 'Kembali ke Daftar' : 'Coba Lagi';
+    const rbtn = document.getElementById('resultBtn'); rbtn.textContent = success ? 'Back to List' : 'Try Again';
     rbtn.onclick = onOk || (() => document.getElementById('modalResult').classList.add('hidden'));
     document.getElementById('modalResult').classList.remove('hidden');
 }

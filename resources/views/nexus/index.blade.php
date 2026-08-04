@@ -8,7 +8,7 @@
 
 @php $activeNav = 'home' @endphp
 
-@section('title', $isNexus ? 'Nexus Dashboard' : 'Pertanyaan Saya')
+@section('title', $isNexus ? 'Nexus Dashboard' : 'My Questions')
 
 @push('styles')
 <style>
@@ -91,9 +91,9 @@
         </a>
         <div>
             <span class="text-white text-[17px] font-extrabold tracking-wide">
-                @if($isNexus) Nexus Dashboard @else Pertanyaan Saya @endif
+                @if($isNexus) Nexus Dashboard @else My Questions @endif
             </span>
-            <p id="headerSubtitle" class="text-white/70 text-xs font-semibold mt-0.5">Memuat...</p>
+            <p id="headerSubtitle" class="text-white/70 text-xs font-semibold mt-0.5">Loading...</p>
         </div>
     </div>
 </div>
@@ -103,7 +103,7 @@
     <div class="anim delay-2 bg-white rounded-[20px] p-4 shadow-[0_2px_12px_rgba(0,0,0,0.08)]">
         <div class="flex items-center bg-[#F4F4F4] rounded-[10px] border border-[#DDD6EF] px-3 py-2.5 mb-3">
             <ion-icon name="search-outline" style="font-size:16px;color:#8B86A5;flex-shrink:0;"></ion-icon>
-            <input type="text" id="searchInput" placeholder="Cari pertanyaan..."
+            <input type="text" id="searchInput" placeholder="Search questions..."
                    class="search-input flex-1 text-[13px] font-semibold text-[#4B5563] placeholder-[#9CA3AF] bg-transparent ml-2"
                    oninput="applyFilters()">
         </div>
@@ -137,12 +137,12 @@
             <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-6">
                 <ion-icon id="emptyIcon" name="chatbubble-ellipses-outline" style="font-size:48px;color:#C4B5FD;"></ion-icon>
             </div>
-            <h3 id="emptyTitle" class="text-[#1E1B2E] font-bold text-lg mb-2 text-center">Belum ada pertanyaan</h3>
+            <h3 id="emptyTitle" class="text-[#1E1B2E] font-bold text-lg mb-2 text-center">No questions yet</h3>
             <p id="emptyDesc" class="text-[#9CA3AF] text-sm text-center leading-relaxed">
                 @if($isNexus)
-                    Belum ada pertanyaan yang masuk
+                    No questions have come in yet
                 @else
-                    Ajukan pertanyaan baru dengan tombol + di bawah
+                    Ask a new question with the + button below
                 @endif
             </p>
         </div>
@@ -159,13 +159,13 @@
         <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-[#FFF3E0] flex items-center justify-center">
             <ion-icon name="hourglass-outline" style="font-size:36px;color:#E65100;"></ion-icon>
         </div>
-        <h3 class="text-[#1E1B2E] text-lg font-extrabold mb-2">Menunggu Nexus</h3>
+        <h3 class="text-[#1E1B2E] text-lg font-extrabold mb-2">Waiting for Nexus</h3>
         <p class="text-[#7C7893] text-sm font-semibold leading-relaxed mb-6">
-            Pertanyaan ini masih menunggu Nexus untuk mengambil antrian Anda. Silakan tunggu sebentar.
+            This question is still waiting for Nexus to take your turn. Please wait a moment.
         </p>
         <button onclick="closeWaitModal()"
                 class="bg-[#8B46D3] text-white font-extrabold text-sm px-8 py-3 rounded-[14px] border-none cursor-pointer transition-transform active:scale-95 w-full">
-            Mengerti
+            Got It
         </button>
     </div>
 </div>
@@ -189,9 +189,9 @@ const isNexusMode = isNexus; // true = filter by role; false = filter by status
         // Nexus: filter by role pengirim
         const tabs = [
             { key: 'all', label: 'All' },
-            { key: 'Majikan', label: 'Majikan' },
+            { key: 'Majikan', label: 'Employer' },
             { key: 'Nanny', label: 'Nanny' },
-            { key: 'Konsultan', label: 'Konsultan' },
+            { key: 'Konsultan', label: 'Consultant' },
         ];
         container.className = 'border border-[#DDD6EF] rounded-[10px] p-1 grid grid-cols-4 gap-1';
         container.innerHTML = tabs.map(t =>
@@ -202,9 +202,9 @@ const isNexusMode = isNexus; // true = filter by role; false = filter by status
         const tabs = [
             { key: 'all', label: 'All' },
             { key: 'open', label: 'Open' },
-            { key: 'claimed', label: 'Diproses' },
-            { key: 'answered', label: 'Terjawab' },
-            { key: 'closed', label: 'Selesai' },
+            { key: 'claimed', label: 'In Progress' },
+            { key: 'answered', label: 'Answered' },
+            { key: 'closed', label: 'Closed' },
         ];
         container.className = 'border border-[#DDD6EF] rounded-[10px] p-1 grid grid-cols-5 gap-1';
         container.innerHTML = tabs.map(t =>
@@ -216,7 +216,7 @@ const isNexusMode = isNexus; // true = filter by role; false = filter by status
 // ── Helpers ──
 function statusBadge(s) {
     const map = { open:'badge-open', claimed:'badge-claimed', answered:'badge-answered', closed:'badge-closed' };
-    const lbl = { open:'Open', claimed:'Diproses', answered:'Terjawab', closed:'Selesai' };
+    const lbl = { open:'Open', claimed:'In Progress', answered:'Answered', closed:'Closed' };
     return `<span class="inline-block text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-[.5px] ${map[s]||'badge-open'}">${lbl[s]||s}</span>`;
 }
 
@@ -224,12 +224,12 @@ function formatTime(ts) {
     const d = new Date(ts);
     const now = new Date();
     const diff = Math.floor((now - d) / (1000 * 60));
-    if (diff < 1) return 'baru saja';
+    if (diff < 1) return 'just now';
     if (diff < 60) return diff + 'm';
     const jam = Math.floor(diff / 60);
-    if (jam < 24) return jam + 'j';
+    if (jam < 24) return jam + 'h';
     const hari = Math.floor(jam / 24);
-    return hari + 'h';
+    return hari + 'd';
 }
 
 function initials(name) {
@@ -271,10 +271,10 @@ function buildCardHTML(q, idx) {
                     ${statusBadge(q.status)}
                     ${q.kategori ? `<span class="text-[10px] font-bold text-[#8B46D3] bg-[#EDE9FE] px-2.5 py-0.5 rounded-full">${q.kategori}</span>` : ''}
                     <span class="text-[11px] text-[#A8A2C2] font-semibold">· ${askerName}</span>
-                    ${msgCount > 0 ? `<span class="text-[11px] text-[#A8A2C2] font-semibold">· ${msgCount} pesan</span>` : ''}
+                    ${msgCount > 0 ? `<span class="text-[11px] text-[#A8A2C2] font-semibold">· ${msgCount} messages</span>` : ''}
                 </div>
                 ${q.claimed_by ? `<div class="mt-1.5 text-[11px] text-[#7B52AB] font-semibold">👤 ${q.claimed_by?.name || 'Nexus'}</div>` : ''}
-                ${canClaim ? `<div class="mt-2"><button class="inline-block bg-[#8B46D3] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-[10px] border-none cursor-pointer transition-transform active:scale-95" onclick="event.stopPropagation();claimQuestion(${q.id})">Ambil</button></div>` : ''}
+                ${canClaim ? `<div class="mt-2"><button class="inline-block bg-[#8B46D3] text-white text-[11px] font-extrabold px-4 py-1.5 rounded-[10px] border-none cursor-pointer transition-transform active:scale-95" onclick="event.stopPropagation();claimQuestion(${q.id})">Take</button></div>` : ''}
             </div>
         </div>
     </div>`;
@@ -287,7 +287,7 @@ function renderQuestions(items) {
 
     const total = items.length;
     document.getElementById('headerSubtitle').textContent =
-        isNexus ? `${total} pertanyaan` : `${total} pertanyaan`;
+        isNexus ? `${total} questions` : `${total} questions`;
 
     skeleton.style.display = 'none';
     list.classList.remove('hidden');
@@ -344,8 +344,8 @@ function applyFilters() {
     if (filtered.length === 0) {
         const isSearch = !!q;
         document.getElementById('emptyIcon').setAttribute('name', isSearch ? 'search-outline' : 'chatbubble-ellipses-outline');
-        document.getElementById('emptyTitle').textContent = isSearch ? 'Pertanyaan tidak ditemukan' : 'Belum ada pertanyaan';
-        document.getElementById('emptyDesc').textContent = isSearch ? `Tidak ada yang cocok dengan "${q}"` : (isNexus ? 'Belum ada pertanyaan yang masuk' : 'Ajukan pertanyaan baru dengan tombol + di bawah');
+        document.getElementById('emptyTitle').textContent = isSearch ? 'Question not found' : 'No questions yet';
+        document.getElementById('emptyDesc').textContent = isSearch ? `Nothing matches "${q}"` : (isNexus ? 'No questions have come in yet' : 'Ask a new question with the + button below');
         renderQuestions([]);
     } else {
         renderQuestions(filtered);
@@ -358,7 +358,7 @@ async function loadQuestions() {
         const res = await fetch(`${API_BASE}/nexus`, {
             headers: { 'Authorization': 'Bearer {{ session("token") }}', 'Accept': 'application/json' }
         });
-        if (!res.ok) throw new Error('Gagal memuat');
+        if (!res.ok) throw new Error('Failed to load');
         const json = await res.json();
 
         // For Nexus: data is grouped by role. Flatten it.
@@ -374,8 +374,8 @@ async function loadQuestions() {
         document.getElementById('skeletonLoader').style.display = 'none';
         document.getElementById('qList').classList.add('hidden');
         document.getElementById('emptyIcon').setAttribute('name', 'alert-circle-outline');
-        document.getElementById('emptyTitle').textContent = 'Gagal memuat';
-        document.getElementById('emptyDesc').textContent = 'Coba refresh halaman';
+        document.getElementById('emptyTitle').textContent = 'Failed to load';
+        document.getElementById('emptyDesc').textContent = 'Try refreshing the page';
         document.getElementById('emptyState').classList.remove('hidden');
     }
 }
@@ -405,10 +405,10 @@ async function claimQuestion(id) {
             headers: { 'Authorization': 'Bearer {{ session("token") }}', 'Accept': 'application/json' }
         });
         const json = await res.json();
-        if (!res.ok) { alert(json.message || 'Gagal claim'); return; }
+        if (!res.ok) { alert(json.message || 'Failed to claim'); return; }
         loadQuestions();
     } catch (e) {
-        alert('Gagal claim pertanyaan');
+        alert('Failed to claim the question');
     }
 }
 </script>

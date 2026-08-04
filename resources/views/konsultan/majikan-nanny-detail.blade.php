@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Penugasan - ' . ($assignment['majikan_name'] ?? 'Majikan'))
+@section('title', 'Assignment Details - ' . ($assignment['majikan_name'] ?? 'Employer'))
 
 @push('styles')
 <style>
@@ -31,8 +31,8 @@
             <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
         </a>
         <div>
-            <span class="text-white text-[17px] font-extrabold tracking-wide">Detail Penugasan</span>
-            <p class="text-white/70 text-xs font-semibold mt-0.5 leading-[1.3]">Informasi lengkap majikan<br>dan nanny yang ditugaskan</p>
+            <span class="text-white text-[17px] font-extrabold tracking-wide">Assignment Details</span>
+            <p class="text-white/70 text-xs font-semibold mt-0.5 leading-[1.3]">Complete employer<br>and assigned nanny information</p>
         </div>
     </div>
 </div>
@@ -41,12 +41,12 @@
 <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar">
     <x-empty-state
         icon="document-outline"
-        title="Data tidak ditemukan"
-        description="Data penugasan yang Anda cari tidak tersedia"
+        title="Data not found"
+        description="The assignment data you are looking for is unavailable"
     >
         <a href="{{ route('konsultan-majikan-nanny') }}"
            class="mt-6 bg-[#8B46D3] text-white text-sm font-bold px-8 py-3 rounded-2xl shadow-[0_8px_20px_rgba(139,70,211,0.35)]">
-            Kembali ke Daftar
+            Back to List
         </a>
     </x-empty-state>
 </div>
@@ -69,7 +69,7 @@
     $calcAge = function ($date) {
         if (empty($date)) return '-';
         try {
-            return (new \DateTime())->diff(new \DateTime($date))->y . ' tahun';
+            return (new \DateTime())->diff(new \DateTime($date))->y . ' yrs';
         } catch (\Throwable $e) {
             return '-';
         }
@@ -78,7 +78,7 @@
 
 <div class="flex-1 overflow-y-auto px-[20px] pt-[20px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar space-y-4">
 
-    {{-- Majikan profile card --}}
+    {{-- Employer profile card --}}
     <div class="section-card anim delay-2 p-5">
         <div class="flex flex-col items-center">
             @if(!empty($a['majikan_foto']))
@@ -98,13 +98,13 @@
 
             <div class="flex items-center gap-1.5 bg-[#EDE9FE] px-3 py-1.5 rounded-full mb-2">
                 <ion-icon name="briefcase-outline" style="font-size:12px;color:#8B46D3;"></ion-icon>
-                <span class="text-[#8B46D3] text-[10px] font-extrabold tracking-wide uppercase">Majikan</span>
+                <span class="text-[#8B46D3] text-[10px] font-extrabold tracking-wide uppercase">Employer</span>
             </div>
 
             <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full {{ $isActive ? 'bg-[#DCFCE7]' : 'bg-[#FEE2E2]' }}">
                 <ion-icon name="ellipse" style="font-size:8px;color:{{ $isActive ? '#166534' : '#991B1B' }};"></ion-icon>
                 <span class="text-[10px] font-extrabold tracking-wide uppercase {{ $isActive ? 'text-[#166534]' : 'text-[#991B1B]' }}">
-                    {{ $isActive ? 'AKTIF' : 'TIDAK AKTIF' }}
+                    {{ $isActive ? 'ACTIVE' : 'INACTIVE' }}
                 </span>
             </div>
         </div>
@@ -116,7 +116,7 @@
                 <ion-icon name="document-text-outline" style="font-size:16px;color:#8B46D3;"></ion-icon>
             </div>
             <div class="flex-1">
-                <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Catatan</p>
+                <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Notes</p>
                 <p class="text-[#1E1B2E] text-[12px] font-semibold leading-relaxed">{{ $a['catatan'] }}</p>
             </div>
         </div>
@@ -127,7 +127,7 @@
     <div class="section-card anim delay-3 p-5">
         <div class="flex items-center gap-2">
             <ion-icon name="clipboard" style="font-size:16px;color:#8B46D3;"></ion-icon>
-            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Informasi Penugasan</h3>
+            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Assignment Information</h3>
         </div>
         <div class="h-px bg-[#E5E1F0] my-4"></div>
 
@@ -137,7 +137,7 @@
                     <ion-icon name="calendar-outline" style="font-size:16px;color:#EC4899;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Periode Penugasan</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Assignment Period</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold">
                         {{ $formatDate($a['tanggal_mulai'] ?? null) }} - {{ $formatDate($a['tanggal_selesai'] ?? null) }}
                     </p>
@@ -149,21 +149,21 @@
                     <ion-icon name="time-outline" style="font-size:16px;color:#4F46E5;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Status Penugasan</p>
-                    <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $isActive ? 'Aktif' : 'Tidak Aktif' }}</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Assignment Status</p>
+                    <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $isActive ? 'Active' : 'Inactive' }}</p>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="anim delay-4 space-y-2">
-        <p class="text-[#8B86A5] text-[10px] font-extrabold uppercase tracking-[1.8px] text-center">Hubungan Penugasan</p>
+        <p class="text-[#8B86A5] text-[10px] font-extrabold uppercase tracking-[1.8px] text-center">Assignment Relationship</p>
 
-        {{-- Majikan details --}}
+        {{-- Employer details --}}
         <div class="section-card p-5">
             <div class="flex items-center gap-2">
                 <ion-icon name="person-circle" style="font-size:16px;color:#8B46D3;"></ion-icon>
-                <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Informasi Majikan</h3>
+                <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Employer Information</h3>
             </div>
             <div class="h-px bg-[#E5E1F0] my-4"></div>
 
@@ -184,7 +184,7 @@
                     </div>
                     <div class="flex-1">
                         <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Gender</p>
-                        <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $majMale ? 'Laki-laki' : 'Perempuan' }}</p>
+                        <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $majMale ? 'Male' : 'Female' }}</p>
                     </div>
                 </div>
 
@@ -193,7 +193,7 @@
                         <ion-icon name="calendar-outline" style="font-size:16px;color:#EC4899;"></ion-icon>
                     </div>
                     <div class="flex-1">
-                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Tanggal Lahir</p>
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Date Of Birth</p>
                         <p class="text-[#1E1B2E] text-[13px] font-extrabold">
                             {{ $formatDate($a['majikan_tanggal_lahir'] ?? null) }}
                             @if(!empty($a['majikan_tanggal_lahir']))
@@ -208,7 +208,7 @@
                         <ion-icon name="location-outline" style="font-size:16px;color:#F59E0B;"></ion-icon>
                     </div>
                     <div class="flex-1">
-                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Lokasi</p>
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Location</p>
                         <p class="text-[#1E1B2E] text-[13px] font-extrabold">
                             @if(!empty($a['majikan_kota']) && !empty($a['majikan_provinsi']))
                                 {{ $a['majikan_kota'] }}, {{ $a['majikan_provinsi'] }}
@@ -223,7 +223,7 @@
                         <ion-icon name="home-outline" style="font-size:16px;color:#8B46D3;"></ion-icon>
                     </div>
                     <div class="flex-1">
-                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Alamat</p>
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Address</p>
                         <p class="text-[#1E1B2E] text-[12px] font-semibold leading-snug">{{ $a['majikan_alamat'] }}</p>
                     </div>
                 </div>
@@ -242,7 +242,7 @@
         <div class="section-card p-5">
             <div class="flex items-center gap-2">
                 <ion-icon name="heart" style="font-size:16px;color:#8B46D3;"></ion-icon>
-                <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Informasi Nanny</h3>
+                <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Nanny Information</h3>
             </div>
             <div class="h-px bg-[#E5E1F0] my-4"></div>
 
@@ -285,7 +285,7 @@
                     </div>
                     <div class="flex-1">
                         <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Gender</p>
-                        <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $nannyMale ? 'Laki-laki' : 'Perempuan' }}</p>
+                        <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $nannyMale ? 'Male' : 'Female' }}</p>
                     </div>
                 </div>
 
@@ -294,7 +294,7 @@
                         <ion-icon name="calendar-outline" style="font-size:16px;color:#EC4899;"></ion-icon>
                     </div>
                     <div class="flex-1">
-                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Tanggal Lahir</p>
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Date Of Birth</p>
                         <p class="text-[#1E1B2E] text-[13px] font-extrabold">
                             {{ $formatDate($a['nanny_tanggal_lahir'] ?? null) }}
                             @if(!empty($a['nanny_tanggal_lahir']))
@@ -309,7 +309,7 @@
                         <ion-icon name="location-outline" style="font-size:16px;color:#F59E0B;"></ion-icon>
                     </div>
                     <div class="flex-1">
-                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Lokasi</p>
+                        <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Location</p>
                         <p class="text-[#1E1B2E] text-[13px] font-extrabold">
                             @if(!empty($a['nanny_kota']) && !empty($a['nanny_provinsi']))
                                 {{ $a['nanny_kota'] }}, {{ $a['nanny_provinsi'] }}
@@ -326,7 +326,7 @@
         <a href="{{ route('chat.room', $a['id_majikan'] ?? 0) }}?nama={{ urlencode($a['majikan_name'] ?? '') }}"
            class="bg-white border border-[#E7E3F5] text-[#8B46D3] rounded-2xl font-extrabold flex items-center justify-center gap-2 h-[52px] shadow-[0_2px_10px_rgba(0,0,0,0.06)] active:scale-[0.97] transition-transform">
             <ion-icon name="chatbubble-ellipses-outline" style="font-size:18px;"></ion-icon>
-            <span>Chat dengan Majikan</span>
+            <span>Chat with Employer</span>
         </a>
     </div>
 </div>

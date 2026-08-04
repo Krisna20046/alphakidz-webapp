@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Rekap Diary Nanny')
+@section('title', 'Nanny Diary Recap')
 
 @push('styles')
 <style>
@@ -154,7 +154,7 @@
         <div class="mb-3">
             <button onclick="backToStep1()" class="inline-flex items-center gap-1.5 text-[#8B46D3] text-[12px] font-extrabold">
                 <ion-icon name="chevron-back" style="font-size:14px;"></ion-icon>
-                Pilih nanny lain
+                Choose another nanny
             </button>
         </div>
 
@@ -199,7 +199,7 @@
                     />
                     <ion-icon name="calendar-outline" style="font-size:15px;color:#7C748F;" onclick="openDatePicker('start')" class="cursor-pointer"></ion-icon>
                 </div>
-                <p id="errStart" class="hidden text-red-500 text-xs mt-1 font-medium">Tanggal mulai harus diisi</p>
+                <p id="errStart" class="hidden text-red-500 text-xs mt-1 font-medium">Start date is required</p>
             </div>
 
             <div class="mb-4">
@@ -212,13 +212,13 @@
                     />
                     <ion-icon name="calendar-outline" style="font-size:15px;color:#7C748F;" onclick="openDatePicker('end')" class="cursor-pointer"></ion-icon>
                 </div>
-                <p id="errEnd" class="hidden text-red-500 text-xs mt-1 font-medium">Tanggal selesai harus diisi</p>
+                <p id="errEnd" class="hidden text-red-500 text-xs mt-1 font-medium">End date is required</p>
             </div>
 
             <div class="mb-5">
                 <label class="block text-[#1E1B2E] text-[12px] font-bold mb-2">Activity Categories</label>
                 <div id="categoryChips" class="flex flex-wrap gap-2"></div>
-                <span id="kategoriLabel" class="hidden">Semua Kategori</span>
+                <span id="kategoriLabel" class="hidden">All Categories</span>
             </div>
         </div>
 
@@ -228,10 +228,10 @@
                 <p class="text-[#D97706] font-extrabold text-[11px] uppercase tracking-wide">Information</p>
             </div>
             <ul class="list-disc pl-5 space-y-0.5 text-[11px] text-[#7C748F] font-semibold leading-snug">
-                <li class="flex gap-2"><span class="text-[#F59E0B] flex-shrink-0">•</span> Laporan mencakup semua diary dalam periode yang dipilih</li>
-                <li class="flex gap-2"><span class="text-[#F59E0B] flex-shrink-0">•</span> Data dapat difilter berdasarkan kategori aktivitas</li>
-                <li class="flex gap-2"><span class="text-[#F59E0B] flex-shrink-0">•</span> Pastikan periode tanggal sudah benar sebelum generate</li>
-                <li class="flex gap-2"><span class="text-[#F59E0B] flex-shrink-0">•</span> File Excel siap digunakan untuk analisis lanjutan</li>
+                <li class="flex gap-2"><span class="text-[#F59E0B] flex-shrink-0">•</span> The report includes all diary entries in the selected period</li>
+                <li class="flex gap-2"><span class="text-[#F59E0B] flex-shrink-0">•</span> Data can be filtered by activity category</li>
+                <li class="flex gap-2"><span class="text-[#F59E0B] flex-shrink-0">•</span> Make sure the date period is correct before generating</li>
+                <li class="flex gap-2"><span class="text-[#F59E0B] flex-shrink-0">•</span> The Excel file is ready for further analysis</li>
             </ul>
         </div>
 
@@ -260,7 +260,7 @@
         <div class="flex items-center justify-between px-5 py-4 border-b-2 border-[#EDE9FE]">
             <div class="flex items-center gap-2">
                 <ion-icon name="calendar" style="font-size:22px;color:#7B1E5A;"></ion-icon>
-                <p id="dpTitle" class="text-[#1E1B2E] font-bold text-lg">Pilih Tanggal</p>
+                <p id="dpTitle" class="text-[#1E1B2E] font-bold text-lg">Select Date</p>
             </div>
             <button onclick="closeDatePicker()" class="w-9 h-9 rounded-xl bg-[#EDE9FE] flex items-center justify-center">
                 <ion-icon name="close" style="font-size:18px;color:#7B1E5A;"></ion-icon>
@@ -274,15 +274,15 @@
 
         <div class="flex gap-2 px-5 pt-2 pb-2">
             <div class="flex-1">
-                <p class="text-[#8B86A5] text-xs font-bold text-center mb-2 uppercase tracking-wider">Tahun</p>
+                <p class="text-[#8B86A5] text-xs font-bold text-center mb-2 uppercase tracking-wider">Year</p>
                 <div id="yearCol" class="picker-col bg-[#F8F7FF] rounded-2xl border-2 border-[#EDE9FE]"></div>
             </div>
             <div class="flex-1">
-                <p class="text-[#8B86A5] text-xs font-bold text-center mb-2 uppercase tracking-wider">Bulan</p>
+                <p class="text-[#8B86A5] text-xs font-bold text-center mb-2 uppercase tracking-wider">Month</p>
                 <div id="monthCol" class="picker-col bg-[#F8F7FF] rounded-2xl border-2 border-[#EDE9FE]"></div>
             </div>
             <div class="flex-1">
-                <p class="text-[#8B86A5] text-xs font-bold text-center mb-2 uppercase tracking-wider">Tgl</p>
+                <p class="text-[#8B86A5] text-xs font-bold text-center mb-2 uppercase tracking-wider">Day</p>
                 <div id="dayCol" class="picker-col bg-[#F8F7FF] rounded-2xl border-2 border-[#EDE9FE]"></div>
             </div>
         </div>
@@ -290,12 +290,12 @@
         <div class="flex gap-3 px-5 py-4 border-t-2 border-[#EDE9FE]">
             <button onclick="closeDatePicker()"
                     class="flex-1 py-3.5 rounded-xl bg-[#EDE9FE] text-[#8B46D3] font-bold text-sm hover:bg-[#8B46D3]/10 transition-colors">
-                Batal
+                Cancel
             </button>
             <button onclick="confirmDatePicker()"
                     class="flex-1 py-3.5 rounded-xl bg-[#8B46D3] text-white font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#9F58F8] transition-colors shadow-lg shadow-[#8B46D3]/30">
                 <ion-icon name="checkmark" style="font-size:18px;"></ion-icon>
-                Pilih
+                Select
             </button>
         </div>
     </div>
@@ -312,7 +312,7 @@
         <div class="flex items-center justify-between px-5 py-4 border-b-2 border-[#EDE9FE]">
             <div class="flex items-center gap-2">
                 <ion-icon name="filter" style="font-size:22px;color:#7B1E5A;"></ion-icon>
-                <p class="text-[#1E1B2E] font-bold text-lg">Pilih Kategori</p>
+                <p class="text-[#1E1B2E] font-bold text-lg">Select Category</p>
             </div>
             <button onclick="closeKategoriModal()" class="w-9 h-9 rounded-xl bg-[#EDE9FE] flex items-center justify-center">
                 <ion-icon name="close" style="font-size:18px;color:#7B1E5A;"></ion-icon>
@@ -329,7 +329,7 @@
             <ion-icon name="document-text" style="font-size:32px;color:#7B1E5A;" class="dl-pulse"></ion-icon>
         </div>
         <p id="loadingTitle" class="text-[#1E1B2E] font-bold text-lg mb-1">Generating...</p>
-        <p id="loadingSubtitle" class="text-[#8B86A5] text-sm mb-5 text-center">Mohon tunggu, sedang memproses laporan</p>
+        <p id="loadingSubtitle" class="text-[#8B86A5] text-sm mb-5 text-center">Please wait, processing the report</p>
         <div class="w-full bg-[#EDE9FE] rounded-full h-2 overflow-hidden">
             <div id="progressBar" class="h-full bg-[#8B46D3] rounded-full progress-bar" style="width:0%"></div>
         </div>
@@ -362,8 +362,8 @@ let selectedKategori = '';
 let dpTarget      = 'start';
 let dpYear, dpMonth, dpDay;
 
-const MONTHS_ID = ['Januari','Februari','Maret','April','Mei','Juni',
-                   'Juli','Agustus','September','Oktober','November','Desember'];
+const MONTHS_ID = ['January','February','March','April','May','June',
+                   'July','August','September','October','November','December'];
 const KATEGORI_OPTIONS = [
     { value: '',        label: 'All',         short: 'All',       icon: 'apps-outline',            bg: '#EDE9FE', color: '#8B46D3' },
     { value: 'makan',   label: 'Eat',         short: 'Eat',       icon: 'restaurant-outline',      bg: '#EDE9FE', color: '#8B46D3' },
@@ -405,7 +405,7 @@ function showToast(type, title, msg) {
 }
 
 // ── Loading overlay ───────────────────────────────────────────────────────────
-function showLoading(title='Generating...', subtitle='Sedang memproses laporan') {
+function showLoading(title='Generating...', subtitle='Processing the report') {
     document.getElementById('loadingTitle').textContent    = title;
     document.getElementById('loadingSubtitle').textContent = subtitle;
     document.getElementById('progressBar').style.width     = '20%';
@@ -443,7 +443,7 @@ async function fetchNannies() {
     } catch (e) {
         console.error('Fetch nannies error:', e);
         allNannies = [];
-        showToast('error', 'Gagal memuat', 'Tidak dapat terhubung ke server');
+        showToast('error', 'Failed to load', 'Unable to connect to the server');
     }
 
     renderNannies(allNannies);
@@ -473,8 +473,8 @@ function renderNannies(list) {
                 <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-5">
                     <ion-icon name="person-outline" style="font-size:44px;color:#C4B5FD;"></ion-icon>
                 </div>
-                <p class="text-[#1E1B2E] font-extrabold text-lg mb-2">Tidak ada nanny aktif</p>
-                <p class="text-[#9CA3AF] text-sm">Nanny aktif bertugas akan muncul di sini</p>
+                <p class="text-[#1E1B2E] font-extrabold text-lg mb-2">No active nannies</p>
+                <p class="text-[#9CA3AF] text-sm">Active nannies on duty will appear here</p>
             </div>`;
         return;
     }
@@ -500,7 +500,7 @@ function renderNannies(list) {
                         <ion-icon name="briefcase-outline" style="font-size:12px;color:#8B46D3;"></ion-icon>
                         <span class="text-[#1E1B2E] text-[12px] font-extrabold truncate">Nanny</span>
                     </div>
-                    <p class="text-[#8B86A5] text-[11px] italic font-semibold mt-0.5 truncate">"${item.email || 'Siap dibuatkan rekap diary'}"</p>
+                    <p class="text-[#8B86A5] text-[11px] italic font-semibold mt-0.5 truncate">"${item.email || 'Ready to create a diary recap'}"</p>
                 </div>
             </div>
         </button>
@@ -592,7 +592,7 @@ function openDatePicker(target) {
     dpMonth   = d.getMonth();
     dpDay     = d.getDate();
 
-    document.getElementById('dpTitle').textContent = target === 'start' ? 'Tanggal Mulai' : 'Tanggal Selesai';
+    document.getElementById('dpTitle').textContent = target === 'start' ? 'Start Date' : 'End Date';
 
     buildDateCols();
     updateDpPreview();
@@ -725,7 +725,7 @@ function closeKategoriOnOverlay(e) {
 function selectKategori(val) {
     selectedKategori = val;
     const opt = KATEGORI_OPTIONS.find(o => o.value === val);
-    document.getElementById('kategoriLabel').textContent = opt ? opt.label : 'Semua Kategori';
+    document.getElementById('kategoriLabel').textContent = opt ? opt.label : 'All Categories';
     document.getElementById('kategoriLabel').className = 'hidden';
     renderCategoryChips();
     closeKategoriModal();
@@ -756,7 +756,7 @@ function validateForm() {
     }
 
     if (start && end && new Date(start) > new Date(end)) {
-        document.getElementById('errEnd').textContent = 'Tanggal selesai harus setelah tanggal mulai';
+        document.getElementById('errEnd').textContent = 'End date must be after start date';
         document.getElementById('errEnd').classList.remove('hidden');
         document.getElementById('endDateWrapper').classList.add('border-red-400');
         valid = false;
@@ -768,13 +768,13 @@ function validateForm() {
 // ── Generate Report ───────────────────────────────────────────────────────────
 async function handleGenerate() {
     if (!validateForm()) {
-        showToast('error', 'Form tidak lengkap', 'Periksa kembali isian tanggal');
+        showToast('error', 'Incomplete form', 'Please check the date fields');
         return;
     }
 
     const btn = document.getElementById('generateBtn');
     btn.disabled = true;
-    showLoading('Generating Laporan...', 'Sedang memproses data diary nanny');
+    showLoading('Generating Report...', 'Processing nanny diary data');
 
     let prog = 20;
     const progInterval = setInterval(() => {
@@ -807,20 +807,20 @@ async function handleGenerate() {
             }, 500);
         } else {
             hideLoading();
-            showToast('error', 'Gagal generate', data.message || 'Terjadi kesalahan pada server');
+            showToast('error', 'Generation failed', data.message || 'An error occurred on the server');
         }
     } catch (e) {
         clearInterval(progInterval);
         hideLoading();
         console.error(e);
-        showToast('error', 'Koneksi gagal', 'Tidak dapat terhubung ke server');
+        showToast('error', 'Connection failed', 'Unable to connect to the server');
     } finally {
         btn.disabled = false;
     }
 }
 
 function downloadFile(url, filename) {
-    showLoading('Mengunduh File...', 'File Excel sedang diunduh');
+    showLoading('Downloading File...', 'The Excel file is being downloaded');
 
     const anchor = document.createElement('a');
     anchor.href     = url;
@@ -832,7 +832,7 @@ function downloadFile(url, filename) {
 
     setTimeout(() => {
         hideLoading();
-        showToast('success', 'Berhasil!', `File "${filename}" berhasil diunduh`);
+        showToast('success', 'Success!', `File "${filename}" downloaded successfully`);
     }, 1200);
 }
 

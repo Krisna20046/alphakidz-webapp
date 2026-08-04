@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Majikan Anda')
+@section('title', 'Your Employers')
 
 @push('styles')
 <style>
@@ -27,8 +27,8 @@
             <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
         </a>
         <div>
-            <span class="text-white text-[17px] font-extrabold tracking-wide">Majikan Anda</span>
-            <p class="text-white/60 text-xs font-medium mt-0.5">{{ count($assignments ?? []) }} majikan dalam pengawasan</p>
+            <span class="text-white text-[17px] font-extrabold tracking-wide">Your Employers</span>
+            <p class="text-white/60 text-xs font-medium mt-0.5">{{ count($assignments ?? []) }} employers under supervision</p>
         </div>
     </div>
 </div>
@@ -44,9 +44,9 @@
     <div class="anim delay-3">
         @if(isset($assignments) && count($assignments) > 0)
         <div class="flex items-center justify-between mb-2">
-            <h2 class="text-[#5A556E] text-[18px] font-extrabold">Daftar Majikan</h2>
+            <h2 class="text-[#5A556E] text-[18px] font-extrabold">Employer List</h2>
             <div class="bg-[#EDE9FE] px-3 py-1 rounded-full">
-                <span class="text-[#8B46D3] text-xs font-bold">{{ count($assignments) }} Majikan</span>
+                <span class="text-[#8B46D3] text-xs font-bold">{{ count($assignments) }} Employers</span>
             </div>
         </div>
 
@@ -62,9 +62,9 @@
                 } else {
                     $badgeClass = 'badge-pending';
                 }
-                $statusLabel = !empty($item['status']) ? ucfirst($item['status']) : 'Bertugas';
+                $statusLabel = !empty($item['status']) ? ucfirst($item['status']) : 'On Duty';
                 $nannyName = $item['nanny_name'] ?? null;
-                $subtitle = $nannyName ? 'Nanny: ' . $nannyName : $item['majikan_email'] ?? 'Detail majikan dalam pengawasan Anda';
+                $subtitle = $nannyName ? 'Nanny: ' . $nannyName : $item['majikan_email'] ?? 'Employer details under your supervision';
             @endphp
             <a href="{{ route('konsultan-majikan-nanny-detail', $item['id_majikan']) }}"
                class="majikan-card block bg-white rounded-[14px] px-3 py-2.5 shadow-[0_2px_10px_rgba(0,0,0,0.10)] border border-[#EAE6F5]"
@@ -94,7 +94,7 @@
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-1 mb-0.5">
                                 <ion-icon name="{{ $isMale ? 'male-outline' : 'female-outline' }}" style="font-size:11px;color:#8B46D3;flex-shrink:0;"></ion-icon>
-                                <span class="text-[#8B86A5] text-[11px] font-semibold truncate">{{ $isMale ? 'Laki-laki' : 'Perempuan' }}</span>
+                                <span class="text-[#8B86A5] text-[11px] font-semibold truncate">{{ $isMale ? 'Male' : 'Female' }}</span>
                             </div>
                             @if(!empty($item['majikan_email']))
                             <div class="flex items-center gap-1 mb-0.5">
@@ -117,9 +117,9 @@
             <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-5">
                 <ion-icon name="people-outline" style="font-size:44px;color:#C4B5FD;"></ion-icon>
             </div>
-            <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">Belum ada majikan</h3>
+            <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">No employers yet</h3>
             <p class="text-[#9CA3AF] text-sm text-center leading-relaxed">
-                Anda belum memiliki majikan yang terdaftar di bawah pengawasan Anda
+                You have no employers registered under your supervision
             </p>
         </div>
         @endif

@@ -1,11 +1,11 @@
 {{-- FRONTEND: resources/views/auth/google-callback.blade.php --}}
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Memproses Login...</title>
+    <title>Processing Login...</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { theme: { extend: { screens: { sm: '1024px' } } } };
@@ -74,8 +74,8 @@
         </div>
 
         <div>
-            <p id="titleText" class="text-[#3D1F7A] text-xl font-extrabold mb-1.5">Memproses Login</p>
-            <p id="subText" class="text-[#9CA3AF] text-sm font-semibold leading-relaxed">Menghubungkan akun Google Anda...</p>
+            <p id="titleText" class="text-[#3D1F7A] text-xl font-extrabold mb-1.5">Processing Login</p>
+            <p id="subText" class="text-[#9CA3AF] text-sm font-semibold leading-relaxed">Connecting your Google account...</p>
         </div>
 
         <div id="dots" class="flex gap-2">
@@ -86,7 +86,7 @@
 
         <a id="btnBack" href="{{ route('login') }}"
            class="hidden px-8 py-3 rounded-full bg-[#8B46D3] text-white text-sm font-bold shadow-lg hover:bg-[#7C3AED] transition-colors">
-            Kembali ke Login
+            Back to Login
         </a>
     </div>
 </div>
@@ -98,7 +98,7 @@
     const code   = params.get('code');
 
     if (!code) {
-        showError('Parameter autentikasi tidak ditemukan.');
+        showError('Authentication parameters not found.');
         return;
     }
 
@@ -112,7 +112,7 @@
         const apiData = await apiRes.json();
 
         if (apiData.status !== 'success' || !apiData.token) {
-            showError(apiData.message || 'Login Google gagal. Silakan coba lagi.');
+            showError(apiData.message || 'Google sign-in failed. Please try again.');
             return;
         }
 
@@ -138,12 +138,12 @@
                 window.location.href = '{{ route("dashboard") }}';
             }, 1500);
         } else {
-            showError('Gagal menyimpan sesi login.');
+            showError('Failed to save the login session.');
         }
 
     } catch (err) {
         console.error(err);
-        showError('Gagal terhubung ke server. Periksa koneksi internet Anda.');
+        showError('Failed to connect to the server. Check your internet connection.');
     }
 })();
 
@@ -153,9 +153,9 @@ function showSuccess(name) {
     document.getElementById('pulseRing').style.background = 'rgba(34,197,94,0.10)';
     document.getElementById('dots').classList.add('hidden');
     const t = document.getElementById('titleText');
-    t.textContent = 'Login Berhasil! 🎉';
+    t.textContent = 'Login Successful! 🎉';
     t.className = 'text-green-600 text-xl font-extrabold mb-1.5';
-    document.getElementById('subText').textContent = 'Halo, ' + name + '! Mengarahkan ke dashboard...';
+    document.getElementById('subText').textContent = 'Hi, ' + name + '! Redirecting to the dashboard...';
 }
 
 function showError(msg) {
@@ -164,7 +164,7 @@ function showError(msg) {
     document.getElementById('pulseRing').style.background = 'rgba(239,68,68,0.08)';
     document.getElementById('dots').classList.add('hidden');
     const t = document.getElementById('titleText');
-    t.textContent = 'Login Gagal';
+    t.textContent = 'Login Failed';
     t.className = 'text-red-500 text-xl font-extrabold mb-1.5';
     document.getElementById('subText').textContent = msg;
     document.getElementById('btnBack').classList.remove('hidden');

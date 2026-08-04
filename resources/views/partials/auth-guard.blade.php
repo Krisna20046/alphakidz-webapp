@@ -80,7 +80,7 @@
         if (isRedirecting) return;
         isRedirecting = true;
         stopPolling();
-        try { sessionStorage.setItem('profile_flash', 'Lengkapi profil Anda terlebih dahulu.'); } catch (_) {}
+        try { sessionStorage.setItem('profile_flash', 'Complete your profile first.'); } catch (_) {}
         window.location.replace(PROFILE_URL);
     }
 
@@ -118,7 +118,7 @@
                     </svg>
                 </div>
                 <p style="color:#fff;font-size:18px;font-weight:700;margin:0 0 8px;text-align:center;padding:0 32px;">
-                    Sesi Berakhir
+                    Session Expired
                 </p>
                 <p style="color:rgba(255,255,255,.65);font-size:13px;text-align:center;margin:0 0 24px;padding:0 40px;line-height:1.6;">
                     ${msg}
@@ -129,7 +129,7 @@
                     animation:__spin .8s linear infinite;
                 "></div>
                 <p style="color:rgba(255,255,255,.4);font-size:11px;margin-top:16px;">
-                    Mengalihkan ke halaman login...
+                    Redirecting to login page...
                 </p>
             </div>
         `;
@@ -153,7 +153,7 @@
 
             /* ── Token tidak valid / dicabut ── */
             if (res.status === 401 || res.status === 403) {
-                forceLogout('Akun Anda masuk dari perangkat lain atau sesi telah berakhir.');
+                forceLogout('Your account is logged in on another device or the session has expired.');
                 return;
             }
 
@@ -168,7 +168,7 @@
             failCount = 0; // reset pada sukses
 
             if (json.status !== 'success') {
-                forceLogout('Sesi tidak valid. Silakan login kembali.');
+                forceLogout('Invalid session. Please log in again.');
                 return;
             }
 
@@ -222,7 +222,7 @@
 
     /* ── Bootstrap ───────────────────────────────────────────────────────── */
     if (!TOKEN) {
-        forceLogout('Silakan login untuk melanjutkan.');
+        forceLogout('Please log in to continue.');
         return;
     }
 

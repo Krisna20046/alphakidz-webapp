@@ -72,7 +72,7 @@
 
 @if($data)
 @php
-    $genderText   = ($data['majikan_gender'] ?? '') === 'L' ? 'Laki-laki' : (($data['majikan_gender'] ?? '') === 'P' ? 'Perempuan' : '-');
+    $genderText   = ($data['majikan_gender'] ?? '') === 'L' ? 'Male' : (($data['majikan_gender'] ?? '') === 'P' ? 'Female' : '-');
     $isMale       = ($data['majikan_gender'] ?? '') === 'L';
     $locationText = (!empty($data['majikan_kota']) && !empty($data['majikan_provinsi']))
                     ? $data['majikan_kota'].', '.$data['majikan_provinsi']
@@ -104,7 +104,7 @@
 
             <div class="mt-2 bg-[#EFE9FB] px-3 py-1 rounded-full flex items-center gap-1.5">
                 <ion-icon name="briefcase-outline" style="font-size:12px;color:#8B46D3;"></ion-icon>
-                <span class="text-[#8B46D3] text-[10px] font-extrabold tracking-wide uppercase">Majikan</span>
+                <span class="text-[#8B46D3] text-[10px] font-extrabold tracking-wide uppercase">Employer</span>
             </div>
         </div>
     </div>
@@ -132,7 +132,7 @@
                     <ion-icon name="call-outline" style="font-size:16px;color:#EC4899;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Nomor HP</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Phone Number</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $data['majikan_no_hp'] ?? '-' }}</p>
                 </div>
             </div>
@@ -171,7 +171,7 @@
                     <ion-icon name="location-outline" style="font-size:16px;color:#4F46E5;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Lokasi</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Location</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $locationText }}</p>
                 </div>
             </div>
@@ -181,7 +181,7 @@
                     <ion-icon name="home-outline" style="font-size:16px;color:#F59E0B;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Alamat</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Address</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold leading-snug">{{ $data['majikan_alamat'] }}</p>
                 </div>
             </div>
@@ -198,7 +198,7 @@
                 <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Child Data</h3>
             </div>
             <div class="bg-[#EFE9FB] px-3 py-1 rounded-full">
-                <span class="text-[#8B46D3] text-[11px] font-extrabold">{{ count($children) }} anak</span>
+                <span class="text-[#8B46D3] text-[11px] font-extrabold">{{ count($children) }} children</span>
             </div>
         </div>
 
@@ -225,7 +225,7 @@
                         <p class="text-[#1E1B2E] text-[15px] font-extrabold">{{ $child['nama'] }}</p>
                         <div class="flex items-center gap-1 mt-0.5">
                             <ion-icon name="{{ $childMale ? 'male-outline' : 'female-outline' }}" style="font-size:11px;color:#8B46D3;"></ion-icon>
-                            <span class="text-[#8B46D3] text-[11px] font-bold">{{ $childMale ? 'Laki-laki' : 'Perempuan' }}</span>
+                            <span class="text-[#8B46D3] text-[11px] font-bold">{{ $childMale ? 'Male' : 'Female' }}</span>
                         </div>
                     </div>
                 </div>
@@ -261,7 +261,7 @@
                             <ion-icon name="warning-outline" style="font-size:13px;color:#EF4444;"></ion-icon>
                         </div>
                         <div class="flex-1">
-                            <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.5px]">Alergi</p>
+                            <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.5px]">Allergies</p>
                             <p class="text-[#1E1B2E] text-[12px] font-extrabold leading-snug">{{ $child['alergi'] }}</p>
                         </div>
                     </div>
@@ -273,7 +273,7 @@
                             <ion-icon name="heart-outline" style="font-size:13px;color:#EC4899;"></ion-icon>
                         </div>
                         <div class="flex-1">
-                            <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.5px]">Hobi</p>
+                            <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.5px]">Hobby</p>
                             <p class="text-[#1E1B2E] text-[12px] font-extrabold leading-snug">{{ $child['hobi'] }}</p>
                         </div>
                     </div>
@@ -300,7 +300,7 @@
     <div class="anim delay-6 pt-1 pb-4">
         <a href="{{ route('chat.room', ['id' => $data['id_majikan'] ?? 0]) }}" class="btn-chat">
             <ion-icon name="chatbubble-ellipses-outline" style="font-size:18px;"></ion-icon>
-            Hubungi Majikan
+            Contact Employer
         </a>
     </div>
 
@@ -311,8 +311,8 @@
 <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar">
     <x-empty-state
         icon="person-circle-outline"
-        title="Data majikan tidak ditemukan"
-        description="Belum ada penugasan aktif saat ini"
+        title="Employer data not found"
+        description="No active assignment right now"
     />
 </div>
 @endif

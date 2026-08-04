@@ -269,7 +269,7 @@
             </div>
             @empty
             <div style="padding:0 20px;color:#A8A2C2;font-size:13px;font-weight:700;">
-                Belum ada data anak
+                No child data yet
             </div>
             @endforelse
         </div>
@@ -280,14 +280,14 @@
         <div class="hide-scrollbar flex" style="overflow-x:auto;gap:8px;padding-bottom:2px;">
             @php
                 $kats = [
-                    ['value'=>'','label'=>'Semua'],
-                    ['value'=>'makan','label'=>'🍽️ Makan'],
-                    ['value'=>'tidur','label'=>'🌙 Tidur'],
-                    ['value'=>'main','label'=>'⚽ Main'],
-                    ['value'=>'belajar','label'=>'📖 Belajar'],
-                    ['value'=>'mandi','label'=>'🛁 Mandi'],
-                    ['value'=>'bab','label'=>'🟤 BAB'],
-                    ['value'=>'bak','label'=>'💧 BAK'],
+                    ['value'=>'','label'=>'All'],
+                    ['value'=>'makan','label'=>'🍽️ Eat'],
+                    ['value'=>'tidur','label'=>'🌙 Sleep'],
+                    ['value'=>'main','label'=>'⚽ Play'],
+                    ['value'=>'belajar','label'=>'📖 Study'],
+                    ['value'=>'mandi','label'=>'🛁 Bath'],
+                    ['value'=>'bab','label'=>'🟤 Poop'],
+                    ['value'=>'bak','label'=>'💧 Pee'],
                 ];
             @endphp
             @foreach($kats as $kat)
@@ -435,12 +435,12 @@
                         @if(!empty($item['foto_sebelum_url']) || !empty($item['foto_sesudah_url']))
                         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
                             @if(!empty($item['foto_sebelum_url']))
-                            <img src="{{ $item['foto_sebelum_url'] }}" class="akt-photo" alt="Sebelum"
+                            <img src="{{ $item['foto_sebelum_url'] }}" class="akt-photo" alt="Before"
                                 onclick="event.stopPropagation();openImageModal('{{ $item['foto_sebelum_url'] }}')"
                                 style="cursor:pointer;">
                             @endif
                             @if(!empty($item['foto_sesudah_url']))
-                            <img src="{{ $item['foto_sesudah_url'] }}" class="akt-photo" alt="Sesudah"
+                            <img src="{{ $item['foto_sesudah_url'] }}" class="akt-photo" alt="After"
                                 onclick="event.stopPropagation();openImageModal('{{ $item['foto_sesudah_url'] }}')"
                                 style="cursor:pointer;">
                             @endif
@@ -473,8 +473,8 @@
                  style="width:100px;height:100px;border-radius:50%;background:#EDE9FE;margin-bottom:18px;">
                 <ion-icon name="calendar-clear-outline" style="font-size:48px;color:#C4B5FD;"></ion-icon>
             </div>
-            <p style="font-size:16px;font-weight:900;color:#1E1B2E;margin-bottom:6px;">Tidak ada aktivitas</p>
-            <p style="font-size:13px;font-weight:700;color:#A8A2C2;">pada tanggal ini</p>
+            <p style="font-size:16px;font-weight:900;color:#1E1B2E;margin-bottom:6px;">No activities</p>
+            <p style="font-size:13px;font-weight:700;color:#A8A2C2;">for this date</p>
         </div>
         @endif
     </div>
@@ -531,7 +531,7 @@
 <div class="modal-overlay" id="modalDetail">
     <div class="modal-box modal-box-tall" style="max-width:340px;">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-shrink:0;padding:20px;border-bottom:2px solid #F0EDFB;">
-            <span style="font-size:17px;font-weight:800;color:#1E1B2E;">Detail Aktivitas</span>
+            <span style="font-size:17px;font-weight:800;color:#1E1B2E;">Activity Details</span>
             <button onclick="closeDetail()"
                 style="width:32px;height:32px;border-radius:16px;background:#EDE9FE;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;">
                 <ion-icon name="close" style="font-size:20px;color:#8B46D3;"></ion-icon>
@@ -542,7 +542,7 @@
             <button onclick="closeDetail()"
                 style="width:100%;background:#8B46D3;padding:16px;border-radius:16px;font-size:16px;font-weight:800;color:#fff;cursor:pointer;border:none;
                        box-shadow:0 6px 18px rgba(139,70,211,.3);font-family:'Nunito',sans-serif;">
-                Tutup
+                Close
             </button>
         </div>
     </div>
@@ -761,25 +761,25 @@ function detailRow(iconName,label,value,isLast){
 function openDetail(item){
     const bg=getKatBg(item.kategori), col=getKatColor(item.kategori), ic=getKatIcon(item.kategori);
     const rows=[
-        {icon:'time-outline',label:'Waktu Mulai',value:item.jam_mulai_fmt},
-        {icon:'time-outline',label:'Waktu Selesai',value:item.jam_selesai_fmt},
-        {icon:'hourglass',label:'Durasi',value:item.durasi_fmt},
+        {icon:'time-outline',label:'Start Time',value:item.jam_mulai_fmt},
+        {icon:'time-outline',label:'End Time',value:item.jam_selesai_fmt},
+        {icon:'hourglass',label:'Duration',value:item.durasi_fmt},
     ];
     if(item.mood && item.kategori!=='bab' && item.kategori!=='bak') rows.push({emoji:getMoodEmoji(item.mood),label:'Mood',value:item.mood.charAt(0).toUpperCase()+item.mood.slice(1)});
-    if(item.deskripsi) rows.push({icon:'document-text-outline',label:'Deskripsi',value:item.deskripsi});
+    if(item.deskripsi) rows.push({icon:'document-text-outline',label:'Description',value:item.deskripsi});
     // BAB/BAK fields
     if(item.kategori==='bab'||item.kategori==='bak'){
-        if(item.warna) rows.push({icon:'color-palette-outline',label:'Warna',value:item.warna.charAt(0).toUpperCase()+item.warna.slice(1)});
-        if(item.tekstur && item.kategori==='bab') rows.push({icon:'layers-outline',label:'Tekstur',value:item.tekstur.charAt(0).toUpperCase()+item.tekstur.slice(1)});
+        if(item.warna) rows.push({icon:'color-palette-outline',label:'Color',value:item.warna.charAt(0).toUpperCase()+item.warna.slice(1)});
+        if(item.tekstur && item.kategori==='bab') rows.push({icon:'layers-outline',label:'Texture',value:item.tekstur.charAt(0).toUpperCase()+item.tekstur.slice(1)});
         if(item.volume) rows.push({icon:'scale-outline',label:'Volume',value:item.volume.charAt(0).toUpperCase()+item.volume.slice(1)});
-        if(item.frekuensi) rows.push({icon:'repeat-outline',label:'Frekuensi',value:item.frekuensi+'×'});
+        if(item.frekuensi) rows.push({icon:'repeat-outline',label:'Frequency',value:item.frekuensi+'×'});
     }
     // Makan/Minum fields
     if(item.kategori==='makan'||item.kategori==='minum'){
-        if(item.porsi) rows.push({icon:'fast-food-outline',label:'Porsi',value:item.porsi.charAt(0).toUpperCase()+item.porsi.slice(1)});
-        if(item.nafsu_makan) rows.push({icon:'happy-outline',label:'Nafsu Makan',value:item.nafsu_makan.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())});
+        if(item.porsi) rows.push({icon:'fast-food-outline',label:'Portion',value:item.porsi.charAt(0).toUpperCase()+item.porsi.slice(1)});
+        if(item.nafsu_makan) rows.push({icon:'happy-outline',label:'Appetite',value:item.nafsu_makan.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())});
     }
-    if(item.nanny_name) rows.push({icon:'person-outline',label:'Dicatat oleh',value:item.nanny_name});
+    if(item.nanny_name) rows.push({icon:'person-outline',label:'Recorded by',value:item.nanny_name});
 
     let html=`<div style="display:flex;flex-direction:column;align-items:center;padding:20px;border-radius:16px;margin-bottom:20px;background:${bg};border:1.5px solid ${col}40;">
         <ion-icon name="${ic}" style="font-size:36px;color:${col};"></ion-icon>
@@ -798,19 +798,19 @@ function openDetail(item){
     });
     if(item.foto_url){
         html+=`<div style="margin-top:10px;">
-            <p style="font-size:12px;color:#A8A2C2;font-weight:700;margin-bottom:8px;">Foto</p>
+            <p style="font-size:12px;color:#A8A2C2;font-weight:700;margin-bottom:8px;">Photo</p>
             <img src="${item.foto_url}" onclick="closeDetail();openImageModal('${item.foto_url}')"
                  style="width:100%;height:180px;border-radius:14px;object-fit:cover;border:1.5px solid #EDE9FE;cursor:pointer;transition:transform .2s ease;"
                  onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
         </div>`;
     }
-    // Foto sebelum/sesudah untuk makan/minum
+    // Photo sebelum/sesudah untuk makan/minum
     if((item.kategori==='makan'||item.kategori==='minum') && (item.foto_sebelum_url||item.foto_sesudah_url)){
         html+=`<div style="margin-top:10px;">
-            <p style="font-size:12px;color:#A8A2C2;font-weight:700;margin-bottom:8px;">Foto Makanan</p>
+            <p style="font-size:12px;color:#A8A2C2;font-weight:700;margin-bottom:8px;">Food Photo</p>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">`;
-        if(item.foto_sebelum_url) html+=`<img src="${item.foto_sebelum_url}" onclick="closeDetail();openImageModal('${item.foto_sebelum_url}')" style="height:160px;border-radius:14px;object-fit:cover;border:1.5px solid #EDE9FE;cursor:pointer;" title="Sebelum">`;
-        if(item.foto_sesudah_url) html+=`<img src="${item.foto_sesudah_url}" onclick="closeDetail();openImageModal('${item.foto_sesudah_url}')" style="height:160px;border-radius:14px;object-fit:cover;border:1.5px solid #EDE9FE;cursor:pointer;" title="Sesudah">`;
+        if(item.foto_sebelum_url) html+=`<img src="${item.foto_sebelum_url}" onclick="closeDetail();openImageModal('${item.foto_sebelum_url}')" style="height:160px;border-radius:14px;object-fit:cover;border:1.5px solid #EDE9FE;cursor:pointer;" title="Before">`;
+        if(item.foto_sesudah_url) html+=`<img src="${item.foto_sesudah_url}" onclick="closeDetail();openImageModal('${item.foto_sesudah_url}')" style="height:160px;border-radius:14px;object-fit:cover;border:1.5px solid #EDE9FE;cursor:pointer;" title="After">`;
         html+=`</div></div>`;
     }
     document.getElementById('detailBody').innerHTML=html;
@@ -822,11 +822,11 @@ document.getElementById('modalDetail').addEventListener('click',e=>{ if(e.target
 // ── Location Modal ──
 function openLocationModal(name, lat, lng) {
     locLat = lat; locLng = lng;
-    const n = name || 'Lokasi Aktivitas';
+    const n = name || 'Activity Location';
     document.getElementById('locModalName').textContent = n;
     document.getElementById('locModalSub').textContent = lat && lng
         ? lat + ', ' + lng
-        : 'Lokasi tercatat';
+        : 'Location recorded';
 
     const latDec = dmsToDecimal(lat);
     const lngDec = dmsToDecimal(lng);
@@ -848,7 +848,7 @@ function openLocationModal(name, lat, lng) {
             <div style="width:100%;height:180px;border-radius:14px;background:#e8f4e8;
                         display:flex;align-items:center;justify-content:center;
                         font-size:13px;color:#666;font-weight:600;">
-                Koordinat tidak tersedia
+                Coordinates unavailable
             </div>`;
     }
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Nanny Anda')
+@section('title', 'Your Nanny')
 
 @push('styles')
 <style>
@@ -26,8 +26,8 @@
             <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
         </a>
         <div>
-            <span class="text-white text-[17px] font-extrabold tracking-wide">Nanny Anda</span>
-            <p class="text-white/60 text-xs font-medium mt-0.5">Daftar nanny di bawah pengawasan Anda</p>
+            <span class="text-white text-[17px] font-extrabold tracking-wide">Your Nanny</span>
+            <p class="text-white/60 text-xs font-medium mt-0.5">List of nannies under your supervision</p>
         </div>
     </div>
 </div>
@@ -50,8 +50,8 @@
 
     <div class="anim delay-2 flex items-center justify-between px-1">
         <div>
-            <h2 class="text-[#1E1B2E] font-extrabold text-[16px]">Daftar Nanny</h2>
-            <p class="text-[#8B86A5] text-[11px] font-semibold mt-0.5">Pantau nanny yang sedang terhubung dengan Anda</p>
+            <h2 class="text-[#1E1B2E] font-extrabold text-[16px]">Nanny List</h2>
+            <p class="text-[#8B86A5] text-[11px] font-semibold mt-0.5">Monitor nannies currently connected to you</p>
         </div>
         <div class="min-w-[38px] h-[32px] px-3 rounded-full bg-white border border-[#E6E1F2] flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
             <span class="text-[#8B46D3] text-[12px] font-extrabold">{{ count($nannies ?? []) }}</span>
@@ -89,7 +89,7 @@
                         <div class="flex items-start justify-between gap-2 mb-1">
                             <p class="text-[#1E1B2E] font-extrabold text-[15px] truncate">{{ $nanny['name'] }}</p>
                             <span class="text-[9px] font-extrabold px-2 py-1 rounded-full leading-none shrink-0 whitespace-nowrap {{ $isActive ? 'badge-aktif' : 'badge-nonaktif' }}">
-                                {{ $isActive ? 'AKTIF' : 'NONAKTIF' }}
+                                {{ $isActive ? 'ACTIVE' : 'INACTIVE' }}
                             </span>
                         </div>
 
@@ -100,7 +100,7 @@
 
                         <div class="flex items-center gap-1 mb-0.5">
                             <ion-icon name="{{ $isMale ? 'male-outline' : 'female-outline' }}" style="font-size:11px;color:#F59E0B;flex-shrink:0;"></ion-icon>
-                            <span class="text-[#8B86A5] text-[11px] font-semibold truncate">{{ $isMale ? 'Laki-laki' : 'Perempuan' }}</span>
+                            <span class="text-[#8B86A5] text-[11px] font-semibold truncate">{{ $isMale ? 'Male' : 'Female' }}</span>
                         </div>
 
                         @if(!empty($nanny['catatan']))
@@ -119,14 +119,14 @@
             <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-5">
                 <ion-icon name="people-outline" style="font-size:44px;color:#C4B5FD;"></ion-icon>
             </div>
-            <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">Belum ada nanny</h3>
+            <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">No nannies yet</h3>
             <p class="text-[#9CA3AF] text-sm text-center leading-relaxed">
-                Anda belum memiliki nanny yang terdaftar di bawah pengawasan Anda
+                You have no nannies registered under your supervision
             </p>
             <a href="{{ route('konsultan-nanny-list') }}"
                class="mt-6 bg-[#8B46D3] text-white text-sm font-bold px-6 py-3 rounded-2xl shadow-[0_8px_18px_rgba(139,70,211,0.35)] flex items-center gap-2">
                 <ion-icon name="search-outline" style="font-size:16px;"></ion-icon>
-                Cari Nanny
+                Find Nanny
             </a>
         </div>
         @endif

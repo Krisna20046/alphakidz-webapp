@@ -187,8 +187,8 @@
 <div id="chatMessages" class="rounded-t-[34px] -mt-[50px] relative z-20 flex-1 overflow-y-auto">
 
     <!-- Load more -->
-    <div id="loadMoreSpinner"><div class="spinner-ring"></div>Memuat pesan lama...</div>
-    <button id="loadMoreBtn" onclick="loadMore()">↑ Muat pesan lama</button>
+    <div id="loadMoreSpinner"><div class="spinner-ring"></div>Loading older messages...</div>
+    <button id="loadMoreBtn" onclick="loadMore()">↑ Load older messages</button>
 
     <!-- Skeleton -->
     <div id="msgSkeleton" class="flex flex-col gap-3 py-4 skeleton">
@@ -378,7 +378,7 @@ function updateLoadMoreUI(){
     spinner.classList.remove('visible');
     if(hasMore){
         btn.classList.add('visible');
-        btn.textContent = '↑ Muat pesan lama';
+        btn.textContent = '↑ Load older messages';
     } else {
         btn.classList.remove('visible');
     }
@@ -414,7 +414,7 @@ async function fetchChat(targetPage=1, replace=false){
     } catch(e){
         console.error('fetchChat error', e);
         document.getElementById('msgSkeleton')?.remove();
-        showToast('Gagal memuat pesan.');
+        showToast('Failed to load messages.');
     }
 }
 
@@ -523,13 +523,13 @@ async function sendMessage(){
         } else {
             messages = messages.filter(m => m.id !== tempId);
             document.querySelector(`[data-msgid="${tempId}"]`)?.remove();
-            showToast(data.message || 'Pesan gagal dikirim.');
+            showToast(data.message || 'Failed to send message.');
             if(messages.length===0) document.getElementById('emptyState').classList.add('visible');
         }
     } catch(e){
         messages = messages.filter(m => m.id !== tempId);
         document.querySelector(`[data-msgid="${tempId}"]`)?.remove();
-        showToast('Terjadi kesalahan. Coba lagi.');
+        showToast('An error occurred. Try again.');
         if(messages.length===0) document.getElementById('emptyState').classList.add('visible');
     }
 }

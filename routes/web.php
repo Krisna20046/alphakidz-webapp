@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
@@ -14,9 +14,11 @@ use App\Http\Controllers\KonsultanController;
 use App\Http\Controllers\NexusController;
 use App\Http\Controllers\KonsultanTugaskanController;
 use App\Http\Controllers\ArtikelController;
+use App\Http\Controllers\SchoolSubjectController;
+use App\Http\Controllers\SchoolScheduleController;
 
 
-// ─── Guest Routes ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Guest Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 Route::middleware('guest.api')->group(function () {
     Route::get( '/login',    [AuthController::class, 'showLogin']   )->name('login');
@@ -66,7 +68,7 @@ Route::get('/auth/google/callback', function () {
     return view('auth.google-callback');
 })->name('google.callback');
 
-// ─── Protected Routes ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Protected Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 Route::middleware('auth.api')->group(function () {
 
@@ -83,16 +85,16 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/fcm/update-token', [FcmController::class, 'updateToken'])->name('fcm.update');
     Route::post('/fcm/remove-token', [FcmController::class, 'removeToken'])->name('fcm.remove');
 
-    // ── Chat ──────────────────────────────────────────────────────────────────
+    // â”€â”€ Chat â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     Route::get('/chat',          [ChatController::class, 'list'] )->name('chat.list');
     Route::get('/chat/{id}',     [ChatController::class, 'room'] )->name('chat.room');
 
-    // ── Chat API Proxy (dipanggil dari JS, token tetap server-side) ───────────
+    // â”€â”€ Chat API Proxy (dipanggil dari JS, token tetap server-side) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     Route::get( '/api/chat-list', [ChatController::class, 'apiChatList'])->name('api.chat.list');
     Route::get( '/api/chat',      [ChatController::class, 'apiGetChat'] )->name('api.chat.get');
     Route::post('/api/chat',      [ChatController::class, 'apiSendChat'])->name('api.chat.send');
 
-    // ── Online Status API Proxy ───────────────────────────────────────────────
+    // â”€â”€ Online Status API Proxy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     Route::post('/api/user/ping',         [ChatController::class, 'apiPing'])->name('api.user.ping');
     Route::post('/api/user/offline',      [ChatController::class, 'apiOffline'])->name('api.user.offline');
     Route::get('/api/user/{id}/status',   [ChatController::class, 'apiUserStatus'])->name('api.user.status');
@@ -101,7 +103,7 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/artikel', [ArtikelController::class, 'index'])->name('artikel.index');
     Route::get('/artikel/{id}', [ArtikelController::class, 'show'])->name('artikel.show');
 
-    // ── Nexus ────────────────────────────────────────────────────────────────
+    // â”€â”€ Nexus â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     Route::prefix('nexus')->name('nexus.')->group(function () {
         Route::get('/',           [NexusController::class, 'index'] )->name('nexus-index');
         Route::get('/create',     [NexusController::class, 'create'])->name('create');
@@ -109,7 +111,7 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/{id}',       [NexusController::class, 'show']  )->name('show');
     });
 
-    // ── Profil ────────────────────────────────────────────────────────────────
+    // â”€â”€ Profil â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     Route::prefix('profil')->name('profil.')->group(function () {
         Route::get('/',               [ProfileController::class, 'index']    )->name('index');
         Route::get('/detail',         [ProfileController::class, 'detail']   )->name('detail');
@@ -124,7 +126,7 @@ Route::middleware('auth.api')->group(function () {
         Route::post('/data-anak/update',    [AnakController::class, 'update'] )->name('anak.update');
         Route::delete('/data-anak/{id}',    [AnakController::class, 'hapus']  )->name('anak.hapus');
 
-        // Medical CRUD (RS, Dokter, Vaksin) — proxy via AnakController
+        // Medical CRUD (RS, Dokter, Vaksin) â€” proxy via AnakController
         Route::post('/data-anak/medical/{type}',                [AnakController::class, 'medicalStore'])->name('anak.medical.store');
         Route::post('/data-anak/medical/{type}/update',         [AnakController::class, 'medicalUpdate'])->name('anak.medical.update');
         Route::post('/data-anak/medical/{type}/delete',         [AnakController::class, 'medicalDelete'])->name('anak.medical.delete');
@@ -174,6 +176,27 @@ Route::middleware('auth.api')->group(function () {
         Route::delete('/{id}',     [AdminController::class, 'destroy']      )->name('admin-kelola-akun.destroy');
     });
 
+    Route::prefix('admin/school-subject')->group(function () {
+        Route::get('/',            [SchoolSubjectController::class, 'index']  )->name('admin-school-subject');
+        Route::get('/create',      [SchoolSubjectController::class, 'create'] )->name('admin-school-subject.create');
+        Route::post('/',           [SchoolSubjectController::class, 'store']  )->name('admin-school-subject.store');
+        Route::get('/{id}',        [SchoolSubjectController::class, 'show']   )->name('admin-school-subject.show');
+        Route::get('/{id}/edit',   [SchoolSubjectController::class, 'edit']   )->name('admin-school-subject.edit');
+        Route::put('/{id}',        [SchoolSubjectController::class, 'update'] )->name('admin-school-subject.update');
+        Route::delete('/{id}',     [SchoolSubjectController::class, 'destroy'])->name('admin-school-subject.destroy');
+    });
+
+    // Module 2 — School Schedule (role Nanny untuk sekarang)
+    Route::prefix('school-schedule')->name('school-schedule.')->group(function () {
+        Route::get('/',            [SchoolScheduleController::class, 'index']  )->name('index');
+        Route::get('/create',      [SchoolScheduleController::class, 'create'] )->name('create');
+        Route::post('/',           [SchoolScheduleController::class, 'store']  )->name('store');
+        Route::get('/{id}',        [SchoolScheduleController::class, 'show']   )->name('show');
+        Route::get('/{id}/edit',   [SchoolScheduleController::class, 'edit']   )->name('edit');
+        Route::put('/{id}',        [SchoolScheduleController::class, 'update'] )->name('update');
+        Route::delete('/{id}',     [SchoolScheduleController::class, 'destroy'])->name('destroy');
+    });
+
     Route::prefix('admin')->group(function () {
         Route::get('/diary', fn() => view('admin.diary-nanny-list'))
             ->name('admin-diary-nanny-list');
@@ -208,7 +231,7 @@ Route::middleware('auth.api')->group(function () {
     });
 });
 
-// ─── Broadcasting Auth (Pusher private channel) ───────────────────────────────
+// â”€â”€â”€ Broadcasting Auth (Pusher private channel) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 Route::post('/broadcasting/auth', function (\Illuminate\Http\Request $request) {
     $token = session('token');
@@ -237,3 +260,4 @@ Route::post('/broadcasting/auth', function (\Illuminate\Http\Request $request) {
 
 // Root
 Route::get('/', fn() => redirect()->route('login'));
+

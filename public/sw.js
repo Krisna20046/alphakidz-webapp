@@ -295,7 +295,7 @@ function offlineFallbackHTML() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Tidak Ada Koneksi</title>
+    <title>No Connection</title>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
         body{font-family:'Plus Jakarta Sans',sans-serif;background:#FFF9FB;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
@@ -310,9 +310,9 @@ function offlineFallbackHTML() {
 <body>
     <div class="card">
         <div class="icon">📡</div>
-        <h1>Tidak Ada Koneksi</h1>
-        <p>Halaman ini tidak tersedia secara offline. Periksa koneksi internet Anda dan coba lagi.</p>
-        <button onclick="location.reload()">Coba Lagi</button>
+        <h1>No Connection</h1>
+        <p>This page is not available offline. Check your internet connection and try again.</p>
+        <button onclick="location.reload()">Try Again</button>
     </div>
 </body>
 </html>`;

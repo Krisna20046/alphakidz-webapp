@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Daftar - Aplikasi')
+@section('title', 'Sign Up - App')
 
 @push('styles')
 @include('components.styles')
@@ -252,7 +252,7 @@ function checkMatch() {
     if (!conf) { matchMsg.classList.add('hidden'); return; }
     matchMsg.classList.remove('hidden');
     const ok = passwordEl.value === conf;
-    matchMsg.textContent = ok ? '✓ Password cocok' : '✗ Password tidak cocok';
+    matchMsg.textContent = ok ? '✓ Passwords match' : '✗ Passwords do not match';
     matchMsg.className   = `text-xs mt-1.5 ml-2 font-semibold ${ok ? 'text-green-600' : 'text-red-500'}`;
 }
 confirmEl.addEventListener('input', checkMatch);
@@ -261,7 +261,7 @@ confirmEl.addEventListener('input', checkMatch);
 function setLoading(loading) {
     const btn = document.getElementById('submitBtn');
     btn.disabled = loading;
-    document.getElementById('btnText').textContent = loading ? 'Mendaftar...' : 'Sign Up';
+    document.getElementById('btnText').textContent = loading ? 'Signing up...' : 'Sign Up';
     document.getElementById('btnArrow').classList.toggle('hidden', loading);
     document.getElementById('btnSpinner').classList.toggle('hidden', !loading);
     btn.style.opacity = loading ? '0.75' : '1';
@@ -275,12 +275,12 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     const password = document.getElementById('password').value;
     const confirm  = document.getElementById('confirm').value;
 
-    if (!name || !email || !password || !confirm) return showToast('Semua field wajib diisi!');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))  return showToast('Email tidak valid!');
-    if (password.length < 8)     return showToast('Password minimal 8 karakter!');
-    if (!/[A-Z]/.test(password)) return showToast('Password harus mengandung minimal 1 huruf kapital!');
-    if (!/[0-9]/.test(password)) return showToast('Password harus mengandung minimal 1 angka!');
-    if (password !== confirm)    return showToast('Konfirmasi password tidak cocok!');
+    if (!name || !email || !password || !confirm) return showToast('All fields are required!');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))  return showToast('Invalid email address!');
+    if (password.length < 8)     return showToast('Password must be at least 8 characters!');
+    if (!/[A-Z]/.test(password)) return showToast('Password must contain at least 1 capital letter!');
+    if (!/[0-9]/.test(password)) return showToast('Password must contain at least 1 number!');
+    if (password !== confirm)    return showToast('Passwords do not match!');
 
     setLoading(true);
     try {
@@ -296,7 +296,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         const data = await res.json();
 
         if (data.success) {
-            showToast(data.message || 'Registrasi berhasil!', 'success');
+            showToast(data.message || 'Registration successful!', 'success');
             setTimeout(() => { window.location.href = '{{ route("login") }}'; }, 1800);
         } else {
             const errors = data.errors;
@@ -304,11 +304,11 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
                 const first = Object.values(errors)[0];
                 showToast(Array.isArray(first) ? first[0] : first);
             } else {
-                showToast(data.message || 'Gagal registrasi.');
+                showToast(data.message || 'Registration failed.');
             }
         }
     } catch (err) {
-        showToast('Terjadi kesalahan. Coba lagi.');
+        showToast('Something went wrong. Please try again.');
     } finally {
         setLoading(false);
     }
@@ -328,17 +328,17 @@ document.getElementById('googleBtn').addEventListener('click', async () => {
             headers: { 'Accept': 'application/json' },
         });
 
-        if (!res.ok) throw new Error('Gagal menghubungi server.');
+        if (!res.ok) throw new Error('Failed to reach the server.');
 
         const data = await res.json();
 
         if (data.status === 'success' && data.url) {
             window.location.href = data.url;
         } else {
-            throw new Error('URL redirect tidak ditemukan.');
+            throw new Error('Redirect URL not found.');
         }
     } catch (err) {
-        showToast('Login Google gagal. Coba lagi.');
+        showToast('Google sign-in failed. Please try again.');
         btn.disabled = false;
         btn.classList.remove('loading');
     }

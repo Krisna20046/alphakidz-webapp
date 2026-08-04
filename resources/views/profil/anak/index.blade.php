@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Data Anak</title>
+    <title>Child Data</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -114,7 +114,7 @@
                 $lahir = new \DateTime($anak['tanggal_lahir']);
                 $now   = new \DateTime();
                 $diff  = $now->diff($lahir);
-                $umur  = ($diff->y > 0 ? $diff->y.' Tahun ' : '') . $diff->m.' Bulan';
+                $umur  = ($diff->y > 0 ? $diff->y.' Years ' : '') . $diff->m.' Months';
             @endphp
             <a href="{{ route('profil.anak.detail', $anak['id']) }}"
                class="card-item block bg-white rounded-[20px] p-[14px] flex items-center gap-4 shadow-[0_2px_12px_rgba(0,0,0,0.07)]"
@@ -167,9 +167,9 @@
             <div class="float-anim w-28 h-28 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-6">
                 <ion-icon name="happy-outline" style="font-size:56px;color:#C4B5FD;"></ion-icon>
             </div>
-            <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">Belum ada data anak</h3>
+            <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">No child data yet</h3>
             <p class="text-[#9CA3AF] text-sm text-center leading-relaxed">
-                Tambahkan data anak Anda<br>untuk memulai
+                Add your child's data<br>to get started
             </p>
         </div>
         @endif

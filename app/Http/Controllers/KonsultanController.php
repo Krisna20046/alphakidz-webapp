@@ -212,17 +212,17 @@ class KonsultanController extends Controller
 
                 return redirect()
                     ->route('konsultan-nanny-anda-detail', $redirectId)
-                    ->with('success', 'Akun nanny berhasil ' . ($active === 1 ? 'diaktifkan' : 'dinonaktifkan') . '.');
+                    ->with('success', 'Nanny account successfully ' . ($active === 1 ? 'activated' : 'deactivated') . '.');
             }
 
             return redirect()
                 ->back()
-                ->with('error', $json['message'] ?? 'Gagal mengubah status nanny.');
+                ->with('error', $json['message'] ?? 'Failed to update nanny status.');
 
         } catch (\Throwable $e) {
             return redirect()
                 ->back()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
 
@@ -255,17 +255,17 @@ class KonsultanController extends Controller
             if (($json['status'] ?? '') === 'success') {
                 return redirect()
                     ->route('konsultan-nanny-list')
-                    ->with('success', 'Nanny berhasil ditambahkan ke daftar pengawasan Anda.');
+                    ->with('success', 'Nanny successfully added to your supervision list.');
             }
 
             return redirect()
                 ->back()
-                ->with('error', $json['message'] ?? 'Gagal menambahkan nanny.');
+                ->with('error', $json['message'] ?? 'Failed to add nanny.');
 
         } catch (\Throwable $e) {
             return redirect()
                 ->back()
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
 
@@ -438,11 +438,11 @@ class KonsultanController extends Controller
             }
 
             return redirect()->route('konsultan-nanny-anda')
-                ->with('error', 'Anda belum memiliki nanny yang terdaftar.');
+                ->with('error', 'You do not have any registered nannies yet.');
 
         } catch (\Throwable $e) {
             return redirect()->route('konsultan-nanny-anda')
-                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+                ->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
 }

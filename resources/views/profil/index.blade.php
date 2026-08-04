@@ -53,7 +53,7 @@
         </div>
 
         <h1 class="anim delay-2 text-[#1E1B2E] text-[22px] font-extrabold leading-tight mb-[6px]">
-            {{ session('user')['name'] ?? 'Pengguna' }}
+            {{ session('user')['name'] ?? 'User' }}
         </h1>
 
         <div class="anim delay-2 flex items-center gap-[6px] mb-[4px]">
@@ -133,14 +133,14 @@
             <div class="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-4">
                 <ion-icon name="log-out-outline" style="font-size:32px;color:#ef4444;"></ion-icon>
             </div>
-            <h3 class="text-[#1E1B2E] text-lg font-extrabold mb-1">Keluar dari Akun?</h3>
-            <p class="text-[#9CA3AF] text-sm leading-relaxed">Kamu perlu login ulang untuk mengakses aplikasi.</p>
+            <h3 class="text-[#1E1B2E] text-lg font-extrabold mb-1">Log out of your account?</h3>
+            <p class="text-[#9CA3AF] text-sm leading-relaxed">You need to log in again to access the app.</p>
         </div>
         <div class="flex gap-3">
-            <button onclick="hideLogoutModal()" class="flex-1 py-[14px] rounded-2xl border-2 border-[#EDE9FE] text-[#8B46D3] font-bold text-sm active:bg-[#EDE9FE] transition-all">Batal</button>
+            <button onclick="hideLogoutModal()" class="flex-1 py-[14px] rounded-2xl border-2 border-[#EDE9FE] text-[#8B46D3] font-bold text-sm active:bg-[#EDE9FE] transition-all">Cancel</button>
             <form method="POST" action="{{ route('logout') }}" class="flex-1" id="logoutForm">
                 @csrf
-                <button type="button" onclick="doLogout()" class="w-full py-[14px] rounded-2xl bg-red-500 text-white font-bold text-sm active:bg-red-600 transition-all">Ya, Keluar</button>
+                <button type="button" onclick="doLogout()" class="w-full py-[14px] rounded-2xl bg-red-500 text-white font-bold text-sm active:bg-red-600 transition-all">Yes, Log Out</button>
             </form>
         </div>
     </div>

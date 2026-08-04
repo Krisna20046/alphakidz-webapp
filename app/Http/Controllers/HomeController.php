@@ -103,7 +103,7 @@ class HomeController extends Controller
                     'id'        => $post['id'],
                     'judul'     => $post['title']['rendered'] ?? '',
                     'thumbnail' => $post['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
-                    'kategori'  => $post['_embedded']['wp:term'][0][0]['name'] ?? 'Artikel',
+                    'kategori'  => $post['_embedded']['wp:term'][0][0]['name'] ?? 'Article',
                     'read_time' => '3',
                     'views'     => '0',
                     'link'      => $post['link'] ?? '#',

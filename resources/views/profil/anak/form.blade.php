@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{{ $isEdit ? 'Ubah Data Anak' : 'Tambah Data Anak' }}</title>
+    <title>{{ $isEdit ? 'Edit Child Data' : 'Add Child Data' }}</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -186,10 +186,10 @@
                     <div class="relative mb-2">
                         <div class="w-[96px] h-[96px] rounded-full border-4 border-[#EDE9FE] overflow-hidden bg-[#F3F0FD] flex items-center justify-center" id="avatarWrap">
                             @if($isEdit && ($anak['foto'] ?? null))
-                                <img id="avatarPreview" src="{{ $anak['foto'] }}" class="w-full h-full object-cover" alt="foto"/>
+                                <img id="avatarPreview" src="{{ $anak['foto'] }}" class="w-full h-full object-cover" alt="photo"/>
                             @else
                                 <ion-icon id="avatarIcon" name="happy-outline" style="font-size:42px;color:#8B46D3;"></ion-icon>
-                                <img id="avatarPreview" src="" class="w-full h-full object-cover hidden" alt="foto"/>
+                                <img id="avatarPreview" src="" class="w-full h-full object-cover hidden" alt="photo"/>
                             @endif
                         </div>
                         <label for="fotoInput"
@@ -236,8 +236,8 @@
                 </div>
 
                 <div>
-                    <label class="block text-[#2C293A] text-[13px] font-extrabold mb-2">Tempat Lahir</label>
-                    <input type="text" name="tempat_lahir" value="{{ $anak['tempat_lahir'] ?? '' }}" placeholder="Contoh: Jakarta"
+                    <label class="block text-[#2C293A] text-[13px] font-extrabold mb-2">Place of Birth</label>
+                    <input type="text" name="tempat_lahir" value="{{ $anak['tempat_lahir'] ?? '' }}" placeholder="e.g. Jakarta"
                            class="input-field w-full px-4 py-3"/>
                 </div>
             </div>
@@ -273,7 +273,7 @@
             <div class="anim delay-4 bg-white rounded-[24px] p-[18px] shadow-[0_2px_12px_rgba(0,0,0,0.07)] space-y-5">
                 <div>
                     <p class="text-[#5A556E] text-[16px] font-extrabold tracking-wide uppercase">Medical Information</p>
-                    <p class="text-[#8B46D3] text-[12px] font-bold">Optional - Rumah Sakit, Dokter, Vaksin</p>
+                    <p class="text-[#8B46D3] text-[12px] font-bold">Optional - Hospital, Doctor, Vaccine</p>
                 </div>
 
                 {{-- Rumah Sakit --}}
@@ -282,9 +282,9 @@
                         <div class="med-section-icon" style="background:#E0F2FE;">
                             <ion-icon name="business-outline" style="font-size:15px;color:#0284C7;"></ion-icon>
                         </div>
-                        <span class="txt">Rumah Sakit Langganan</span>
+                        <span class="txt">Regular Hospital</span>
                         <button type="button" onclick="addMedItem('rs')" class="med-add-btn">
-                            <ion-icon name="add-circle" style="font-size:15px;"></ion-icon> Tambah
+                            <ion-icon name="add-circle" style="font-size:15px;"></ion-icon> Add
                         </button>
                     </div>
                     <div id="rsContainer">
@@ -292,31 +292,31 @@
                             @foreach($rumahSakit as $i => $rs)
                             <div class="med-entry med-entry-card" data-type="rs" data-index="{{ $i }}">
                                 <div class="med-entry-head">
-                                    <span class="med-entry-title">Rumah Sakit {{ $i + 1 }}</span>
+                                    <span class="med-entry-title">Hospital {{ $i + 1 }}</span>
                                     <input type="hidden" name="rs[{{ $i }}][id]" value="{{ $rs['id'] ?? '' }}">
                                     <button type="button" onclick="this.closest('.med-entry').remove()" class="med-remove-btn">
                                         <ion-icon name="trash-outline" style="font-size:14px;"></ion-icon>
                                     </button>
                                 </div>
                                 <div class="med-field">
-                                    <label>Nama Rumah Sakit</label>
-                                    <input type="text" name="rs[{{ $i }}][nama_rs]" value="{{ $rs['nama_rs'] }}" placeholder="Contoh: RKZ">
+                                    <label>Hospital Name</label>
+                                    <input type="text" name="rs[{{ $i }}][nama_rs]" value="{{ $rs['nama_rs'] }}" placeholder="e.g. RKZ">
                                 </div>
                                 <div class="med-field">
-                                    <label>Kategori</label>
+                                    <label>Category</label>
                                     <select name="rs[{{ $i }}][kategori]">
-                                        <option value="rs" {{ ($rs['kategori']??'')=='rs'?'selected':'' }}>Rumah Sakit</option>
-                                        <option value="klinik" {{ ($rs['kategori']??'')=='klinik'?'selected':'' }}>Klinik</option>
-                                        <option value="puskesmas" {{ ($rs['kategori']??'')=='puskesmas'?'selected':'' }}>Puskesmas</option>
+                                        <option value="rs" {{ ($rs['kategori']??'')=='rs'?'selected':'' }}>Hospital</option>
+                                        <option value="klinik" {{ ($rs['kategori']??'')=='klinik'?'selected':'' }}>Clinic</option>
+                                        <option value="puskesmas" {{ ($rs['kategori']??'')=='puskesmas'?'selected':'' }}>Health Center</option>
                                     </select>
                                 </div>
                                 <div class="med-field-row">
                                     <div class="med-field">
-                                        <label>Alamat</label>
-                                        <input type="text" name="rs[{{ $i }}][alamat]" value="{{ $rs['alamat'] ?? '' }}" placeholder="Alamat">
+                                        <label>Address</label>
+                                        <input type="text" name="rs[{{ $i }}][alamat]" value="{{ $rs['alamat'] ?? '' }}" placeholder="Address">
                                     </div>
                                     <div class="med-field">
-                                        <label>No. Telepon</label>
+                                        <label>Phone Number</label>
                                         <input type="text" name="rs[{{ $i }}][no_telp]" value="{{ $rs['no_telp'] ?? '' }}" placeholder="0821...">
                                     </div>
                                 </div>
@@ -326,7 +326,7 @@
                     </div>
                     <div id="rsEmpty" class="med-empty-state {{ ($isEdit && !empty($rumahSakit)) ? 'hidden' : '' }}">
                         <ion-icon name="business-outline"></ion-icon>
-                        <p>Belum ada rumah sakit.</p>
+                        <p>No hospital added yet.</p>
                     </div>
                 </div>
 
@@ -336,9 +336,9 @@
                         <div class="med-section-icon" style="background:#EDE9FE;">
                             <ion-icon name="medkit-outline" style="font-size:15px;color:#8B46D3;"></ion-icon>
                         </div>
-                        <span class="txt">Dokter Andalan</span>
+                        <span class="txt">Trusted Doctor</span>
                         <button type="button" onclick="addMedItem('dokter')" class="med-add-btn">
-                            <ion-icon name="add-circle" style="font-size:15px;"></ion-icon> Tambah
+                            <ion-icon name="add-circle" style="font-size:15px;"></ion-icon> Add
                         </button>
                     </div>
                     <div id="dokterContainer">
@@ -346,28 +346,28 @@
                             @foreach($dokter as $i => $d)
                             <div class="med-entry med-entry-card" data-type="dokter">
                                 <div class="med-entry-head">
-                                    <span class="med-entry-title">Dokter {{ $i + 1 }}</span>
+                                    <span class="med-entry-title">Doctor {{ $i + 1 }}</span>
                                     <input type="hidden" name="dokter[{{ $i }}][id]" value="{{ $d['id'] ?? '' }}">
                                     <button type="button" onclick="this.closest('.med-entry').remove()" class="med-remove-btn">
                                         <ion-icon name="trash-outline" style="font-size:14px;"></ion-icon>
                                     </button>
                                 </div>
                                 <div class="med-field">
-                                    <label>Nama Dokter</label>
-                                    <input type="text" name="dokter[{{ $i }}][nama_dokter]" value="{{ $d['nama_dokter'] }}" placeholder="Nama lengkap">
+                                    <label>Doctor Name</label>
+                                    <input type="text" name="dokter[{{ $i }}][nama_dokter]" value="{{ $d['nama_dokter'] }}" placeholder="Full name">
                                 </div>
                                 <div class="med-field">
-                                    <label>Spesialisasi</label>
-                                    <input type="text" name="dokter[{{ $i }}][spesialisasi]" value="{{ $d['spesialisasi'] ?? '' }}" placeholder="Contoh: Sp.A (Anak)">
+                                    <label>Specialization</label>
+                                    <input type="text" name="dokter[{{ $i }}][spesialisasi]" value="{{ $d['spesialisasi'] ?? '' }}" placeholder="e.g. Sp.A (Pediatrics)">
                                 </div>
                                 <div class="med-field-row">
                                     <div class="med-field">
-                                        <label>No. Telepon</label>
+                                        <label>Phone Number</label>
                                         <input type="text" name="dokter[{{ $i }}][no_telp]" value="{{ $d['no_telp'] ?? '' }}" placeholder="0821...">
                                     </div>
                                     <div class="med-field">
-                                        <label>Alamat Praktek</label>
-                                        <input type="text" name="dokter[{{ $i }}][alamat_praktek]" value="{{ $d['alamat_praktek'] ?? '' }}" placeholder="Alamat praktek">
+                                        <label>Practice Address</label>
+                                        <input type="text" name="dokter[{{ $i }}][alamat_praktek]" value="{{ $d['alamat_praktek'] ?? '' }}" placeholder="Practice address">
                                     </div>
                                 </div>
                             </div>
@@ -376,7 +376,7 @@
                     </div>
                     <div id="dokterEmpty" class="med-empty-state {{ ($isEdit && !empty($dokter)) ? 'hidden' : '' }}">
                         <ion-icon name="medkit-outline"></ion-icon>
-                        <p>Belum ada dokter.</p>
+                        <p>No doctor added yet.</p>
                     </div>
                 </div>
 
@@ -386,9 +386,9 @@
                         <div class="med-section-icon" style="background:#FDE8EF;">
                             <ion-icon name="shield-checkmark-outline" style="font-size:15px;color:#EC4899;"></ion-icon>
                         </div>
-                        <span class="txt">Daftar Vaksin</span>
+                        <span class="txt">Vaccine List</span>
                         <button type="button" onclick="addMedItem('vaksin')" class="med-add-btn">
-                            <ion-icon name="add-circle" style="font-size:15px;"></ion-icon> Tambah
+                            <ion-icon name="add-circle" style="font-size:15px;"></ion-icon> Add
                         </button>
                     </div>
                     <div id="vaksinContainer">
@@ -396,7 +396,7 @@
                             @foreach($vaksin as $i => $v)
                             <div class="med-entry med-entry-card" data-type="vaksin">
                                 <div class="med-entry-head">
-                                    <span class="med-entry-title">Vaksin {{ $i + 1 }}</span>
+                                    <span class="med-entry-title">Vaccine {{ $i + 1 }}</span>
                                     <input type="hidden" name="vaksin[{{ $i }}][id]" value="{{ $v['id'] ?? '' }}">
                                     <button type="button" onclick="this.closest('.med-entry').remove()" class="med-remove-btn">
                                         <ion-icon name="trash-outline" style="font-size:14px;"></ion-icon>
@@ -404,27 +404,27 @@
                                 </div>
                                 <div class="med-field-row">
                                     <div class="med-field">
-                                        <label>Nama Vaksin</label>
-                                        <input type="text" name="vaksin[{{ $i }}][nama_vaksin]" value="{{ $v['nama_vaksin'] }}" placeholder="BCG, Polio, dll">
+                                        <label>Vaccine Name</label>
+                                        <input type="text" name="vaksin[{{ $i }}][nama_vaksin]" value="{{ $v['nama_vaksin'] }}" placeholder="BCG, Polio, etc.">
                                     </div>
                                     <div class="med-field">
-                                        <label>Tanggal Vaksin</label>
+                                        <label>Vaccine Date</label>
                                         <input type="date" name="vaksin[{{ $i }}][tanggal_vaksin]" value="{{ $v['tanggal_vaksin'] ? \Illuminate\Support\Str::substr($v['tanggal_vaksin'], 0, 10) : '' }}">
                                     </div>
                                 </div>
                                 <div class="med-field-row">
                                     <div class="med-field">
-                                        <label>Tempat Vaksin</label>
-                                        <input type="text" name="vaksin[{{ $i }}][tempat_vaksin]" value="{{ $v['tempat_vaksin'] ?? '' }}" placeholder="Contoh: Puskesmas A">
+                                        <label>Vaccine Location</label>
+                                        <input type="text" name="vaksin[{{ $i }}][tempat_vaksin]" value="{{ $v['tempat_vaksin'] ?? '' }}" placeholder="e.g. Health Center A">
                                     </div>
                                     <div class="med-field">
-                                        <label>Dokter Pemberi</label>
-                                        <input type="text" name="vaksin[{{ $i }}][dokter_pemberi]" value="{{ $v['dokter_pemberi'] ?? '' }}" placeholder="Nama dokter">
+                                        <label>Administering Doctor</label>
+                                        <input type="text" name="vaksin[{{ $i }}][dokter_pemberi]" value="{{ $v['dokter_pemberi'] ?? '' }}" placeholder="Doctor name">
                                     </div>
                                 </div>
                                 <div class="med-field">
-                                    <label>Catatan</label>
-                                    <textarea name="vaksin[{{ $i }}][catatan]" placeholder="Efek samping, reaksi, dll" rows="2">{{ $v['catatan'] ?? '' }}</textarea>
+                                    <label>Notes</label>
+                                    <textarea name="vaksin[{{ $i }}][catatan]" placeholder="Side effects, reactions, etc." rows="2">{{ $v['catatan'] ?? '' }}</textarea>
                                 </div>
                             </div>
                             @endforeach
@@ -432,7 +432,7 @@
                     </div>
                     <div id="vaksinEmpty" class="med-empty-state {{ ($isEdit && !empty($vaksin)) ? 'hidden' : '' }}">
                         <ion-icon name="shield-checkmark-outline"></ion-icon>
-                        <p>Belum ada vaksin.</p>
+                        <p>No vaccine added yet.</p>
                     </div>
                 </div>
             </div>
@@ -533,7 +533,7 @@ function setLoadingText(text) {
 
 // ── Medical Entry Dynamic Add ──────────────────────────────
 let medCounters = { rs: 0, dokter: 0, vaksin: 0 };
-const medEntryTitles = { rs: 'Rumah Sakit', dokter: 'Dokter', vaksin: 'Vaksin' };
+const medEntryTitles = { rs: 'Hospital', dokter: 'Doctor', vaksin: 'Vaccine' };
 
 function refreshEntryNumbers(type) {
     const container = document.getElementById(type + 'Container');
@@ -556,84 +556,84 @@ function addMedItem(type) {
     if (type === 'rs') {
         inner = `
             <div class="med-entry-head">
-                <span class="med-entry-title">Rumah Sakit ${num}</span>
+                <span class="med-entry-title">Hospital ${num}</span>
                 <button type="button" onclick="removeMedItem(this,'rs')" class="med-remove-btn"><ion-icon name="trash-outline" style="font-size:14px;"></ion-icon></button>
             </div>
             <div class="med-field">
-                <label>Nama Rumah Sakit</label>
-                <input type="text" name="rs[new_${idx}][nama_rs]" placeholder="Contoh: RKZ">
+                <label>Hospital Name</label>
+                <input type="text" name="rs[new_${idx}][nama_rs]" placeholder="e.g. RKZ">
             </div>
             <div class="med-field">
-                <label>Kategori</label>
+                <label>Category</label>
                 <select name="rs[new_${idx}][kategori]">
-                    <option value="rs">Rumah Sakit</option>
-                    <option value="klinik">Klinik</option>
-                    <option value="puskesmas">Puskesmas</option>
+                    <option value="rs">Hospital</option>
+                    <option value="klinik">Clinic</option>
+                    <option value="puskesmas">Health Center</option>
                 </select>
             </div>
             <div class="med-field-row">
                 <div class="med-field">
-                    <label>Alamat</label>
-                    <input type="text" name="rs[new_${idx}][alamat]" placeholder="Alamat">
+                    <label>Address</label>
+                    <input type="text" name="rs[new_${idx}][alamat]" placeholder="Address">
                 </div>
                 <div class="med-field">
-                    <label>No. Telepon</label>
+                    <label>Phone Number</label>
                     <input type="text" name="rs[new_${idx}][no_telp]" placeholder="0821...">
                 </div>
             </div>`;
     } else if (type === 'dokter') {
         inner = `
             <div class="med-entry-head">
-                <span class="med-entry-title">Dokter ${num}</span>
+                <span class="med-entry-title">Doctor ${num}</span>
                 <button type="button" onclick="removeMedItem(this,'dokter')" class="med-remove-btn"><ion-icon name="trash-outline" style="font-size:14px;"></ion-icon></button>
             </div>
             <div class="med-field">
-                <label>Nama Dokter</label>
-                <input type="text" name="dokter[new_${idx}][nama_dokter]" placeholder="Nama lengkap">
+                <label>Doctor Name</label>
+                <input type="text" name="dokter[new_${idx}][nama_dokter]" placeholder="Full name">
             </div>
             <div class="med-field">
-                <label>Spesialisasi</label>
-                <input type="text" name="dokter[new_${idx}][spesialisasi]" placeholder="Contoh: Sp.A (Anak)">
+                <label>Specialization</label>
+                <input type="text" name="dokter[new_${idx}][spesialisasi]" placeholder="e.g. Sp.A (Pediatrics)">
             </div>
             <div class="med-field-row">
                 <div class="med-field">
-                    <label>No. Telepon</label>
+                    <label>Phone Number</label>
                     <input type="text" name="dokter[new_${idx}][no_telp]" placeholder="0821...">
                 </div>
                 <div class="med-field">
-                    <label>Alamat Praktek</label>
-                    <input type="text" name="dokter[new_${idx}][alamat_praktek]" placeholder="Alamat praktek">
+                    <label>Practice Address</label>
+                    <input type="text" name="dokter[new_${idx}][alamat_praktek]" placeholder="Practice address">
                 </div>
             </div>`;
     } else if (type === 'vaksin') {
         inner = `
             <div class="med-entry-head">
-                <span class="med-entry-title">Vaksin ${num}</span>
+                <span class="med-entry-title">Vaccine ${num}</span>
                 <button type="button" onclick="removeMedItem(this,'vaksin')" class="med-remove-btn"><ion-icon name="trash-outline" style="font-size:14px;"></ion-icon></button>
             </div>
             <div class="med-field-row">
                 <div class="med-field">
-                    <label>Nama Vaksin</label>
-                    <input type="text" name="vaksin[new_${idx}][nama_vaksin]" placeholder="BCG, Polio, dll">
+                    <label>Vaccine Name</label>
+                    <input type="text" name="vaksin[new_${idx}][nama_vaksin]" placeholder="BCG, Polio, etc.">
                 </div>
                 <div class="med-field">
-                    <label>Tanggal Vaksin</label>
+                    <label>Vaccine Date</label>
                     <input type="date" name="vaksin[new_${idx}][tanggal_vaksin]">
                 </div>
             </div>
             <div class="med-field-row">
                 <div class="med-field">
-                    <label>Tempat Vaksin</label>
-                    <input type="text" name="vaksin[new_${idx}][tempat_vaksin]" placeholder="Contoh: Puskesmas A">
+                    <label>Vaccine Location</label>
+                    <input type="text" name="vaksin[new_${idx}][tempat_vaksin]" placeholder="e.g. Health Center A">
                 </div>
                 <div class="med-field">
-                    <label>Dokter Pemberi</label>
-                    <input type="text" name="vaksin[new_${idx}][dokter_pemberi]" placeholder="Nama dokter">
+                    <label>Administering Doctor</label>
+                    <input type="text" name="vaksin[new_${idx}][dokter_pemberi]" placeholder="Doctor name">
                 </div>
             </div>
             <div class="med-field">
-                <label>Catatan</label>
-                <textarea name="vaksin[new_${idx}][catatan]" placeholder="Efek samping, reaksi, dll" rows="2"></textarea>
+                <label>Notes</label>
+                <textarea name="vaksin[new_${idx}][catatan]" placeholder="Side effects, reactions, etc." rows="2"></textarea>
             </div>`;
     }
 
@@ -732,10 +732,10 @@ document.getElementById('anakForm').addEventListener('submit', async (e) => {
     const gender = document.getElementById('genderInput').value;
     const tgl = document.getElementById('tanggalLahir').value;
 
-    if (!nama) return showAlert('Nama anak wajib diisi!');
-    if (!gender) return showAlert('Gender wajib dipilih!');
-    if (!tgl) return showAlert('Tanggal lahir wajib diisi!');
-    if (new Date(tgl) > new Date()) return showAlert('Tanggal lahir tidak boleh melebihi hari ini!');
+    if (!nama) return showAlert('Child name is required!');
+    if (!gender) return showAlert('Gender is required!');
+    if (!tgl) return showAlert('Date of birth is required!');
+    if (new Date(tgl) > new Date()) return showAlert('Date of birth cannot be in the future!');
 
     // ── Kirim ──
     setLoading(true);
@@ -779,13 +779,13 @@ document.getElementById('anakForm').addEventListener('submit', async (e) => {
         }
 
         showSuccessAlert(
-            data.message || 'Data berhasil disimpan!',
+            data.message || 'Data saved successfully!',
             '{{ route("profil.data-anak") }}'
         );
 
     } catch (err) {
         console.error('❌ Error:', err);
-        const msg = err.response?.message || err.message || 'Terjadi kesalahan. Coba lagi.';
+        const msg = err.response?.message || err.message || 'An error occurred. Try again.';
         const detail = err.response?.errors
             ? Object.values(err.response.errors).flat().join(', ')
             : null;

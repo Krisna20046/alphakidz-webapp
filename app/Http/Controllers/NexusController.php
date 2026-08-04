@@ -28,7 +28,7 @@ class NexusController extends Controller
     {
         $token = session('token');
         if (!$token) {
-            return redirect()->route('login')->with('error', 'Sesi habis, silakan login ulang.');
+            return redirect()->route('login')->with('error', 'Session expired, please sign in again.');
         }
 
         $response = Http::withToken($token)
@@ -42,11 +42,11 @@ class NexusController extends Controller
 
         if ($response->failed()) {
             return redirect()->route('nexus.create')
-                ->with('error', $json['message'] ?? 'Gagal membuat pertanyaan.');
+                ->with('error', $json['message'] ?? 'Failed to create question.');
         }
 
         return redirect()->route('nexus.show', $json['data']['id'])
-            ->with('success', 'Pertanyaan berhasil dibuat!');
+            ->with('success', 'Question created successfully!');
     }
 
     public function show($id)

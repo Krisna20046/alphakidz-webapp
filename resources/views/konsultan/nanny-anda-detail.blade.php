@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Nanny - ' . ($nanny['name'] ?? 'Nanny'))
+@section('title', 'Nanny Details - ' . ($nanny['name'] ?? 'Nanny'))
 
 @push('styles')
 <style>
@@ -31,8 +31,8 @@
             <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
         </a>
         <div>
-            <span class="text-white text-[17px] font-extrabold tracking-wide">Detail Nanny</span>
-            <p class="text-white/70 text-xs font-semibold mt-0.5 leading-[1.3]">Informasi lengkap profil<br>dan manajemen akun nanny</p>
+            <span class="text-white text-[17px] font-extrabold tracking-wide">Nanny Details</span>
+            <p class="text-white/70 text-xs font-semibold mt-0.5 leading-[1.3]">Complete profile information<br>and nanny account management</p>
         </div>
     </div>
 </div>
@@ -41,12 +41,12 @@
 <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar">
     <x-empty-state
         icon="person-circle-outline"
-        title="Data tidak ditemukan"
-        description="Data yang Anda cari tidak tersedia"
+        title="Data not found"
+        description="The data you are looking for is unavailable"
     >
         <a href="{{ route('konsultan-nanny-anda') }}"
            class="mt-6 bg-[#8B46D3] text-white text-sm font-bold px-8 py-3 rounded-2xl shadow-[0_8px_20px_rgba(139,70,211,0.35)]">
-            Kembali ke Daftar
+            Back to List
         </a>
     </x-empty-state>
 </div>
@@ -99,7 +99,7 @@
             <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full {{ $isActive ? 'bg-[#DCFCE7]' : 'bg-[#FEE2E2]' }}">
                 <ion-icon name="ellipse" style="font-size:8px;color:{{ $isActive ? '#166534' : '#991B1B' }};"></ion-icon>
                 <span class="text-[10px] font-extrabold tracking-wide uppercase {{ $isActive ? 'text-[#166534]' : 'text-[#991B1B]' }}">
-                    {{ $isActive ? 'AKTIF' : 'NONAKTIF' }}
+                    {{ $isActive ? 'ACTIVE' : 'INACTIVE' }}
                 </span>
             </div>
         </div>
@@ -122,7 +122,7 @@
     <div class="section-card anim delay-3 p-5">
         <div class="flex items-center gap-2">
             <ion-icon name="call" style="font-size:16px;color:#8B46D3;"></ion-icon>
-            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Informasi Kontak</h3>
+            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Contact Information</h3>
         </div>
         <div class="h-px bg-[#E5E1F0] my-4"></div>
         <div class="space-y-2">
@@ -140,7 +140,7 @@
                     <ion-icon name="call-outline" style="font-size:16px;color:#4F46E5;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Nomor HP</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Phone Number</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $nanny['no_hp'] ?? '-' }}</p>
                 </div>
             </div>
@@ -151,7 +151,7 @@
     <div class="section-card anim delay-4 p-5">
         <div class="flex items-center gap-2">
             <ion-icon name="person-circle" style="font-size:16px;color:#8B46D3;"></ion-icon>
-            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Informasi Pribadi</h3>
+            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Personal Information</h3>
         </div>
         <div class="h-px bg-[#E5E1F0] my-4"></div>
         <div class="space-y-2">
@@ -160,7 +160,7 @@
                     <ion-icon name="calendar-outline" style="font-size:16px;color:#EC4899;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Tanggal Lahir</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Date Of Birth</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $nanny['tanggal_lahir'] ?? '-' }}</p>
                 </div>
             </div>
@@ -171,7 +171,7 @@
                 <div class="flex-1">
                     <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Gender</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold">
-                        @php $g = $nanny['gender'] ?? ''; echo $g === 'L' ? 'Laki-laki' : ($g === 'P' ? 'Perempuan' : '-'); @endphp
+                        @php $g = $nanny['gender'] ?? ''; echo $g === 'L' ? 'Male' : ($g === 'P' ? 'Female' : '-'); @endphp
                     </p>
                 </div>
             </div>
@@ -180,7 +180,7 @@
                     <ion-icon name="location-outline" style="font-size:16px;color:#F59E0B;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Lokasi</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Location</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold">
                         @if(!empty($nanny['kota']) && !empty($nanny['provinsi']))
                             {{ $nanny['kota'] }}, {{ $nanny['provinsi'] }}
@@ -195,7 +195,7 @@
                     <ion-icon name="home-outline" style="font-size:16px;color:#8B46D3;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Alamat</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Address</p>
                     <p class="text-[#1E1B2E] text-[12px] font-semibold leading-snug">{{ $nanny['alamat'] }}</p>
                 </div>
             </div>
@@ -208,7 +208,7 @@
     <div class="section-card anim delay-5 p-5">
         <div class="flex items-center gap-2">
             <ion-icon name="briefcase" style="font-size:16px;color:#8B46D3;"></ion-icon>
-            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Informasi Profesional</h3>
+            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Professional Information</h3>
         </div>
         <div class="h-px bg-[#E5E1F0] my-4"></div>
         <div class="space-y-2">
@@ -229,7 +229,7 @@
                     <ion-icon name="time-outline" style="font-size:16px;color:#4F46E5;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Pengalaman</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Experience</p>
                     <p class="text-[#1E1B2E] text-[12px] font-semibold leading-snug">{{ $nanny['pengalaman'] }}</p>
                 </div>
             </div>
@@ -240,7 +240,7 @@
                     <ion-icon name="ribbon-outline" style="font-size:16px;color:#166534;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Sertifikasi</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Certification</p>
                     <p class="text-[#1E1B2E] text-[12px] font-semibold leading-snug">{{ $nanny['sertifikasi'] }}</p>
                 </div>
             </div>
@@ -254,20 +254,20 @@
         <a href="{{ route('chat.room', $idUser) }}?nama={{ urlencode($nanny['name'] ?? 'Nanny') }}"
            class="bg-white border border-[#E7E3F5] text-[#8B46D3] rounded-2xl font-extrabold flex items-center justify-center gap-2 h-[52px] shadow-[0_2px_10px_rgba(0,0,0,0.06)] active:scale-[0.97] transition-transform">
             <ion-icon name="chatbubble-ellipses-outline" style="font-size:18px;"></ion-icon>
-            <span>Hubungi Nanny</span>
+            <span>Contact Nanny</span>
         </a>
 
         @if($isActive)
         <button onclick="openStatusModal()"
                 class="w-full flex items-center justify-center gap-2 h-[52px] rounded-2xl font-extrabold text-[14px] bg-[#FEF2F2] border border-[#FECACA] text-[#DC2626] active:scale-[0.97] transition-transform">
             <ion-icon name="close-circle-outline" style="font-size:18px;"></ion-icon>
-            Nonaktifkan Akun
+            Deactivate Account
         </button>
         @else
         <button onclick="openStatusModal()"
                 class="w-full flex items-center justify-center gap-2 h-[52px] rounded-2xl font-extrabold text-[14px] bg-[#F0FDF4] border border-[#BBF7D0] text-[#16A34A] active:scale-[0.97] transition-transform">
             <ion-icon name="checkmark-circle-outline" style="font-size:18px;"></ion-icon>
-            Aktifkan Akun
+            Activate Account
         </button>
         @endif
     </div>
@@ -282,22 +282,22 @@
                 <ion-icon name="{{ $isActive ? 'close-circle' : 'checkmark-circle' }}" style="font-size:36px;color:{{ $isActive ? '#DC2626' : '#16A34A' }};"></ion-icon>
             </div>
             <h3 class="text-[#1E1B2E] font-extrabold text-[18px] mb-2">
-                {{ $isActive ? 'Nonaktifkan Akun?' : 'Aktifkan Akun?' }}
+                {{ $isActive ? 'Deactivate Account?' : 'Activate Account?' }}
             </h3>
             <p class="text-[#8B86A5] text-[13px] leading-relaxed">
-                Anda akan
+                You are about to
                 <span class="font-extrabold {{ $isActive ? 'text-[#DC2626]' : 'text-[#16A34A]' }}">
-                    {{ $isActive ? 'menonaktifkan' : 'mengaktifkan' }}
+                    {{ $isActive ? 'deactivate' : 'activate' }}
                 </span>
-                akun nanny <span class="font-extrabold text-[#1E1B2E]">{{ $nanny['name'] }}</span>.
-                {{ $isActive ? 'Nanny tidak dapat login setelah dinonaktifkan.' : 'Nanny dapat kembali login setelah diaktifkan.' }}
+                the nanny account <span class="font-extrabold text-[#1E1B2E]">{{ $nanny['name'] }}</span>.
+                {{ $isActive ? 'The nanny cannot log in once deactivated.' : 'The nanny can log in again once activated.' }}
             </p>
         </div>
 
         <div class="flex gap-3">
             <button onclick="closeStatusModal()"
                     class="flex-1 h-[48px] rounded-2xl border border-[#ECEAF4] bg-[#F8F8FB] text-[#8B86A5] font-extrabold text-[13px] active:scale-[0.97] transition-transform">
-                Batal
+                Cancel
             </button>
             <form action="{{ route('konsultan-nanny-update-status') }}" method="POST" class="flex-1">
                 @csrf
@@ -306,7 +306,7 @@
                 <input type="hidden" name="redirect_id" value="{{ $nanny['id_user'] }}">
                 <button type="submit"
                         class="w-full h-[48px] rounded-2xl text-white font-extrabold text-[13px] active:scale-[0.97] transition-transform {{ $isActive ? 'bg-[#DC2626] shadow-[0_4px_12px_rgba(220,38,38,0.35)]' : 'bg-[#16A34A] shadow-[0_4px_12px_rgba(22,163,74,0.35)]' }}">
-                    Ya, {{ $isActive ? 'Nonaktifkan' : 'Aktifkan' }}
+                    Yes, {{ $isActive ? 'Deactivate' : 'Activate' }}
                 </button>
             </form>
         </div>
