@@ -102,7 +102,8 @@
                     'id'=>$s['id'],'subject'=>$subjName,'color'=>$color,'child'=>$childName,
                     'day'=>ucfirst($s['day_of_week']),'start'=>$s['start_time']??'','end'=>$s['end_time']??'',
                     'teacher'=>$s['teacher_name']??'','notes'=>$s['notes']??'',
-                    'editUrl'=>route('school-schedule.edit',$s['id'])
+                    'editUrl'=>route('school-schedule.edit',$s['id']),
+                    'deleteUrl'=>route('school-schedule.destroy',$s['id'])
                 ]) }})"
                     class="px-3 py-1.5 rounded-xl bg-[#EDE9FE] text-[#8B46D3] text-xs font-bold">
                     Details

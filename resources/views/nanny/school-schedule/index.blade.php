@@ -126,9 +126,11 @@
                 <p class='text-[#8B86A5] text-xs font-bold'>Monday - Sunday</p>
             </div>
             <div class='flex items-center gap-2'>
-                <button type='button' onclick='downloadPreview()' class='h-9 px-3.5 rounded-xl bg-[#8B46D3] text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-[#8B46D3]/30'>
-                    <ion-icon name='download-outline' style='font-size:14px;'></ion-icon>
-                    Download
+                <button type='button' id='downloadBtn' onclick='downloadPreview()' class='h-9 px-3.5 rounded-xl bg-[#8B46D3] text-white text-xs font-bold flex items-center gap-1.5 shadow-md shadow-[#8B46D3]/30 disabled:opacity-60 disabled:cursor-not-allowed' style='width:110px;'>
+                    <span id='downloadLabel' class='flex items-center gap-1.5'>
+                        <ion-icon name='download-outline' style='font-size:14px;'></ion-icon>
+                        Download
+                    </span>
                 </button>
                 <button type='button' onclick='closePreview()' class='w-9 h-9 rounded-xl bg-[#EDE9FE] flex items-center justify-center'>
                     <ion-icon name='close' style='font-size:16px;color:#8B46D3;'></ion-icon>
@@ -230,6 +232,30 @@
     </div>
 </div>
 
+{{-- DELETE CONFIRM MODAL --}}
+<div id="deleteConfirmModal" class="modal-backdrop">
+    <div class="modal-sheet">
+        <div class="handle-container">
+            <div class="flex justify-center pt-3 pb-1"><div class="w-10 h-1.5 rounded-full bg-gray-200"></div></div>
+        </div>
+        <div class="scrollable-content">
+            <div class="px-6 pt-2 pb-8 text-center">
+                <div class="w-14 h-14 mx-auto rounded-2xl bg-red-50 flex items-center justify-center mb-4">
+                    <ion-icon name="trash-outline" style="font-size:26px;color:#F44336;"></ion-icon>
+                </div>
+                <h3 class="text-[#1E1B2E] text-lg font-extrabold mb-1">Delete Schedule?</h3>
+                <p class="text-[#8B86A5] text-sm font-semibold mb-6">This schedule will be permanently removed.</p>
+                <div class="flex gap-3 pb-16">
+                    <button type="button" onclick="closeDeleteConfirm()"
+                        class="act-btn flex-1 py-4 rounded-2xl bg-[#EDE9FE] text-[#8B46D3] text-sm font-bold">Cancel</button>
+                    <button type="button" onclick="doDelete()"
+                        class="act-btn flex-1 py-4 rounded-2xl bg-red-500 text-white text-sm font-bold shadow-lg shadow-red-500/30">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {{-- DETAIL MODAL --}}
 <div id="detailModal" class="modal-backdrop">
     <div class="modal-sheet">
@@ -279,12 +305,21 @@
                     </div>
                 </div>
             </div>
-            <div class="px-5 pb-20">
+            <div class="px-5 pb-20 space-y-3">
                 <a id="dEditBtn" href="#"
                    class="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-[#8B46D3] text-white font-bold text-sm shadow-lg shadow-[#8B46D3]/30">
                     <ion-icon name="create-outline" style="font-size:18px;"></ion-icon>
                     Edit Schedule
                 </a>
+                <button type="button" onclick="confirmDelete()"
+                   class="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-red-50 border border-red-200 text-red-600 font-bold text-sm">
+                    <ion-icon name="trash-outline" style="font-size:18px;"></ion-icon>
+                    Delete Schedule
+                </button>
+                <form id="deleteForm" method="POST" style="display:none;">
+                    @csrf
+                    @method('DELETE')
+                </form>
             </div>
         </div>
     </div>
@@ -305,9 +340,29 @@ function openDetail(s) {
     document.getElementById('dTeacher').textContent = s.teacher || '-';
     document.getElementById('dNotes').textContent = s.notes || '-';
     document.getElementById('dEditBtn').href = s.editUrl;
+    document.getElementById('deleteForm').action = s.deleteUrl;
     document.getElementById('detailModal').classList.add('open');
     document.body.classList.add('modal-open');
 }
+function confirmDelete() {
+    const form = document.getElementById('deleteForm');
+    if (!form.action) return;
+    // Close the detail modal first so the confirm sheet shows on its own.
+    document.getElementById('detailModal').classList.remove('open');
+    document.getElementById('deleteConfirmModal').classList.add('open');
+    document.body.classList.add('modal-open');
+}
+function doDelete() {
+    document.getElementById('deleteConfirmModal').classList.remove('open');
+    document.getElementById('deleteForm').submit();
+}
+function closeDeleteConfirm() {
+    document.getElementById('deleteConfirmModal').classList.remove('open');
+    document.body.classList.remove('modal-open');
+}
+document.getElementById('deleteConfirmModal').addEventListener('click', function(e) {
+    if (e.target === this) closeDeleteConfirm();
+});
 function closeDetail() {
     document.getElementById('detailModal').classList.remove('open');
     document.body.classList.remove('modal-open');
@@ -326,20 +381,51 @@ function closePreview() {
     document.body.classList.remove('modal-open');
 }
 function downloadPreview() {
-    const card = document.getElementById('previewCard');
+    const btn = document.getElementById('downloadBtn');
+    const label = document.getElementById('downloadLabel');
+    if (btn && btn.disabled) return;
+    const setLoading = (on) => {
+        if (!btn) return;
+        btn.disabled = on;
+        if (label) label.innerHTML = on
+            ? '<span class="w-3.5 h-3.5 border-2 border-white/40 border-t-white rounded-full" style="animation:spin .6s linear infinite;"></span> Downloading...'
+            : '<ion-icon name="download-outline" style="font-size:14px;"></ion-icon> Download';
+    };
+    setLoading(true);
     const capture = () => {
-        html2canvas(card, { backgroundColor: null, scale: 2 }).then(canvas => {
-            const a = document.createElement('a');
-            a.download = 'weekly-schedule.png';
-            a.href = canvas.toDataURL('image/png');
-            a.click();
-        });
+        const done = () => setLoading(false);
+        const src = document.getElementById('previewCard');
+        const clone = src.cloneNode(true);
+        clone.style.cssText += ';position:fixed;left:0;top:0;z-index:-100;width:max-content;min-width:430px;';
+        clone.style.maxWidth = 'none';
+        clone.querySelectorAll('.overflow-x-auto').forEach(n => { n.style.overflow = 'visible'; });
+        document.body.appendChild(clone);
+
+        // Double rAF so the clone is fully laid out before measuring.
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            const w = clone.scrollWidth, h = clone.scrollHeight;
+            html2canvas(clone, {
+                backgroundColor: '#fff',
+                scale: 2,
+                width: w,
+                height: h,
+                windowWidth: w,
+                windowHeight: h,
+            }).then(canvas => {
+                clone.remove();
+                done();
+                const a = document.createElement('a');
+                a.download = 'weekly-schedule.png';
+                a.href = canvas.toDataURL('image/png');
+                a.click();
+            });
+        }));
     };
     if (window.html2canvas) { capture(); return; }
     const scr = document.createElement('script');
     scr.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
     scr.onload = capture;
-    scr.onerror = () => alert('Failed to load the library needed to download the image.');
+    scr.onerror = () => { done(); alert('Failed to load the library needed to download the image.'); };
     document.head.appendChild(scr);
 }
 document.getElementById('previewModal').addEventListener('click', function(e) {
