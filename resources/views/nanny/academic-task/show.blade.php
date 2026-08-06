@@ -58,7 +58,7 @@
             <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
         </a>
         <div class="flex-1 min-w-0">
-            <span class="text-white text-[17px] font-extrabold tracking-wide truncate">{{ $task['title'] }}</span>
+            <span class="block text-white text-[17px] font-extrabold tracking-wide truncate">{{ $task['title'] }}</span>
             <p class="text-white/60 text-xs font-medium mt-0.5">{{ $childName }}</p>
         </div>
         <a href="{{ route('academic-task.edit', $task['id']) }}"
