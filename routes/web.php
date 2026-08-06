@@ -156,6 +156,8 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/nanny-anda/{id}', [MajikanController::class, 'showNannyAnda'] )->name('majikan-nanny-anda-detail');
         Route::get('/diary',        [MajikanController::class, 'chooseDiary'])->name('majikan-diary-choose');
         Route::get('/diary/{id}',   [MajikanController::class, 'showDiary']  )->name('majikan-diary');
+        Route::get('/diary/{id}/summary',        [MajikanController::class, 'fetchSummary'])  ->name('majikan-diary-summary');
+        Route::post('/diary/summary/generate',   [MajikanController::class, 'generateSummary'])->name('majikan-diary-summary-generate');
 
         // Tracking (monitor tasks & schedule yg diisi nanny)
         Route::get('/monitoring',        [MajikanTrackingController::class, 'index'])->name('majikan-tracking');
@@ -172,6 +174,8 @@ Route::middleware('auth.api')->group(function () {
     Route::prefix('nanny')->group(function () {
         Route::get('/diary', [NannyController::class, 'chooseDiary'])->name('nanny-diary-choose');
         Route::get('/diary/{id_anak}', [NannyController::class, 'showDiary'])->name('nanny-diary');
+        Route::get('/diary/{id_anak}/summary',        [NannyController::class, 'fetchSummary'])  ->name('nanny-diary-summary');
+        Route::post('/diary/summary/generate',        [NannyController::class, 'generateSummary'])->name('nanny-diary-summary-generate');
         Route::get('/diary/{id_anak}/tambah', [NannyController::class, 'showAdd'])->name('nanny-diary-add');
         Route::post('/diary/store', [NannyController::class, 'store'])->name('nanny-diary-store');
         Route::get('/data-anak',  [NannyController::class, 'dataAnak'])->name('nanny-anak-list');

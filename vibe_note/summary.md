@@ -1,7 +1,54 @@
 # SUMMARY.md — Progress Academic Task, Task Progress & Parent Approval
 
 Tanggal: 2026-08-06
-Status: Fungsional — Backend (API) ✅ + Frontend Nanny (input) ✅ + Frontend Majikan (tracking & approval) ✅
+Status: Fungsional — Backend (API) ✅ + Frontend Nanny (input) ✅ + Frontend Majikan (tracking & approval) ✅ + Modul 7 (Diary AI Summary) ✅
+
+---
+
+## 0b. Modul 7 — Diary AI Summary (frontend, 2026-08-06)
+
+Fitur ringkasan AI diary kini tampil di halaman diary **Nanny & Majikan** (`Laravel_Web_App`):
+
+| File | Peran |
+|------|-------|
+| `app/Http/Controllers/NannyController.php` | Proxy `fetchSummary` (GET) + `generateSummary` (POST) |
+| `app/Http/Controllers/MajikanController.php` | Proxy `fetchSummary` (GET, read-only) + `generateSummary` (POST) |
+| `routes/web.php` | `nanny-diary-summary`/`-generate`, `majikan-diary-summary`/`-generate` |
+| `resources/views/nanny/diary.blade.php` | Kartu "Ringkasan AI Hari Ini" + tombol **Generate Ringkasan** |
+| `resources/views/majikan/diary.blade.php` | Kartu sama, **tanpa** tombol generate (read-only) |
+
+Perilaku:
+- Kartu muncul hanya jika ada `$idAnak` (halaman diary anak tertentu).
+- `loadSummary()` otomatis saat halaman dimuat → GET proxy → tampilkan `ai_summary` bila ada (teks dipecah per baris).
+- Nanny: tombol **✨ Generate Ringkasan** → POST proxy → backend `daily-ai-summaries/generate` (role 1,3) — menampilkan `j.message` bila error (mis. tidak ada aktivitas tanggal itu).
+- Majikan: **read-only** (backend batch role hanya Admin/Nanny yang boleh generate); tombol generate tidak dirender.
+- Tanggal ikut tanggal yang sedang dilihat (`$tanggal`), jadi ringkasan mengikuti pilihan tanggal di kalender.
+
+---
+
+## 0. Modul 7 — Diary AI Summary (backend, 2026-08-06)
+
+Fitur **ringkasan diary aktivitas** (diary summary khusus) dibangun di `AlphaKidz-Backend`:
+
+| File | Peran |
+|------|-------|
+| `app/Models/DailyAiSummary.php` | Model → tabel `daily_ai_summaries` existing (NO migration) |
+| `app/Services/GeminiAiService.php` | Multi API key + rotate model (fallback saat limit), REST tanpa SDK |
+| `app/Http/Controllers/DailyAiSummaryController.php` | generate (on-demand) / regenerate / getByChild |
+| `app/Http/Requests/DailyAiSummary/GenerateSummaryRequest.php` | Validasi (id_anak, summary_date) |
+| `app/Http/Resources/DailyAiSummary/DailyAiSummaryResource.php` | Resource |
+| `config/services.php` + `.env` / `.env.example` | Blok `services.gemini` (GEMINI_API_KEY, _2, _3, GEMINI_MODELS) |
+| `db_sql_example/alphakidz-06agustus2026_daily_summary.sql` | SQL contoh (tanpa perubahan skema) |
+| `tests/GeminiRotateSelfTest.php` + `run_gemini_self_test.php` | Self-check rotate (PASS) |
+
+Routes: `GET daily-ai-summaries? id_anak&summary_date`, `POST daily-ai-summaries/generate`, `POST daily-ai-summaries/{id}/regenerate`.
+
+Detail:
+- **Data AI**: diary `aktivitas_anak` per tanggal (kategori, deskripsi, jam, durasi, mood, lokasi, porsi, nafsu) + usia anak dari `tanggal_lahir` (analisis age↔mood ditunda ke summary penuh Modul 7).
+- **Multi-API rotate**: model-a 429 → coba model berikutnya; semua model pada satu key gagal → pindah key; semua habis → throw. (Desain sesuai permintaan user.)
+- **Upsert**: 1 baris per (anak, summary_date) — regenerate meng-update baris yang sama.
+- Role: generate = Admin/Nanny (1,3); read = + Majikan/Konsultan (1,2,3,4); child-access check pola sama AcademicTask.
+- **BUTUH AKSI user**: isi `GEMINI_API_KEY` (dan opsional _2/_3 + GEMINI_MODELS) di `.env` backend sebelum endpoint dipakai.
 
 ---
 

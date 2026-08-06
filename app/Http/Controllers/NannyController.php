@@ -285,6 +285,41 @@ class NannyController extends Controller
         return response()->json($data);
     }
 
+    // ── Daily AI Summary (Modul 7) ─────────────────────────────────────────────
+
+    /**
+     * Proxy: ambil summary AI utk anak+tanggal tertentu.
+     * GET backend: /daily-ai-summaries?id_anak&summary_date
+     */
+    public function fetchSummary(Request $request, int $id_anak)
+    {
+        $tanggal = $request->get('tanggal', date('Y-m-d'));
+        $res = Http::withHeaders($this->headers())
+            ->get($this->apiUrl('/daily-ai-summaries'), [
+                'id_anak'      => $id_anak,
+                'summary_date' => $tanggal,
+            ]);
+        return response()->json($res->json() ?? ['success' => false, 'message' => 'No response']);
+    }
+
+    /**
+     * Proxy: generate summary diary (on-demand).
+     * POST backend: /daily-ai-summaries/generate { id_anak, summary_date }
+     */
+    public function generateSummary(Request $request)
+    {
+        $request->validate([
+            'id_anak'      => 'required|integer',
+            'summary_date' => 'required|date_format:Y-m-d',
+        ]);
+        $res = Http::withHeaders($this->headers())
+            ->post($this->apiUrl('/daily-ai-summaries/generate'), [
+                'id_anak'      => $request->id_anak,
+                'summary_date' => $request->summary_date,
+            ]);
+        return response()->json($res->json() ?? ['success' => false, 'message' => 'No response']);
+    }
+
     // ── Private helpers ───────────────────────────────────────────────────────
 
     /**
