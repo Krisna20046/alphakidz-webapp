@@ -16,6 +16,8 @@ use App\Http\Controllers\KonsultanTugaskanController;
 use App\Http\Controllers\ArtikelController;
 use App\Http\Controllers\SchoolSubjectController;
 use App\Http\Controllers\SchoolScheduleController;
+use App\Http\Controllers\AcademicTaskController;
+use App\Http\Controllers\MajikanTrackingController;
 
 
 // â”€â”€â”€ Guest Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -153,6 +155,10 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/nanny-anda/{id}', [MajikanController::class, 'showNannyAnda'] )->name('majikan-nanny-anda-detail');
         Route::get('/diary',        [MajikanController::class, 'chooseDiary'])->name('majikan-diary-choose');
         Route::get('/diary/{id}',   [MajikanController::class, 'showDiary']  )->name('majikan-diary');
+
+        // Tracking (monitor tasks & schedule yg diisi nanny)
+        Route::get('/monitoring',        [MajikanTrackingController::class, 'index'])->name('majikan-tracking');
+        Route::get('/monitoring/{id_anak}', [MajikanTrackingController::class, 'show'])->name('majikan-tracking-show');
     });
 
     Route::prefix('nanny')->group(function () {
@@ -195,6 +201,20 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/{id}/edit',   [SchoolScheduleController::class, 'edit']   )->name('edit');
         Route::put('/{id}',        [SchoolScheduleController::class, 'update'] )->name('update');
         Route::delete('/{id}',     [SchoolScheduleController::class, 'destroy'])->name('destroy');
+    });
+
+    // Module 3 & 4 — Academic Task + Task Progress (role Nanny)
+    Route::prefix('academic-task')->name('academic-task.')->group(function () {
+        Route::get('/',                [AcademicTaskController::class, 'index']        )->name('index');
+        Route::get('/create',          [AcademicTaskController::class, 'create']       )->name('create');
+        Route::post('/',               [AcademicTaskController::class, 'store']        )->name('store');
+        Route::get('/{id}',            [AcademicTaskController::class, 'show']         )->name('show');
+        Route::get('/{id}/edit',       [AcademicTaskController::class, 'edit']         )->name('edit');
+        Route::post('/{id}/update',    [AcademicTaskController::class, 'update']       )->name('update');
+        Route::delete('/{id}',         [AcademicTaskController::class, 'destroy']      )->name('destroy');
+        Route::post('/{id}/status',    [AcademicTaskController::class, 'updateStatus'] )->name('update-status');
+        Route::post('/{id}/complete',  [AcademicTaskController::class, 'markComplete'] )->name('complete');
+        Route::post('/{id}/progress',  [AcademicTaskController::class, 'storeProgress'])->name('progress');
     });
 
     Route::prefix('admin')->group(function () {
