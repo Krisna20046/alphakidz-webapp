@@ -244,7 +244,49 @@ class AcademicTaskController extends Controller
 
         $childNames = collect($this->fetchChildren())->pluck('nama', 'id');
 
-        return view('nanny.academic-task.show', compact('task', 'childNames'));
+        // Alasan penolakan terbaru dari majikan (Modul 11, Opsi B: task di-reopen)
+        $rejection = $this->fetchLatestRejection($task['id_anak'] ?? 0, (int) $id);
+
+        return view('nanny.academic-task.show', compact('task', 'childNames', 'rejection'));
+    }
+
+    /**
+     * Ambil riwayat parent-comment untuk satu anak, cari penolakan terbaru atas tugas ini.
+     * Response backend (ParentCommentResource): list `decision` approved/rejected/pending/comment.
+     */
+    private function fetchLatestRejection(int $idAnak, int $taskId): ?array
+    {
+        if ($idAnak <= 0) {
+            return null;
+        }
+
+        $response = Http::withHeaders($this->headers())
+            ->get($this->apiUrl('/parent-comments'), [
+                'id_anak'  => $idAnak,
+                'task_id'  => $taskId,
+                'per_page' => 50,
+            ]);
+
+        if (!$response->successful()) {
+            return null;
+        }
+        $json = $response->json();
+        $data = $json['data'] ?? [];
+
+        if (!is_array($data) || !$this->isSuccess($json)) {
+            return null;
+        }
+        $list = is_array($data) && array_key_exists('data', $data)
+            ? (is_array($data['data']) ? $data['data'] : [])
+            : $data;
+
+        // Cari reject paling baru utk tugas ini
+        foreach ($list as $h) {
+            if (($h['action'] ?? null) === 'reject') {
+                return $h;
+            }
+        }
+        return null;
     }
 
     // ─── Edit Form ───────────────────────────────────────────────────────────

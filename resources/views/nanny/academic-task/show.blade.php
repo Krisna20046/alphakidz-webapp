@@ -87,6 +87,24 @@
     </div>
     @endif
 
+    {{-- Rejection banner (Modul 11, Opsi B: task di-reopen oleh majikan) --}}
+    @if(!empty($rejection))
+    <div class="rounded-2xl p-4 bg-red-50 border border-red-200 flex items-start gap-3 mb-4 anim delay-1">
+        <div class="w-9 h-9 rounded-xl bg-red-100 flex items-center justify-center shrink-0">
+            <ion-icon name="alert-circle" style="font-size:20px;color:#DC2626;"></ion-icon>
+        </div>
+        <div class="flex-1 min-w-0">
+            <p class="text-[#DC2626] text-sm font-extrabold">Tugas Ditolak oleh Majikan</p>
+            @if(!empty($rejection['comment']))
+            <p class="text-[#7F1D1D] text-xs font-semibold mt-0.5">{{ $rejection['comment'] }}</p>
+            @endif
+            <p class="text-[#9F1239] text-[10px] font-bold mt-1">
+                Perbaiki tugas ini, lalu update progress & tandai selesai kembali.
+            </p>
+        </div>
+    </div>
+    @endif
+
     {{-- Info card --}}
     <div class="bg-white rounded-2xl p-5 border border-[#DDD6EF] anim delay-2">
         <div class="flex items-center justify-between mb-3">

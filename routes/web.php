@@ -18,6 +18,7 @@ use App\Http\Controllers\SchoolSubjectController;
 use App\Http\Controllers\SchoolScheduleController;
 use App\Http\Controllers\AcademicTaskController;
 use App\Http\Controllers\MajikanTrackingController;
+use App\Http\Controllers\MajikanParentCommentController;
 
 
 // â”€â”€â”€ Guest Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -159,6 +160,13 @@ Route::middleware('auth.api')->group(function () {
         // Tracking (monitor tasks & schedule yg diisi nanny)
         Route::get('/monitoring',        [MajikanTrackingController::class, 'index'])->name('majikan-tracking');
         Route::get('/monitoring/{id_anak}', [MajikanTrackingController::class, 'show'])->name('majikan-tracking-show');
+
+        // Module 11 — Parent Approval (approve/reject/comment tugas akademik anak)
+        Route::get('/approval',              [MajikanParentCommentController::class, 'index'])->name('majikan-approval');
+        Route::get('/approval/{id_anak}',    [MajikanParentCommentController::class, 'show'] )->name('majikan-approval-show');
+        Route::post('/approval/approve',     [MajikanParentCommentController::class, 'approve'])->name('majikan-approval-approve');
+        Route::post('/approval/reject',      [MajikanParentCommentController::class, 'reject'] )->name('majikan-approval-reject');
+        Route::post('/approval/comment',     [MajikanParentCommentController::class, 'comment'])->name('majikan-approval-comment');
     });
 
     Route::prefix('nanny')->group(function () {
