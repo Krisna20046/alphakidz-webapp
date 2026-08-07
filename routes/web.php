@@ -19,6 +19,7 @@ use App\Http\Controllers\SchoolScheduleController;
 use App\Http\Controllers\AcademicTaskController;
 use App\Http\Controllers\MajikanTrackingController;
 use App\Http\Controllers\MajikanParentCommentController;
+use App\Http\Controllers\LearningProgressController;
 
 
 // â”€â”€â”€ Guest Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -169,6 +170,11 @@ Route::middleware('auth.api')->group(function () {
         Route::post('/approval/approve',     [MajikanParentCommentController::class, 'approve'])->name('majikan-approval-approve');
         Route::post('/approval/reject',      [MajikanParentCommentController::class, 'reject'] )->name('majikan-approval-reject');
         Route::post('/approval/comment',     [MajikanParentCommentController::class, 'comment'])->name('majikan-approval-comment');
+
+        // Module 5 — Learning Progress (read-only chart)
+        Route::get('/learning-progress',            [LearningProgressController::class, 'majikanIndex'])->name('majikan-learning');
+        Route::get('/learning-progress/{id_anak}',  [LearningProgressController::class, 'majikanShow'] )->name('majikan-learning-show');
+        Route::get('/learning-progress/{id_anak}/history', [LearningProgressController::class, 'majikanHistory'])->name('majikan-learning-history');
     });
 
     Route::prefix('nanny')->group(function () {
@@ -181,6 +187,14 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/data-anak',  [NannyController::class, 'dataAnak'])->name('nanny-anak-list');
         Route::get('/konsultan',  [NannyController::class, 'konsultan'])->name('nanny-konsultan');
         Route::get('/majikan',    [NannyController::class, 'majikan'])->name('nanny-majikan');
+
+        // Module 5 — Learning Progress (input skor + lihat chart)
+        Route::get('/learning-progress',            [LearningProgressController::class, 'nannyIndex'])->name('nanny-learning');
+        Route::get('/learning-progress/{id_anak}',  [LearningProgressController::class, 'nannyShow'] )->name('nanny-learning-show');
+        Route::get('/learning-progress/{id_anak}/history', [LearningProgressController::class, 'nannyHistory'])->name('nanny-learning-history');
+        Route::get('/learning-progress/{id_anak}/add', [LearningProgressController::class, 'nannyCreate'])->name('nanny-learning-create');
+        Route::post('/learning-progress',           [LearningProgressController::class, 'store']    )->name('nanny-learning-store');
+        Route::delete('/learning-progress/{id}',    [LearningProgressController::class, 'destroy']  )->name('nanny-learning-destroy');
     });
 
     Route::prefix('admin/kelola-akun')->group(function () {

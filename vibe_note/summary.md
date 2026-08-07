@@ -1,7 +1,30 @@
-# SUMMARY.md — Progress Academic Task, Task Progress & Parent Approval
+# SUMMARY.md — Progress Academic Task, Task Progress, Parent Approval & Learning Progress
 
-Tanggal: 2026-08-06
-Status: Fungsional — Backend (API) ✅ + Frontend Nanny (input) ✅ + Frontend Majikan (tracking & approval) ✅ + Modul 7 (Diary AI Summary) ✅
+Tanggal: 2026-08-07
+Status: Fungsional — Backend (API) ✅ + Frontend Nanny (input) ✅ + Frontend Majikan (tracking & approval) ✅ + Modul 7 (Diary AI Summary) ✅ + Modul 5 (Learning Progress) ✅
+
+---
+
+## 0c. Modul 5 — Learning Progress (2026-08-07)
+
+Fitur **learning progress** selesai end-to-end (backend + frontend Nanny input & chart + Majikan
+read-only + pagination history). Detail lengkap di
+`vibe_note/module5-learning-progress.md`.
+
+| Lapisan | Status | Lokasi |
+|---------|--------|--------|
+| Backend API (Model, Controller, Request, Resource, routes, chart) | ✅ | `AlphaKidz-Backend` |
+| Frontend Nanny (pilih anak, chart, input skor, history + pagination) | ✅ | `Laravel_Web_App` |
+| Frontend Majikan (pilih anak, trend chart, history + pagination) | ✅ | `Laravel_Web_App` |
+| SQL seed (24 data Chalista, 1 minggu) & menu | ✅ | `AlphaKidz-Backend/database/` |
+
+Catatan penting:
+- **Pagination**: `getByChild`/`index` `paginate()`; `meta` dibuat eksplisit karena
+  `Resource::collection($paginator)` di-nest tidak otomatis menyertakan meta (fix 2026-08-07).
+- Routes history: `nanny-learning-history` / `majikan-learning-history` (AJAX partial swap `#historyList`).
+- **Tutorial modal** (2026-08-07): tombol `?` di header Nanny & Majikan → modal multi-langkah
+  (Sebelumnya/Berikutnya/Selesai, dots, Escape) menjelaskan skor, rubrik, rata-rata mingguan &
+  badge status. Partial bersama `learning-progress/_tutorial.blade.php`; `$steps` beda per role.
 
 ---
 
