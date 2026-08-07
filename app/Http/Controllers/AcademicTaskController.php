@@ -215,13 +215,15 @@ class AcademicTaskController extends Controller
             'attachment'    => 'nullable|image|mimes:jpeg,png,jpg|max:10048',
         ]);
 
-        $response = Http::withHeaders($this->headers())
-            ->attach(
+        $http = Http::withHeaders($this->headers());
+        if ($request->hasFile('attachment')) {
+            $http = $http->attach(
                 'attachment',
                 file_get_contents($request->file('attachment')->getRealPath()),
                 $request->file('attachment')->getClientOriginalName()
-            )
-            ->post($this->apiUrl('/academic-tasks'), $this->taskFields($request));
+            );
+        }
+        $response = $http->post($this->apiUrl('/academic-tasks'), $this->taskFields($request));
 
         $json = $response->json();
         if ($response->successful() && is_array($json) && $this->isSuccess($json)) {

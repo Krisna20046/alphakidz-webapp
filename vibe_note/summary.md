@@ -1,7 +1,42 @@
 # SUMMARY.md — Progress Academic Task, Task Progress, Parent Approval & Learning Progress
 
 Tanggal: 2026-08-07
-Status: Fungsional — Backend (API) ✅ + Frontend Nanny (input) ✅ + Frontend Majikan (tracking & approval) ✅ + Modul 7 (Diary AI Summary) ✅ + Modul 5 (Learning Progress) ✅
+Status: Fungsional — Backend (API) ✅ + Frontend Nanny (input) ✅ + Frontend Majikan (tracking & approval) ✅ + Modul 7 (Diary AI Summary) ✅ + Modul 5 (Learning Progress) ✅ + Modul 9 (Task Reminder) ✅
+
+---
+
+## 0d. Modul 9 — Task Reminder (2026-08-07)
+
+Fitur **reminder tugas & exam** (deadline ≤ 3 hari, overdue, exam) end-to-end:
+
+| Lapisan | Status | Lokasi |
+|---------|--------|--------|
+| Backend (migration, model, service, job, command, controller, routes, SQL) | ✅ | `AlphaKidz-Backend` |
+| Frontend dashboard (pop-up overlay harian + section "Pengingat Tugas & Ujian" + trigger on-demand) | ✅ | `Laravel_Web_App` |
+
+Catatan penting:
+- **Window 3 hari** (`DEADLINE_WINDOW_HOURS=72`): task berisiko = deadline ≤ 3 hari / overdue / exam.
+- **Khusus Nanny (role 3)** — Majikan TIDAK dapat reminder (keputusan user 2026-08-07): redirect ke
+  halaman update-progress Nanny salah sasaran & reminder berhari-hari mengganggu Majikan.
+  Backend `resolveRecipients` hanya Nanny; frontend `riskyTaskList` + trigger hanya role 3.
+- **Pop-up muncul tiap hari** mulai H-3 sampai task `completed`/`cancelled`; sekali/hari/task via
+  `localStorage` (`taskRiskyShown:{id}:{YYYY-M-D}`). Card punya tombol dismiss (per sesi) + tombol tutorial (?).
+- **Tutorial modal** (pola `learning-progress/_tutorial.blade.php`) menjelaskan cara pakai reminder.
+- **Pemicu ganda**: scheduler `task:remind` (bila cron ada) ATAU on-demand `POST /api/reminders/check-now`
+  (fallback hosting tanpa cron, di-ikat dari dashboard).
+- **Anti-spam**: tabel `task_reminders` — 1 notif per task per tipe per hari (unique task_id+type+notif_date).
+- **Penerima**: Nanny via `task.id_assignment → nanny_assignment.id_nanny` (status active); hanya jika `fcm_token`.
+- **FCM payload**: meniru pola reject task (`type=academic_task_reminder`, `url=/academic-task/{id}`)
+  → klien web (`firebase-messaging-sw.js`) tampil & meroute benar.
+- **Self-test**: `tests/TaskReminderSelfTest.php` (classify) → 8/8 PASS.
+- **Fix stdClass bug (Nanny)**: `childrenByRole` normalisasi `(array)$anak` — endpoint
+  `getAnakForNanny` mengembalikan `anak` sebagai stdClass; `$anak['id']` melempar Error → `RISKY_TASKS` kosong.
+- **Fix blade script bug**: modal tutorial semula di dalam `<script>` → dipindah ke `<body>`;
+  sebelumnya seluruh blok script gagal parse → `RISKY_TASKS is not defined`.
+- **Catatan hosting**: untuk pakai scheduler perlu cron `* * * * * php artisan schedule:run`;
+  tanpa cron, andalkan on-demand check saat dashboard dimuat.
+- **Keterbatasan**: FCM `fcm_options.link` web hardcoded ke `/chat/...`; notif yang diklik mungkin
+  tetap ke chat. Perlu edit kecil FCMService bila ingin langsung ke detail tugas.
 
 ---
 
@@ -248,6 +283,11 @@ task completed & belum approve → pending (tombol muncul lagi). Diperbaiki.
 
 ### e. (2026-08-06) Approve/reject menambah baris baru setiap aksi
 Solusi: upsert (`saveDecision`) — satu baris keputusan per target task/summary. Diperbaiki.
+
+### f. (2026-08-07) Input academic task tanpa gambar → error `getRealPath() on null`
+Penyebab: `AcademicTaskController@store` (frontend) selalu memanggil
+`file_get_contents($request->file('attachment')->getRealPath())` tanpa guard. Fix: tambah
+`if ($request->hasFile('attachment'))` sebelum `attach`, pola sama seperti `update()` / `storeProgress()`. Diperbaiki.
 
 ---
 

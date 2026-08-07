@@ -82,6 +82,9 @@ Route::middleware('auth.api')->group(function () {
     // Proxy: unread count (dipanggil JS, agar token tidak exposed ke client)
     Route::get('/api/unread-count', [HomeController::class, 'unreadCount'])->name('api.unread');
 
+    // Proxy Modul 9: trigger reminder tugas/exam (fallback hosting tanpa cron)
+    Route::get('/api/trigger-task-reminders', [HomeController::class, 'triggerTaskReminders'])->name('api.trigger-task-reminders');
+
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 

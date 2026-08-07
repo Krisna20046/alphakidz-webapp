@@ -166,6 +166,54 @@
         {{-- UPCOMING REMINDER --}}
         <div id="homeReminderSection" class="hidden"></div>
 
+        {{-- MODUL 9 — KARTU REMINDER TUGAS & EXAM (deadline/overdue/exam) --}}
+        @php $hasRisky = !empty($riskyTasks); @endphp
+        <div id="taskReminderSection" class="{{ $hasRisky ? '' : 'hidden' }}">
+            <div class="rounded-[15px] bg-[#FFF5F5] p-4 shadow-[0_2px_12px_rgba(236,72,153,0.10)]">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-full bg-[#FDE8F0] flex items-center justify-center">
+                            <ion-icon name="notifications" style="color:#EC4899;font-size:15px;"></ion-icon>
+                        </span>
+                        <p class="text-[#EC4899] text-[13px] font-extrabold">Pengingat Tugas & Ujian</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        @if($hasRisky)
+                            <span class="text-[10px] font-extrabold text-[#EC4899] bg-[#FDE8F0] rounded-full px-2.5 py-1">{{ count($riskyTasks) }}</span>
+                        @endif
+                        <button type="button" onclick="openTaskRiskyTutorial()"
+                            class="w-7 h-7 rounded-full bg-[#FDE8F0] flex items-center justify-center shrink-0"
+                            title="Cara pakai reminder" aria-label="Cara pakai reminder">
+                            <ion-icon name="help-circle-outline" style="color:#EC4899;font-size:15px;"></ion-icon>
+                        </button>
+                        <button type="button" onclick="dismissTaskRiskySection()"
+                            class="w-7 h-7 rounded-full bg-[#FDE8F0] flex items-center justify-center shrink-0"
+                            title="Tutup kartu" aria-label="Tutup kartu">
+                            <ion-icon name="close" style="color:#EC4899;font-size:14px;"></ion-icon>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    @forelse($riskyTasks as $t)
+                        @php
+                            $st = $t['status'] === 'overdue' ? 'Terlambat' : ($t['type'] === 'exam' ? 'Ujian' : 'Deadline dekat');
+                            $badge = $t['status'] === 'overdue' ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-600';
+                        @endphp
+                        <a href="{{ route('academic-task.show', $t['id']) }}"
+                           class="flex items-center gap-2 bg-white rounded-[10px] px-3 py-2 no-underline">
+                            <span class="w-7 h-7 rounded-full bg-[#FDE8F0] flex items-center justify-center flex-shrink-0">
+                                <ion-icon name="book-outline" style="color:#EC4899;font-size:13px;"></ion-icon>
+                            </span>
+                            <span class="text-[12px] font-bold text-gray-800 truncate flex-1">{{ $t['title'] }}</span>
+                            <span class="text-[10px] font-extrabold {{ $badge }} rounded-full px-2 py-0.5 flex-shrink-0">{{ $st }}</span>
+                        </a>
+                    @empty
+                        <p class="text-[11px] text-gray-400 font-medium text-center py-1">Tidak ada tugas mendesak 🎉</p>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+
         {{-- LOW STOCK ALERT --}}
         <div id="homeLowStockSection" class="hidden"></div>
 
@@ -425,6 +473,117 @@
     <div class="h-5"></div>
 </div>
 
+<!-- MODUL 9 — POP-UP REMINDER TUGAS & UJIAN (meniru pola partials/reminder, ID terpisah) -->
+<style>
+    #taskRiskyOverlay {
+        position: fixed; inset: 0; z-index: 99998;
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.4s ease; background: transparent;
+    }
+    #taskRiskyOverlay.visible { opacity: 1; pointer-events: all; }
+    #taskRiskyCard {
+        position: absolute; inset: 0;
+        background: linear-gradient(160deg, #f0ecff 0%, #e8e0ff 40%, #ddd5ff 100%);
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        padding: 40px 32px 48px;
+        transform: scale(0.92) translateY(24px); opacity: 0;
+        transition: transform .55s cubic-bezier(0.34,1.26,0.64,1), opacity .4s ease;
+    }
+    #taskRiskyOverlay.visible #taskRiskyCard { transform: scale(1) translateY(0); opacity: 1; }
+    #taskRiskyEyebrow { font-family:'Nunito',sans-serif;font-size:11px;font-weight:800;letter-spacing:.15em;color:#8B46D3;text-transform:uppercase;margin-bottom:10px;text-align:center; }
+</style>
+
+<div id="taskRiskyOverlay">
+    <div id="taskRiskyCard">
+        <div class="rem-dashed"></div>
+        <div class="rem-dot rem-dot-1"></div>
+        <div class="rem-dot rem-dot-2"></div>
+        <div class="rem-dot rem-dot-3"></div>
+        <div class="rem-corner-tl"></div>
+        <div class="rem-corner-br"></div>
+
+        <div class="rem-bell-wrap">
+            <div class="rem-bell-pulse-2"></div>
+            <div class="rem-bell-pulse"></div>
+            <svg class="rem-bell-svg" width="110" height="120" viewBox="0 0 130 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M65 18C65 18 40 28 40 70V98L28 108H102L90 98V70C90 28 65 18 65 18Z" fill="#F9C03B"/>
+                <path d="M55 30C52 38 50 50 50 64" stroke="#FDE68A" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
+                <rect x="57" y="14" width="16" height="10" rx="5" fill="#E8A82A"/>
+                <rect x="26" y="104" width="78" height="10" rx="5" fill="#E8A82A"/>
+                <circle cx="65" cy="125" r="10" fill="#FF4D6D"/>
+                <path d="M36 72 C30 62 30 50 36 40" stroke="#F9C03B" stroke-width="4" stroke-linecap="round" opacity="0.45" fill="none"/>
+                <path d="M94 72 C100 62 100 50 94 40" stroke="#F9C03B" stroke-width="4" stroke-linecap="round" opacity="0.45" fill="none"/>
+            </svg>
+        </div>
+
+        <div class="rem-type-badge today" id="taskRiskyBadge">Deadline Dekat</div>
+        <p class="rem-eyebrow" id="taskRiskyEyebrow">PENGINGAT TUGAS & UJIAN</p>
+        <h1 class="rem-title" id="taskRiskyTitle">...</h1>
+        <p class="rem-desc" id="taskRiskyDesc">Preparing your reminder...</p>
+
+        <a href="#" class="rem-btn-main" id="taskRiskyLink">Lihat Tugas →</a>
+
+        <div class="rem-auto-badge">
+            <div class="rem-auto-dot"></div>
+            <span id="taskRiskyCountdown">AUTO REDIRECT IN 5s</span>
+        </div>
+    </div>
+</div>
+
+<!-- MODUL 9 — MODAL TUTORIAL CARA PAKAI REMINDER (pola _tutorial.blade.php) -->
+<div id="trTutorialModal" class="hidden fixed inset-0 z-[99997] flex items-end sm:items-center justify-center">
+    <div id="trTutorialBackdrop" class="absolute inset-0 bg-[#1E1B2E]/60 backdrop-blur-sm"></div>
+    <div class="relative bg-white rounded-t-[28px] sm:rounded-[28px] w-full max-w-md max-h-[88vh] flex flex-col overflow-hidden">
+        <div class="relative bg-[#EC4899] px-5 pt-5 pb-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <span class="text-white text-[15px] font-extrabold">Panduan Pengingat Tugas & Ujian</span>
+                    <p id="trTutorialCount" class="text-white/60 text-[11px] font-bold mt-0.5">Langkah 1 dari 4</p>
+                </div>
+                <button type="button" onclick="trTutorialClose()"
+                    class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+                    <ion-icon name="close" class="text-white" style="font-size:16px;"></ion-icon>
+                </button>
+            </div>
+        </div>
+        <div class="flex-1 overflow-y-auto px-5 py-5 hide-scrollbar">
+            @php $trSteps = [
+                ['icon'=>'notifications','color'=>'#EC4899','title'=>'Apa itu?',
+                 'body'=>'Kartu dan pop-up <b>Pengingat Tugas &amp; Ujian</b> muncul saat ada tugas/ujian yang mendekati deadline (≤ 3 hari), sudah lewat waktu (terlambat), atau adalah ujian (exam).'],
+                ['icon'=>'calendar','color'=>'#8B46D3','title'=>'Kapan muncul?',
+                 'body'=>'Reminder muncul di halaman beranda <b>setiap hari</b> mulai <b>H-3</b> sebelum deadline, sampai tugas di-mark status <b>Completed</b> atau <b>Cancelled</b>.'],
+                ['icon'=>'checkmark-done','color'=>'#22C55E','title'=>'Agar tidak muncul lagi',
+                 'body'=>'Tandai tugas selesai (status <b>Completed</b>) dari halaman detail tugas. Setelah itu tugas tidak akan lagi muncul di pengingat.'],
+                ['icon'=>'chatbubble-ellipses','color'=>'#F59E0B','title'=>'Ketik Kapan Saja',
+                 'body'=>'Butuh pengingat di luar tugas &amp; ujian? Gunakan fitur <b>Reminder</b> umum pada menu profil. Kartu di beranda hanya menampilkan tugas &amp; ujian.'],
+            ]; @endphp
+            @foreach($trSteps as $i => $s)
+            <div class="tr-step" data-step="{{ $i }}" @if($i !== 0) style="display:none" @endif>
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-10 h-10 rounded-xl flex items-center justify-center text-white shrink-0" style="background:{{ $s['color'] }}">
+                        <ion-icon name="{{ $s['icon'] }}" style="font-size:19px;"></ion-icon>
+                    </div>
+                    <span class="text-[15px] font-extrabold text-[#1E1B2E]">{{ $s['title'] }}</span>
+                </div>
+                <div class="text-[12px] leading-relaxed text-[#4B4763] font-semibold space-y-2">{!! $s['body'] !!}</div>
+            </div>
+            @endforeach
+        </div>
+        <div class="flex items-center justify-center gap-1.5 pt-1">
+            @foreach($trSteps as $i => $s)
+            <span class="tr-dot w-1.5 h-1.5 rounded-full transition-all" data-step="{{ $i }}" style="background:{{ $i === 0 ? '#EC4899' : '#F3E3EC' }}"></span>
+            @endforeach
+        </div>
+        <div class="flex items-center gap-3 p-4 pb-8">
+            <button type="button" onclick="trTutorialGo(-1)" id="trTutorialPrev"
+                class="flex-1 py-3 rounded-2xl border border-[#F1C6DC] text-[#EC4899] text-[13px] font-extrabold opacity-30 pointer-events-none">Sebelumnya</button>
+            <button type="button" onclick="trTutorialGo(1)" id="trTutorialNext"
+                class="flex-1 py-3 rounded-2xl bg-[#EC4899] text-white text-[13px] font-extrabold">Berikutnya</button>
+        </div>
+    </div>
+</div>
+
 <!-- BOTTOM NAV -->
 @include('partials.bottom-nav', ['active' => 'home'])
 @include('partials.reminder')
@@ -446,6 +605,9 @@ const PUSHER_CLUSTER = "{{ config('services.pusher.options.cluster', 'ap1') }}";
 const PUSHER_AUTH_EP = "{{ url('/broadcasting/auth') }}";
 const UNREAD_API     = "{{ route('api.unread') }}";
 const CSRF           = "{{ csrf_token() }}";
+
+// Modul 9 — task berisiko (deadline/overdue/exam) utk banner in-app
+const RISKY_TASKS    = @json($riskyTasks ?? []);
 
 // Greeting
 (function() {
@@ -559,6 +721,127 @@ const CSRF           = "{{ csrf_token() }}";
         showNonEmptySections();
     } catch (e) { /* silent */ }
 })();
+
+// ── Modul 9: Trigger reminder tugas/exam (fallback hosting tanpa cron) ──
+// Panggil proxy → POST /api/reminders/check-now, supaya reminder terkirim
+// walau hosting tidak menjalankan scheduler. Hanya Nanny (role 3) — Majikan tidak.
+(async function triggerTaskReminders() {
+    if (!AUTH_TOKEN || USER_ROLE !== 3) return;
+    try {
+        await fetch("{{ route('api.trigger-task-reminders') }}", {
+            headers: { 'Accept': 'application/json' }
+        });
+    } catch (e) { /* silent — non-critical */ }
+})();
+
+// ── Modul 9: Pop-up overlay "Pengingat Tugas & Ujian" ───────────
+// Meniru pola pop-up reminder general (partials/reminder.blade.php):
+// overlay full-screen + lonceng beranimasi + countdown 5s + CTA.
+// Muncul SEKALI PER HARI (flag + tanggal di localStorage, reset tiap hari),
+// 1 task paling mendesak (first). Task berisiko = deadline ≤3 hari / overdue / exam.
+let riskyShown = false;
+(function showTaskRiskyPopup() {
+    const overlay = document.getElementById('taskRiskyOverlay');
+    if (!overlay || !Array.isArray(RISKY_TASKS) || RISKY_TASKS.length === 0) return;
+    const first = RISKY_TASKS[0];
+
+    // Sekali per hari per task: kunci = task(id)+tanggal lokal → tiap hari H-3..H muncul lagi.
+    const today = new Date();
+    const dayKey = 'taskRiskyShown:' + first.id + ':' + today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate();
+    if (localStorage.getItem(dayKey)) return;
+
+    const more  = RISKY_TASKS.length - 1;
+
+    // Hitung sisa hari supaya badge akurat (exam 2 hari lagi = "Ujian H-2", bukan "Hari Ini")
+    let daysLeft = null;
+    if (first.deadline) {
+        const dl = new Date(String(first.deadline).replace(' ', 'T'));
+        if (!isNaN(dl)) daysLeft = Math.ceil((dl - Date.now()) / 86400000);
+    }
+    let st, badgeCls;
+    if (first.status === 'overdue')                    { st = 'Terlambat';        badgeCls = 'missed';  }
+    else if (first.type === 'exam')                    { st = daysLeft <= 0 ? 'Ujian Hari Ini' : 'Ujian ' + (daysLeft > 9 ? daysLeft : 'H-' + daysLeft); badgeCls = 'at_time'; }
+    else                                               { st = 'Deadline ' + (daysLeft !== null && daysLeft > 9 ? daysLeft + ' hari' : (daysLeft !== null && daysLeft <= 0 ? 'hari ini' : 'H-' + daysLeft)); badgeCls = 'today'; }
+    const url = "{{ route('academic-task.show', '__ID__') }}".replace('__ID__', first.id);
+
+    document.getElementById('taskRiskyBadge').textContent = st;
+    document.getElementById('taskRiskyBadge').className = 'rem-type-badge ' + badgeCls;
+    document.getElementById('taskRiskyTitle').textContent = first.title;
+    document.getElementById('taskRiskyDesc').innerHTML =
+        (more > 0
+            ? 'Anda memiliki <strong>' + escHtmlHome(first.title) + '</strong> dan ' + more + ' tugas lain yang perlu perhatian — cek sekarang.'
+            : 'Jangan lewatkan <strong>' + escHtmlHome(first.title) + '</strong> — cek detail tugas sekarang.');
+    document.getElementById('taskRiskyLink').href = url;
+
+    overlay.classList.add('visible');
+    riskyShown = true;
+
+    let sec = 5;
+    document.getElementById('taskRiskyCountdown').textContent = 'AUTO REDIRECT IN ' + sec + 's';
+    const h = setInterval(() => {
+        sec--;
+        if (sec <= 0) { clearInterval(h); closeTaskRisky(true); }
+        else document.getElementById('taskRiskyCountdown').textContent = 'AUTO REDIRECT IN ' + sec + 's';
+    }, 1000);
+
+    document.getElementById('taskRiskyLink').onclick = () => { clearInterval(h); };
+
+    function closeTaskRisky(redirect) {
+        overlay.classList.remove('visible');
+        riskyShown = false;
+        localStorage.setItem(dayKey, '1');   // tidak muncul lagi hari ini
+        if (redirect) setTimeout(() => { window.location.href = url; }, 350);
+    }
+})();
+
+// ── Modul 9: Tutorial cara pakai reminder (pola _tutorial.blade.php) + dismiss kartu ──
+(function () {
+    if (window.__trTutorialBound) return;
+    window.__trTutorialBound = true;
+
+    const modal = document.getElementById('trTutorialModal');
+    if (!modal) return;
+    const total = {{ count($trSteps) }};
+    let cur = 0;
+    const stepEls = () => Array.from(modal.querySelectorAll('.tr-step'));
+    const dotEls  = () => Array.from(modal.querySelectorAll('.tr-dot'));
+    const countEl = document.getElementById('trTutorialCount');
+    const prevBtn = document.getElementById('trTutorialPrev');
+    const nextBtn = document.getElementById('trTutorialNext');
+
+    function render() {
+        stepEls().forEach((el, i) => { el.style.display = i === cur ? '' : 'none'; });
+        dotEls().forEach((el, i) => { el.style.background = i === cur ? '#EC4899' : '#F3E3EC'; });
+        if (countEl) countEl.textContent = 'Langkah ' + (cur + 1) + ' dari ' + total;
+        prevBtn.classList.toggle('opacity-30', cur === 0);
+        prevBtn.classList.toggle('pointer-events-none', cur === 0);
+        nextBtn.textContent = cur === total - 1 ? 'Selesai' : 'Berikutnya';
+    }
+
+    window.openTaskRiskyTutorial = function () { cur = 0; render(); modal.classList.remove('hidden'); document.body.style.overflow = 'hidden'; };
+    window.trTutorialClose = function () { modal.classList.add('hidden'); document.body.style.overflow = ''; };
+    window.trTutorialGo = function (d) {
+        const n = cur + d;
+        if (n < 0) return;
+        if (n >= total) { trTutorialClose(); return; }
+        cur = n; render();
+    };
+    modal.querySelector('#trTutorialBackdrop').addEventListener('click', trTutorialClose);
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) trTutorialClose();
+    });
+})();
+
+// Tutup kartu Pengingat (dismiss) sekali per sesi — list tetap tersedia di halaman detail.
+function dismissTaskRiskySection() {
+    const sec = document.getElementById('taskReminderSection');
+    if (sec) sec.classList.add('hidden');
+    try { sessionStorage.setItem('taskRiskyCardDismissed', '1'); } catch (e) {}
+}
+if (sessionStorage.getItem('taskRiskyCardDismissed')) {
+    const sec = document.getElementById('taskReminderSection');
+    if (sec) sec.classList.add('hidden');
+}
 
 // ── Low Stock Alert ───────────────────────────────────────────
 (async function loadLowStock() {
