@@ -20,6 +20,7 @@ use App\Http\Controllers\AcademicTaskController;
 use App\Http\Controllers\MajikanTrackingController;
 use App\Http\Controllers\MajikanParentCommentController;
 use App\Http\Controllers\LearningProgressController;
+use App\Http\Controllers\AssistantNoteController;
 
 
 // â”€â”€â”€ Guest Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -178,6 +179,11 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/learning-progress',            [LearningProgressController::class, 'majikanIndex'])->name('majikan-learning');
         Route::get('/learning-progress/{id_anak}',  [LearningProgressController::class, 'majikanShow'] )->name('majikan-learning-show');
         Route::get('/learning-progress/{id_anak}/history', [LearningProgressController::class, 'majikanHistory'])->name('majikan-learning-history');
+
+        // Module 6 — Assistant Notes (read-only)
+        Route::get('/assistant-notes',               [AssistantNoteController::class, 'majikanIndex'])->name('majikan-notes');
+        Route::get('/assistant-notes/{id_anak}',     [AssistantNoteController::class, 'majikanShow'] )->name('majikan-notes-show');
+        Route::get('/assistant-notes/{id_anak}/history', [AssistantNoteController::class, 'majikanHistory'])->name('majikan-notes-history');
     });
 
     Route::prefix('nanny')->group(function () {
@@ -198,6 +204,14 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/learning-progress/{id_anak}/add', [LearningProgressController::class, 'nannyCreate'])->name('nanny-learning-create');
         Route::post('/learning-progress',           [LearningProgressController::class, 'store']    )->name('nanny-learning-store');
         Route::delete('/learning-progress/{id}',    [LearningProgressController::class, 'destroy']  )->name('nanny-learning-destroy');
+
+        // Module 6 — Assistant Notes (input catatan harian + lihat riwayat)
+        Route::get('/assistant-notes',               [AssistantNoteController::class, 'nannyIndex'])->name('nanny-notes');
+        Route::get('/assistant-notes/{id_anak}',     [AssistantNoteController::class, 'nannyShow'] )->name('nanny-notes-show');
+        Route::get('/assistant-notes/{id_anak}/history', [AssistantNoteController::class, 'nannyHistory'])->name('nanny-notes-history');
+        Route::get('/assistant-notes/{id_anak}/add', [AssistantNoteController::class, 'nannyCreate'])->name('nanny-notes-create');
+        Route::post('/assistant-notes',              [AssistantNoteController::class, 'store']    )->name('nanny-notes-store');
+        Route::delete('/assistant-notes/{id}',       [AssistantNoteController::class, 'destroy']  )->name('nanny-notes-destroy');
     });
 
     Route::prefix('admin/kelola-akun')->group(function () {
