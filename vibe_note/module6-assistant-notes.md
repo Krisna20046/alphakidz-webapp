@@ -1,7 +1,7 @@
 # MODULE 6 — Assistant Notes (Frontend UI — Nanny & Majikan)
 
 Tanggal: 2026-08-08
-Status: Fungsional — Backend (API) ✅ + Frontend Nanny (input & riwayat) ✅ + Frontend Majikan (read-only) ✅
+Status: Fungsional — Backend (API) ✅ + Frontend Nanny (input & riwayat) ✅ + Frontend Majikan (read-only) ✅ + Delete modal & fix ikon mood ✅
 
 ---
 
@@ -74,6 +74,22 @@ Detail penting:
 
 ---
 
+## 4b. Polesan & Fix (2026-08-08)
+
+- **Fix ikon mood "marah" tidak tampil**: penyebabnya `angry-outline` TIDAK ada di set Ionicons
+  (set hanya punya wajah `happy`/`sad`), sehingga `<ion-icon name="angry-outline">` gagal render.
+  Solusi: ganti ke **`flame-outline`** (valid) di ketiga file array `$moodMeta`
+  (`nanny/assistant-notes/create.blade.php`, `nanny/assistant-notes/_history.blade.php`,
+  `majikan/assistant-notes/_history.blade.php`) agar seragam.
+- **Modal konfirmasi hapus in-app**: blok `<form>..onsubmit="confirm()"` di `_history` diganti tombol
+  murni yang memanggil `anDeleteConfirm(url)`; modal `#anDeleteModal` + fungsi JS di
+  `nanny/assistant-notes/show.blade.php` (sengaja di file show, bukan partial, karena partial
+  `_history` di-swap saat pagination → modal di partial akan hilang). Tombol: Batal / Ya, Hapus,
+  backdrop + Escape utk tutup.
+- **Seeder data** ditambahkan: `AlphaKidz-Backend/database/seeder_sql/alphakidz-08agustus2026_assistant_notes_chalista.sql`
+  (nanny id 57, anak 25, 14 catatan, task_id NULL, mood bervariasi).
+
+---
 ## 5. Belum dikerjakan / Next
 
 - Menu SQL belum di-run user (dashboard belum tampil menu Assistant Notes).

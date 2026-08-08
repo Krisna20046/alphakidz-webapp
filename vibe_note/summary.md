@@ -1,10 +1,32 @@
 # SUMMARY.md — Progress Academic Task, Task Progress, Parent Approval & Learning Progress
 
-Tanggal: 2026-08-07
-Status: Fungsional — Backend (API) ✅ + Frontend Nanny (input) ✅ + Frontend Majikan (tracking & approval) ✅ + Modul 7 (Diary AI Summary) ✅ + Modul 5 (Learning Progress) ✅ + Modul 9 (Task Reminder) ✅
+Tanggal: 2026-08-08
+Status: Fungsional — Backend (API) ✅ + Frontend Nanny (input) ✅ + Frontend Majikan (tracking & approval) ✅ + Modul 7 (Diary AI Summary) ✅ + Modul 5 (Learning Progress) ✅ + Modul 9 (Task Reminder) ✅ + Modul 6 (Assistant Notes) ✅
 
 ---
 
+## 0e. Modul 6 — Assistant Notes (2026-08-08)
+
+Fitur **catatan harian asisten** (mood + highlight + concern + rekomendasi) end-to-end:
+
+| Lapisan | Status | Lokasi |
+|---------|--------|--------|
+| Backend API (Model, Controller, Form Request, Resource, routes, mood enum) | ✅ | `AlphaKidz-Backend` |
+| Seeder (nanny id 57, anak 25, 14 catatan) | ✅ | `AlphaKidz-Backend/database/seeder_sql/` |
+| Frontend Nanny (pilih anak, input, riwayat + pagination, hapus) | ✅ | `Laravel_Web_App` |
+| Frontend Majikan (pilih anak, riwayat read-only) | ✅ | `Laravel_Web_App` |
+
+Detail lengkap di `vibe_note/module6-assistant-notes.md`.
+
+Catatan penting (2026-08-08):
+- **Mood enum** `senang/sedih/marah/biasa` (sama diary); ditampilkan sebagai badge berwarna di kartu riwayat.
+- **Hapus hanya Nanny** (route destroy); Majikan read-only (tanpa tombol hapus/FAB).
+- **Modal konfirmasi hapus in-app** menggantikan `confirm()` native — dipicu tombol trash, form DELETE via modal (`#anDeleteModal` di `nanny/assistant-notes/show.blade.php`), backdrop/Escape utk tutup.
+- **Fix ikon mood** (2026-08-08): mood "marah" semula `angry-outline` yang TIDAK ada di Ionicons → diganti `flame-outline` (valid) agar emote tampil; diseragamkan di create + riwayat nanny + riwayat majikan.
+- **Tutorial modal** 5 langkah per role (prefix `anTutorial*` biar tak bentrok bila bareng tutorial lain).
+- **Menu SQL** `alphakidz-08agustus2026_assistant_notes_menu.sql` (menu 22/23 + role_menu) **belum di-run** user.
+
+---
 ## 0d. Modul 9 — Task Reminder (2026-08-07)
 
 Fitur **reminder tugas & exam** (deadline ≤ 3 hari, overdue, exam) end-to-end:
