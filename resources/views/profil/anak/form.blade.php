@@ -216,7 +216,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block text-[#2C293A] text-[13px] font-extrabold mb-2">Date Of Birth <span class="text-red-500">*</span></label>
-                        <input type="date" name="tanggal_lahir" id="tanggalLahir" value="{{ $anak['tanggal_lahir'] ? \Illuminate\Support\Str::substr($anak['tanggal_lahir'], 0, 10) : '' }}" max="{{ date('Y-m-d') }}"
+                        <input type="date" name="tanggal_lahir" id="tanggalLahir" value="{{ ($anak['tanggal_lahir'] ?? null) ? \Illuminate\Support\Str::substr($anak['tanggal_lahir'], 0, 10) : '' }}" max="{{ date('Y-m-d') }}"
                                class="input-field w-full px-3 py-3"/>
                     </div>
                     <div>
