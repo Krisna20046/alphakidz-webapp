@@ -74,7 +74,9 @@ class FcmController extends Controller
             $response = Http::timeout(10)
                 ->withToken($token)
                 ->acceptJson()
-                ->post("{$this->apiBaseUrl}/fcm/remove-token");
+                ->post("{$this->apiBaseUrl}/fcm/remove-token", [
+                    'fcm_token' => $request->fcm_token,
+                ]);
 
             if ($response->successful()) {
                 return response()->json(['success' => true, 'message' => 'FCM token removed']);
