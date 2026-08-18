@@ -254,6 +254,15 @@
     </div>
 </div>
 
+@if(session('error'))
+<div style="margin:16px 20px -8px;position:relative;z-index:30;">
+    <div style="display:flex;align-items:center;gap:8px;background:#FEE2E2;color:#B91C1C;border-radius:12px;padding:12px 16px;font-size:13px;font-weight:700;">
+        <ion-icon name="alert-circle-outline" style="font-size:18px;flex-shrink:0;"></ion-icon>
+        {{ session('error') }}
+    </div>
+</div>
+@endif
+
 <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar flex flex-col gap-4">
 
     {{-- Child avatars --}}
@@ -464,6 +473,14 @@
                             style="cursor:pointer;">
                         @endif
                         <div class="akt-footer">
+                            @if(!empty($item['can_edit']))
+                            <a href="{{ route('nanny-diary-edit', ['id_anak' => $idAnak, 'id' => $item['id'], 'id_assignment' => $idAssignment ?? '']) }}"
+                               onclick="event.stopPropagation();"
+                               style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:800;color:#8B46D3;text-decoration:none;background:#EDE9FE;border-radius:20px;padding:6px 12px;margin-right:auto;">
+                                <ion-icon name="create-outline" style="font-size:14px;"></ion-icon>
+                                Edit
+                            </a>
+                            @endif
                             <button class="loc-btn"
                                 onclick="event.stopPropagation(); openLocationModal(
                                     '{{ addslashes($item['lokasi'] ?? '') }}',

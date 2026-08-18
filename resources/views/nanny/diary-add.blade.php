@@ -249,7 +249,7 @@
            class="w-10 h-10 rounded-full bg-white/20 border-[1.5px] border-white/30 flex items-center justify-center shrink-0">
             <ion-icon name="arrow-back" style="font-size:18px;color:#fff;"></ion-icon>
         </a>
-        <span class="text-white font-extrabold tracking-wide" style="font-size:18px;">Create Diary</span>
+        <span class="text-white font-extrabold tracking-wide" style="font-size:18px;">{{ isset($diary) ? 'Edit Diary' : 'Create Diary' }}</span>
     </div>
 </div>
 
@@ -276,7 +276,7 @@
             @endphp
             @foreach($katOptions as $k)
             <button type="button"
-                    class="kat-btn"
+                    class="kat-btn{{ (isset($diary) && $diary['kategori'] === $k['value']) ? ' sel' : '' }}"
                     data-kat="{{ $k['value'] }}"
                     data-bg="{{ $k['bg'] }}"
                     data-color="{{ $k['color'] }}"
@@ -330,7 +330,7 @@
             @endphp
             @foreach($moods as $m)
             <button type="button"
-                    class="mood-btn {{ $m['value']==='biasa'?'sel':'' }}"
+                    class="mood-btn {{ (isset($diary) && $diary['mood'] === $m['value']) ? 'sel' : ($m['value']==='biasa' ? 'sel' : '') }}"
                     data-mood="{{ $m['value'] }}"
                     onclick="selectMood(this)">
                 <span style="font-size:30px;line-height:1;">{{ $m['emoji'] }}</span>
@@ -345,7 +345,7 @@
         <p class="sec-label">Activity Description</p>
         <div class="desk-wrap">
             <textarea id="deskripsi" class="desk-input" rows="4"
-                      placeholder="Write down the details of your child's activities today...."></textarea>
+                      placeholder="Write down the details of your child's activities today....">{{ isset($diary) ? e($diary['deskripsi']) : '' }}</textarea>
         </div>
     </div>
 
@@ -359,7 +359,8 @@
             <div class="pill-group">
                 @php $porsiOpts = ['Habis','Setengah','Sedikit','Tidak Makan']; @endphp
                 @foreach($porsiOpts as $p)
-                <button type="button" class="pill-btn" data-porsi="{{ strtolower(str_replace(' ','_',$p)) }}" onclick="selectPorsi(this)">{{ $p }}</button>
+                @php $pVal = strtolower(str_replace(' ','_',$p)); @endphp
+                <button type="button" class="pill-btn{{ (isset($diary) && $diary['porsi'] === $pVal) ? ' sel' : '' }}" data-porsi="{{ $pVal }}" onclick="selectPorsi(this)">{{ $p }}</button>
                 @endforeach
             </div>
         </div>
@@ -370,7 +371,8 @@
             <div class="pill-group">
                 @php $nafsuOpts = ['Lapar','Biasa','Tidak Nafsu']; @endphp
                 @foreach($nafsuOpts as $n)
-                <button type="button" class="pill-btn" data-nafsu="{{ strtolower(str_replace(' ','_',$n)) }}" onclick="selectNafsu(this)">{{ $n }}</button>
+                @php $nVal = strtolower(str_replace(' ','_',$n)); @endphp
+                <button type="button" class="pill-btn{{ (isset($diary) && $diary['nafsu_makan'] === $nVal) ? ' sel' : '' }}" data-nafsu="{{ $nVal }}" onclick="selectNafsu(this)">{{ $n }}</button>
                 @endforeach
             </div>
         </div>
@@ -388,6 +390,14 @@
                         <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
                     </button>
                 </div>
+                @if(isset($diary) && !empty($diary['foto_sebelum_url']))
+                <div id="fotoSebelumExisting" class="photo-slot" style="margin-bottom:5px;position:relative;">
+                    <img src="{{ $diary['foto_sebelum_url'] }}" alt="Sebelum">
+                    <button type="button" class="photo-remove" onclick="removeFotoSebelumExisting()" title="Hapus foto">
+                        <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
+                    </button>
+                </div>
+                @endif
                 <div id="fotoSebelumActions" style="display:contents;">
                     <label class="upload-slot" for="inputFotoSebelum">
                         <div style="width:40px;height:40px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
@@ -413,6 +423,14 @@
                         <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
                     </button>
                 </div>
+                @if(isset($diary) && !empty($diary['foto_sesudah_url']))
+                <div id="fotoSesudahExisting" class="photo-slot" style="margin-bottom:5px;position:relative;">
+                    <img src="{{ $diary['foto_sesudah_url'] }}" alt="Sesudah">
+                    <button type="button" class="photo-remove" onclick="removeFotoSesudahExisting()" title="Hapus foto">
+                        <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
+                    </button>
+                </div>
+                @endif
                 <div id="fotoSesudahActions" style="display:contents;">
                     <label class="upload-slot" for="inputFotoSesudah">
                         <div style="width:40px;height:40px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
@@ -463,16 +481,16 @@
         <div style="margin-bottom:18px;">
             <p class="time-field-label">Warna</p>
             <div class="swatch-group" id="warnaGroupBab" style="display:none;">
-                <button type="button" class="swatch-btn" data-warna="coklat" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#6D4C41;"></span>Coklat</button>
-                <button type="button" class="swatch-btn" data-warna="hijau" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#2E7D32;"></span>Hijau</button>
-                <button type="button" class="swatch-btn" data-warna="kuning" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#F9A825;"></span>Kuning</button>
-                <button type="button" class="swatch-btn" data-warna="hitam" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#212121;"></span>Hitam</button>
-                <button type="button" class="swatch-btn" data-warna="merah" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#C62828;"></span>Merah</button>
+                <button type="button" class="swatch-btn{{ (isset($diary) && $diary['warna'] === 'coklat') ? ' sel' : '' }}" data-warna="coklat" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#6D4C41;"></span>Coklat</button>
+                <button type="button" class="swatch-btn{{ (isset($diary) && $diary['warna'] === 'hijau') ? ' sel' : '' }}" data-warna="hijau" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#2E7D32;"></span>Hijau</button>
+                <button type="button" class="swatch-btn{{ (isset($diary) && $diary['warna'] === 'kuning') ? ' sel' : '' }}" data-warna="kuning" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#F9A825;"></span>Kuning</button>
+                <button type="button" class="swatch-btn{{ (isset($diary) && $diary['warna'] === 'hitam') ? ' sel' : '' }}" data-warna="hitam" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#212121;"></span>Hitam</button>
+                <button type="button" class="swatch-btn{{ (isset($diary) && $diary['warna'] === 'merah') ? ' sel' : '' }}" data-warna="merah" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#C62828;"></span>Merah</button>
             </div>
             <div class="swatch-group" id="warnaGroupBak" style="display:none;">
-                <button type="button" class="swatch-btn" data-warna="kuning" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#F9A825;"></span>Kuning</button>
-                <button type="button" class="swatch-btn" data-warna="jernih" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#CFD8DC;"></span>Jernih</button>
-                <button type="button" class="swatch-btn" data-warna="keruh" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#8D6E63;"></span>Keruh</button>
+                <button type="button" class="swatch-btn{{ (isset($diary) && $diary['warna'] === 'kuning') ? ' sel' : '' }}" data-warna="kuning" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#F9A825;"></span>Kuning</button>
+                <button type="button" class="swatch-btn{{ (isset($diary) && $diary['warna'] === 'jernih') ? ' sel' : '' }}" data-warna="jernih" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#CFD8DC;"></span>Jernih</button>
+                <button type="button" class="swatch-btn{{ (isset($diary) && $diary['warna'] === 'keruh') ? ' sel' : '' }}" data-warna="keruh" onclick="selectWarna(this)"><span class="swatch-dot" style="background:#8D6E63;"></span>Keruh</button>
             </div>
         </div>
 
@@ -482,7 +500,8 @@
             <div class="pill-group">
                 @php $teksturOpts = ['Padat','Lembek','Cair','Keras','Berbusa']; @endphp
                 @foreach($teksturOpts as $t)
-                <button type="button" class="pill-btn" data-tekstur="{{ strtolower($t) }}" onclick="selectTekstur(this)">{{ $t }}</button>
+                @php $tVal = strtolower($t); @endphp
+                <button type="button" class="pill-btn{{ (isset($diary) && $diary['tekstur'] === $tVal) ? ' sel' : '' }}" data-tekstur="{{ $tVal }}" onclick="selectTekstur(this)">{{ $t }}</button>
                 @endforeach
             </div>
         </div>
@@ -493,7 +512,8 @@
             <div class="pill-group">
                 @php $volOpts = ['Sedikit','Sedang','Banyak']; @endphp
                 @foreach($volOpts as $v)
-                <button type="button" class="pill-btn" data-volume="{{ strtolower($v) }}" onclick="selectVolume(this)">{{ $v }}</button>
+                @php $vVal = strtolower($v); @endphp
+                <button type="button" class="pill-btn{{ (isset($diary) && $diary['volume'] === $vVal) ? ' sel' : '' }}" data-volume="{{ $vVal }}" onclick="selectVolume(this)">{{ $v }}</button>
                 @endforeach
             </div>
         </div>
@@ -512,7 +532,7 @@
         <div>
             <p class="time-field-label">Deskripsi</p>
             <div class="desk-wrap">
-                <textarea id="catatanKondisi" class="desk-input" rows="3" placeholder="Deskripsi tambahan tentang kondisi..."></textarea>
+                <textarea id="catatanKondisi" class="desk-input" rows="3" placeholder="Deskripsi tambahan tentang kondisi...">{{ isset($diary) ? e($diary['deskripsi']) : '' }}</textarea>
             </div>
         </div>
     </div>
@@ -527,6 +547,14 @@
                     <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
                 </button>
             </div>
+            @if(isset($diary) && !empty($diary['foto_url']))
+            <div id="fotoExisting" class="photo-slot" style="position:relative;">
+                <img src="{{ $diary['foto_url'] }}" alt="Foto existing">
+                <button type="button" class="photo-remove" onclick="removeFotoExisting()" title="Hapus foto">
+                    <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
+                </button>
+            </div>
+            @endif
             <div id="photoActions" class="photo-actions" style="display:contents;">
                 <label id="uploadSlot" class="upload-slot" for="inputFoto">
                     <div style="width:40px;height:40px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
@@ -550,7 +578,7 @@
     </div>
     <button id="submitBtn" class="submit-btn" onclick="handleSubmit()" disabled>
         <ion-icon name="save-outline" style="font-size:22px;color:#fff;"></ion-icon>
-        Save Diary
+        {{ isset($diary) ? 'Update Diary' : 'Save Diary' }}
     </button>
 </div>
 @endsection
@@ -600,7 +628,11 @@
 <script>
 const ID_ANAK       = {{ $idAnak ?? 'null' }};
 const ID_ASSIGNMENT = {{ $idAssignment ?? 'null' }};
-const SUBMIT_URL    = "{{ route('nanny-diary-store') }}";
+const IS_EDIT       = {{ isset($diary) ? 'true' : 'false' }};
+const DIARY_ID      = {{ $diaryId ?? 'null' }};
+const SUBMIT_URL    = "{{ isset($diary) ? route('nanny-diary-update') : route('nanny-diary-store') }}";
+const SAVE_LABEL    = "{{ isset($diary) ? 'Update Diary' : 'Save Diary' }}";
+const REDIRECT_URL  = "{{ route('nanny-diary', ['id_anak' => $idAnak ?? 0]) }}?id_assignment={{ $idAssignment ?? '' }}";
 const CSRF          = "{{ csrf_token() }}";
 
 let selKat     = '';
@@ -621,6 +653,9 @@ let selPorsi  = '';
 let selNafsu  = '';
 let fotoSebelumFile = null;
 let fotoSesudahFile = null;
+let hapusFoto = false;
+let hapusFotoSebelum = false;
+let hapusFotoSesudah = false;
 
 const KAT_DURASI = {
     makan:   30,
@@ -647,6 +682,53 @@ function setDurasi(menit){
 
 // ── Default times ──
 (function(){ setDurasi(30); })();
+
+// ── Edit mode: prefill dari diary yang sudah ada ──
+@if(isset($diary))
+(function(){
+    const d = @json($diary);
+
+    // Kategori
+    if (d.kategori) {
+        const btn = document.querySelector('.kat-btn[data-kat="' + d.kategori + '"]');
+        if (btn) selectKat(btn);
+    }
+
+    // Waktu mulai & selesai
+    if (d.jam_mulai) {
+        const t = d.jam_mulai.split(' ')[1] || d.jam_mulai;
+        jamMulai = t.slice(0,5);
+        document.getElementById('displayMulai').textContent = jamMulai;
+    }
+    if (d.jam_selesai) {
+        const t = d.jam_selesai.split(' ')[1] || d.jam_selesai;
+        jamSelesai = t.slice(0,5);
+        document.getElementById('displaySelesai').textContent = jamSelesai;
+    }
+    updateDurasi();
+
+    // Mood
+    if (d.mood) {
+        const mb = document.querySelector('.mood-btn[data-mood="' + d.mood + '"]');
+        if (mb) selectMood(mb);
+    }
+
+    // BAB/BAK
+    if (d.warna)  { const w = document.querySelector('.swatch-btn[data-warna="' + d.warna + '"]'); if (w) selectWarna(w); }
+    if (d.tekstur){ const t = document.querySelector('.pill-btn[data-tekstur="' + d.tekstur + '"]'); if (t) selectTekstur(t); }
+    if (d.volume) { const v = document.querySelector('.pill-btn[data-volume="' + d.volume + '"]'); if (v) selectVolume(v); }
+    if (d.frekuensi) {
+        frekuensi = Math.max(1, Math.min(10, parseInt(d.frekuensi) || 1));
+        document.getElementById('frekuensiDisplay').textContent = frekuensi;
+    }
+
+    // Makan/Minum
+    if (d.porsi)      { const p = document.querySelector('.pill-btn[data-porsi="' + d.porsi + '"]'); if (p) selectPorsi(p); }
+    if (d.nafsu_makan){ const n = document.querySelector('.pill-btn[data-nafsu="' + d.nafsu_makan + '"]'); if (n) selectNafsu(n); }
+
+    checkReady();
+})();
+@endif
 
 // ── Category ──
 function selectKat(btn){
@@ -901,6 +983,7 @@ async function previewFoto(input){
     const safeFile = await handleOversizedFile(file);
     if (!safeFile) { input.value = ''; return; }
     fotoFile=safeFile;
+    if (IS_EDIT) { hapusFoto = false; const ex = document.getElementById('fotoExisting'); if (ex) ex.style.display = 'none'; }
     const reader=new FileReader();
     reader.onload=e=>{
         document.getElementById('fotoPreviewImg').src=e.target.result;
@@ -916,6 +999,25 @@ function removeFoto(){
     document.getElementById('photoActions').style.display='contents';
     document.getElementById('inputFoto').value='';
     document.getElementById('inputCamera').value='';
+}
+// Hapus foto existing (mode edit) — set flag untuk dihapus di backend
+function removeFotoExisting(){
+    hapusFoto = true;
+    const el = document.getElementById('fotoExisting');
+    if (el) el.style.display = 'none';
+    showAlert('Foto akan dihapus. Simpan untuk menerapkan.', 'ok');
+}
+function removeFotoSebelumExisting(){
+    hapusFotoSebelum = true;
+    const el = document.getElementById('fotoSebelumExisting');
+    if (el) el.style.display = 'none';
+    showAlert('Foto sebelum akan dihapus. Simpan untuk menerapkan.', 'ok');
+}
+function removeFotoSesudahExisting(){
+    hapusFotoSesudah = true;
+    const el = document.getElementById('fotoSesudahExisting');
+    if (el) el.style.display = 'none';
+    showAlert('Foto sesudah akan dihapus. Simpan untuk menerapkan.', 'ok');
 }
 
 // ── MAKAN / MINUM ──
@@ -935,6 +1037,7 @@ async function previewFotoSebelum(input){
     const safeFile = await handleOversizedFile(file);
     if (!safeFile) { input.value = ''; return; }
     fotoSebelumFile=safeFile;
+    if (IS_EDIT) { hapusFotoSebelum = false; const ex = document.getElementById('fotoSebelumExisting'); if (ex) ex.style.display = 'none'; }
     const reader=new FileReader();
     reader.onload=e=>{
         document.getElementById('fotoSebelumImg').src=e.target.result;
@@ -957,6 +1060,7 @@ async function previewFotoSesudah(input){
     const safeFile = await handleOversizedFile(file);
     if (!safeFile) { input.value = ''; return; }
     fotoSesudahFile=safeFile;
+    if (IS_EDIT) { hapusFotoSesudah = false; const ex = document.getElementById('fotoSesudahExisting'); if (ex) ex.style.display = 'none'; }
     const reader=new FileReader();
     reader.onload=e=>{
         document.getElementById('fotoSesudahImg').src=e.target.result;
@@ -1029,8 +1133,13 @@ async function handleSubmit(){
 
     const fd=new FormData();
     fd.append('_token',       CSRF);
+    if (IS_EDIT) fd.append('id', DIARY_ID);
     fd.append('id_assignment',ID_ASSIGNMENT);
     fd.append('id_anak',      ID_ANAK);
+    // Flag hapus foto existing (mode edit)
+    if (hapusFoto)  fd.append('hapus_foto', '1');
+    if (hapusFotoSebelum) fd.append('hapus_foto_sebelum', '1');
+    if (hapusFotoSesudah) fd.append('hapus_foto_sesudah', '1');
     fd.append('kategori',     selKat);
     fd.append('deskripsi',    document.getElementById('deskripsi').value);
     fd.append('jam_mulai',    `${ymd} ${jamMulai}:00`);
@@ -1063,19 +1172,19 @@ async function handleSubmit(){
         const res  = await fetch(SUBMIT_URL,{method:'POST',body:fd});
         const data = await res.json();
         if(data.status==='success'||data.success){
-            showAlert('Aktivitas berhasil ditambahkan!','ok');
+            showAlert(IS_EDIT ? 'Diary berhasil diperbarui!' : 'Aktivitas berhasil ditambahkan!','ok');
             setTimeout(()=>{
-                window.location.href='{{ route("nanny-diary", ["id_anak"=>$idAnak??0]) }}?id_assignment={{ $idAssignment ?? "" }}';
+                window.location.href=REDIRECT_URL;
             },1200);
         } else {
             showAlert(data.message||'Gagal menyimpan aktivitas.');
             btn.disabled=false;
-            btn.innerHTML='<ion-icon name="save-outline" style="font-size:22px;color:#fff;"></ion-icon> Save Diary';
+            btn.innerHTML='<ion-icon name="save-outline" style="font-size:22px;color:#fff;"></ion-icon> '+SAVE_LABEL;
         }
     } catch(err){
         showAlert('Terjadi kesalahan koneksi.');
         btn.disabled=false;
-        btn.innerHTML='<ion-icon name="save-outline" style="font-size:22px;color:#fff;"></ion-icon> Save Diary';
+        btn.innerHTML='<ion-icon name="save-outline" style="font-size:22px;color:#fff;"></ion-icon> '+SAVE_LABEL;
     }
 }
 </script>

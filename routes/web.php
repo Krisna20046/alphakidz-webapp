@@ -157,7 +157,9 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/diary', [NannyController::class, 'chooseDiary'])->name('nanny-diary-choose');
         Route::get('/diary/{id_anak}', [NannyController::class, 'showDiary'])->name('nanny-diary');
         Route::get('/diary/{id_anak}/tambah', [NannyController::class, 'showAdd'])->name('nanny-diary-add');
+        Route::get('/diary/{id_anak}/edit/{id}', [NannyController::class, 'edit'])->name('nanny-diary-edit');
         Route::post('/diary/store', [NannyController::class, 'store'])->name('nanny-diary-store');
+        Route::post('/diary/update', [NannyController::class, 'update'])->name('nanny-diary-update');
         Route::get('/data-anak',  [NannyController::class, 'dataAnak'])->name('nanny-anak-list');
         Route::get('/konsultan',  [NannyController::class, 'konsultan'])->name('nanny-konsultan');
         Route::get('/majikan',    [NannyController::class, 'majikan'])->name('nanny-majikan');
