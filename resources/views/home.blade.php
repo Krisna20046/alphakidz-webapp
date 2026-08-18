@@ -988,7 +988,7 @@ async function toggleNannyGps() {
             alert('GPS tidak didukung oleh browser ini.');
             return;
         }
-        if (window.startNannyGps) await window.startNannyGps();
+        if (window.startNannyGps) await window.startNannyGps(true);
 
         // Update UI local
         const dot = document.getElementById('nannyGpsDot');

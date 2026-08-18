@@ -11,21 +11,32 @@
     'use strict';
 
     const STORAGE_KEY  = 'nanny_gps_sharing_active';
+    const DEVICE_KEY   = 'nanny_gps_device_id';
     const NANNY_ID     = @json($nannyUserId);
     const NANNY_TOKEN  = "{{ session('token') }}";
     const NANNY_API    = "{{ rtrim(config('services.api.base_url', env('API_BASE_URL', 'https://api.alpha-kidz.com/api')), '/') }}";
     const NANNY_CSRF   = "{{ csrf_token() }}";
 
+    // ID perangkat stabil (persisten di browser ini) — identitas untuk backend
+    let _deviceId = null;
+    try { _deviceId = localStorage.getItem(DEVICE_KEY); } catch(e) {}
+    if (!_deviceId) {
+        _deviceId = 'web-' + Math.random().toString(36).slice(2, 10) + '-' + Date.now();
+        try { localStorage.setItem(DEVICE_KEY, _deviceId); } catch(e) {}
+    }
+
     let _interval = null;
     let _active   = false;
 
     /* ── Start sharing ── */
-    window.startNannyGps = async function() {
+    // forceStart=true hanya saat user menyalakan toggle (berniat take over).
+    // Auto-resume dari localStorage tidak memaksa take over.
+    window.startNannyGps = async function(forceStart) {
         if (_active) return;
         _active = true;
         try { localStorage.setItem(STORAGE_KEY, '1'); } catch(e) {}
 
-        await _sendLocation();
+        await _sendLocation(!!forceStart);
         _interval = setInterval(_sendLocation, 60000);
     };
 
@@ -40,14 +51,14 @@
                 await fetch(NANNY_API + '/nanny/update-location', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer ' + NANNY_TOKEN },
-                    body: JSON.stringify({ latitude: null, longitude: null, is_online: false }),
+                    body: JSON.stringify({ latitude: null, longitude: null, is_online: false, device_id: _deviceId }),
                 });
             } catch(e) {}
         }
     };
 
     /* ── Kirim lokasi ── */
-    async function _sendLocation() {
+    async function _sendLocation(forceStart) {
         if (!_active) return;
         try {
             const pos = await new Promise((resolve, reject) => {
@@ -61,16 +72,38 @@
             // Update UI elemen di halaman manapun yang punya ID ini
             _updateUi(lat, lng);
 
-            await fetch(NANNY_API + '/nanny/update-location', {
+            const res = await fetch(NANNY_API + '/nanny/update-location', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer ' + NANNY_TOKEN },
-                body: JSON.stringify({ latitude: lat, longitude: lng, is_online: true }),
+                body: JSON.stringify({ latitude: lat, longitude: lng, is_online: true, device_id: _deviceId, start: !!forceStart }),
             });
+            const json = await res.json().catch(() => null);
+
+            // Perangkat lain menyalakan share lebih dulu → akhiri sharing di perangkat ini
+            if (json && json.status === 'inactive') {
+                await window.stopNannyGps(false);
+                _forceUiOff();
+            }
         } catch(err) {
             if (err.code === 1) { // Permission denied
                 await window.stopNannyGps(false);
             }
         }
+    }
+
+    /* ── Reset UI toggle ke OFF (dipanggil saat auto-off karena device lain aktif) ── */
+    function _forceUiOff() {
+        const toggle = document.getElementById('nannyGpsToggle');
+        if (toggle) toggle.checked = false;
+        const dot = document.getElementById('nannyGpsDot');
+        if (dot) dot.className = 'w-12 h-12 rounded-full bg-[#D1D5DB] flex items-center justify-center';
+        const statusLabel = document.getElementById('nannyGpsStatusLabel');
+        if (statusLabel) { statusLabel.textContent = 'Location sharing is OFF'; statusLabel.className = 'text-[#9CA3AF] text-[12px] font-bold'; }
+        const nannyStatus = document.getElementById('nannyGpsStatus');
+        if (nannyStatus) nannyStatus.textContent = 'Share lokasi dimatikan, perangkat lain aktif';
+        document.getElementById('nannyGpsCoords')?.classList.add('hidden');
+        document.getElementById('nannyGpsLastUpdate')?.classList.add('hidden');
+        document.getElementById('nannyGpsAddress')?.classList.add('hidden');
     }
 
     /* ── Update UI components if they exist on current page ── */
@@ -109,7 +142,7 @@
     /* ── Cek state tersimpan, start ulang jika perlu ── */
     try {
         if (localStorage.getItem(STORAGE_KEY) === '1') {
-            window.startNannyGps();
+            window.startNannyGps(false);
         }
     } catch(e) {}
 
