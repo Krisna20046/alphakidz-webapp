@@ -78,6 +78,7 @@ Route::middleware('auth.api')->group(function () {
 
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('/logout-all', [AuthController::class, 'logoutAll'])->name('logout-all');
 
     // FCM Token management
     Route::post('/fcm/update-token', [FcmController::class, 'updateToken'])->name('fcm.update');
