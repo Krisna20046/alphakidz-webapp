@@ -169,7 +169,7 @@
                 </div>
                 <div>
                     <p class="text-[#8B86A5] text-[13px] font-extrabold uppercase tracking-[1.8px]">Date Of Birth</p>
-                    <p class="text-[#1E1B2E] text-[18px] font-extrabold leading-none mt-1">{{ $anak['tanggal_lahir'] ? \Illuminate\Support\Str::substr($anak['tanggal_lahir'], 0, 10) : '-' }}</p>
+                    <p class="text-[#1E1B2E] text-[14px] font-semibold leading-relaxed mt-1">{{ $anak['tanggal_lahir'] ? \Illuminate\Support\Str::substr($anak['tanggal_lahir'], 0, 10) : '-' }}</p>
                 </div>
             </div>
 
@@ -179,7 +179,7 @@
                 </div>
                 <div>
                     <p class="text-[#8B86A5] text-[13px] font-extrabold uppercase tracking-[1.8px]">Gender</p>
-                    <p class="text-[#1E1B2E] text-[18px] font-extrabold leading-none mt-1">{{ $anak['gender'] === 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
+                    <p class="text-[#1E1B2E] text-[14px] font-semibold leading-relaxed mt-1">{{ $anak['gender'] === 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
                 </div>
             </div>
 
@@ -189,8 +189,8 @@
                     <ion-icon name="location-outline" style="font-size:18px;color:#0284C7;"></ion-icon>
                 </div>
                 <div>
-                    <p class="text-[#8B86A5] text-[13px] font-extrabold uppercase tracking-[1.8px]">Tempat Lahir</p>
-                    <p class="text-[#1E1B2E] text-[18px] font-extrabold leading-none mt-1">{{ $anak['tempat_lahir'] }}</p>
+                    <p class="text-[#8B86A5] text-[13px] font-extrabold uppercase tracking-[1.8px]">Place Of Birth</p>
+                    <p class="text-[#1E1B2E] text-[14px] font-semibold leading-relaxed mt-1">{{ $anak['tempat_lahir'] }}</p>
                 </div>
             </div>
             @endif
@@ -204,37 +204,37 @@
             <p class="text-[#5A556E] text-[16px] font-extrabold tracking-wide uppercase">More Information</p>
 
             @if($anak['catatan_khusus'] ?? null)
-            <div class="info-card p-4 flex items-center gap-3">
+            <div class="info-card p-4 flex items-start gap-3">
                 <div class="w-10 h-10 rounded-[8px] bg-[#EDE9FE] flex items-center justify-center shrink-0">
                     <ion-icon name="create-outline" style="font-size:18px;color:#4F46E5;"></ion-icon>
                 </div>
                 <div>
                     <p class="text-[#8B86A5] text-[13px] font-extrabold uppercase tracking-[1.8px]">Special Note</p>
-                    <p class="text-[#1E1B2E] text-[18px] font-extrabold leading-none mt-1 break-words">{{ $anak['catatan_khusus'] }}</p>
+                    <p class="text-[#1E1B2E] text-[14px] font-semibold leading-relaxed mt-1 whitespace-pre-line break-words">{{ $anak['catatan_khusus'] }}</p>
                 </div>
             </div>
             @endif
 
             @if($anak['alergi'] ?? null)
-            <div class="info-card p-4 flex items-center gap-3">
+            <div class="info-card p-4 flex items-start gap-3">
                 <div class="w-10 h-10 rounded-[8px] bg-[#FEF3E2] flex items-center justify-center shrink-0">
                     <ion-icon name="warning-outline" style="font-size:18px;color:#F59E0B;"></ion-icon>
                 </div>
                 <div>
                     <p class="text-[#8B86A5] text-[13px] font-extrabold uppercase tracking-[1.8px]">Allergies</p>
-                    <p class="text-[#1E1B2E] text-[18px] font-extrabold leading-none mt-1 break-words">{{ $anak['alergi'] }}</p>
+                    <p class="text-[#1E1B2E] text-[14px] font-semibold leading-relaxed mt-1 whitespace-pre-line break-words">{{ $anak['alergi'] }}</p>
                 </div>
             </div>
             @endif
 
             @if($anak['hobi'] ?? null)
-            <div class="info-card p-4 flex items-center gap-3">
+            <div class="info-card p-4 flex items-start gap-3">
                 <div class="w-10 h-10 rounded-[8px] bg-[#FDE8EF] flex items-center justify-center shrink-0">
                     <ion-icon name="heart" style="font-size:18px;color:#EC4899;"></ion-icon>
                 </div>
                 <div>
                     <p class="text-[#8B86A5] text-[13px] font-extrabold uppercase tracking-[1.8px]">Hobby</p>
-                    <p class="text-[#1E1B2E] text-[18px] font-extrabold leading-none mt-1 break-words">{{ $anak['hobi'] }}</p>
+                    <p class="text-[#1E1B2E] text-[14px] font-semibold leading-relaxed mt-1 whitespace-pre-line break-words">{{ $anak['hobi'] }}</p>
                 </div>
             </div>
             @endif
@@ -251,13 +251,13 @@
                 {{-- Tab Nav --}}
                 <div class="tab-nav">
                     <button class="med-tab active" data-tab="rs">
-                        <ion-icon name="business-outline"></ion-icon> Rumah Sakit
+                        <ion-icon name="business-outline"></ion-icon> Hospital
                     </button>
                     <button class="med-tab" data-tab="dokter">
-                        <ion-icon name="medkit-outline"></ion-icon> Dokter
+                        <ion-icon name="medkit-outline"></ion-icon> Doctor
                     </button>
                     <button class="med-tab" data-tab="vaksin">
-                        <ion-icon name="shield-checkmark-outline"></ion-icon> Vaksin
+                        <ion-icon name="shield-checkmark-outline"></ion-icon> Vaccine
                     </button>
                 </div>
 
