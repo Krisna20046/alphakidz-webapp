@@ -215,6 +215,27 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 
+    public function logoutAll(Request $request)
+    {
+        $token = session('token');
+
+        if ($token) {
+            try {
+                // Hit endpoint API untuk menghapus semua token (semua perangkat)
+                Http::timeout(10)
+                    ->withToken($token)
+                    ->post("{$this->apiBaseUrl}/logout-all");
+            } catch (\Exception $e) {
+                Log::warning('LogoutAll - API call failed: ' . $e->getMessage());
+            }
+        }
+
+        // Hapus semua session
+        $request->session()->flush();
+
+        return redirect()->route('login');
+    }
+
     public function storeToken(Request $request)
     {
         $request->validate([

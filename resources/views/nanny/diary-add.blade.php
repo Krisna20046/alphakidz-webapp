@@ -249,7 +249,7 @@
            class="w-10 h-10 rounded-full bg-white/20 border-[1.5px] border-white/30 flex items-center justify-center shrink-0">
             <ion-icon name="arrow-back" style="font-size:18px;color:#fff;"></ion-icon>
         </a>
-        <span class="text-white font-extrabold tracking-wide" style="font-size:18px;">Create Diary</span>
+        <span class="text-white font-extrabold tracking-wide" style="font-size:18px;">{{ isset($diary) ? 'Edit Diary' : 'Create Diary' }}</span>
     </div>
 </div>
 
@@ -276,7 +276,7 @@
             @endphp
             @foreach($katOptions as $k)
             <button type="button"
-                    class="kat-btn"
+                    class="kat-btn{{ (isset($diary) && $diary['kategori'] === $k['value']) ? ' sel' : '' }}"
                     data-kat="{{ $k['value'] }}"
                     data-bg="{{ $k['bg'] }}"
                     data-color="{{ $k['color'] }}"
@@ -330,7 +330,7 @@
             @endphp
             @foreach($moods as $m)
             <button type="button"
-                    class="mood-btn {{ $m['value']==='biasa'?'sel':'' }}"
+                    class="mood-btn {{ (isset($diary) && $diary['mood'] === $m['value']) ? 'sel' : ($m['value']==='biasa' ? 'sel' : '') }}"
                     data-mood="{{ $m['value'] }}"
                     onclick="selectMood(this)">
                 <span style="font-size:30px;line-height:1;">{{ $m['emoji'] }}</span>
@@ -345,7 +345,7 @@
         <p class="sec-label">Activity Description</p>
         <div class="desk-wrap">
             <textarea id="deskripsi" class="desk-input" rows="4"
-                      placeholder="Write down the details of your child's activities today...."></textarea>
+                      placeholder="Write down the details of your child's activities today....">{{ isset($diary) ? e($diary['deskripsi']) : '' }}</textarea>
         </div>
     </div>
 
@@ -388,6 +388,14 @@
                         <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
                     </button>
                 </div>
+                @if(isset($diary) && !empty($diary['foto_sebelum_url']))
+                <div id="fotoSebelumExisting" class="photo-slot" style="margin-bottom:5px;position:relative;">
+                    <img src="{{ $diary['foto_sebelum_url'] }}" alt="Sebelum">
+                    <button type="button" class="photo-remove" onclick="removeFotoSebelumExisting()" title="Hapus foto">
+                        <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
+                    </button>
+                </div>
+                @endif
                 <div id="fotoSebelumActions" style="display:contents;">
                     <label class="upload-slot" for="inputFotoSebelum">
                         <div style="width:40px;height:40px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
@@ -413,6 +421,14 @@
                         <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
                     </button>
                 </div>
+                @if(isset($diary) && !empty($diary['foto_sesudah_url']))
+                <div id="fotoSesudahExisting" class="photo-slot" style="margin-bottom:5px;position:relative;">
+                    <img src="{{ $diary['foto_sesudah_url'] }}" alt="Sesudah">
+                    <button type="button" class="photo-remove" onclick="removeFotoSesudahExisting()" title="Hapus foto">
+                        <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
+                    </button>
+                </div>
+                @endif
                 <div id="fotoSesudahActions" style="display:contents;">
                     <label class="upload-slot" for="inputFotoSesudah">
                         <div style="width:40px;height:40px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
@@ -527,6 +543,14 @@
                     <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
                 </button>
             </div>
+            @if(isset($diary) && !empty($diary['foto_url']))
+            <div id="fotoExisting" class="photo-slot" style="position:relative;">
+                <img src="{{ $diary['foto_url'] }}" alt="Foto existing">
+                <button type="button" class="photo-remove" onclick="removeFotoExisting()" title="Hapus foto">
+                    <ion-icon name="close" style="font-size:14px;color:#fff;"></ion-icon>
+                </button>
+            </div>
+            @endif
             <div id="photoActions" class="photo-actions" style="display:contents;">
                 <label id="uploadSlot" class="upload-slot" for="inputFoto">
                     <div style="width:40px;height:40px;border-radius:50%;background:#EDE9FE;display:flex;align-items:center;justify-content:center;">
@@ -542,7 +566,7 @@
                 </button>
             </div>
         </div>
-        <input type="file" id="inputFoto" accept="image/*" capture="environment" class="hidden" onchange="previewFoto(this)">
+        <input type="file" id="inputFoto" accept="image/*" class="hidden" onchange="previewFoto(this)">
         <input type="file" id="inputCamera" accept="image/*" capture="environment" class="hidden" onchange="previewFoto(this)">
         <p style="font-size:11px;font-weight:600;color:#A8A2C2;text-align:center;margin-top:-16px;margin-bottom:24px;">
             Choose <strong>Gallery</strong> to pick from photos or <strong>Camera</strong> to take a new photo
@@ -550,7 +574,7 @@
     </div>
     <button id="submitBtn" class="submit-btn" onclick="handleSubmit()" disabled>
         <ion-icon name="save-outline" style="font-size:22px;color:#fff;"></ion-icon>
-        Save Diary
+        {{ isset($diary) ? 'Update Diary' : 'Save Diary' }}
     </button>
 </div>
 @endsection
@@ -600,7 +624,11 @@
 <script>
 const ID_ANAK       = {{ $idAnak ?? 'null' }};
 const ID_ASSIGNMENT = {{ $idAssignment ?? 'null' }};
-const SUBMIT_URL    = "{{ route('nanny-diary-store') }}";
+const IS_EDIT       = {{ isset($diary) ? 'true' : 'false' }};
+const DIARY_ID      = {{ $diaryId ?? 'null' }};
+const SUBMIT_URL    = "{{ isset($diary) ? route('nanny-diary-update') : route('nanny-diary-store') }}";
+const SAVE_LABEL    = "{{ isset($diary) ? 'Update Diary' : 'Save Diary' }}";
+const REDIRECT_URL  = "{{ route('nanny-diary', ['id_anak' => $idAnak ?? 0]) }}?id_assignment={{ $idAssignment ?? '' }}";
 const CSRF          = "{{ csrf_token() }}";
 
 let selKat     = '';
@@ -621,6 +649,9 @@ let selPorsi  = '';
 let selNafsu  = '';
 let fotoSebelumFile = null;
 let fotoSesudahFile = null;
+let hapusFoto = false;
+let hapusFotoSebelum = false;
+let hapusFotoSesudah = false;
 
 const KAT_DURASI = {
     makan:   30,
@@ -647,6 +678,53 @@ function setDurasi(menit){
 
 // ── Default times ──
 (function(){ setDurasi(30); })();
+
+// ── Edit mode: prefill dari diary yang sudah ada ──
+@if(isset($diary))
+(function(){
+    const d = @json($diary);
+
+    // Kategori
+    if (d.kategori) {
+        const btn = document.querySelector('.kat-btn[data-kat="' + d.kategori + '"]');
+        if (btn) selectKat(btn);
+    }
+
+    // Waktu mulai & selesai
+    if (d.jam_mulai) {
+        const t = d.jam_mulai.split(' ')[1] || d.jam_mulai;
+        jamMulai = t.slice(0,5);
+        document.getElementById('displayMulai').textContent = jamMulai;
+    }
+    if (d.jam_selesai) {
+        const t = d.jam_selesai.split(' ')[1] || d.jam_selesai;
+        jamSelesai = t.slice(0,5);
+        document.getElementById('displaySelesai').textContent = jamSelesai;
+    }
+    updateDurasi();
+
+    // Mood
+    if (d.mood) {
+        const mb = document.querySelector('.mood-btn[data-mood="' + d.mood + '"]');
+        if (mb) selectMood(mb);
+    }
+
+    // BAB/BAK
+    if (d.warna)  { const w = document.querySelector('.swatch-btn[data-warna="' + d.warna + '"]'); if (w) selectWarna(w); }
+    if (d.tekstur){ const t = document.querySelector('.pill-btn[data-tekstur="' + d.tekstur + '"]'); if (t) selectTekstur(t); }
+    if (d.volume) { const v = document.querySelector('.pill-btn[data-volume="' + d.volume + '"]'); if (v) selectVolume(v); }
+    if (d.frekuensi) {
+        frekuensi = Math.max(1, Math.min(10, parseInt(d.frekuensi) || 1));
+        document.getElementById('frekuensiDisplay').textContent = frekuensi;
+    }
+
+    // Makan/Minum
+    if (d.porsi)      { const p = document.querySelector('.pill-btn[data-porsi="' + d.porsi + '"]'); if (p) selectPorsi(p); }
+    if (d.nafsu_makan){ const n = document.querySelector('.pill-btn[data-nafsu="' + d.nafsu_makan + '"]'); if (n) selectNafsu(n); }
+
+    checkReady();
+})();
+@endif
 
 // ── Category ──
 function selectKat(btn){
@@ -901,6 +979,7 @@ async function previewFoto(input){
     const safeFile = await handleOversizedFile(file);
     if (!safeFile) { input.value = ''; return; }
     fotoFile=safeFile;
+    if (IS_EDIT) { hapusFoto = false; const ex = document.getElementById('fotoExisting'); if (ex) ex.style.display = 'none'; }
     const reader=new FileReader();
     reader.onload=e=>{
         document.getElementById('fotoPreviewImg').src=e.target.result;
@@ -916,6 +995,25 @@ function removeFoto(){
     document.getElementById('photoActions').style.display='contents';
     document.getElementById('inputFoto').value='';
     document.getElementById('inputCamera').value='';
+}
+// Hapus foto existing (mode edit) — set flag untuk dihapus di backend
+function removeFotoExisting(){
+    hapusFoto = true;
+    const el = document.getElementById('fotoExisting');
+    if (el) el.style.display = 'none';
+    showAlert('Foto akan dihapus. Simpan untuk menerapkan.', 'ok');
+}
+function removeFotoSebelumExisting(){
+    hapusFotoSebelum = true;
+    const el = document.getElementById('fotoSebelumExisting');
+    if (el) el.style.display = 'none';
+    showAlert('Foto sebelum akan dihapus. Simpan untuk menerapkan.', 'ok');
+}
+function removeFotoSesudahExisting(){
+    hapusFotoSesudah = true;
+    const el = document.getElementById('fotoSesudahExisting');
+    if (el) el.style.display = 'none';
+    showAlert('Foto sesudah akan dihapus. Simpan untuk menerapkan.', 'ok');
 }
 
 // ── MAKAN / MINUM ──
@@ -935,6 +1033,7 @@ async function previewFotoSebelum(input){
     const safeFile = await handleOversizedFile(file);
     if (!safeFile) { input.value = ''; return; }
     fotoSebelumFile=safeFile;
+    if (IS_EDIT) { hapusFotoSebelum = false; const ex = document.getElementById('fotoSebelumExisting'); if (ex) ex.style.display = 'none'; }
     const reader=new FileReader();
     reader.onload=e=>{
         document.getElementById('fotoSebelumImg').src=e.target.result;
@@ -957,6 +1056,7 @@ async function previewFotoSesudah(input){
     const safeFile = await handleOversizedFile(file);
     if (!safeFile) { input.value = ''; return; }
     fotoSesudahFile=safeFile;
+    if (IS_EDIT) { hapusFotoSesudah = false; const ex = document.getElementById('fotoSesudahExisting'); if (ex) ex.style.display = 'none'; }
     const reader=new FileReader();
     reader.onload=e=>{
         document.getElementById('fotoSesudahImg').src=e.target.result;
@@ -1029,8 +1129,13 @@ async function handleSubmit(){
 
     const fd=new FormData();
     fd.append('_token',       CSRF);
+    if (IS_EDIT) fd.append('id', DIARY_ID);
     fd.append('id_assignment',ID_ASSIGNMENT);
     fd.append('id_anak',      ID_ANAK);
+    // Flag hapus foto existing (mode edit)
+    if (hapusFoto)  fd.append('hapus_foto', '1');
+    if (hapusFotoSebelum) fd.append('hapus_foto_sebelum', '1');
+    if (hapusFotoSesudah) fd.append('hapus_foto_sesudah', '1');
     fd.append('kategori',     selKat);
     fd.append('deskripsi',    document.getElementById('deskripsi').value);
     fd.append('jam_mulai',    `${ymd} ${jamMulai}:00`);
@@ -1065,17 +1170,17 @@ async function handleSubmit(){
         if(data.status==='success'||data.success){
             showAlert('Activity added successfully!','ok');
             setTimeout(()=>{
-                window.location.href='{{ route("nanny-diary", ["id_anak"=>$idAnak??0]) }}?id_assignment={{ $idAssignment ?? "" }}';
+                window.location.href=REDIRECT_URL;
             },1200);
         } else {
             showAlert(data.message||'Failed to save activity.');
             btn.disabled=false;
-            btn.innerHTML='<ion-icon name="save-outline" style="font-size:22px;color:#fff;"></ion-icon> Save Diary';
+            btn.innerHTML='<ion-icon name="save-outline" style="font-size:22px;color:#fff;"></ion-icon> '+SAVE_LABEL;
         }
     } catch(err){
         showAlert('A connection error occurred.');
         btn.disabled=false;
-        btn.innerHTML='<ion-icon name="save-outline" style="font-size:22px;color:#fff;"></ion-icon> Save Diary';
+        btn.innerHTML='<ion-icon name="save-outline" style="font-size:22px;color:#fff;"></ion-icon> '+SAVE_LABEL;
     }
 }
 </script>

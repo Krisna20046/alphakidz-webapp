@@ -285,6 +285,158 @@ class NannyController extends Controller
         return response()->json($data);
     }
 
+    // ── Edit Diary: tampilkan form edit dengan data diary ────────────────────
+
+    public function edit(Request $request, int $id_anak, int $id)
+    {
+        $idAssignment = $request->query('id_assignment');
+        $token        = session('token');
+
+        $diary = null;
+        try {
+            $res = Http::withHeaders($this->headers())
+                ->asMultipart()
+                ->post($this->apiUrl('/diary-for-nanny'), [
+                    'id_anak' => $id_anak,
+                    'tanggal' => date('Y-m-d'),
+                ]);
+            $json = $res->json();
+
+            if (($json['status'] ?? '') === 'success' && isset($json['data'])) {
+                // Cari diary dengan id yang diminta
+                foreach ($json['data']['aktivitas_per_tanggal'] ?? [] as $group) {
+                    foreach ($group['aktivitas'] ?? [] as $a) {
+                        if ((int) $a['id'] === $id) {
+                            $diary = $this->formatAktivitas($a);
+                            break 2;
+                        }
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // silent — form kosong
+        }
+
+        if (!$diary) {
+            return redirect()->route('nanny-diary', [
+                'id_anak'       => $id_anak,
+                'id_assignment' => $idAssignment,
+            ])->with('error', 'Diary tidak ditemukan atau sudah tidak dapat diedit.');
+        }
+
+        return view('nanny.diary-add', [
+            'idAnak'       => $id_anak,
+            'idAssignment' => $idAssignment,
+            'diary'        => $diary,
+            'diaryId'      => $id,
+        ]);
+    }
+
+    // ── Update Diary: kirim ke API ────────────────────────────────────────────
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'id'            => 'required|integer',
+            'id_anak'       => 'required|integer',
+            'id_assignment' => 'required|integer',
+            'kategori'      => 'required|string',
+            'jam_mulai'     => 'required|string',
+            'jam_selesai'   => 'required|string',
+            'mood'          => 'nullable|string',
+            'deskripsi'     => 'nullable|string',
+            'foto'          => 'nullable|image|max:4096',
+            'foto_sebelum'  => 'nullable|image|max:4096',
+            'foto_sesudah'  => 'nullable|image|max:4096',
+            'hapus_foto'         => 'nullable|boolean',
+            'hapus_foto_sebelum' => 'nullable|boolean',
+            'hapus_foto_sesudah' => 'nullable|boolean',
+            'porsi'         => 'nullable|string',
+            'nafsu_makan'   => 'nullable|string',
+            'lat'           => 'nullable|numeric',
+            'lng'           => 'nullable|numeric',
+            'warna'          => 'nullable|string',
+            'tekstur'        => 'nullable|string',
+            'volume'         => 'nullable|string',
+            'frekuensi'      => 'nullable|integer|min:0|max:99',
+        ]);
+
+        $multipart = [
+            ['name' => 'id',            'contents' => (string) $request->id],
+            ['name' => 'kategori',      'contents' => (string) $request->kategori],
+            ['name' => 'jam_mulai',     'contents' => (string) $request->jam_mulai],
+            ['name' => 'jam_selesai',   'contents' => (string) $request->jam_selesai],
+            ['name' => 'deskripsi',     'contents' => (string) ($request->deskripsi ?? '')],
+            ['name' => 'lat',           'contents' => (string) ($request->lat ?? '')],
+            ['name' => 'lng',           'contents' => (string) ($request->lng ?? '')],
+            ['name' => 'mood',          'contents' => (string) ($request->mood ?? 'biasa')],
+        ];
+
+        // Hapus foto (flag dari form edit)
+        foreach (['hapus_foto', 'hapus_foto_sebelum', 'hapus_foto_sesudah'] as $flag) {
+            if ($request->has($flag) && $request->boolean($flag)) {
+                $multipart[] = ['name' => $flag, 'contents' => '1'];
+            }
+        }
+
+        // BAB/BAK specific fields
+        if (in_array($request->kategori, ['bab', 'bak'])) {
+            $multipart[] = ['name' => 'warna',   'contents' => (string) ($request->warna ?? '')];
+            $multipart[] = ['name' => 'tekstur', 'contents' => (string) ($request->tekstur ?? '')];
+            $multipart[] = ['name' => 'volume',  'contents' => (string) ($request->volume ?? '')];
+            if ($request->filled('frekuensi')) {
+                $multipart[] = ['name' => 'frekuensi', 'contents' => (string) $request->frekuensi];
+            }
+        }
+
+        // Makan/Minum specific fields
+        if (in_array($request->kategori, ['makan', 'minum'])) {
+            if ($request->filled('porsi')) {
+                $multipart[] = ['name' => 'porsi', 'contents' => (string) $request->porsi];
+            }
+            if ($request->filled('nafsu_makan')) {
+                $multipart[] = ['name' => 'nafsu_makan', 'contents' => (string) $request->nafsu_makan];
+            }
+        }
+
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $multipart[] = [
+                'name'     => 'foto',
+                'contents' => fopen($file->getRealPath(), 'r'),
+                'filename' => $file->getClientOriginalName(),
+            ];
+        }
+
+        if ($request->hasFile('foto_sebelum')) {
+            $file = $request->file('foto_sebelum');
+            $multipart[] = [
+                'name'     => 'foto_sebelum',
+                'contents' => fopen($file->getRealPath(), 'r'),
+                'filename' => $file->getClientOriginalName(),
+            ];
+        }
+
+        if ($request->hasFile('foto_sesudah')) {
+            $file = $request->file('foto_sesudah');
+            $multipart[] = [
+                'name'     => 'foto_sesudah',
+                'contents' => fopen($file->getRealPath(), 'r'),
+                'filename' => $file->getClientOriginalName(),
+            ];
+        }
+
+        $res = Http::withHeaders([
+            'Authorization' => 'Bearer ' . session('token'),
+            'Accept'        => 'application/json',
+        ])
+        ->asMultipart()
+        ->post($this->apiUrl('/diary/' . $request->id . '/update'), $multipart);
+
+        $data = $res->json() ?? ['status' => 'error', 'message' => 'Tidak ada respon dari server'];
+        return response()->json($data);
+    }
+
     // ── Daily AI Summary (Modul 7) ─────────────────────────────────────────────
 
     /**
@@ -420,6 +572,10 @@ private function formatAktivitas(array $a): array
     return [
         'id'              => $a['id'] ?? null,
         'kategori'        => $a['kategori'] ?? 'main',
+        'jam_mulai'       => $jamMulai,
+        'jam_selesai'     => $jamSelesai,
+        // Diary hanya bisa diedit pada hari yang sama dengan jam_mulai
+        'can_edit'        => $jamMulai && date('Y-m-d', strtotime($jamMulai)) === date('Y-m-d'),
         'jam_mulai_fmt'   => $a['jam_mulai_fmt'],
         'jam_selesai_fmt' => $a['jam_selesai_fmt'],
         'durasi_fmt'      => $a['durasi_fmt'],

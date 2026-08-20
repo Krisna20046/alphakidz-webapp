@@ -104,7 +104,10 @@ async function updateFCMToken(csrfToken) {
 // ─── Remove token saat logout ─────────────────────────────────────────────────
 async function removeFCMToken(csrfToken) {
     try {
-        // 1. Hapus dari backend
+        // Ambil token yang sedang dipakai device ini, untuk dihapus dari backend
+        const currentToken = await getFCMToken();
+
+        // 1. Hapus dari backend (kirim token supaya device lain tetap aktif)
         await fetch('/fcm/remove-token', {
             method: 'POST',
             headers: {
@@ -112,6 +115,9 @@ async function removeFCMToken(csrfToken) {
                 'Accept':        'application/json',
                 'X-CSRF-TOKEN':  csrfToken,
             },
+            body: JSON.stringify({
+                fcm_token: currentToken || null,
+            }),
         });
 
         // 2. Hapus dari Firebase (browser-side)

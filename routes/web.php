@@ -88,6 +88,7 @@ Route::middleware('auth.api')->group(function () {
 
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('/logout-all', [AuthController::class, 'logoutAll'])->name('logout-all');
 
     // FCM Token management
     Route::post('/fcm/update-token', [FcmController::class, 'updateToken'])->name('fcm.update');
@@ -192,7 +193,9 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/diary/{id_anak}/summary',        [NannyController::class, 'fetchSummary'])  ->name('nanny-diary-summary');
         Route::post('/diary/summary/generate',        [NannyController::class, 'generateSummary'])->name('nanny-diary-summary-generate');
         Route::get('/diary/{id_anak}/tambah', [NannyController::class, 'showAdd'])->name('nanny-diary-add');
+        Route::get('/diary/{id_anak}/edit/{id}', [NannyController::class, 'edit'])->name('nanny-diary-edit');
         Route::post('/diary/store', [NannyController::class, 'store'])->name('nanny-diary-store');
+        Route::post('/diary/update', [NannyController::class, 'update'])->name('nanny-diary-update');
         Route::get('/data-anak',  [NannyController::class, 'dataAnak'])->name('nanny-anak-list');
         Route::get('/konsultan',  [NannyController::class, 'konsultan'])->name('nanny-konsultan');
         Route::get('/majikan',    [NannyController::class, 'majikan'])->name('nanny-majikan');

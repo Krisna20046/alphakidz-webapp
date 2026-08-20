@@ -134,14 +134,25 @@
                 <ion-icon name="log-out-outline" style="font-size:32px;color:#ef4444;"></ion-icon>
             </div>
             <h3 class="text-[#1E1B2E] text-lg font-extrabold mb-1">Log out of your account?</h3>
-            <p class="text-[#9CA3AF] text-sm leading-relaxed">You need to log in again to access the app.</p>
+            <p class="text-[#9CA3AF] text-sm leading-relaxed">Choose how you want to log out of the application.</p>
         </div>
-        <div class="flex gap-3">
-            <button onclick="hideLogoutModal()" class="flex-1 py-[14px] rounded-2xl border-2 border-[#EDE9FE] text-[#8B46D3] font-bold text-sm active:bg-[#EDE9FE] transition-all">Cancel</button>
-            <form method="POST" action="{{ route('logout') }}" class="flex-1" id="logoutForm">
+        <div class="flex flex-col gap-2">
+            <form method="POST" action="{{ route('logout') }}" id="logoutForm">
                 @csrf
-                <button type="button" onclick="doLogout()" class="w-full py-[14px] rounded-2xl bg-red-500 text-white font-bold text-sm active:bg-red-600 transition-all">Yes, Log Out</button>
+                <button type="button" onclick="doLogout()"
+                    class="w-full py-[14px] rounded-2xl bg-red-500 text-white font-bold text-sm active:bg-red-600 transition-all flex items-center justify-center gap-2">
+                    <ion-icon name="log-out-outline"></ion-icon> Log Out of This Device
+                </button>
             </form>
+            <form method="POST" action="{{ route('logout-all') }}" id="logoutAllForm">
+                @csrf
+                <button type="button" onclick="doLogoutAll()"
+                    class="w-full py-[14px] rounded-2xl border-2 border-red-200 text-red-600 font-bold text-sm active:bg-red-50 transition-all flex items-center justify-center gap-2">
+                    <ion-icon name="phone-portrait-outline"></ion-icon> Log Out of All Devices
+                </button>
+            </form>
+            <button onclick="hideLogoutModal()"
+                class="w-full py-[14px] rounded-2xl border-2 border-[#EDE9FE] text-[#8B46D3] font-bold text-sm active:bg-[#EDE9FE] transition-all">Cancel</button>
         </div>
     </div>
 </div>
@@ -169,6 +180,12 @@ function doLogout() {
     // Hapus semua cache aplikasi saat logout
     if (window.apiCache) window.apiCache.clear();
     document.getElementById('logoutForm').submit();
+}
+function doLogoutAll() {
+    if (typeof removeFcmTokenOnLogout === 'function') removeFcmTokenOnLogout();
+    // Hapus semua cache aplikasi saat logout
+    if (window.apiCache) window.apiCache.clear();
+    document.getElementById('logoutAllForm').submit();
 }
 modal.addEventListener('click', (e) => { if (e.target === modal) hideLogoutModal(); });
 </script>

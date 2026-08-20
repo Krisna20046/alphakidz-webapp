@@ -1271,7 +1271,7 @@ async function toggleNannyGps() {
             alert('GPS is not supported by this browser.');
             return;
         }
-        if (window.startNannyGps) await window.startNannyGps();
+        if (window.startNannyGps) await window.startNannyGps(true);
 
         // Update UI local
         const dot = document.getElementById('nannyGpsDot');
