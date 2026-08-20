@@ -570,7 +570,7 @@
                 </button>
             </div>
         </div>
-        <input type="file" id="inputFoto" accept="image/*" capture="environment" class="hidden" onchange="previewFoto(this)">
+        <input type="file" id="inputFoto" accept="image/*" class="hidden" onchange="previewFoto(this)">
         <input type="file" id="inputCamera" accept="image/*" capture="environment" class="hidden" onchange="previewFoto(this)">
         <p style="font-size:11px;font-weight:600;color:#A8A2C2;text-align:center;margin-top:-16px;margin-bottom:24px;">
             Choose <strong>Gallery</strong> to pick from photos or <strong>Camera</strong> to take a new photo
