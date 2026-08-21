@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Diary Anak – Admin')
+@section('title', 'Child Diary – Admin')
 
 @push('styles')
 <style>
@@ -49,11 +49,11 @@
         <div class="flex items-center justify-center bg-white rounded-full mb-3 shadow-lg" style="width:64px; height:64px;">
             <ion-icon name="book" style="font-size:30px; color:#8B46D3;"></ion-icon>
         </div>
-        <h1 class="font-extrabold text-white mb-1" style="font-size:22px; letter-spacing:.4px;" id="judulAnak">Diary Anak</h1>
-        <p id="subtitleNanny" style="font-size:13px; color:#E5DEFF; font-weight:500;">Memuat data...</p>
+        <h1 class="font-extrabold text-white mb-1" style="font-size:22px; letter-spacing:.4px;" id="judulAnak">Child Diary</h1>
+        <p id="subtitleNanny" style="font-size:13px; color:#E5DEFF; font-weight:500;">Loading data...</p>
         <div class="badge-admin mt-2">
             <ion-icon name="shield-checkmark-outline" style="font-size:12px;"></ion-icon>
-            <span>Tampilan Admin</span>
+            <span>Admin View</span>
         </div>
     </div>
 </div>
@@ -64,27 +64,27 @@
     <div class="no-scrollbar flex" style="overflow-x:auto; gap:10px;">
         <button class="filter-chip" data-kat="" onclick="setKategori(this)"
                 style="padding:8px 16px; border-radius:20px; font-size:13px; border:2px solid #8B46D3; background:#8B46D3; font-weight:700; color:#fff; flex-shrink:0;">
-            Semua
+            All
         </button>
         <button class="filter-chip" data-kat="makan" onclick="setKategori(this)"
                 style="padding:8px 16px; border-radius:20px; font-size:13px; border:2px solid #EDE9FE; background:#fff; font-weight:600; color:#8B46D3; flex-shrink:0;">
-            🍽 Makan
+            🍽 Eat
         </button>
         <button class="filter-chip" data-kat="tidur" onclick="setKategori(this)"
                 style="padding:8px 16px; border-radius:20px; font-size:13px; border:2px solid #EDE9FE; background:#fff; font-weight:600; color:#8B46D3; flex-shrink:0;">
-            😴 Tidur
+            😴 Sleep
         </button>
         <button class="filter-chip" data-kat="main" onclick="setKategori(this)"
                 style="padding:8px 16px; border-radius:20px; font-size:13px; border:2px solid #EDE9FE; background:#fff; font-weight:600; color:#8B46D3; flex-shrink:0;">
-            ⚽ Main
+            ⚽ Play
         </button>
         <button class="filter-chip" data-kat="belajar" onclick="setKategori(this)"
                 style="padding:8px 16px; border-radius:20px; font-size:13px; border:2px solid #EDE9FE; background:#fff; font-weight:600; color:#8B46D3; flex-shrink:0;">
-            📚 Belajar
+            📚 Study
         </button>
         <button class="filter-chip" data-kat="mandi" onclick="setKategori(this)"
                 style="padding:8px 16px; border-radius:20px; font-size:13px; border:2px solid #EDE9FE; background:#fff; font-weight:600; color:#8B46D3; flex-shrink:0;">
-            🛁 Mandi
+            🛁 Bath
         </button>
     </div>
 
@@ -97,7 +97,7 @@
             <button id="btnDatePicker" class="flex flex-col items-center"
                     style="flex:1; background:transparent; cursor:pointer; border:none;">
                 <span style="font-size:15px; font-weight:700; color:#1E1B2E;" id="tanggalLabel">–</span>
-                <span style="font-size:12px; color:#8B86A5; margin-top:3px; font-weight:500;" id="totalLabel">0 aktivitas</span>
+                <span style="font-size:12px; color:#8B86A5; margin-top:3px; font-weight:500;" id="totalLabel">0 activities</span>
             </button>
             <button class="date-arrow" id="btnNext">
                 <ion-icon name="chevron-forward" style="font-size:26px; color:#8B46D3;"></ion-icon>
@@ -128,15 +128,15 @@
         <div class="float-anim" style="width:110px; height:110px; border-radius:55px; background:#EDE9FE; margin-bottom:20px; display:flex; align-items:center; justify-content:center;">
             <ion-icon name="calendar-clear-outline" style="font-size:54px; color:#C4B5FD;"></ion-icon>
         </div>
-        <p style="font-size:17px; font-weight:700; color:#1E1B2E; margin-bottom:6px;">Tidak ada aktivitas</p>
-        <p style="font-size:13px; color:#8B86A5;" id="emptyDesc">pada tanggal ini</p>
+        <p style="font-size:17px; font-weight:700; color:#1E1B2E; margin-bottom:6px;">No activities</p>
+        <p style="font-size:13px; color:#8B86A5;" id="emptyDesc">on this date</p>
     </div>
 
     <!-- Error -->
     <div id="errorState" style="display:none; flex-direction:column; align-items:center; padding:40px 20px; gap:12px;">
         <ion-icon name="cloud-offline-outline" style="font-size:48px; color:#C4B5FD;"></ion-icon>
-        <p style="font-size:15px; font-weight:700; color:#1E1B2E;">Gagal memuat data</p>
-        <button onclick="loadDiary()" style="background:#8B46D3; color:#fff; padding:10px 24px; border-radius:12px; font-size:14px; font-weight:600; border:none; cursor:pointer;">Coba Lagi</button>
+        <p style="font-size:15px; font-weight:700; color:#1E1B2E;">Failed to load data</p>
+        <button onclick="loadDiary()" style="background:#8B46D3; color:#fff; padding:10px 24px; border-radius:12px; font-size:14px; font-weight:600; border:none; cursor:pointer;">Try Again</button>
     </div>
 
 </div>
@@ -145,28 +145,28 @@
 <div class="modal-overlay" id="modalDatePicker">
     <div class="modal-box">
         <div style="display:flex; align-items:center; justify-content:space-between; flex-shrink:0; padding:20px; border-bottom:2px solid #EDE9FE;">
-            <span style="font-size:19px; font-weight:700; color:#1E1B2E;">Pilih Tanggal</span>
+            <span style="font-size:19px; font-weight:700; color:#1E1B2E;">Select Date</span>
             <button onclick="closeDatePicker()" style="width:32px; height:32px; border-radius:16px; background:#EDE9FE; display:flex; align-items:center; justify-content:center; cursor:pointer; border:none;">
                 <ion-icon name="close" style="font-size:20px; color:#8B46D3;"></ion-icon>
             </button>
         </div>
         <div style="display:flex; flex:1; overflow:hidden; padding:10px 20px 0; gap:0;">
             <div style="display:flex; flex-direction:column; flex:1; margin:0 4px;">
-                <p style="font-size:13px; font-weight:700; color:#8B46D3; text-align:center; margin-bottom:8px;">Tahun</p>
+                <p style="font-size:13px; font-weight:700; color:#8B46D3; text-align:center; margin-bottom:8px;">Year</p>
                 <div class="picker-scroll" id="pickerYear"></div>
             </div>
             <div style="display:flex; flex-direction:column; flex:1; margin:0 4px;">
-                <p style="font-size:13px; font-weight:700; color:#8B46D3; text-align:center; margin-bottom:8px;">Bulan</p>
+                <p style="font-size:13px; font-weight:700; color:#8B46D3; text-align:center; margin-bottom:8px;">Month</p>
                 <div class="picker-scroll" id="pickerMonth"></div>
             </div>
             <div style="display:flex; flex-direction:column; flex:1; margin:0 4px;">
-                <p style="font-size:13px; font-weight:700; color:#8B46D3; text-align:center; margin-bottom:8px;">Tanggal</p>
+                <p style="font-size:13px; font-weight:700; color:#8B46D3; text-align:center; margin-bottom:8px;">Date</p>
                 <div class="picker-scroll" id="pickerDay"></div>
             </div>
         </div>
         <div style="display:flex; flex-shrink:0; padding:10px 20px 20px; gap:10px;">
-            <button onclick="closeDatePicker()" style="flex:1; padding:13px; border-radius:12px; background:#EDE9FE; font-size:15px; font-weight:600; color:#8B46D3; cursor:pointer; border:none;">Batal</button>
-            <button onclick="confirmDatePicker()" style="flex:1; padding:13px; border-radius:12px; background:#8B46D3; font-size:15px; font-weight:700; color:#fff; cursor:pointer; border:none;">Pilih</button>
+            <button onclick="closeDatePicker()" style="flex:1; padding:13px; border-radius:12px; background:#EDE9FE; font-size:15px; font-weight:600; color:#8B46D3; cursor:pointer; border:none;">Cancel</button>
+            <button onclick="confirmDatePicker()" style="flex:1; padding:13px; border-radius:12px; background:#8B46D3; font-size:15px; font-weight:700; color:#fff; cursor:pointer; border:none;">Select</button>
         </div>
     </div>
 </div>
@@ -175,14 +175,14 @@
 <div class="modal-overlay" id="modalDetail">
     <div class="modal-box">
         <div style="display:flex; align-items:center; justify-content:space-between; flex-shrink:0; padding:20px; border-bottom:2px solid #EDE9FE;">
-            <span style="font-size:19px; font-weight:700; color:#1E1B2E;">Detail Aktivitas</span>
+            <span style="font-size:19px; font-weight:700; color:#1E1B2E;">Activity Details</span>
             <button onclick="closeDetail()" style="width:32px; height:32px; border-radius:16px; background:#EDE9FE; display:flex; align-items:center; justify-content:center; cursor:pointer; border:none;">
                 <ion-icon name="close" style="font-size:20px; color:#8B46D3;"></ion-icon>
             </button>
         </div>
         <div class="no-scrollbar" id="detailBody" style="flex:1; overflow-y:auto; padding:20px;"></div>
         <div style="flex-shrink:0; padding:0 20px 20px;">
-            <button onclick="closeDetail()" style="width:100%; background:#8B46D3; padding:15px; border-radius:16px; font-size:15px; font-weight:700; color:#fff; cursor:pointer; border:none;">Tutup</button>
+            <button onclick="closeDetail()" style="width:100%; background:#8B46D3; padding:15px; border-radius:16px; font-size:15px; font-weight:700; color:#fff; cursor:pointer; border:none;">Close</button>
         </div>
     </div>
 </div>
@@ -193,7 +193,7 @@
 // ── Config ─────────────────────────────────────────────────────────────────
 var API_BASE_URL = '{{ env("API_BASE_URL") }}';
 var API_TOKEN    = '{{ session("token") }}';
-var MONTHS_ID    = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+var MONTHS_ID    = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 var KAT_COLOR    = { makan:'#FF6B6B', tidur:'#4ECDC4', main:'#FFD93D', belajar:'#6BCB77', mandi:'#95B8D1' };
 var KAT_ICON     = { makan:'restaurant', tidur:'bed', main:'football', belajar:'school', mandi:'water' };
 
@@ -227,11 +227,11 @@ function parseDurasi(durasi, jam_mulai, jam_selesai) {
     if (durasi && typeof durasi === 'object') {
         var j = durasi.jam   || 0;
         var m = durasi.menit || 0;
-        if (j > 0 && m > 0) return j + ' jam ' + m + ' menit';
-        if (j > 0)          return j + ' jam';
-        if (m > 0)          return m + ' menit';
+        if (j > 0 && m > 0) return j + ' hr ' + m + ' min';
+        if (j > 0)          return j + ' hr';
+        if (m > 0)          return m + ' min';
         var tot = durasi.total_menit || 0;
-        return tot > 0 ? tot + ' menit' : '-';
+        return tot > 0 ? tot + ' min' : '-';
     }
     if (durasi && typeof durasi === 'string') return durasi;
     if (!jam_mulai || !jam_selesai) return '-';
@@ -240,7 +240,7 @@ function parseDurasi(durasi, jam_mulai, jam_selesai) {
     var diff = Math.abs(b - a);
     var h = Math.floor(diff / 3600000);
     var m2 = Math.floor((diff % 3600000) / 60000);
-    return h > 0 ? (h + ' jam ' + m2 + ' menit') : (m2 + ' menit');
+    return h > 0 ? (h + ' hr ' + m2 + ' min') : (m2 + ' min');
 }
 
 function ucFirst(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
@@ -275,7 +275,7 @@ async function loadDiary() {
     hideEl('aktList');
     hideEl('emptyState');
     hideEl('errorState');
-    document.getElementById('totalLabel').textContent = '0 aktivitas';
+    document.getElementById('totalLabel').textContent = '0 activities';
 
     try {
         var params = new URLSearchParams({
@@ -296,7 +296,7 @@ async function loadDiary() {
         var data = await res.json();
 
         if (data.status === 'success' && data.data) {
-            var namaAnak = data.data.nama_anak || 'Anak';
+            var namaAnak = data.data.nama_anak || 'Child';
             document.getElementById('judulAnak').textContent = 'Diary ' + namaAnak;
 
             var groups = data.data.aktivitas_per_tanggal || [];
@@ -308,10 +308,10 @@ async function loadDiary() {
             if (list.length > 0 && list[0].nanny_name) {
                 document.getElementById('subtitleNanny').textContent = 'Nanny: ' + list[0].nanny_name;
             } else {
-                document.getElementById('subtitleNanny').textContent = 'Dicatat oleh Nanny';
+                document.getElementById('subtitleNanny').textContent = 'Recorded by Nanny';
             }
 
-            document.getElementById('totalLabel').textContent = list.length + ' aktivitas';
+            document.getElementById('totalLabel').textContent = list.length + ' activities';
             renderAktivitas(list);
         } else {
             hideEl('skeletonList');
@@ -333,8 +333,8 @@ function renderAktivitas(list) {
         hideEl('aktList');
         showEl('emptyState', true);
         document.getElementById('emptyDesc').textContent = activeKat
-            ? 'kategori "' + activeKat + '" pada tanggal ini'
-            : 'pada tanggal ini';
+            ? 'category "' + activeKat + '" on this date'
+            : 'on this date';
         return;
     }
 
@@ -364,7 +364,7 @@ function renderAktivitas(list) {
              +   '<div style="flex:1; min-width:0;">'
              +     '<p style="font-size:15px; font-weight:700; color:#1E1B2E; margin-bottom:3px;">' + ucFirst(item.kategori) + '</p>'
              +     '<p style="font-size:13px; color:#8B46D3; font-weight:500; margin-bottom:2px;">' + mulai + ' – ' + selesai + '</p>'
-             +     '<p style="font-size:12px; color:#8B86A5; font-weight:500;">Durasi: ' + durasi + '</p>'
+             +     '<p style="font-size:12px; color:#8B86A5; font-weight:500;">Duration: ' + durasi + '</p>'
              +     (item.nanny_name ? '<p style="font-size:11px; color:#C4B5FD; font-weight:500; margin-top:2px;">👤 ' + item.nanny_name + '</p>' : '')
              +   '</div>'
              + '</div>'
@@ -490,13 +490,13 @@ function openDetail(item) {
     var durasi  = parseDurasi(item.durasi, item.jam_mulai, item.jam_selesai);
 
     var rows = [
-        { icon: 'time-outline',          label: 'Waktu Mulai',   value: mulai   },
-        { icon: 'time-outline',          label: 'Waktu Selesai', value: selesai },
-        { icon: 'hourglass',             label: 'Durasi',        value: durasi  },
-        { icon: 'person-outline',        label: 'Dicatat Oleh',  value: item.nanny_name || '-' }
+        { icon: 'time-outline',          label: 'Start Time',   value: mulai   },
+        { icon: 'time-outline',          label: 'End Time', value: selesai },
+        { icon: 'hourglass',             label: 'Duration',        value: durasi  },
+        { icon: 'person-outline',        label: 'Recorded By',  value: item.nanny_name || '-' }
     ];
     if (item.mood)      rows.push({ emoji: getMoodEmoji(item.mood), label: 'Mood',       value: ucFirst(item.mood) });
-    if (item.deskripsi) rows.push({ icon: 'document-text-outline', label: 'Deskripsi',  value: item.deskripsi });
+    if (item.deskripsi) rows.push({ icon: 'document-text-outline', label: 'Description',  value: item.deskripsi });
 
     var html = '<div style="display:flex; flex-direction:column; align-items:center; padding:20px;'
              + ' border-radius:16px; margin-bottom:20px; background:' + bg + '20;">'
@@ -526,7 +526,7 @@ function openDetail(item) {
 
     if (item.foto_url) {
         html += '<div style="margin-top:10px;">'
-              +   '<p style="font-size:11px; color:#8B86A5; font-weight:600; margin-bottom:8px;">FOTO</p>'
+              +   '<p style="font-size:11px; color:#8B86A5; font-weight:600; margin-bottom:8px;">PHOTO</p>'
               +   '<img src="' + item.foto_url + '" loading="lazy"'
               +        ' style="width:100%; height:200px; border-radius:16px; object-fit:cover; background:#EDE9FE; border:2px solid #EDE9FE;">'
               + '</div>';

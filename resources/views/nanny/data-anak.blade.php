@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Data Anak')
+@section('title', 'Child Data')
 
 @push('styles')
 <style>
@@ -79,7 +79,7 @@
         @php
             $lahir  = new DateTime($child['tanggal_lahir'] ?? 'now');
             $diff   = $lahir->diff(new DateTime());
-            $umur   = ($diff->y > 0 ? $diff->y . ' tahun ' : '') . $diff->m . ' bulan';
+            $umur   = ($diff->y > 0 ? $diff->y . ' years ' : '') . $diff->m . ' months';
             $isMale = ($child['gender'] ?? '') === 'L';
             $hasDetail = !empty($child['catatan_khusus']) || !empty($child['alergi']) || !empty($child['hobi']);
         @endphp
@@ -176,13 +176,13 @@
     <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-5">
         <ion-icon name="happy-outline" style="font-size:44px;color:#C4B5FD;"></ion-icon>
     </div>
-    <h3 class="text-[#1E1B2E] font-extrabold text-lg mb-2">Belum ada data anak</h3>
+    <h3 class="text-[#1E1B2E] font-extrabold text-lg mb-2">No child data yet</h3>
     <p class="text-[#8B86A5] text-sm text-center leading-relaxed px-8">
         @if($assignmentData)
-            Penugasan dengan <span class="font-bold text-[#8B46D3]">{{ $assignmentData['majikan_name'] ?? '' }}</span><br>
+            Assignment with <span class="font-bold text-[#8B46D3]">{{ $assignmentData['majikan_name'] ?? '' }}</span><br>
             {{ $assignmentData['tanggal_mulai'] ?? '' }} – {{ $assignmentData['tanggal_selesai'] ?? '' }}
         @else
-            Tidak ada penugasan aktif saat ini
+            No active assignment right now
         @endif
     </p>
 </div>

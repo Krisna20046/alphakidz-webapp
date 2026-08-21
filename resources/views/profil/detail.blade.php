@@ -2,7 +2,7 @@
 
 @php $activeNav = 'profil' @endphp
 
-@section('title', $isEditing ? 'Edit Profil' : 'Detail Profil')
+@section('title', $isEditing ? 'Edit Profile' : 'Profile Details')
 
 @push('styles')
 <style>
@@ -97,12 +97,12 @@
             <div class="w-[88px] h-[88px] rounded-full p-[3px]" style="background: linear-gradient(135deg, #C4B5FD 0%, #8B46D3 100%);">
                 @if($user['foto_url'] ?? null)
                     <ion-icon id="avatarIcon" name="person" style="display:none; font-size:42px; color:#8B46D3;"></ion-icon>
-                    <img id="avatarPreview" src="{{ $user['foto_url'] }}" alt="foto" class="w-full h-full rounded-full object-cover border-2 border-white"/>
+                    <img id="avatarPreview" src="{{ $user['foto_url'] }}" alt="photo" class="w-full h-full rounded-full object-cover border-2 border-white"/>
                 @else
                     <div id="avatarPlaceholder" class="w-full h-full rounded-full bg-[#F0EDFB] border-2 border-white flex items-center justify-center">
                         <ion-icon id="avatarIcon" name="person" style="font-size:42px; color:#8B46D3;"></ion-icon>
                     </div>
-                    <img id="avatarPreview" src="" alt="foto" class="hidden" style="position:absolute; inset:3px; width:calc(100% - 6px); height:calc(100% - 6px); border-radius:9999px; object-fit:cover; border:2px solid white;"/>
+                    <img id="avatarPreview" src="" alt="photo" class="hidden" style="position:absolute; inset:3px; width:calc(100% - 6px); height:calc(100% - 6px); border-radius:9999px; object-fit:cover; border:2px solid white;"/>
                 @endif
             </div>
             <label for="fotoInput"
@@ -111,7 +111,7 @@
             </label>
             <input type="file" id="fotoInput" name="foto" accept="image/*" class="hidden">
         </div>
-        <p class="text-[#8B46D3] text-[13px] font-bold mt-1">Change Profil Picture</p>
+        <p class="text-[#8B46D3] text-[13px] font-bold mt-1">Change Profile Picture</p>
     </div>
 
     <form id="profileForm" enctype="multipart/form-data" novalidate class="flex flex-col gap-0">
@@ -123,7 +123,7 @@
 
         <div class="anim delay-2 mb-4">
             <label class="field-label">Full Name <span class="req">*</span></label>
-            <input type="text" name="name" id="name" value="{{ $user['name'] ?? '' }}" placeholder="Nama lengkap" class="inp"/>
+            <input type="text" name="name" id="name" value="{{ $user['name'] ?? '' }}" placeholder="Full name" class="inp"/>
         </div>
 
         <div class="anim delay-2 mb-4">
@@ -142,9 +142,9 @@
             <div class="flex-1">
                 <label class="field-label">Gender <span class="req">*</span></label>
                 <select name="gender" id="genderSelect" class="inp">
-                    <option value="">Pilih</option>
-                    <option value="L" {{ ($user['gender'] ?? '') === 'L' ? 'selected' : '' }}>Laki-laki</option>
-                    <option value="P" {{ ($user['gender'] ?? '') === 'P' ? 'selected' : '' }}>Wanita</option>
+                    <option value="">Select</option>
+                    <option value="L" {{ ($user['gender'] ?? '') === 'L' ? 'selected' : '' }}>Male</option>
+                    <option value="P" {{ ($user['gender'] ?? '') === 'P' ? 'selected' : '' }}>Female</option>
                 </select>
             </div>
         </div>
@@ -170,7 +170,7 @@
 
         <div class="anim delay-3 mb-5">
             <label class="field-label">Address <span class="req">*</span></label>
-            <textarea name="alamat" id="alamat" rows="3" placeholder="Masukkan alamat lengkap" class="inp resize-none">{{ $user['alamat'] ?? '' }}</textarea>
+            <textarea name="alamat" id="alamat" rows="3" placeholder="Enter full address" class="inp resize-none">{{ $user['alamat'] ?? '' }}</textarea>
         </div>
 
         <div class="h-px bg-[#F0EDFB] mb-5"></div>
@@ -188,15 +188,15 @@
         @if(($user['id_role'] ?? 0) != 2)
         <div class="anim delay-4 mb-4">
             <label class="field-label">Skill</label>
-            <textarea name="skill" rows="2" placeholder="Contoh: Masakan Nusantara, Asuh Anak" class="inp resize-none">{{ $user['skill'] ?? '' }}</textarea>
+            <textarea name="skill" rows="2" placeholder="e.g. Indonesian dishes, childcare" class="inp resize-none">{{ $user['skill'] ?? '' }}</textarea>
         </div>
         <div class="anim delay-4 mb-4">
-            <label class="field-label">Pengalaman (tahun)</label>
-            <input type="number" name="pengalaman" value="{{ $user['pengalaman'] ?? '' }}" placeholder="Contoh: 3" min="0" class="inp"/>
+            <label class="field-label">Experience (years)</label>
+            <input type="number" name="pengalaman" value="{{ $user['pengalaman'] ?? '' }}" placeholder="e.g. 3" min="0" class="inp"/>
         </div>
         <div class="anim delay-5 mb-4">
-            <label class="field-label">Sertifikasi</label>
-            <textarea name="sertifikasi" rows="2" placeholder="Contoh: CPR, First Aid, PAUD" class="inp resize-none">{{ $user['sertifikasi'] ?? '' }}</textarea>
+            <label class="field-label">Certification</label>
+            <textarea name="sertifikasi" rows="2" placeholder="e.g. CPR, First Aid, ECD" class="inp resize-none">{{ $user['sertifikasi'] ?? '' }}</textarea>
         </div>
         @endif
 
@@ -230,7 +230,7 @@
         <div class="avatar-in mb-4">
             @if($user['foto_url'] ?? null)
                 <div class="w-[88px] h-[88px] rounded-full p-[3px]" style="background: linear-gradient(135deg, #C4B5FD 0%, #8B46D3 100%);">
-                    <img src="{{ $user['foto_url'] }}" alt="foto" class="w-full h-full rounded-full object-cover border-2 border-white"/>
+                    <img src="{{ $user['foto_url'] }}" alt="photo" class="w-full h-full rounded-full object-cover border-2 border-white"/>
                 </div>
             @else
                 <div class="w-[88px] h-[88px] rounded-full p-[3px]" style="background: linear-gradient(135deg, #C4B5FD 0%, #8B46D3 100%);">
@@ -240,7 +240,7 @@
                 </div>
             @endif
         </div>
-        <h1 class="anim delay-2 text-[#1E1B2E] text-[22px] font-extrabold leading-tight mb-3">{{ $user['name'] ?? 'Pengguna' }}</h1>
+        <h1 class="anim delay-2 text-[#1E1B2E] text-[22px] font-extrabold leading-tight mb-3">{{ $user['name'] ?? 'User' }}</h1>
         <div class="anim delay-2">
             <span class="inline-block px-5 py-[6px] rounded-full bg-[#EDE9FE] text-[#8B46D3] text-[12px] font-bold">{{ $user['role'] ?? '' }}</span>
         </div>
@@ -257,7 +257,7 @@
                 ['icon' => 'call-outline',      'iconBg' => '#FCE7F3', 'iconClr' => '#EC4899', 'label' => 'PHONE NUMBER', 'value' => $user['no_hp'] ?? '-'],
                 ['icon' => 'calendar-outline',  'iconBg' => '#E0E7FF', 'iconClr' => '#6366F1', 'label' => 'DATE OF BIRTH','value' => $user['tanggal_lahir'] ?? '-'],
                 ['icon' => 'transgender-outline','iconBg'=> '#FEF3C7','iconClr'=> '#F59E0B',   'label' => 'GENDER',
-                 'value' => ($user['gender'] ?? '') === 'L' ? 'Laki-laki' : (($user['gender'] ?? '') === 'P' ? 'Perempuan' : '-')],
+                 'value' => ($user['gender'] ?? '') === 'L' ? 'Male' : (($user['gender'] ?? '') === 'P' ? 'Female' : '-')],
                 ['icon' => 'location-outline',  'iconBg' => '#EDE9FE', 'iconClr' => '#8B46D3', 'label' => 'LOCATION',    'value' => $user['kota'] ?? '-'],
                 ['icon' => 'home-outline',      'iconBg' => '#FCE7F3', 'iconClr' => '#EC4899', 'label' => 'ADDRESS',     'value' => $user['alamat'] ?? '-'],
             ];
@@ -304,8 +304,8 @@
                 <div class="info-icon bg-[#D1FAE5]">
                     <ion-icon name="briefcase-outline" style="font-size:18px;color:#10B981;"></ion-icon>
                 </div>
-                <div><p class="text-[9px] font-extrabold tracking-wider text-[#9CA3AF]">PENGALAMAN</p>
-                <p class="text-[#1E1B2E] text-[14px] font-bold mt-[3px]">{{ $user['pengalaman'] }} tahun</p></div>
+                <div><p class="text-[9px] font-extrabold tracking-wider text-[#9CA3AF]">EXPERIENCE</p>
+                <p class="text-[#1E1B2E] text-[14px] font-bold mt-[3px]">{{ $user['pengalaman'] }} years</p></div>
             </div>
             @endif
         @endif
@@ -331,7 +331,7 @@
 <!-- Provinsi Sheet -->
 <div id="provinsiSheet" class="sheet fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-[28px] max-h-[75vh] flex flex-col sm:max-w-[390px] sm:mx-auto">
     <div class="flex items-center justify-between px-5 pt-5 pb-3 border-b border-[#F0EDFB] shrink-0">
-        <h3 class="text-[#1E1B2E] font-extrabold text-[16px]">Pilih Provinsi</h3>
+        <h3 class="text-[#1E1B2E] font-extrabold text-[16px]">Select Province</h3>
         <button onclick="closeSheet()" class="w-8 h-8 rounded-full bg-[#F0EDFB] flex items-center justify-center">
             <ion-icon name="close" style="font-size:18px;color:#8B46D3;"></ion-icon>
         </button>
@@ -339,7 +339,7 @@
     <div class="px-4 py-3 shrink-0">
         <div class="flex items-center gap-2 bg-[#F5F4FB] rounded-[12px] px-4 py-2.5">
             <ion-icon name="search-outline" style="font-size:16px;color:#8B46D3;flex-shrink:0;"></ion-icon>
-            <input type="text" id="provinsiSearch" placeholder="Cari provinsi..." oninput="filterList('provinsi', this.value)" class="flex-1 bg-transparent text-sm text-[#1E1B2E] placeholder-[#B0A8CC] outline-none font-semibold"/>
+            <input type="text" id="provinsiSearch" placeholder="Search province..." oninput="filterList('provinsi', this.value)" class="flex-1 bg-transparent text-sm text-[#1E1B2E] placeholder-[#B0A8CC] outline-none font-semibold"/>
         </div>
     </div>
     <div id="provinsiList" class="overflow-y-auto flex-1 pb-4">
@@ -355,7 +355,7 @@
 <!-- Kota Sheet -->
 <div id="kotaSheet" class="sheet fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-[28px] max-h-[75vh] flex flex-col sm:max-w-[390px] sm:mx-auto">
     <div class="flex items-center justify-between px-5 pt-5 pb-3 border-b border-[#F0EDFB] shrink-0">
-        <h3 class="text-[#1E1B2E] font-extrabold text-[16px]">Pilih Kota</h3>
+        <h3 class="text-[#1E1B2E] font-extrabold text-[16px]">Select City</h3>
         <button onclick="closeSheet()" class="w-8 h-8 rounded-full bg-[#F0EDFB] flex items-center justify-center">
             <ion-icon name="close" style="font-size:18px;color:#8B46D3;"></ion-icon>
         </button>
@@ -363,7 +363,7 @@
     <div class="px-4 py-3 shrink-0">
         <div class="flex items-center gap-2 bg-[#F5F4FB] rounded-[12px] px-4 py-2.5">
             <ion-icon name="search-outline" style="font-size:16px;color:#8B46D3;flex-shrink:0;"></ion-icon>
-            <input type="text" id="kotaSearch" placeholder="Cari kota..." oninput="filterList('kota', this.value)" class="flex-1 bg-transparent text-sm text-[#1E1B2E] placeholder-[#B0A8CC] outline-none font-semibold"/>
+            <input type="text" id="kotaSearch" placeholder="Search city..." oninput="filterList('kota', this.value)" class="flex-1 bg-transparent text-sm text-[#1E1B2E] placeholder-[#B0A8CC] outline-none font-semibold"/>
         </div>
     </div>
     <div id="kotaList" class="overflow-y-auto flex-1 pb-4">
@@ -478,7 +478,7 @@ async function openSheet(type) {
     if (type === 'provinsi' && provinsiData.length === 0) await loadProvinsi();
     if (type === 'kota') {
         const idProv = document.getElementById('idProvinsi').value;
-        if (!idProv) { closeSheet(); showToast('Pilih provinsi terlebih dahulu!'); return; }
+        if (!idProv) { closeSheet(); showToast('Select province first!'); return; }
         await loadKota(idProv);
     }
 }
@@ -495,7 +495,7 @@ async function loadProvinsi() {
         const res  = await fetch(`${API_BASE}/provinsi`, { headers: { 'Accept':'application/json','X-CSRF-TOKEN':CSRF_TOKEN } });
         const data = await res.json();
         if (data.success) { provinsiData = data.data; renderList('provinsi', provinsiData); }
-    } catch { showToast('Gagal memuat data provinsi.'); }
+    } catch { showToast('Failed to load province data.'); }
 }
 async function loadKota(idProv) {
     kotaData = []; renderListLoading('kota');
@@ -503,14 +503,14 @@ async function loadKota(idProv) {
         const res  = await fetch(`${API_BASE}/kota/${idProv}`, { headers: { 'Accept':'application/json','X-CSRF-TOKEN':CSRF_TOKEN } });
         const data = await res.json();
         if (data.success) { kotaData = data.data; renderList('kota', kotaData); }
-    } catch { showToast('Gagal memuat data kota.'); }
+    } catch { showToast('Failed to load city data.'); }
 }
 function renderListLoading(type) {
     document.getElementById(type + 'List').innerHTML = `<div class="flex justify-center py-8"><svg class="w-6 h-6 animate-spin" style="color:#8B46D3" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg></div>`;
 }
 function renderList(type, data) {
     const el = document.getElementById(type + 'List');
-    if (!data || !data.length) { el.innerHTML = '<p class="text-center text-[#9CA3AF] text-sm py-8 font-semibold">Data tidak ditemukan</p>'; return; }
+        if (!data || !data.length) { el.innerHTML = '<p class="text-center text-[#9CA3AF] text-sm py-8 font-semibold">No data found</p>'; return; }
     el.innerHTML = data.map(item =>
         `<button type="button" onclick="selectItem('${type}',${item.id},'${item.nama.replace(/'/g,"\\'")}')" class="w-full text-left px-5 py-[13px] border-b border-[#F5F4FB] text-[14px] font-semibold text-[#1E1B2E] hover:bg-[#F5F4FB] transition-colors">${item.nama}</button>`
     ).join('');
@@ -551,20 +551,20 @@ if (form) {
         const kota   = document.getElementById('idKota')?.value;
         const alamat = document.getElementById('alamat')?.value.trim();
 
-        if (!name)   return showToast('Nama wajib diisi!');
-        if (!noHp)   return showToast('Nomor HP wajib diisi!');
-        if (!tgl)    return showToast('Tanggal lahir wajib diisi!');
-        if (!gender) return showToast('Gender wajib dipilih!');
-        if (!prov)   return showToast('Provinsi wajib dipilih!');
-        if (!kota)   return showToast('Kota wajib dipilih!');
-        if (!alamat) return showToast('Alamat wajib diisi!');
+        if (!name)   return showToast('Name is required!');
+        if (!noHp)   return showToast('Phone number is required!');
+        if (!tgl)    return showToast('Date of birth is required!');
+        if (!gender) return showToast('Gender is required!');
+        if (!prov)   return showToast('Province is required!');
+        if (!kota)   return showToast('City is required!');
+        if (!alamat) return showToast('Address is required!');
 
         const btn     = document.getElementById('submitBtn');
         const btnText = document.getElementById('btnText');
         const btnIcon = document.getElementById('btnIcon');
         const spinner = document.getElementById('btnSpinner');
         btn.disabled = true;
-        btnText.textContent = 'Menyimpan...';
+        btnText.textContent = 'Saving...';
         btnIcon.style.display = 'none';
         spinner.classList.remove('hidden');
 
@@ -580,10 +580,10 @@ if (form) {
             const data = await res.json();
             if (data.success) { showSuccessModal(); }
             else {
-                const err = data.errors ? Object.values(data.errors)[0] : (data.message || 'Gagal menyimpan profil.');
+                const err = data.errors ? Object.values(data.errors)[0] : (data.message || 'Failed to save profile.');
                 showToast(Array.isArray(err) ? err[0] : err);
             }
-        } catch { showToast('Terjadi kesalahan. Coba lagi.'); }
+        } catch { showToast('An error occurred. Try again.'); }
         finally {
             btn.disabled = false;
             btnText.textContent = 'Save Changes';

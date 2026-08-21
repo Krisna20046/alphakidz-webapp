@@ -82,7 +82,7 @@ class AuthController extends Controller
 
                 return response()->json([
                     'success'  => true,
-                    'message'  => 'Login berhasil',
+                    'message'  => 'Login successful',
                     'redirect' => route('dashboard'),
                 ]);
             }
@@ -90,7 +90,7 @@ class AuthController extends Controller
             // Login gagal dari API
             return response()->json([
                 'success' => false,
-                'message' => $data['message'] ?? 'Email atau password salah.',
+                'message' => $data['message'] ?? 'Invalid email or password.',
             ], 401);
 
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
@@ -98,14 +98,14 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Tidak dapat terhubung ke server. Periksa koneksi internet.',
+                'message' => 'Unable to connect to the server. Check your internet connection.',
             ], 503);
         } catch (\Exception $e) {
             Log::error('Login - Unexpected error: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan. Silakan coba lagi.',
+                'message' => 'Something went wrong. Please try again.',
             ], 500);
         }
     }
@@ -130,13 +130,13 @@ class AuthController extends Controller
             ],
             'password_confirmation' => 'required|string',
         ], [
-            'name.required'           => 'Nama lengkap wajib diisi.',
-            'email.required'          => 'Email wajib diisi.',
-            'email.email'             => 'Format email tidak valid.',
-            'password.required'       => 'Password wajib diisi.',
-            'password.min'            => 'Password minimal 8 karakter.',
-            'password.confirmed'      => 'Konfirmasi password tidak cocok.',
-            'password.regex'          => 'Password harus mengandung minimal 1 huruf kapital dan 1 angka.',
+            'name.required'           => 'Full name is required.',
+            'email.required'          => 'Email is required.',
+            'email.email'             => 'Invalid email format.',
+            'password.required'       => 'Password is required.',
+            'password.min'            => 'Password must be at least 8 characters.',
+            'password.confirmed'      => 'Password confirmation does not match.',
+            'password.regex'          => 'Password must contain at least 1 capital letter and 1 number.',
         ]);
 
         if ($validator->fails()) {
@@ -162,14 +162,14 @@ class AuthController extends Controller
             if ($response->successful() && isset($data['status']) && $data['status'] === 'success') {
                 return response()->json([
                     'success' => true,
-                    'message' => $data['message'] ?? 'Registrasi berhasil! Silakan masuk.',
+                    'message' => $data['message'] ?? 'Registration successful! Please sign in.',
                 ]);
             }
 
             // Error dari API (misal: email sudah terdaftar)
             return response()->json([
                 'success' => false,
-                'message' => $data['message'] ?? 'Gagal registrasi.',
+                'message' => $data['message'] ?? 'Registration failed.',
                 'errors'  => $data['errors'] ?? null,
             ], $response->status());
 
@@ -178,14 +178,14 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Tidak dapat terhubung ke server. Periksa koneksi internet.',
+                'message' => 'Unable to connect to the server. Check your internet connection.',
             ], 503);
         } catch (\Exception $e) {
             Log::error('Register - Unexpected error: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan. Silakan coba lagi.',
+                'message' => 'Something went wrong. Please try again.',
             ], 500);
         }
     }

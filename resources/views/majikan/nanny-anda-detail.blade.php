@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Penugasan — ' . ($assignment['nanny_name'] ?? 'Nanny'))
+@section('title', 'Assignment Details — ' . ($assignment['nanny_name'] ?? 'Nanny'))
 
 @push('styles')
 <style>
@@ -61,12 +61,12 @@
 <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar">
     <x-empty-state
         icon="document-text-outline"
-        title="Data tidak ditemukan"
-        description="Data yang Anda cari tidak tersedia"
+        title="Data not found"
+        description="The data you are looking for is unavailable"
     >
         <a href="{{ route('majikan-nanny') }}"
            class="mt-6 bg-[#8B46D3] text-white text-sm font-bold px-8 py-3 rounded-2xl shadow-[0_8px_20px_rgba(139,70,211,0.35)]">
-            Kembali ke Daftar
+            Back to List
         </a>
     </x-empty-state>
 </div>
@@ -355,7 +355,7 @@
         <a href="{{ route('chat.room', [$assignment['id_konsultan'], 'nama' =>($assignment['konsultan_name'])]) }}"
            class="btn-contact shadow-[0_2px_10px_rgba(0,0,0,0.06)] w-full">
             <ion-icon name="chatbubble-ellipses-outline" style="font-size:16px;"></ion-icon>
-            <span>Hubungi Konsultan</span>
+            <span>Contact Consultant</span>
         </a>
         @endif
 

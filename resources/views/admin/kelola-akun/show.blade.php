@@ -1,22 +1,22 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Pengguna')
+@section('title', 'User Details')
 
 @php
     $u        = $user;
     $isActive = (int)($u['is_active'] ?? 0) === 1;
     $role     = strtolower($u['role'] ?? 'nanny');
-    $roleMap  = ['admin'=>'Admin','konsultan'=>'Konsultan','majikan'=>'Majikan','nanny'=>'Nanny'];
+    $roleMap  = ['admin'=>'Admin','konsultan'=>'Consultant','majikan'=>'Employer','nanny'=>'Nanny'];
     $roleLabel = $roleMap[$role] ?? ucfirst($role);
     $initial  = strtoupper(substr($u['name'] ?? '?', 0, 1));
-    $genderMap = ['L'=>'Laki-laki','P'=>'Perempuan'];
+    $genderMap = ['L'=>'Male','P'=>'Female'];
     $gender    = $genderMap[$u['gender'] ?? ''] ?? '-';
     $address   = collect([$u['alamat'] ?? null, $u['kota'] ?? null, $u['provinsi'] ?? null])->filter()->implode(', ') ?: '-';
     $birthDate = !empty($u['tanggal_lahir'])
         ? \Carbon\Carbon::parse($u['tanggal_lahir'])->translatedFormat('j F Y')
         : '-';
     $age = !empty($u['tanggal_lahir'])
-        ? \Carbon\Carbon::parse($u['tanggal_lahir'])->age . ' tahun'
+        ? \Carbon\Carbon::parse($u['tanggal_lahir'])->age . ' years'
         : '';
     $joinDate = !empty($u['created_at'])
         ? \Carbon\Carbon::parse($u['created_at'])->translatedFormat('j F Y')
@@ -47,8 +47,8 @@
             <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
         </a>
         <div>
-            <span class="text-white text-[17px] font-extrabold tracking-wide">Detail Pengguna</span>
-            <p class="text-white/60 text-xs font-medium mt-0.5">Informasi lengkap akun</p>
+            <span class="text-white text-[17px] font-extrabold tracking-wide">User Details</span>
+            <p class="text-white/60 text-xs font-medium mt-0.5">Full account information</p>
         </div>
     </div>
 </div>
@@ -74,7 +74,7 @@
                     <span class="text-[11px] font-bold px-2.5 py-1 rounded-full badge-{{ $role }}">{{ $roleLabel }}</span>
                     <span class="text-[11px] font-bold px-2.5 py-1 rounded-full
                         {{ $isActive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600' }}">
-                        {{ $isActive ? 'Aktif' : 'Nonaktif' }}
+                        {{ $isActive ? 'Active' : 'Inactive' }}
                     </span>
                 </div>
             </div>
@@ -87,20 +87,20 @@
             <div class="w-7 h-7 rounded-lg bg-[#EDE9FE] flex items-center justify-center">
                 <ion-icon name="call-outline" style="font-size:14px;color:#8B46D3;"></ion-icon>
             </div>
-            Informasi Kontak
+            Contact Information
         </h3>
         <div class="space-y-3">
             <div class="flex items-start gap-3">
                 <ion-icon name="call-outline" style="font-size:16px;color:#8B46D3;flex-shrink:0;margin-top:2px;"></ion-icon>
                 <div>
-                    <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">No. HP</p>
+                    <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Phone No.</p>
                     <p class="text-[#1E1B2E] text-sm font-bold mt-0.5">{{ $u['no_hp'] ?? '-' }}</p>
                 </div>
             </div>
             <div class="flex items-start gap-3">
                 <ion-icon name="location-outline" style="font-size:16px;color:#8B46D3;flex-shrink:0;margin-top:2px;"></ion-icon>
                 <div>
-                    <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Alamat</p>
+                    <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Address</p>
                     <p class="text-[#1E1B2E] text-sm font-bold mt-0.5">{{ $address }}</p>
                 </div>
             </div>
@@ -113,20 +113,20 @@
             <div class="w-7 h-7 rounded-lg bg-[#EDE9FE] flex items-center justify-center">
                 <ion-icon name="person-outline" style="font-size:14px;color:#8B46D3;"></ion-icon>
             </div>
-            Informasi Pribadi
+            Personal Information
         </h3>
         <div class="space-y-3">
             <div class="flex items-start gap-3">
                 <ion-icon name="person-outline" style="font-size:16px;color:#8B46D3;flex-shrink:0;margin-top:2px;"></ion-icon>
                 <div>
-                    <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Jenis Kelamin</p>
+                    <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Gender</p>
                     <p class="text-[#1E1B2E] text-sm font-bold mt-0.5">{{ $gender }}</p>
                 </div>
             </div>
             <div class="flex items-start gap-3">
                 <ion-icon name="calendar-outline" style="font-size:16px;color:#8B46D3;flex-shrink:0;margin-top:2px;"></ion-icon>
                 <div>
-                    <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Tanggal Lahir</p>
+                    <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Date of Birth</p>
                     <p class="text-[#1E1B2E] text-sm font-bold mt-0.5">
                         {{ $birthDate }}{{ $age ? " ($age)" : '' }}
                     </p>
@@ -141,20 +141,20 @@
             <div class="w-7 h-7 rounded-lg bg-[#EDE9FE] flex items-center justify-center">
                 <ion-icon name="shield-outline" style="font-size:14px;color:#8B46D3;"></ion-icon>
             </div>
-            Informasi Akun
+            Account Information
         </h3>
         <div class="space-y-3">
             <div class="flex items-start gap-3">
                 <ion-icon name="calendar-outline" style="font-size:16px;color:#8B46D3;flex-shrink:0;margin-top:2px;"></ion-icon>
                 <div>
-                    <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Bergabung</p>
+                    <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Joined</p>
                     <p class="text-[#1E1B2E] text-sm font-bold mt-0.5">{{ $joinDate }}</p>
                 </div>
             </div>
             <div class="flex items-start gap-3">
                 <ion-icon name="time-outline" style="font-size:16px;color:#8B46D3;flex-shrink:0;margin-top:2px;"></ion-icon>
                 <div>
-                    <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Update Terakhir</p>
+                    <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Last Updated</p>
                     <p class="text-[#1E1B2E] text-sm font-bold mt-0.5">{{ $updateDate }}</p>
                 </div>
             </div>
@@ -166,18 +166,18 @@
         <a href="{{ route('admin-kelola-akun.edit', $u['id']) }}"
            class="act-btn flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-[#8B46D3] text-white font-bold text-sm shadow-lg shadow-[#8B46D3]/30">
             <ion-icon name="create-outline" style="font-size:18px;"></ion-icon>
-            Ubah Data Akun
+            Edit Account Data
         </a>
 
         <form action="{{ route('admin-kelola-akun.status', $u['id']) }}" method="POST">
             @csrf
             <input type="hidden" name="is_active" value="{{ $isActive ? 0 : 1 }}">
             <button type="submit"
-                onclick="return confirm('{{ $isActive ? 'Nonaktifkan' : 'Aktifkan' }} akun ini?')"
+                onclick="return confirm('{{ $isActive ? 'Deactivate' : 'Activate' }} this account?')"
                 class="act-btn flex items-center justify-center gap-2 w-full py-4 rounded-2xl font-bold text-sm
                     {{ $isActive ? 'bg-orange-50 text-orange-600 border border-orange-200' : 'bg-green-50 text-green-700 border border-green-200' }}">
                 <ion-icon name="{{ $isActive ? 'pause-circle-outline' : 'play-circle-outline' }}" style="font-size:18px;"></ion-icon>
-                {{ $isActive ? 'Nonaktifkan Akun' : 'Aktifkan Akun' }}
+                {{ $isActive ? 'Deactivate Account' : 'Activate Account' }}
             </button>
         </form>
 
@@ -185,10 +185,10 @@
             @csrf
             @method('DELETE')
             <button type="submit"
-                onclick="return confirm('Hapus akun ini secara permanen? Tindakan tidak dapat dibatalkan.')"
+                onclick="return confirm('Permanently delete this account? This action cannot be undone.')"
                 class="act-btn flex items-center justify-center gap-2 w-full py-4 rounded-2xl font-bold text-sm bg-red-50 text-red-500 border border-red-200">
                 <ion-icon name="trash-outline" style="font-size:18px;"></ion-icon>
-                Hapus Akun
+                Delete Account
             </button>
         </form>
     </div>

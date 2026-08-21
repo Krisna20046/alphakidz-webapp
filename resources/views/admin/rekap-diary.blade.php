@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Rekap Diary Nanny')
+@section('title', 'Nanny Diary Recap')
 
 @push('styles')
 <style>
@@ -45,7 +45,7 @@
         <div>
             <p class="text-white/60 text-xs font-medium mb-0.5">Admin</p>
             <span class="text-white text-[17px] font-extrabold tracking-wide leading-tight">Rekap Diary Nanny</span>
-            <p class="text-white/50 text-xs mt-0.5">Generate laporan aktivitas nanny</p>
+            <p class="text-white/50 text-xs mt-0.5">Generate nanny activity report</p>
         </div>
     </div>
 </div>
@@ -59,7 +59,7 @@
                 <div class="w-7 h-7 rounded-full bg-[#8B46D3] flex items-center justify-center">
                     <span class="text-white text-xs font-bold">1</span>
                 </div>
-                <span class="text-[#1E1B2E] text-sm font-bold">Pilih Nanny</span>
+                <span class="text-[#1E1B2E] text-sm font-bold">Select Nanny</span>
             </div>
             <div class="flex-1 h-px bg-[#EDE9FE]"></div>
             <div class="flex items-center gap-1.5 opacity-40">
@@ -75,7 +75,7 @@
                 <ion-icon name="search-outline" style="font-size:18px;color:#8B86A5;"></ion-icon>
                 <input id="searchInput"
                        type="text"
-                       placeholder="Cari nama nanny..."
+                       placeholder="Search nanny name..."
                        class="flex-1 text-sm text-[#1E1B2E] placeholder-[#8B86A5] bg-transparent outline-none font-bold"
                        oninput="filterNannies(this.value)"
                 />
@@ -93,7 +93,7 @@
                 <div class="w-7 h-7 rounded-full bg-[#EDE9FE] flex items-center justify-center">
                     <ion-icon name="checkmark" style="font-size:14px;color:#8B46D3;"></ion-icon>
                 </div>
-                <span class="text-[#8B86A5] text-sm font-semibold">Pilih Nanny</span>
+                <span class="text-[#8B86A5] text-sm font-semibold">Select Nanny</span>
             </div>
             <div class="flex-1 h-px bg-[#8B46D3]"></div>
             <div class="flex items-center gap-1.5">
@@ -123,12 +123,12 @@
                 <div class="w-8 h-8 rounded-xl bg-[#EDE9FE] flex items-center justify-center">
                     <ion-icon name="filter" style="font-size:16px;color:#8B46D3;"></ion-icon>
                 </div>
-                <p class="text-[#1E1B2E] font-bold text-base">Filter Laporan</p>
+                <p class="text-[#1E1B2E] font-bold text-base">Filter Report</p>
             </div>
 
             <div class="mb-4">
                 <label class="block text-[#8B86A5] text-xs font-bold mb-2 uppercase tracking-wider">
-                    Tanggal Mulai <span class="text-red-500">*</span>
+                    Start Date <span class="text-red-500">*</span>
                 </label>
                 <div id="startDateWrapper" class="flex items-center gap-2 border-2 border-[#EDE9FE] rounded-xl px-4 py-3 bg-[#F8F7FF] focus-within:border-[#8B46D3] transition-colors">
                     <ion-icon name="calendar-outline" style="font-size:18px;color:#8B86A5;"></ion-icon>
@@ -139,12 +139,12 @@
                     />
                     <ion-icon name="chevron-down" style="font-size:16px;color:#8B86A5;" onclick="openDatePicker('start')" class="cursor-pointer"></ion-icon>
                 </div>
-                <p id="errStart" class="hidden text-red-500 text-xs mt-1 font-medium">Tanggal mulai harus diisi</p>
+                <p id="errStart" class="hidden text-red-500 text-xs mt-1 font-medium">Start date is required</p>
             </div>
 
             <div class="mb-4">
                 <label class="block text-[#8B86A5] text-xs font-bold mb-2 uppercase tracking-wider">
-                    Tanggal Selesai <span class="text-red-500">*</span>
+                    End Date <span class="text-red-500">*</span>
                 </label>
                 <div id="endDateWrapper" class="flex items-center gap-2 border-2 border-[#EDE9FE] rounded-xl px-4 py-3 bg-[#F8F7FF] focus-within:border-[#8B46D3] transition-colors">
                     <ion-icon name="calendar-outline" style="font-size:18px;color:#8B86A5;"></ion-icon>
@@ -155,18 +155,18 @@
                     />
                     <ion-icon name="chevron-down" style="font-size:16px;color:#8B86A5;" onclick="openDatePicker('end')" class="cursor-pointer"></ion-icon>
                 </div>
-                <p id="errEnd" class="hidden text-red-500 text-xs mt-1 font-medium">Tanggal selesai harus diisi</p>
+                <p id="errEnd" class="hidden text-red-500 text-xs mt-1 font-medium">End date is required</p>
             </div>
 
             <div class="mb-5">
                 <label class="block text-[#8B86A5] text-xs font-bold mb-2 uppercase tracking-wider">
-                    Kategori <span class="text-[#8B86A5] font-normal italic normal-case">(opsional)</span>
+                    Category <span class="text-[#8B86A5] font-normal italic normal-case">(optional)</span>
                 </label>
                 <button id="kategoriBtn" onclick="openKategoriModal()"
                         class="w-full flex items-center justify-between border-2 border-[#EDE9FE] rounded-xl px-4 py-3 bg-[#F8F7FF] hover:border-[#8B46D3] transition-colors">
                     <div class="flex items-center gap-2">
                         <ion-icon name="list" style="font-size:18px;color:#8B86A5;"></ion-icon>
-                        <span id="kategoriLabel" class="text-sm text-[#8B86A5] font-medium">Semua Kategori</span>
+                        <span id="kategoriLabel" class="text-sm text-[#8B86A5] font-medium">All Categories</span>
                     </div>
                     <ion-icon name="chevron-down" style="font-size:16px;color:#8B86A5;"></ion-icon>
                 </button>
@@ -175,7 +175,7 @@
             <div class="flex items-start gap-3 bg-blue-50 rounded-xl p-3 border border-blue-100">
                 <ion-icon name="information-circle" style="font-size:20px;color:#3B82F6;" class="mt-0.5 flex-shrink-0"></ion-icon>
                 <p class="text-blue-700 text-xs font-medium leading-relaxed">
-                    Laporan akan di-export dalam format <strong>Excel (.xlsx)</strong> dan otomatis terunduh
+                    The report will be exported in <strong>Excel (.xlsx)</strong> format and downloaded automatically
                 </p>
             </div>
         </div>
@@ -186,8 +186,8 @@
                 <p class="text-amber-700 font-bold text-sm">Informasi</p>
             </div>
             <ul class="space-y-1.5 text-xs text-[#1E1B2E] leading-relaxed">
-                <li class="flex gap-2"><span class="text-amber-500 flex-shrink-0">•</span> Laporan mencakup semua diary dalam periode yang dipilih</li>
-                <li class="flex gap-2"><span class="text-amber-500 flex-shrink-0">•</span> Data dapat difilter berdasarkan kategori aktivitas</li>
+                <li class="flex gap-2"><span class="text-amber-500 flex-shrink-0">•</span> The report covers all entries in the selected period</li>
+                <li class="flex gap-2"><span class="text-amber-500 flex-shrink-0">•</span> Data can be filtered by activity category</li>
                 <li class="flex gap-2"><span class="text-amber-500 flex-shrink-0">•</span> Pastikan periode tanggal sudah benar sebelum generate</li>
                 <li class="flex gap-2"><span class="text-amber-500 flex-shrink-0">•</span> File Excel siap digunakan untuk analisis lanjutan</li>
             </ul>
@@ -196,7 +196,7 @@
         <button id="generateBtn" onclick="handleGenerate()"
                 class="w-full flex items-center justify-center gap-3 bg-[#8B46D3] text-white rounded-2xl py-4 font-bold text-base shadow-lg shadow-[#8B46D3]/30 hover:bg-[#7C3AED] active:scale-95 transition-all mb-6">
             <ion-icon name="download-outline" style="font-size:22px;"></ion-icon>
-            <span>Generate &amp; Download Laporan</span>
+            <span>Generate &amp; Download Report</span>
         </button>
     </div>
 
@@ -213,7 +213,7 @@
         <div class="flex items-center justify-between px-5 py-4 border-b-2 border-[#EDE9FE]">
             <div class="flex items-center gap-2">
                 <ion-icon name="calendar" style="font-size:22px;color:#8B46D3;"></ion-icon>
-                <p id="dpTitle" class="text-[#1E1B2E] font-bold text-lg">Pilih Tanggal</p>
+                <p id="dpTitle" class="text-[#1E1B2E] font-bold text-lg">Select Date</p>
             </div>
             <button onclick="closeDatePicker()" class="w-9 h-9 rounded-xl bg-[#EDE9FE] flex items-center justify-center">
                 <ion-icon name="close" style="font-size:18px;color:#8B46D3;"></ion-icon>
@@ -225,27 +225,27 @@
         </div>
         <div class="flex gap-2 px-5 pt-2 pb-2">
             <div class="flex-1">
-                <p class="text-[#8B86A5] text-xs font-bold text-center mb-2 uppercase tracking-wider">Tahun</p>
+                <p class="text-[#8B86A5] text-xs font-bold text-center mb-2 uppercase tracking-wider">Year</p>
                 <div id="yearCol" class="picker-col bg-[#F8F7FF] rounded-2xl border-2 border-[#EDE9FE]"></div>
             </div>
             <div class="flex-1">
-                <p class="text-[#8B86A5] text-xs font-bold text-center mb-2 uppercase tracking-wider">Bulan</p>
+                <p class="text-[#8B86A5] text-xs font-bold text-center mb-2 uppercase tracking-wider">Month</p>
                 <div id="monthCol" class="picker-col bg-[#F8F7FF] rounded-2xl border-2 border-[#EDE9FE]"></div>
             </div>
             <div class="flex-1">
-                <p class="text-[#8B86A5] text-xs font-bold text-center mb-2 uppercase tracking-wider">Tgl</p>
+                <p class="text-[#8B86A5] text-xs font-bold text-center mb-2 uppercase tracking-wider">Date</p>
                 <div id="dayCol" class="picker-col bg-[#F8F7FF] rounded-2xl border-2 border-[#EDE9FE]"></div>
             </div>
         </div>
         <div class="flex gap-3 px-5 py-4 border-t-2 border-[#EDE9FE]">
             <button onclick="closeDatePicker()"
                     class="flex-1 py-3.5 rounded-xl bg-[#EDE9FE] text-[#8B46D3] font-bold text-sm hover:bg-[#E5DEFF] transition-colors">
-                Batal
+                Cancel
             </button>
             <button onclick="confirmDatePicker()"
                     class="flex-1 py-3.5 rounded-xl bg-[#8B46D3] text-white font-bold text-sm flex items-center justify-center gap-2 hover:bg-[#7C3AED] transition-colors shadow-lg shadow-[#8B46D3]/30">
                 <ion-icon name="checkmark" style="font-size:18px;"></ion-icon>
-                Pilih
+                Select
             </button>
         </div>
     </div>
@@ -262,7 +262,7 @@
         <div class="flex items-center justify-between px-5 py-4 border-b-2 border-[#EDE9FE]">
             <div class="flex items-center gap-2">
                 <ion-icon name="filter" style="font-size:22px;color:#8B46D3;"></ion-icon>
-                <p class="text-[#1E1B2E] font-bold text-lg">Pilih Kategori</p>
+                <p class="text-[#1E1B2E] font-bold text-lg">Select Category</p>
             </div>
             <button onclick="closeKategoriModal()" class="w-9 h-9 rounded-xl bg-[#EDE9FE] flex items-center justify-center">
                 <ion-icon name="close" style="font-size:18px;color:#8B46D3;"></ion-icon>
@@ -279,7 +279,7 @@
             <ion-icon name="document-text" style="font-size:32px;color:#8B46D3;" class="dl-pulse"></ion-icon>
         </div>
         <p id="loadingTitle" class="text-[#1E1B2E] font-bold text-lg mb-1">Generating...</p>
-        <p id="loadingSubtitle" class="text-[#8B86A5] text-sm mb-5 text-center">Mohon tunggu, sedang memproses laporan</p>
+        <p id="loadingSubtitle" class="text-[#8B86A5] text-sm mb-5 text-center">Please wait, processing the report</p>
         <div class="w-full bg-[#EDE9FE] rounded-full h-2 overflow-hidden">
             <div id="progressBar" class="h-full bg-[#8B46D3] rounded-full progress-bar" style="width:0%"></div>
         </div>
@@ -310,15 +310,15 @@ let selectedKategori = '';
 let dpTarget      = 'start';
 let dpYear, dpMonth, dpDay;
 
-const MONTHS_ID = ['Januari','Februari','Maret','April','Mei','Juni',
-                   'Juli','Agustus','September','Oktober','November','Desember'];
+const MONTHS_ID = ['January','February','March','April','May','June',
+                   'July','August','September','October','November','December'];
 const KATEGORI_OPTIONS = [
-    { value: '',        label: 'Semua Kategori',  icon: 'apps-outline'    },
-    { value: 'makan',   label: 'Makan',           icon: 'fast-food-outline' },
-    { value: 'tidur',   label: 'Tidur',           icon: 'moon-outline'    },
-    { value: 'main',    label: 'Main',            icon: 'game-controller-outline' },
-    { value: 'belajar', label: 'Belajar',         icon: 'book-outline'    },
-    { value: 'mandi',   label: 'Mandi',           icon: 'water-outline'   },
+    { value: '',        label: 'All Categories',  icon: 'apps-outline'    },
+    { value: 'makan',   label: 'Eat',           icon: 'fast-food-outline' },
+    { value: 'tidur',   label: 'Sleep',           icon: 'moon-outline'    },
+    { value: 'main',    label: 'Play',            icon: 'game-controller-outline' },
+    { value: 'belajar', label: 'Study',         icon: 'book-outline'    },
+    { value: 'mandi',   label: 'Bath',           icon: 'water-outline'   },
 ];
 
 function showToast(type, title, msg) {
@@ -351,7 +351,7 @@ function showToast(type, title, msg) {
     }, 3500);
 }
 
-function showLoading(title='Generating...', subtitle='Sedang memproses laporan') {
+function showLoading(title='Generating...', subtitle='Processing the report') {
     document.getElementById('loadingTitle').textContent    = title;
     document.getElementById('loadingSubtitle').textContent = subtitle;
     document.getElementById('progressBar').style.width     = '20%';
@@ -389,15 +389,15 @@ function showError() {
             <div class="float-anim w-20 h-20 rounded-full bg-red-50 flex items-center justify-center mb-4">
                 <ion-icon name="cloud-offline-outline" style="font-size:34px;color:#f87171;"></ion-icon>
             </div>
-            <p class="text-[#1E1B2E] font-bold text-base mb-1">Gagal memuat data</p>
-            <p class="text-[#8B86A5] text-sm mb-4">Tidak dapat terhubung ke server</p>
+            <p class="text-[#1E1B2E] font-bold text-base mb-1">Failed to load data</p>
+            <p class="text-[#8B86A5] text-sm mb-4">Unable to connect to the server</p>
             <button onclick="fetchNanny()"
                     class="flex items-center gap-2 bg-[#8B46D3] text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-[#7C3AED] transition-colors">
                 <ion-icon name="refresh-outline" style="font-size:16px;"></ion-icon>
-                Coba Lagi
+                Try Again
             </button>
         </div>`;
-    showToast('error', 'Gagal memuat', 'Tidak dapat terhubung ke server');
+    showToast('error', 'Failed to load', 'Unable to connect to the server');
 }
 
 async function fetchNanny() {
@@ -435,8 +435,8 @@ function renderNanny(list) {
                 <div class="float-anim w-20 h-20 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-4">
                     <ion-icon name="person-outline" style="font-size:34px;color:#C4B5FD;"></ion-icon>
                 </div>
-                <p class="text-[#1E1B2E] font-bold text-base mb-1">Belum ada data nanny</p>
-                <p class="text-[#8B86A5] text-sm">Data nanny akan muncul di sini</p>
+                <p class="text-[#1E1B2E] font-bold text-base mb-1">No nanny data yet</p>
+                <p class="text-[#8B86A5] text-sm">Nanny data will appear here</p>
             </div>`;
         return;
     }
@@ -476,7 +476,7 @@ function updateCountBadge(count) {
     const badge = document.getElementById('nannyCountBadge');
     const n = count !== undefined ? count : allNanny.length;
     if (n > 0) {
-        badge.textContent = n + ' nanny';
+        badge.textContent = n + (n === 1 ? ' nanny' : ' nannies');
         badge.classList.remove('hidden');
     } else {
         badge.classList.add('hidden');
@@ -542,7 +542,7 @@ function openDatePicker(target) {
     dpMonth   = d.getMonth();
     dpDay     = d.getDate();
 
-    document.getElementById('dpTitle').textContent = target === 'start' ? 'Tanggal Mulai' : 'Tanggal Selesai';
+    document.getElementById('dpTitle').textContent = target === 'start' ? 'Start Date' : 'End Date';
 
     buildDateCols();
     updateDpPreview();
@@ -656,7 +656,7 @@ function closeKategoriOnOverlay(e) {
 function selectKategori(val) {
     selectedKategori = val;
     const opt = KATEGORI_OPTIONS.find(o => o.value === val);
-    document.getElementById('kategoriLabel').textContent = opt ? opt.label : 'Semua Kategori';
+    document.getElementById('kategoriLabel').textContent = opt ? opt.label : 'All Categories';
     document.getElementById('kategoriLabel').className =
         val ? 'text-sm text-[#1E1B2E] font-bold' : 'text-sm text-[#8B86A5] font-medium';
     closeKategoriModal();
@@ -686,7 +686,7 @@ function validateForm() {
     }
 
     if (start && end && new Date(start) > new Date(end)) {
-        document.getElementById('errEnd').textContent = 'Tanggal selesai harus setelah tanggal mulai';
+        document.getElementById('errEnd').textContent = 'End date must be after the start date';
         document.getElementById('errEnd').classList.remove('hidden');
         document.getElementById('endDateWrapper').classList.add('border-red-400');
         valid = false;
@@ -697,13 +697,13 @@ function validateForm() {
 
 async function handleGenerate() {
     if (!validateForm()) {
-        showToast('error', 'Form tidak lengkap', 'Periksa kembali isian tanggal');
+        showToast('error', 'Incomplete form', 'Check the date fields again');
         return;
     }
 
     const btn = document.getElementById('generateBtn');
     btn.disabled = true;
-    showLoading('Generating Laporan...', 'Sedang memproses data diary nanny');
+    showLoading('Generating Report...', 'Processing nanny diary data');
 
     let prog = 20;
     const progInterval = setInterval(() => {
@@ -736,20 +736,20 @@ async function handleGenerate() {
             }, 500);
         } else {
             hideLoading();
-            showToast('error', 'Gagal generate', data.message || 'Terjadi kesalahan pada server');
+            showToast('error', 'Generation failed', data.message || 'An error occurred on the server');
         }
     } catch (e) {
         clearInterval(progInterval);
         hideLoading();
         console.error(e);
-        showToast('error', 'Koneksi gagal', 'Tidak dapat terhubung ke server');
+        showToast('error', 'Connection failed', 'Unable to connect to the server');
     } finally {
         btn.disabled = false;
     }
 }
 
 function downloadFile(url, filename) {
-    showLoading('Mengunduh File...', 'File Excel sedang diunduh');
+    showLoading('Downloading File...', 'The Excel file is being downloaded');
 
     const anchor = document.createElement('a');
     anchor.href     = url;
@@ -761,7 +761,7 @@ function downloadFile(url, filename) {
 
     setTimeout(() => {
         hideLoading();
-        showToast('success', 'Berhasil!', `File "${filename}" berhasil diunduh`);
+        showToast('success', 'Success!', `File "${filename}" downloaded successfully`);
     }, 1200);
 }
 

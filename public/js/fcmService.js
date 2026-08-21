@@ -137,7 +137,7 @@ function listenForegroundMessages(onReceive) {
     onMessage(msg, (payload) => {
         console.log('[FCM] Foreground message:', payload);
 
-        const title = payload.data?.title || payload.notification?.title || 'Pesan Baru';
+        const title = payload.data?.title || payload.notification?.title || 'New Message';
         const body  = payload.data?.body  || payload.notification?.body  || '';
         const data  = payload.data || {};
 

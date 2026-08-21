@@ -7,7 +7,7 @@
 
 @php $activeNav = 'home'; $hideBottomNav = true @endphp
 
-@section('title', 'Pertanyaan')
+@section('title', 'Question')
 
 @push('styles')
 <style>
@@ -206,10 +206,10 @@
 
     <!-- Title & status -->
     <div class="flex-1 min-w-0">
-        <p id="qTitle" class="text-white font-semibold text-[20px] leading-none truncate">Memuat...</p>
+        <p id="qTitle" class="text-white font-semibold text-[20px] leading-none truncate">Loading...</p>
         <div class="flex items-center gap-2 mt-0.5">
             <span id="qStatus" class="text-white/80 text-[14px] leading-none font-semibold"></span>
-            <button id="btnClose" class="header-close-btn" style="display:none;" onclick="closeQuestion()">Tutup</button>
+            <button id="btnClose" class="header-close-btn" style="display:none;" onclick="closeQuestion()">Close</button>
         </div>
     </div>
 </div>
@@ -236,9 +236,9 @@
         <div class="empty-icon-circle">
             <ion-icon name="time-outline" style="font-size:52px;color:#8B46D3;"></ion-icon>
         </div>
-        <p class="text-[#030712] font-extrabold text-[16px]">Menunggu Nexus</p>
+        <p class="text-[#030712] font-extrabold text-[16px]">Waiting for Nexus</p>
         <p class="text-[#111827] text-[13px] text-center leading-[1.35]">
-            Pertanyaanmu akan segera dijawab<br>oleh tim Nexus
+            Your question will be answered soon<br>by the Nexus team
         </p>
     </div>
 
@@ -247,9 +247,9 @@
         <div class="empty-icon-circle">
             <ion-icon name="chatbox-ellipses" style="font-size:52px;color:#8B46D3;"></ion-icon>
         </div>
-        <p class="text-[#030712] font-extrabold text-[16px]">Belum Ada Pesan</p>
+        <p class="text-[#030712] font-extrabold text-[16px]">No Messages Yet</p>
         <p class="text-[#111827] text-[13px] text-center leading-[1.35]">
-            Mulai percakapan dengan mengirim<br>pesan pertama
+            Start the conversation by sending<br>your first message
         </p>
     </div>
 </div>
@@ -257,7 +257,7 @@
 <!-- INPUT BAR -->
 <div id="inputBar" class="flex items-end gap-2">
     <textarea id="msgInput" rows="1"
-              placeholder="Ketik pesan..."
+              placeholder="Type a message..."
               oninput="autoGrow(this); toggleSendBtn()"
               onkeydown="handleKey(event)"></textarea>
     <button id="sendBtn" onclick="sendMessage()" disabled>
@@ -281,13 +281,13 @@ let messages = [];
 // ── Helpers ──
 const ensureNum = v => typeof v === 'number' ? v : Number(v);
 
-function fmtTime(ts) { return new Date(ts).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}); }
-function fmtDate(ts) { return new Date(ts).toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long'}); }
+function fmtTime(ts) { return new Date(ts).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}); }
+function fmtDate(ts) { return new Date(ts).toLocaleDateString('en-US',{weekday:'long',day:'numeric',month:'long'}); }
 function escHtml(s) { const d=document.createElement('div'); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
 
 function statusBadge(s) {
     const map = { open:'badge-open', claimed:'badge-claimed', answered:'badge-answered', closed:'badge-closed' };
-    const lbl = { open:'Open', claimed:'Diklaim', answered:'Terjawab', closed:'Selesai' };
+    const lbl = { open:'Open', claimed:'Claimed', answered:'Answered', closed:'Closed' };
     return `<span class="inline-block text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-[.5px] ${map[s]||'badge-open'}">${lbl[s]||s}</span>`;
 }
 
@@ -385,11 +385,11 @@ async function loadDetail() {
 
 function showError() {
     document.getElementById('msgSkeleton')?.remove();
-    showToast('Gagal memuat percakapan');
+    showToast('Failed to load the conversation');
     document.getElementById('waitingState').classList.remove('visible');
     document.getElementById('emptyState').classList.add('visible');
-    document.getElementById('emptyState').querySelector('p:first-of-type').textContent = 'Gagal Memuat';
-    document.getElementById('emptyState').querySelector('p:last-of-type').textContent = 'Coba refresh halaman';
+    document.getElementById('emptyState').querySelector('p:first-of-type').textContent = 'Failed to Load';
+    document.getElementById('emptyState').querySelector('p:last-of-type').textContent = 'Try refreshing the page';
 }
 
 function renderDetail(q) {
@@ -397,7 +397,7 @@ function renderDetail(q) {
 
     // Header
     document.getElementById('qTitle').textContent = q.judul;
-    document.getElementById('qStatus').innerHTML = statusBadge(q.status) + ' · oleh ' + (q.asked_by?.name || '-');
+    document.getElementById('qStatus').innerHTML = statusBadge(q.status) + ' · by ' + (q.asked_by?.name || '-');
 
     // Close button
     const isClaimer = q.claimed_by?.id === USER_ID;
@@ -489,20 +489,20 @@ async function sendMessage() {
         } else {
             messages = messages.filter(m => m.id !== tempId);
             document.querySelector(`[data-msgid="${tempId}"]`)?.remove();
-            showToast(data.message || 'Pesan gagal dikirim.');
+            showToast(data.message || 'Failed to send message.');
             if (messages.length === 0) renderMessages();
         }
     } catch(e) {
         messages = messages.filter(m => m.id !== tempId);
         document.querySelector(`[data-msgid="${tempId}"]`)?.remove();
-        showToast('Terjadi kesalahan. Coba lagi.');
+        showToast('An error occurred. Try again.');
         if (messages.length === 0) renderMessages();
     }
 }
 
 // ─── Close Question ───
 async function closeQuestion() {
-    if (!confirm('Tutup pertanyaan ini?')) return;
+    if (!confirm('Close this question?')) return;
     try {
         const res = await fetch(`${API_BASE}/nexus/${QUESTION_ID}/close`, {
             method: 'PUT',
@@ -512,9 +512,9 @@ async function closeQuestion() {
             }
         });
         const json = await res.json();
-        if (!res.ok) { showToast(json.message || 'Gagal'); return; }
+        if (!res.ok) { showToast(json.message || 'Failed'); return; }
         loadDetail();
-    } catch(e) { showToast('Gagal menutup pertanyaan'); }
+    } catch(e) { showToast('Failed to close the question'); }
 }
 
 // ── VisualViewport handler (mobile keyboard support) ──────────────────────────

@@ -85,7 +85,7 @@ class AnakController extends Controller
 
         if (!$anak) {
             return redirect()->route('profil.data-anak')
-                ->with('error', 'Data anak tidak ditemukan.');
+                ->with('error', 'Child data not found.');
         }
 
         // Fetch medical data
@@ -132,7 +132,7 @@ class AnakController extends Controller
             if ($response->successful() && ($data['status'] ?? '') === 'success') {
                 return response()->json([
                     'success'  => true,
-                    'message'  => $data['message'] ?? 'Data anak berhasil ditambahkan!',
+                    'message'  => $data['message'] ?? 'Child data added successfully!',
                     'redirect' => route('profil.data-anak'),
                     'data'     => $data['data'] ?? null,
                     'id_anak'  => $data['data']['id'] ?? ($data['data'][0]['id'] ?? null),
@@ -141,7 +141,7 @@ class AnakController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => $data['message'] ?? 'Gagal menyimpan data anak.',
+                'message' => $data['message'] ?? 'Failed to save child data.',
                 'errors'  => $data['errors'] ?? null,
             ], 422);
 
@@ -178,7 +178,7 @@ class AnakController extends Controller
 
         if (empty($anak)) {
             return redirect()->route('profil.data-anak')
-                ->with('error', 'Data anak tidak ditemukan.');
+                ->with('error', 'Child data not found.');
         }
 
         // Fetch medical data for edit form
@@ -217,14 +217,14 @@ class AnakController extends Controller
             if ($response->successful() && ($data['status'] ?? '') === 'success') {
                 return response()->json([
                     'success'  => true,
-                    'message'  => $data['message'] ?? 'Data anak berhasil diperbarui!',
+                    'message'  => $data['message'] ?? 'Child data updated successfully!',
                     'redirect' => route('profil.data-anak'),
                 ]);
             }
 
             return response()->json([
                 'success' => false,
-                'message' => $data['message'] ?? 'Gagal memperbarui data anak.',
+                'message' => $data['message'] ?? 'Failed to update child data.',
                 'errors'  => $data['errors'] ?? null,
             ], 422);
 
@@ -253,10 +253,10 @@ class AnakController extends Controller
 
             if ($response->successful() && ($data['status'] ?? '') === 'success') {
                 return redirect()->route('profil.data-anak')
-                    ->with('success', 'Data anak berhasil dihapus.');
+                    ->with('success', 'Child data deleted successfully.');
             }
 
-            return redirect()->back()->with('error', $data['message'] ?? 'Gagal menghapus data anak.');
+            return redirect()->back()->with('error', $data['message'] ?? 'Failed to delete child data.');
 
         } catch (\Exception $e) {
             Log::error('AnakController@hapus - ' . $e->getMessage());
@@ -272,7 +272,7 @@ class AnakController extends Controller
     {
         $valid = ['rumah-sakit', 'dokter', 'vaksin'];
         if (!in_array($type, $valid)) {
-            return response()->json(['success' => false, 'message' => 'Tipe tidak valid'], 400);
+        return response()->json(['success' => false, 'message' => 'Invalid type'], 400);
         }
         $token = session('token');
         if (!$token) return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
@@ -281,9 +281,9 @@ class AnakController extends Controller
             $response = $http->post("{$this->apiBaseUrl}/anak/medical/{$type}", $request->all());
             $result = $response->json();
             if ($response->successful() && ($result['status'] ?? '') === 'success') {
-                return response()->json(['success' => true, 'message' => $result['message'] ?? 'Berhasil']);
+        return response()->json(['success' => true, 'message' => $result['message'] ?? 'Success']);
             }
-            return response()->json(['success' => false, 'message' => $result['message'] ?? 'Gagal'], 422);
+        return response()->json(['success' => false, 'message' => $result['message'] ?? 'Failed'], 422);
         } catch (\Exception $e) {
             Log::error("AnakController@medicalStore - " . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Server error'], 500);
@@ -294,7 +294,7 @@ class AnakController extends Controller
     {
         $valid = ['rumah-sakit', 'dokter', 'vaksin'];
         if (!in_array($type, $valid)) {
-            return response()->json(['success' => false, 'message' => 'Tipe tidak valid'], 400);
+        return response()->json(['success' => false, 'message' => 'Invalid type'], 400);
         }
         $token = session('token');
         if (!$token) return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
@@ -303,9 +303,9 @@ class AnakController extends Controller
             $response = $http->put("{$this->apiBaseUrl}/anak/medical/{$type}", $request->all());
             $result = $response->json();
             if ($response->successful() && ($result['status'] ?? '') === 'success') {
-                return response()->json(['success' => true, 'message' => $result['message'] ?? 'Berhasil']);
+        return response()->json(['success' => true, 'message' => $result['message'] ?? 'Success']);
             }
-            return response()->json(['success' => false, 'message' => $result['message'] ?? 'Gagal'], 422);
+        return response()->json(['success' => false, 'message' => $result['message'] ?? 'Failed'], 422);
         } catch (\Exception $e) {
             Log::error("AnakController@medicalUpdate - " . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Server error'], 500);
@@ -316,7 +316,7 @@ class AnakController extends Controller
     {
         $valid = ['rumah-sakit', 'dokter', 'vaksin'];
         if (!in_array($type, $valid)) {
-            return response()->json(['success' => false, 'message' => 'Tipe tidak valid'], 400);
+        return response()->json(['success' => false, 'message' => 'Invalid type'], 400);
         }
         $token = session('token');
         if (!$token) return response()->json(['success' => false, 'message' => 'Unauthenticated'], 401);
@@ -326,9 +326,9 @@ class AnakController extends Controller
                 ->delete("{$this->apiBaseUrl}/anak/medical/{$type}/{$id}");
             $result = $response->json();
             if ($response->successful() && ($result['status'] ?? '') === 'success') {
-                return response()->json(['success' => true, 'message' => $result['message'] ?? 'Berhasil dihapus']);
+        return response()->json(['success' => true, 'message' => $result['message'] ?? 'Deleted successfully']);
             }
-            return response()->json(['success' => false, 'message' => $result['message'] ?? 'Gagal'], 422);
+        return response()->json(['success' => false, 'message' => $result['message'] ?? 'Failed'], 422);
         } catch (\Exception $e) {
             Log::error("AnakController@medicalDelete - " . $e->getMessage());
             return response()->json(['success' => false, 'message' => 'Server error'], 500);

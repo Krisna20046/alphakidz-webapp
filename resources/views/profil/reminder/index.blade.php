@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -829,10 +829,10 @@ async function onToggleActive(id, currentlyActive) {
                 const r = reminders.find(x => x.id === id);
                 if (r) { r.is_active = true; invalidateRemindersCache(); renderList(); }
             } else {
-                showToast('Terjadi kesalahan. Coba lagi.');
+                showToast('An error occurred. Try again.');
             }
         } catch (e) {
-            showToast('Terjadi kesalahan. Coba lagi.');
+            showToast('An error occurred. Try again.');
         }
     }
 }
@@ -856,10 +856,10 @@ async function confirmNonactive() {
                 const r = reminders.find(x => x.id === pendingToggleId);
                 if (r) { r.is_active = false; invalidateRemindersCache(); renderList(); }
             } else {
-                showToast('Terjadi kesalahan. Coba lagi.');
+                showToast('An error occurred. Try again.');
             }
         } catch (e) {
-            showToast('Terjadi kesalahan. Coba lagi.');
+            showToast('An error occurred. Try again.');
         }
     }
     closeNonactiveModal();

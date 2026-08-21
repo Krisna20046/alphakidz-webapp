@@ -225,8 +225,8 @@ class MajikanController extends Controller
             $sekarang = new \DateTime();
             $diff     = $sekarang->diff($lahir);
             $result   = '';
-            if ($diff->y > 0) $result .= "{$diff->y} tahun ";
-            $result .= "{$diff->m} bulan";
+            if ($diff->y > 0) $result .= "{$diff->y} year" . ($diff->y > 1 ? 's' : '') . ' ';
+            $result .= "{$diff->m} month" . ($diff->m > 1 ? 's' : '');
             return trim($result);
         } catch (\Exception $e) {
             return '-';
@@ -241,19 +241,19 @@ class MajikanController extends Controller
         $a['jam_mulai_fmt']   = $jamMulai   ? date('H:i', strtotime($jamMulai))   : '-';
         $a['jam_selesai_fmt'] = $jamSelesai ? date('H:i', strtotime($jamSelesai)) : '-';
 
-        // durasi_fmt — mirrors RN: "X jam Y menit"
+        // durasi_fmt — mirrors RN: "X hr Y min"
         $durasi = $a['durasi'] ?? [];
         $jam    = $durasi['jam']   ?? 0;
         $menit  = $durasi['menit'] ?? 0;
-        $a['durasi_fmt'] = ($jam > 0 ? "{$jam} jam " : '') . "{$menit} menit";
+        $a['durasi_fmt'] = ($jam > 0 ? "{$jam} hr " : '') . "{$menit} min";
 
         return $a;
     }
 
     private function formatTanggalIndo(string $tanggal): string
     {
-        $months = ['', 'Januari','Februari','Maret','April','Mei','Juni',
-                       'Juli','Agustus','September','Oktober','November','Desember'];
+        $months = ['', 'January','February','March','April','May','June',
+                       'July','August','September','October','November','December'];
         try {
             $d = new \DateTime($tanggal);
             return $d->format('j') . ' ' . $months[(int)$d->format('n')] . ' ' . $d->format('Y');

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Nanny - ' . ($nanny['name'] ?? 'Nanny'))
+@section('title', 'Nanny Details - ' . ($nanny['name'] ?? 'Nanny'))
 
 @push('styles')
 <style>
@@ -31,8 +31,8 @@
             <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
         </a>
         <div>
-            <span class="text-white text-[17px] font-extrabold tracking-wide">Detail Nanny</span>
-            <p class="text-white/70 text-xs font-semibold mt-0.5 leading-[1.3]">Informasi lengkap profil<br>dan penambahan nanny</p>
+            <span class="text-white text-[17px] font-extrabold tracking-wide">Nanny Details</span>
+            <p class="text-white/70 text-xs font-semibold mt-0.5 leading-[1.3]">Complete profile information<br>and adding a nanny</p>
         </div>
     </div>
 </div>
@@ -41,12 +41,12 @@
 <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar">
     <x-empty-state
         icon="person-circle-outline"
-        title="Data tidak ditemukan"
-        description="Data yang Anda cari tidak tersedia"
+        title="Data not found"
+        description="The data you are looking for is unavailable"
     >
         <a href="{{ route('konsultan-nanny-list') }}"
            class="mt-6 bg-[#8B46D3] text-white text-sm font-bold px-8 py-3 rounded-2xl shadow-[0_8px_20px_rgba(139,70,211,0.35)]">
-            Kembali ke Daftar
+            Back to List
         </a>
     </x-empty-state>
 </div>
@@ -96,7 +96,7 @@
             <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-full {{ $isActive ? 'bg-[#DCFCE7]' : 'bg-[#FEE2E2]' }}">
                 <ion-icon name="ellipse" style="font-size:8px;color:{{ $isActive ? '#166534' : '#991B1B' }};"></ion-icon>
                 <span class="text-[10px] font-extrabold tracking-wide uppercase {{ $isActive ? 'text-[#166534]' : 'text-[#991B1B]' }}">
-                    {{ $isActive ? 'AKTIF' : 'NONAKTIF' }}
+                    {{ $isActive ? 'ACTIVE' : 'INACTIVE' }}
                 </span>
             </div>
         </div>
@@ -119,7 +119,7 @@
     <div class="section-card anim delay-3 p-5">
         <div class="flex items-center gap-2">
             <ion-icon name="call" style="font-size:16px;color:#8B46D3;"></ion-icon>
-            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Informasi Kontak</h3>
+            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Contact Information</h3>
         </div>
         <div class="h-px bg-[#E5E1F0] my-4"></div>
         <div class="space-y-2">
@@ -137,7 +137,7 @@
                     <ion-icon name="call-outline" style="font-size:16px;color:#4F46E5;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Nomor HP</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Phone Number</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $nanny['no_hp'] ?? '-' }}</p>
                 </div>
             </div>
@@ -148,7 +148,7 @@
     <div class="section-card anim delay-4 p-5">
         <div class="flex items-center gap-2">
             <ion-icon name="person-circle" style="font-size:16px;color:#8B46D3;"></ion-icon>
-            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Informasi Pribadi</h3>
+            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Personal Information</h3>
         </div>
         <div class="h-px bg-[#E5E1F0] my-4"></div>
         <div class="space-y-2">
@@ -157,7 +157,7 @@
                     <ion-icon name="calendar-outline" style="font-size:16px;color:#EC4899;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Tanggal Lahir</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Date Of Birth</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $nanny['tanggal_lahir'] ?? '-' }}</p>
                 </div>
             </div>
@@ -168,7 +168,7 @@
                 <div class="flex-1">
                     <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Gender</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold">
-                        @php $g = $nanny['gender'] ?? ''; echo $g === 'L' ? 'Laki-laki' : ($g === 'P' ? 'Perempuan' : '-'); @endphp
+                        @php $g = $nanny['gender'] ?? ''; echo $g === 'L' ? 'Male' : ($g === 'P' ? 'Female' : '-'); @endphp
                     </p>
                 </div>
             </div>
@@ -177,7 +177,7 @@
                     <ion-icon name="location-outline" style="font-size:16px;color:#F59E0B;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Lokasi</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Location</p>
                     <p class="text-[#1E1B2E] text-[13px] font-extrabold">
                         @if(!empty($nanny['kota']) && !empty($nanny['provinsi']))
                             {{ $nanny['kota'] }}, {{ $nanny['provinsi'] }}
@@ -192,7 +192,7 @@
                     <ion-icon name="home-outline" style="font-size:16px;color:#8B46D3;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Alamat</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Address</p>
                     <p class="text-[#1E1B2E] text-[12px] font-semibold leading-snug">{{ $nanny['alamat'] }}</p>
                 </div>
             </div>
@@ -205,7 +205,7 @@
     <div class="section-card anim delay-5 p-5">
         <div class="flex items-center gap-2">
             <ion-icon name="briefcase" style="font-size:16px;color:#8B46D3;"></ion-icon>
-            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Informasi Profesional</h3>
+            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Professional Information</h3>
         </div>
         <div class="h-px bg-[#E5E1F0] my-4"></div>
         <div class="space-y-2">
@@ -226,7 +226,7 @@
                     <ion-icon name="time-outline" style="font-size:16px;color:#4F46E5;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Pengalaman</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Experience</p>
                     <p class="text-[#1E1B2E] text-[12px] font-semibold leading-snug">{{ $nanny['pengalaman'] }}</p>
                 </div>
             </div>
@@ -237,7 +237,7 @@
                     <ion-icon name="ribbon-outline" style="font-size:16px;color:#166534;"></ion-icon>
                 </div>
                 <div class="flex-1">
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Sertifikasi</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px] mb-1">Certification</p>
                     <p class="text-[#1E1B2E] text-[12px] font-semibold leading-snug">{{ $nanny['sertifikasi'] }}</p>
                 </div>
             </div>
@@ -250,7 +250,7 @@
     <div class="section-card anim delay-5 p-5">
         <div class="flex items-center gap-2">
             <ion-icon name="people" style="font-size:16px;color:#8B46D3;"></ion-icon>
-            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Pengawasan</h3>
+            <h3 class="text-[#1E1B2E] text-[20px] font-extrabold leading-none">Supervision</h3>
         </div>
         <div class="h-px bg-[#E5E1F0] my-4"></div>
         <div class="detail-item px-3 py-2.5 flex items-center gap-3">
@@ -259,7 +259,7 @@
                 <ion-icon name="checkmark-circle-outline" style="font-size:16px;color:#166534;"></ion-icon>
             </div>
             <div class="flex-1 min-w-0">
-                <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Konsultan</p>
+                <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Consultant</p>
                 <p class="text-[#1E1B2E] text-[13px] font-extrabold truncate">{{ $nanny['konsultan']['name'] ?? '-' }}</p>
             </div>
             @else
@@ -267,8 +267,8 @@
                 <ion-icon name="alert-circle-outline" style="font-size:16px;color:#8B46D3;"></ion-icon>
             </div>
             <div class="flex-1">
-                <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Konsultan</p>
-                <p class="text-[#1E1B2E] text-[13px] font-extrabold">Belum ada konsultan</p>
+                <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Consultant</p>
+                <p class="text-[#1E1B2E] text-[13px] font-extrabold">No consultant yet</p>
             </div>
             @endif
         </div>
@@ -279,7 +279,7 @@
         <button onclick="openConfirmModal()"
                 class="w-full flex items-center justify-center gap-2 h-[52px] rounded-2xl font-extrabold text-[14px] bg-[#8B46D3] text-white shadow-[0_8px_18px_rgba(139,70,211,0.32)] active:scale-[0.97] transition-transform">
             <ion-icon name="person-add-outline" style="font-size:18px;"></ion-icon>
-            Tambahkan Nanny
+            Add Nanny
         </button>
     </div>
 </div>
@@ -292,23 +292,23 @@
             <div class="w-[68px] h-[68px] rounded-full bg-[#EDE9FE] flex items-center justify-center mb-4">
                 <ion-icon name="person-add" style="font-size:36px;color:#8B46D3;"></ion-icon>
             </div>
-            <h3 class="text-[#1E1B2E] font-extrabold text-[18px] mb-2">Tambahkan Nanny?</h3>
+            <h3 class="text-[#1E1B2E] font-extrabold text-[18px] mb-2">Add Nanny?</h3>
             <p class="text-[#8B86A5] text-[13px] leading-relaxed">
-                Anda akan menambahkan <span class="font-extrabold text-[#1E1B2E]">{{ $nanny['name'] }}</span> ke daftar nanny yang Anda awasi.
+                You will add <span class="font-extrabold text-[#1E1B2E]">{{ $nanny['name'] }}</span> to the list of nannies you supervise.
             </p>
         </div>
 
         <div class="flex gap-3">
             <button onclick="closeConfirmModal()"
                     class="flex-1 h-[48px] rounded-2xl border border-[#ECEAF4] bg-[#F8F8FB] text-[#8B86A5] font-extrabold text-[13px] active:scale-[0.97] transition-transform">
-                Batal
+                Cancel
             </button>
             <form action="{{ route('konsultan-nanny-add') }}" method="POST" class="flex-1">
                 @csrf
                 <input type="hidden" name="id_nanny" value="{{ $nanny['id'] }}">
                 <button type="submit"
                         class="w-full h-[48px] rounded-2xl bg-[#8B46D3] text-white font-extrabold text-[13px] shadow-[0_4px_12px_rgba(139,70,211,0.35)] active:scale-[0.97] transition-transform">
-                    Ya, Tambahkan
+                    Yes, Add
                 </button>
             </form>
         </div>

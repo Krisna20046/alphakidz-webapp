@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Kelola Akun')
+@section('title', 'Manage Accounts')
 
 @push('styles')
 <style>
@@ -105,12 +105,12 @@
             <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
         </a>
         <div>
-            <span class="text-white text-[17px] font-extrabold tracking-wide">Kelola Akun</span>
+            <span class="text-white text-[17px] font-extrabold tracking-wide">Manage Accounts</span>
             <p class="text-white/60 text-xs font-medium mt-0.5">
                 @if($pagination)
-                    {{ $pagination['total'] }} pengguna terdaftar
+                    {{ $pagination['total'] }} registered users
                 @else
-                    {{ count($users) }} pengguna terdaftar
+                    {{ count($users) }} registered users
                 @endif
             </p>
         </div>
@@ -141,7 +141,7 @@
     <div class="flex gap-3 anim delay-2">
         <div class="search-wrapper flex-1 flex items-center gap-2 bg-white rounded-full px-4 py-2.5 border border-[#DDD6EF]">
             <ion-icon name="search-outline" style="font-size:16px;color:#8B86A5;flex-shrink:0;"></ion-icon>
-            <input id="searchInput" type="text" placeholder="Cari nama, email, atau no. HP..."
+            <input id="searchInput" type="text" placeholder="Search name, email, or phone..."
                 class="flex-1 bg-transparent text-[13px] font-semibold text-[#4B5563] placeholder-[#9CA3AF] outline-none"
                 oninput="filterUsers()">
             <button id="clearSearch" onclick="clearSearch()" class="hidden">
@@ -170,7 +170,7 @@
     {{-- Result count --}}
     <div class="flex items-center justify-between">
         <p class="text-xs font-bold text-[#8B86A5]">
-            Menampilkan <span id="resultCount" class="text-[#8B46D3]">{{ count($users) }}</span> pengguna
+            Showing <span id="resultCount" class="text-[#8B46D3]">{{ count($users) }}</span> users
         </p>
         @if($pagination)
         <div class="flex items-center gap-1 text-xs font-bold">
@@ -197,8 +197,8 @@
             <div class="float-anim w-20 h-20 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-4">
                 <ion-icon name="people-outline" style="font-size:36px;color:#C4B5FD;"></ion-icon>
             </div>
-            <h3 class="text-[#1E1B2E] font-extrabold text-base mb-1">Tidak ada pengguna</h3>
-            <p class="text-[#8B86A5] text-xs text-center">Coba ubah filter atau kata kunci pencarian</p>
+            <h3 class="text-[#1E1B2E] font-extrabold text-base mb-1">No users</h3>
+            <p class="text-[#8B86A5] text-xs text-center">Try changing the filter or search keyword</p>
             <button onclick="resetAll()"
                 class="mt-4 px-5 py-2 rounded-xl bg-[#8B46D3] text-white text-sm font-bold">
                 Reset Filter
@@ -211,17 +211,17 @@
         @php
             $isActive  = (int)$user['is_active'] === 1;
             $role      = strtolower($user['role'] ?? 'nanny');
-            $roleMap   = ['admin'=>'Admin','konsultan'=>'Konsultan','majikan'=>'Majikan','nanny'=>'Nanny'];
+            $roleMap   = ['admin'=>'Admin','konsultan'=>'Consultant','majikan'=>'Employer','nanny'=>'Nanny'];
             $roleLabel = $roleMap[$role] ?? ucfirst($role);
             $initial   = strtoupper(substr($user['name'] ?? '?', 0, 1));
             $phone     = $user['no_hp'] ?? '-';
             $joinDate  = !empty($user['created_at'])
                 ? \Carbon\Carbon::parse($user['created_at'])->translatedFormat('j F Y') : '-';
-            $gender    = $user['gender'] === 'L' ? 'Laki-laki' : ($user['gender'] === 'P' ? 'Perempuan' : '-');
+            $gender    = $user['gender'] === 'L' ? 'Male' : ($user['gender'] === 'P' ? 'Female' : '-');
             $birthDate = !empty($user['tanggal_lahir'])
                 ? \Carbon\Carbon::parse($user['tanggal_lahir'])->translatedFormat('j F Y') : '-';
             $age = !empty($user['tanggal_lahir'])
-                ? \Carbon\Carbon::parse($user['tanggal_lahir'])->age . ' tahun' : '';
+                ? \Carbon\Carbon::parse($user['tanggal_lahir'])->age . ' years' : '';
             $address = collect([$user['alamat'] ?? null, $user['kota'] ?? null, $user['provinsi'] ?? null])
                 ->filter()->implode(', ') ?: '-';
             $updatedDate = !empty($user['updated_at'])
@@ -254,7 +254,7 @@
                     <span class="text-[10px] font-bold px-2.5 py-1 rounded-full badge-{{ $role }}">{{ $roleLabel }}</span>
                     <span class="text-[10px] font-bold px-2.5 py-1 rounded-full
                         {{ $isActive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600' }}">
-                        {{ $isActive ? 'Aktif' : 'Nonaktif' }}
+                        {{ $isActive ? 'Active' : 'Inactive' }}
                     </span>
                 </div>
             </div>
@@ -299,10 +299,10 @@
                     @csrf
                     <input type="hidden" name="is_active" value="0">
                     <button type="submit"
-                        onclick="return confirm('Nonaktifkan akun {{ addslashes($user['name']) }}?')"
+                        onclick="return confirm('Deactivate account {{ addslashes($user['name']) }}?')"
                         class="act-btn w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-orange-50 text-orange-600 text-xs font-bold">
                         <ion-icon name="pause-circle-outline" style="font-size:14px;"></ion-icon>
-                        Nonaktifkan
+                        Deactivate
                     </button>
                 </form>
                 @else
@@ -310,10 +310,10 @@
                     @csrf
                     <input type="hidden" name="is_active" value="1">
                     <button type="submit"
-                        onclick="return confirm('Aktifkan akun {{ addslashes($user['name']) }}?')"
+                        onclick="return confirm('Activate account {{ addslashes($user['name']) }}?')"
                         class="act-btn w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-green-50 text-green-700 text-xs font-bold">
                         <ion-icon name="play-circle-outline" style="font-size:14px;"></ion-icon>
-                        Aktifkan
+                        Activate
                     </button>
                 </form>
                 @endif
@@ -322,10 +322,10 @@
                     @csrf
                     @method('DELETE')
                     <button type="submit"
-                        onclick="return confirm('Hapus akun {{ addslashes($user['name']) }}? Tindakan ini tidak dapat dibatalkan.')"
+                        onclick="return confirm('Delete account {{ addslashes($user['name']) }}? This action cannot be undone.')"
                         class="act-btn w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-red-50 text-red-500 text-xs font-bold">
                         <ion-icon name="trash-outline" style="font-size:14px;"></ion-icon>
-                        Hapus
+                        Delete
                     </button>
                 </form>
             </div>
@@ -340,7 +340,7 @@
 <div id="pageLoader" class="hidden fixed inset-0 z-50 bg-white/60 flex items-center justify-center">
     <div class="flex items-center gap-3 bg-white rounded-2xl px-6 py-4 shadow-xl border border-[#EDE9FE]">
         <div class="page-loader w-5 h-5 border-2 border-[#EDE9FE] border-t-[#8B46D3] rounded-full"></div>
-        <span class="text-sm font-bold text-[#8B46D3]">Memuat...</span>
+        <span class="text-sm font-bold text-[#8B46D3]">Loading...</span>
     </div>
 </div>
 
@@ -359,16 +359,16 @@
             <div class="w-10 h-1.5 rounded-full bg-gray-200"></div>
         </div>
         <div class="flex items-center justify-between px-5 py-4 border-b border-[#EDE9FE]">
-            <h2 class="text-[#1E1B2E] text-lg font-extrabold">Filter Pengguna</h2>
+            <h2 class="text-[#1E1B2E] text-lg font-extrabold">Filter Users</h2>
             <button onclick="closeFilter()" class="w-8 h-8 rounded-xl bg-[#EDE9FE] flex items-center justify-center">
                 <ion-icon name="close" style="font-size:18px;color:#8B46D3;"></ion-icon>
             </button>
         </div>
         <div class="px-5 py-5 space-y-6">
             <div>
-                <p class="text-[#1E1B2E] font-bold text-sm mb-3">Peran</p>
+                <p class="text-[#1E1B2E] font-bold text-sm mb-3">Role</p>
                 <div class="flex flex-wrap gap-2">
-                    @foreach(['all'=>'Semua','admin'=>'Admin','konsultan'=>'Konsultan','majikan'=>'Majikan','nanny'=>'Nanny'] as $val=>$label)
+                    @foreach(['all'=>'All','admin'=>'Admin','konsultan'=>'Consultant','majikan'=>'Employer','nanny'=>'Nanny'] as $val=>$label)
                     <button onclick="setRole('{{ $val }}')" id="role-{{ $val }}"
                         class="chip text-xs font-bold px-4 py-2 rounded-xl {{ $val === 'all' ? 'active' : '' }}">
                         {{ $label }}
@@ -379,7 +379,7 @@
             <div>
                 <p class="text-[#1E1B2E] font-bold text-sm mb-3">Status</p>
                 <div class="flex gap-2">
-                    @foreach(['all'=>'Semua','active'=>'Aktif','inactive'=>'Nonaktif'] as $val=>$label)
+                    @foreach(['all'=>'All','active'=>'Active','inactive'=>'Inactive'] as $val=>$label)
                     <button onclick="setStatus('{{ $val }}')" id="status-{{ $val }}"
                         class="chip text-xs font-bold px-4 py-2 rounded-xl {{ $val === 'all' ? 'active' : '' }}">
                         {{ $label }}
@@ -390,7 +390,7 @@
         </div>
         <div class="flex gap-3 px-5 pb-20">
             <button onclick="resetAll()" class="flex-1 py-3 rounded-2xl bg-[#EDE9FE] text-[#8B46D3] font-bold text-sm">Reset</button>
-            <button onclick="applyFilter()" class="flex-1 py-3 rounded-2xl bg-[#8B46D3] text-white font-bold text-sm">Terapkan Filter</button>
+            <button onclick="applyFilter()" class="flex-1 py-3 rounded-2xl bg-[#8B46D3] text-white font-bold text-sm">Apply Filter</button>
         </div>
     </div>
 </div>
@@ -403,7 +403,7 @@
                 <div class="w-10 h-1.5 rounded-full bg-gray-200"></div>
             </div>
             <div class="flex items-center justify-between px-5 py-4 border-b border-[#EDE9FE]">
-                <h2 class="text-[#1E1B2E] text-lg font-extrabold">Detail Pengguna</h2>
+                <h2 class="text-[#1E1B2E] text-lg font-extrabold">User Details</h2>
                 <button onclick="closeDetail()" class="w-8 h-8 rounded-xl bg-[#EDE9FE] flex items-center justify-center">
                     <ion-icon name="close" style="font-size:18px;color:#8B46D3;"></ion-icon>
                 </button>
@@ -425,54 +425,54 @@
 
             <div class="px-5 py-4 space-y-5">
                 <div>
-                    <p class="detail-section-title">Informasi Kontak</p>
+                    <p class="detail-section-title">Contact Information</p>
                     <div class="detail-row">
                         <ion-icon name="call-outline" style="font-size:16px;color:#8B46D3;flex-shrink:0;margin-top:2px;"></ion-icon>
                         <div>
-                            <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">No. HP</p>
+                            <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Phone No.</p>
                             <p id="dPhone" class="detail-val mt-0.5"></p>
                         </div>
                     </div>
                     <div class="detail-row">
                         <ion-icon name="location-outline" style="font-size:16px;color:#8B46D3;flex-shrink:0;margin-top:2px;"></ion-icon>
                         <div>
-                            <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Alamat</p>
+                            <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Address</p>
                             <p id="dAddress" class="detail-val mt-0.5"></p>
                         </div>
                     </div>
                 </div>
 
                 <div>
-                    <p class="detail-section-title">Informasi Pribadi</p>
+                    <p class="detail-section-title">Personal Information</p>
                     <div class="detail-row">
                         <ion-icon name="person-outline" style="font-size:16px;color:#8B46D3;flex-shrink:0;margin-top:2px;"></ion-icon>
                         <div>
-                            <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Jenis Kelamin</p>
+                            <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Gender</p>
                             <p id="dGender" class="detail-val mt-0.5"></p>
                         </div>
                     </div>
                     <div class="detail-row">
                         <ion-icon name="calendar-outline" style="font-size:16px;color:#8B46D3;flex-shrink:0;margin-top:2px;"></ion-icon>
                         <div>
-                            <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Tanggal Lahir</p>
+                            <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Date of Birth</p>
                             <p id="dBirth" class="detail-val mt-0.5"></p>
                         </div>
                     </div>
                 </div>
 
                 <div>
-                    <p class="detail-section-title">Informasi Akun</p>
+                    <p class="detail-section-title">Account Information</p>
                     <div class="detail-row">
                         <ion-icon name="calendar-outline" style="font-size:16px;color:#8B46D3;flex-shrink:0;margin-top:2px;"></ion-icon>
                         <div>
-                            <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Bergabung</p>
+                            <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Joined</p>
                             <p id="dJoined" class="detail-val mt-0.5"></p>
                         </div>
                     </div>
                     <div class="detail-row">
                         <ion-icon name="time-outline" style="font-size:16px;color:#8B46D3;flex-shrink:0;margin-top:2px;"></ion-icon>
                         <div>
-                            <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Update Terakhir</p>
+                            <p class="text-[10px] text-[#8B86A5] font-bold uppercase tracking-wider">Last Updated</p>
                             <p id="dUpdated" class="detail-val mt-0.5"></p>
                         </div>
                     </div>
@@ -483,7 +483,7 @@
                 <a id="dEditBtn" href="#"
                    class="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-[#8B46D3] text-white font-bold text-sm shadow-lg shadow-[#8B46D3]/30">
                     <ion-icon name="create-outline" style="font-size:18px;"></ion-icon>
-                    Ubah Data Akun
+                    Edit Account Data
                 </a>
             </div>
         </div>
@@ -558,8 +558,8 @@ function filterUsers() {
 }
 
 function updateActiveChips() {
-    const roleLabels   = {all:'Semua',admin:'Admin',konsultan:'Konsultan',majikan:'Majikan',nanny:'Nanny'};
-    const statusLabels = {all:'Semua',active:'Aktif',inactive:'Nonaktif'};
+    const roleLabels   = {all:'All',admin:'Admin',konsultan:'Consultant',majikan:'Employer',nanny:'Nanny'};
+    const statusLabels = {all:'All',active:'Active',inactive:'Inactive'};
     const showRole   = activeRole !== 'all';
     const showStatus = activeStatus !== 'all';
 
@@ -601,7 +601,7 @@ function openDetail(u) {
     rb.className    = 'text-[11px] font-bold px-2.5 py-1 rounded-full ' + (roleBadgeClasses[u.roleCls] || 'bg-gray-100 text-gray-700');
 
     const sb = document.getElementById('dStatusBadge');
-    sb.textContent = u.isActive ? 'Aktif' : 'Nonaktif';
+    sb.textContent = u.isActive ? 'Active' : 'Inactive';
     sb.className   = 'text-[11px] font-bold px-2.5 py-1 rounded-full ' + (u.isActive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600');
 
     document.getElementById('dPhone').textContent   = u.phone;

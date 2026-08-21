@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Lupa Password - Aplikasi')
+@section('title', 'Forgot Password - App')
 
 @push('styles')
 @include('components.styles')
@@ -147,11 +147,11 @@ document.getElementById('forgotForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('email').value.trim();
 
-    if (!email) { showToast('Email wajib diisi!'); return; }
+    if (!email) { showToast('Email is required!'); return; }
 
     // Basic email format check
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) { showToast('Format email tidak valid.'); return; }
+    if (!emailRegex.test(email)) { showToast('Invalid email format.'); return; }
 
     setLoading(true);
 
@@ -173,10 +173,10 @@ document.getElementById('forgotForm').addEventListener('submit', async (e) => {
             document.getElementById('formState').classList.add('hidden');
             document.getElementById('successState').classList.remove('hidden');
         } else {
-            showToast(data.message || 'Email tidak ditemukan. Coba lagi.');
+            showToast(data.message || 'Email not found. Please try again.');
         }
     } catch (err) {
-        showToast('Terjadi kesalahan. Coba lagi.');
+        showToast('Something went wrong. Please try again.');
     } finally {
         setLoading(false);
     }

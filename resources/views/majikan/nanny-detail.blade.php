@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Nanny — ' . ($nanny['name'] ?? 'Nanny'))
+@section('title', 'Nanny Details — ' . ($nanny['name'] ?? 'Nanny'))
 
 @push('styles')
 <style>
@@ -51,12 +51,12 @@
 <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar">
     <x-empty-state
         icon="person-circle-outline"
-        title="Data tidak ditemukan"
-        description="Data yang Anda cari tidak tersedia"
+        title="Data not found"
+        description="The data you are looking for is unavailable"
     >
         <a href="{{ route('majikan-nanny-list') }}"
            class="mt-6 bg-[#8B46D3] text-white text-sm font-bold px-8 py-3 rounded-2xl shadow-[0_8px_20px_rgba(139,70,211,0.35)]">
-            Kembali ke Daftar
+            Back to List
         </a>
     </x-empty-state>
 </div>
@@ -68,7 +68,7 @@
     $employerCount = $nanny['employer_count'] ?? '2';
     $consultantName = $nanny['konsultan']['name'] ?? null;
     $consultantPhoto = $nanny['konsultan']['foto'] ?? null;
-    $genderText = ($nanny['gender'] ?? '') === 'L' ? 'Laki-laki' : (($nanny['gender'] ?? '') === 'P' ? 'Perempuan' : '-');
+    $genderText = ($nanny['gender'] ?? '') === 'L' ? 'Male' : (($nanny['gender'] ?? '') === 'P' ? 'Female' : '-');
     $locationText = (!empty($nanny['kota']) && !empty($nanny['provinsi'])) ? $nanny['kota'].', '.$nanny['provinsi'] : ($nanny['kota'] ?? $nanny['provinsi'] ?? 'Surabaya');
 @endphp
 <div class="flex-1 overflow-y-auto px-[20px] pt-[20px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar space-y-4">
@@ -104,7 +104,7 @@
             </div> --}}
             <div>
                 <p class="text-[#7C7893] text-[10px] uppercase tracking-[1.2px] font-extrabold">Experience</p>
-                <p class="text-[#1E1B2E] text-[13px] font-extrabold mt-1">{{ $experienceYears }} Thn</p>
+                <p class="text-[#1E1B2E] text-[13px] font-extrabold mt-1">{{ $experienceYears }} Yrs</p>
             </div>
             {{-- <div>
                 <p class="text-[#7C7893] text-[10px] uppercase tracking-[1.2px] font-extrabold">Employer</p>
@@ -206,7 +206,7 @@
             @endif
             <div class="flex-1">
                 <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.8px]">Consultant</p>
-                <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $consultantName ?? 'Belum ada konsultan' }}</p>
+                <p class="text-[#1E1B2E] text-[13px] font-extrabold">{{ $consultantName ?? 'No consultant yet' }}</p>
             </div>
         </div>
     </div>

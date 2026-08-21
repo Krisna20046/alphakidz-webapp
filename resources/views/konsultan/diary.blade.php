@@ -307,7 +307,7 @@
             </div>
             @empty
             <div style="padding:0 20px;color:#A8A2C2;font-size:13px;font-weight:700;">
-                Belum ada data nanny
+                No nanny data yet
             </div>
             @endforelse
         </div>
@@ -318,14 +318,14 @@
         <div class="hide-scrollbar flex" style="overflow-x:auto;gap:8px;padding-bottom:2px;">
             @php
                 $kats = [
-                    ['value'=>'','label'=>'Semua'],
-                    ['value'=>'makan','label'=>'🍽️ Makan'],
-                    ['value'=>'tidur','label'=>'🌙 Tidur'],
-                    ['value'=>'main','label'=>'⚽ Main'],
-                    ['value'=>'belajar','label'=>'📖 Belajar'],
-                    ['value'=>'mandi','label'=>'🛁 Mandi'],
-                    ['value'=>'bab','label'=>'🟤 BAB'],
-                    ['value'=>'bak','label'=>'💧 BAK'],
+                    ['value'=>'','label'=>'All'],
+                    ['value'=>'makan','label'=>'🍽️ Eat'],
+                    ['value'=>'tidur','label'=>'🌙 Sleep'],
+                    ['value'=>'main','label'=>'⚽ Play'],
+                    ['value'=>'belajar','label'=>'📖 Study'],
+                    ['value'=>'mandi','label'=>'🛁 Bath'],
+                    ['value'=>'bab','label'=>'🟤 Poop'],
+                    ['value'=>'bak','label'=>'💧 Pee'],
                 ];
             @endphp
             @foreach($kats as $kat)
@@ -450,8 +450,8 @@
                      style="width:100px;height:100px;border-radius:50%;background:#EDE9FE;margin-bottom:18px;">
                     <ion-icon name="calendar-clear-outline" style="font-size:48px;color:#C4B5FD;"></ion-icon>
                 </div>
-                <p style="font-size:16px;font-weight:900;color:#1E1B2E;margin-bottom:6px;">Tidak ada aktivitas</p>
-                <p style="font-size:13px;font-weight:700;color:#A8A2C2;">pada tanggal ini</p>
+                <p style="font-size:16px;font-weight:900;color:#1E1B2E;margin-bottom:6px;">No activities</p>
+                <p style="font-size:13px;font-weight:700;color:#A8A2C2;">for this date</p>
             </div>
         @endif
     </div>
@@ -702,11 +702,11 @@ document.getElementById('modalMonthYear').addEventListener('click',e=>{
 // ── Location Modal ──
 function openLocationModal(name, lat, lng) {
     locLat = lat; locLng = lng;
-    const n = name || 'Lokasi Aktivitas';
+    const n = name || 'Activity Location';
     document.getElementById('locModalName').textContent = n;
     document.getElementById('locModalSub').textContent = lat && lng
         ? lat + ', ' + lng
-        : 'Lokasi tercatat';
+        : 'Location recorded';
 
     const latDec = dmsToDecimal(lat);
     const lngDec = dmsToDecimal(lng);
@@ -728,7 +728,7 @@ function openLocationModal(name, lat, lng) {
             <div style="width:100%;height:180px;border-radius:14px;background:#e8f4e8;
                         display:flex;align-items:center;justify-content:center;
                         font-size:13px;color:#666;font-weight:600;">
-                Koordinat tidak tersedia
+                Coordinates unavailable
             </div>`;
     }
 

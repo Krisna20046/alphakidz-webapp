@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Tugaskan Nanny')
+@section('title', 'Assign Nanny')
 
 @push('styles')
 <style>
@@ -41,8 +41,8 @@
             <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
         </a>
         <div>
-            <span class="text-white text-[17px] font-extrabold tracking-wide">Tugaskan Nanny</span>
-            <p class="text-white/70 text-xs font-semibold mt-0.5 leading-[1.3]">Kelola penugasan nanny<br>di bawah pengawasan Anda</p>
+            <span class="text-white text-[17px] font-extrabold tracking-wide">Assign Nanny</span>
+            <p class="text-white/70 text-xs font-semibold mt-0.5 leading-[1.3]">Manage nanny assignments<br>under your supervision</p>
         </div>
     </div>
 </div>
@@ -54,7 +54,7 @@
         <div class="w-14 h-14 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-4 spin">
             <ion-icon name="sync" style="font-size:26px;color:#8B46D3;"></ion-icon>
         </div>
-        <p class="text-[#8B86A5] text-sm font-semibold">Memuat data nanny...</p>
+        <p class="text-[#8B86A5] text-sm font-semibold">Loading nanny data...</p>
     </div>
 
     {{-- Empty State --}}
@@ -62,14 +62,14 @@
         <div class="float-anim w-28 h-28 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-6">
             <ion-icon name="people-outline" style="font-size:52px;color:#C4B5FD;"></ion-icon>
         </div>
-        <h3 class="text-[#1E1B2E] font-extrabold text-lg mb-2">Belum ada nanny</h3>
-        <p class="text-[#8B86A5] text-sm text-center leading-relaxed">Anda belum memiliki nanny yang terdaftar</p>
+        <h3 class="text-[#1E1B2E] font-extrabold text-lg mb-2">No nannies yet</h3>
+        <p class="text-[#8B86A5] text-sm text-center leading-relaxed">You have no registered nannies</p>
     </div>
 
     {{-- List State --}}
     <div id="listState" class="hidden space-y-4">
         <div class="anim delay-2 flex items-center justify-between">
-            <h2 class="text-[#1E1B2E] font-extrabold text-[15px]">Daftar Nanny</h2>
+            <h2 class="text-[#1E1B2E] font-extrabold text-[15px]">Nanny List</h2>
             <div class="bg-[#EDE9FE] px-3 py-1 rounded-full">
                 <span class="text-[#8B46D3] text-xs font-extrabold" id="nannyCount">0</span>
             </div>
@@ -87,11 +87,11 @@ const API_BASE_URL = '{{ env("API_BASE_URL") }}';
 const API_TOKEN    = '{{ session("token") }}';
 
 const STATUS_MAP = {
-    active:    { label:'Aktif Bertugas',      icon:'time',           bg:'bg-blue-100',   text:'text-blue-600' },
-    pending:   { label:'Menunggu Konfirmasi', icon:'hourglass',      bg:'bg-yellow-100', text:'text-yellow-700' },
-    completed: { label:'Tugas Selesai',       icon:'checkmark-done', bg:'bg-gray-100',   text:'text-gray-600' },
-    cancelled: { label:'Dibatalkan',          icon:'close-circle',   bg:'bg-red-100',    text:'text-red-600' },
-    tersedia:  { label:'Tersedia',            icon:'checkmark-circle',bg:'bg-green-100', text:'text-green-700' },
+    active:    { label:'On Duty',      icon:'time',           bg:'bg-blue-100',   text:'text-blue-600' },
+    pending:   { label:'Awaiting Confirmation', icon:'hourglass',      bg:'bg-yellow-100', text:'text-yellow-700' },
+    completed: { label:'Completed',       icon:'checkmark-done', bg:'bg-gray-100',   text:'text-gray-600' },
+    cancelled: { label:'Cancelled',          icon:'close-circle',   bg:'bg-red-100',    text:'text-red-600' },
+    tersedia:  { label:'Available',            icon:'checkmark-circle',bg:'bg-green-100', text:'text-green-700' },
 };
 
 function avatarHtml(foto) {
@@ -126,7 +126,7 @@ function cardHtml(item, i) {
                 </div>
                 <div>
                     <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.5px]">Gender</p>
-                    <p class="text-[#1E1B2E] text-[12px] font-extrabold">${item.gender === 'L' ? 'Laki-laki' : 'Perempuan'}</p>
+                    <p class="text-[#1E1B2E] text-[12px] font-extrabold">${item.gender === 'L' ? 'Male' : 'Female'}</p>
                 </div>
             </div>
             <div class="detail-item px-3 py-2 flex items-center gap-2.5">
@@ -154,13 +154,13 @@ function cardHtml(item, i) {
                     <ion-icon name="document-text" style="font-size:13px;color:#F59E0B;"></ion-icon>
                 </div>
                 <div>
-                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.5px] mb-0.5">Catatan</p>
+                    <p class="text-[#8B86A5] text-[9px] font-extrabold uppercase tracking-[1.5px] mb-0.5">Notes</p>
                     <p class="text-[#8B86A5] text-[11px] font-semibold italic">"${item.catatan}"</p>
                 </div>
             </div>` : ''}
         </div>
         <div class="px-4 py-2.5 border-t border-[#F0EDF8] flex items-center justify-end">
-            <span class="text-[#8B86A5] text-[11px] font-semibold italic">${!item.is_assigned ? 'Tap untuk tugaskan' : 'Tap untuk lihat detail'}</span>
+            <span class="text-[#8B86A5] text-[11px] font-semibold italic">${!item.is_assigned ? 'Tap to assign' : 'Tap to view details'}</span>
         </div>
     </a>`;
 }
@@ -185,8 +185,8 @@ async function loadNannies() {
             <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
                 <ion-icon name="alert-circle" style="font-size:32px;color:#DC2626;"></ion-icon>
             </div>
-            <p class="text-red-600 font-bold mb-3 text-sm">Gagal memuat data</p>
-            <button onclick="loadNannies()" class="bg-[#8B46D3] text-white text-sm font-bold px-6 py-2.5 rounded-2xl shadow-[0_4px_12px_rgba(139,70,211,0.35)]">Coba lagi</button>
+            <p class="text-red-600 font-bold mb-3 text-sm">Failed to load data</p>
+            <button onclick="loadNannies()" class="bg-[#8B46D3] text-white text-sm font-bold px-6 py-2.5 rounded-2xl shadow-[0_4px_12px_rgba(139,70,211,0.35)]">Try Again</button>
         </div>`;
     }
 }

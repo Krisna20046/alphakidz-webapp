@@ -6,7 +6,7 @@
 
 @php $activeNav = 'home' @endphp
 
-@section('title', 'Ajukan Pertanyaan')
+@section('title', 'Ask a Question')
 
 @push('styles')
 <style>
@@ -90,8 +90,8 @@
             <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
         </a>
         <div>
-            <span class="text-white text-[17px] font-extrabold tracking-wide">Ajukan Pertanyaan</span>
-            <p class="text-white/70 text-xs font-semibold mt-0.5">Tim Nexus akan menjawab pertanyaan kamu</p>
+            <span class="text-white text-[17px] font-extrabold tracking-wide">Ask a Question</span>
+            <p class="text-white/70 text-xs font-semibold mt-0.5">The Nexus team will answer your question</p>
         </div>
     </div>
 </div>
@@ -100,25 +100,25 @@
     <div class="anim delay-2 bg-white rounded-[20px] p-4 shadow-[0_2px_12px_rgba(0,0,0,0.08)] space-y-5">
         {{-- Judul --}}
         <div>
-            <p class="text-[#5A556E] text-[13px] font-extrabold uppercase tracking-[1.8px] mb-2">Judul Pertanyaan</p>
+            <p class="text-[#5A556E] text-[13px] font-extrabold uppercase tracking-[1.8px] mb-2">Question Title</p>
             <input type="text" class="form-input" id="judul"
-                placeholder="Contoh: Anak susah makan, bagaimana mengatasinya?"
+                placeholder="Example: My child is a picky eater, how do I handle it?"
                 maxlength="255">
         </div>
 
-        {{-- Kategori --}}
+        {{-- Category --}}
         <div>
             <p class="text-[#5A556E] text-[13px] font-extrabold uppercase tracking-[1.8px] mb-3">
-                Kategori <span class="text-[#A8A2C2] font-normal normal-case tracking-normal">(opsional)</span>
+                Category <span class="text-[#A8A2C2] font-normal normal-case tracking-normal">(optional)</span>
             </p>
             <div class="flex flex-wrap gap-2" id="kategoriPills">
-                <div class="cat-pill" data-value="">Semua</div>
-                <div class="cat-pill" data-value="tumbuh_kembang">🌱 Tumbuh Kembang</div>
-                <div class="cat-pill" data-value="gizi">🍎 Gizi & Makanan</div>
-                <div class="cat-pill" data-value="kesehatan">🏥 Kesehatan</div>
-                <div class="cat-pill" data-value="pendidikan">📚 Pendidikan</div>
-                <div class="cat-pill" data-value="perilaku">🧠 Perilaku</div>
-                <div class="cat-pill" data-value="lainnya">📌 Lainnya</div>
+                <div class="cat-pill" data-value="">All</div>
+                <div class="cat-pill" data-value="tumbuh_kembang">🌱 Growth & Development</div>
+                <div class="cat-pill" data-value="gizi">🍎 Nutrition & Food</div>
+                <div class="cat-pill" data-value="kesehatan">🏥 Health</div>
+                <div class="cat-pill" data-value="pendidikan">📚 Education</div>
+                <div class="cat-pill" data-value="perilaku">🧠 Behavior</div>
+                <div class="cat-pill" data-value="lainnya">📌 Others</div>
             </div>
         </div>
     </div>
@@ -126,7 +126,7 @@
     <div class="anim delay-3 mt-5">
         <button class="btn-submit" id="btnSubmit" onclick="submitQuestion()">
             <ion-icon name="paper-plane" style="font-size:18px;margin-right:6px;vertical-align:-2px;"></ion-icon>
-            Kirim Pertanyaan
+            Send Question
         </button>
     </div>
 </div>
@@ -138,14 +138,14 @@
 <script>
 const CSRF = "{{ csrf_token() }}";
 const API_BASE = '{{ rtrim(config("services.api.base_url", env("API_BASE_URL", "")), "/") }}';
-let selectedKategori = '';
+let selectedCategory = '';
 
 document.getElementById('kategoriPills').addEventListener('click', function(e) {
     const pill = e.target.closest('.cat-pill');
     if (!pill) return;
     this.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
     pill.classList.add('active');
-    selectedKategori = pill.dataset.value;
+    selectedCategory = pill.dataset.value;
 });
 
 function showToast(msg) {
@@ -156,10 +156,10 @@ function showToast(msg) {
 
 async function submitQuestion() {
     const judul = document.getElementById('judul').value.trim();
-    if (!judul) { showToast('Judul pertanyaan wajib diisi'); return; }
+    if (!judul) { showToast('Question title is required'); return; }
 
     const btn = document.getElementById('btnSubmit');
-    btn.disabled = true; btn.innerHTML = 'Mengirim...';
+    btn.disabled = true; btn.innerHTML = 'Sending...';
 
     try {
         const res = await fetch(`${API_BASE}/nexus`, {
@@ -169,14 +169,14 @@ async function submitQuestion() {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ judul, kategori: selectedKategori || null })
+            body: JSON.stringify({ judul, kategori: selectedCategory || null })
         });
         const json = await res.json();
-        if (!res.ok) { showToast(json.message || 'Gagal mengirim'); btn.disabled = false; btn.innerHTML = 'Kirim Pertanyaan'; return; }
+        if (!res.ok) { showToast(json.message || 'Failed to send'); btn.disabled = false; btn.innerHTML = 'Send Question'; return; }
         window.location.href = '{{ route("nexus.nexus-index") }}';
     } catch (e) {
-        showToast('Gagal mengirim pertanyaan');
-        btn.disabled = false; btn.innerHTML = 'Kirim Pertanyaan';
+        showToast('Failed to send the question');
+        btn.disabled = false; btn.innerHTML = 'Send Question';
     }
 }
 </script>

@@ -17,7 +17,7 @@ messaging.onBackgroundMessage(function (payload) {
     const data         = payload.data         || {};
 
     const title     = data.title     || notification.title || 'Pesan Baru - AlphaKidz';
-    const body      = data.body      || notification.body  || 'Anda memiliki pesan baru';
+    const body      = data.body      || notification.body  || 'You have a new message';
     const senderId  = data.sender_id || '';
     const chatUrl   = data.url
         ? data.url
@@ -58,7 +58,7 @@ self.addEventListener('notificationclick', function (event) {
                     return client.navigate(fullUrl);
                 }
             }
-            // Tidak ada tab — buka baru
+            // No tab open — open a new one
             return clients.openWindow(fullUrl);
         })
     );

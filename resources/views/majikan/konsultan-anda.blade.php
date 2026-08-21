@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Konsultan Anda')
+@section('title', 'Your Consultants')
 
 @push('styles')
 <style>
@@ -31,8 +31,8 @@
             <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
         </a>
         <div>
-            <span class="text-white text-[17px] font-extrabold tracking-wide">Konsultan Anda</span>
-            <p class="text-white/60 text-xs font-medium mt-0.5">{{ count($konsultans ?? []) }} konsultan ditugaskan</p>
+            <span class="text-white text-[17px] font-extrabold tracking-wide">Your Consultants</span>
+            <p class="text-white/60 text-xs font-medium mt-0.5">{{ count($konsultans ?? []) }} consultants assigned</p>
         </div>
     </div>
 </div>
@@ -46,9 +46,9 @@
 
         {{-- HEADER --}}
         <div class="flex items-center justify-between mb-3">
-            <h2 class="text-[#5A556E] text-[18px] font-extrabold">Konsultan Aktif</h2>
+            <h2 class="text-[#5A556E] text-[18px] font-extrabold">Active Consultants</h2>
             <div class="bg-[#EDE9FE] px-3 py-1 rounded-full">
-                <span class="text-[#8B46D3] text-xs font-bold">{{ count($konsultans) }} Konsultan</span>
+                <span class="text-[#8B46D3] text-xs font-bold">{{ count($konsultans) }} Consultants</span>
             </div>
         </div>
 
@@ -56,7 +56,7 @@
         <div class="flex flex-col gap-3 pb-6">
             @foreach($konsultans as $i => $konsultan)
             @php
-                $genderText = ($konsultan['gender'] ?? '') === 'L' ? 'Laki-laki' : (($konsultan['gender'] ?? '') === 'P' ? 'Perempuan' : '-');
+                $genderText = ($konsultan['gender'] ?? '') === 'L' ? 'Male' : (($konsultan['gender'] ?? '') === 'P' ? 'Female' : '-');
             @endphp
             <a href="{{ route('majikan-konsultan-detail', $konsultan['id']) }}"
                class="konsultan-card block bg-white rounded-[14px] px-3 py-3 shadow-[0_2px_10px_rgba(0,0,0,0.08)] border border-[#EAE6F5]"
@@ -83,7 +83,7 @@
                         <div class="flex items-start justify-between gap-2 mb-1">
                             <p class="text-[#1E1B2E] font-extrabold text-[15px] truncate">{{ $konsultan['name'] }}</p>
                             <span class="bg-[#EDE9FE] text-[#8B46D3] text-[9px] font-extrabold px-2 py-1 rounded-full leading-none shrink-0 whitespace-nowrap">
-                                KONSULTAN
+                                CONSULTANT
                             </span>
                         </div>
 
@@ -111,9 +111,9 @@
             <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-5">
                 <ion-icon name="people-outline" style="font-size:44px;color:#C4B5FD;"></ion-icon>
             </div>
-            <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">Belum ada konsultan</h3>
+            <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">No consultants yet</h3>
             <p class="text-[#9CA3AF] text-sm text-center leading-relaxed">
-                Anda belum memiliki konsultan yang ditugaskan saat ini
+                You have no consultants assigned at this time
             </p>
         </div>
         @endif

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pilih Anak – Diary Admin')
+@section('title', 'Select Child – Diary Admin')
 
 @push('styles')
 <style>
@@ -29,15 +29,15 @@
         <div class="flex items-center justify-center bg-white rounded-full mb-3 shadow-lg" style="width:64px; height:64px;">
             <ion-icon name="people" style="font-size:30px; color:#8B46D3;"></ion-icon>
         </div>
-        <h1 class="font-extrabold text-white mb-1" style="font-size:22px; letter-spacing:.4px;">Pilih Anak</h1>
-        <p id="nannyNameHeader" style="font-size:13px; color:#E5DEFF; font-weight:500;">Memuat data nanny...</p>
+        <h1 class="font-extrabold text-white mb-1" style="font-size:22px; letter-spacing:.4px;">Select Child</h1>
+        <p id="nannyNameHeader" style="font-size:13px; color:#E5DEFF; font-weight:500;">Loading nanny data...</p>
     </div>
 </div>
 
 <div class="flex-1 overflow-y-auto px-[20px] pt-[24px] pb-28 bg-gradient-to-b from-[#F8F7FF] via-[#F8F7FF] to-[#D4BAEF]/50 rounded-t-[50px] -mt-[50px] relative z-20 hide-scrollbar flex flex-col gap-4">
 
     <div class="flex items-center justify-between anim delay-2">
-        <span style="font-size:17px; font-weight:700; color:#1E1B2E;">Anak yang Diasuh</span>
+        <span style="font-size:17px; font-weight:700; color:#1E1B2E;">Children in Care</span>
         <span id="anakCount" style="background:#EDE9FE; padding:3px 10px; border-radius:12px; font-size:12px; font-weight:700; color:#8B46D3;">–</span>
     </div>
 
@@ -62,15 +62,15 @@
         <div class="float-anim flex items-center justify-center" style="width:110px; height:110px; border-radius:55px; background:#EDE9FE; margin-bottom:20px;">
             <ion-icon name="body-outline" style="font-size:54px; color:#C4B5FD;"></ion-icon>
         </div>
-        <p style="font-size:17px; font-weight:700; color:#1E1B2E; margin-bottom:6px;">Belum ada anak</p>
-        <p style="font-size:13px; color:#8B86A5; text-align:center;">Nanny ini belum mengasuh anak apapun</p>
+        <p style="font-size:17px; font-weight:700; color:#1E1B2E; margin-bottom:6px;">No children yet</p>
+        <p style="font-size:13px; color:#8B86A5; text-align:center;">This nanny is not caring for any children yet</p>
     </div>
 
     <!-- Error -->
     <div id="errorState" class="hidden flex flex-col items-center" style="padding:40px 20px; gap:12px;">
         <ion-icon name="cloud-offline-outline" style="font-size:48px; color:#C4B5FD;"></ion-icon>
-        <p style="font-size:15px; font-weight:700; color:#1E1B2E;">Gagal memuat data</p>
-        <button onclick="fetchAnak()" style="background:#8B46D3; color:#fff; padding:10px 24px; border-radius:12px; font-size:14px; font-weight:600; border:none; cursor:pointer;">Coba Lagi</button>
+        <p style="font-size:15px; font-weight:700; color:#1E1B2E;">Failed to load data</p>
+        <button onclick="fetchAnak()" style="background:#8B46D3; color:#fff; padding:10px 24px; border-radius:12px; font-size:14px; font-weight:600; border:none; cursor:pointer;">Try Again</button>
     </div>
 
 </div>
@@ -100,7 +100,7 @@ async function fetchAnak() {
         if (nannyName) {
             document.getElementById('nannyNameHeader').textContent = 'Nanny: ' + nannyName;
         } else {
-            document.getElementById('nannyNameHeader').textContent = 'Daftar anak yang diasuh';
+            document.getElementById('nannyNameHeader').textContent = 'List of children in care';
         }
 
         assignments.forEach(assignment => {
@@ -153,7 +153,7 @@ function renderAnak(list) {
     container.classList.remove('hidden');
 
     container.innerHTML = list.map((anak, i) => {
-        const namaAnak = anak.nama || anak.name || 'Anak';
+        const namaAnak = anak.nama || anak.name || 'Child';
         const idAnak   = anak.id;
         const foto     = anak.foto || '';
         const gender   = (anak.gender || '').toUpperCase();
@@ -161,7 +161,7 @@ function renderAnak(list) {
         const umur     = calculateAge(tglLahir);
 
         const isMale = gender === 'L' || gender === 'LAKI' || gender === 'MALE';
-        const genderLabel = isMale ? 'Laki-laki' : 'Perempuan';
+        const genderLabel = isMale ? 'Male' : 'Female';
         const genderIcon  = isMale ? 'male-outline' : 'female-outline';
 
         const avatarHtml = foto
@@ -211,9 +211,9 @@ function calculateAge(tgl) {
     let years  = now.getFullYear() - birth.getFullYear();
     let months = now.getMonth()    - birth.getMonth();
     if (months < 0) { years--; months += 12; }
-    if (years > 0) return years + ' tahun';
-    if (months > 0) return months + ' bulan';
-    return '< 1 bulan';
+    if (years > 0) return years + ' years';
+    if (months > 0) return months + ' months';
+    return '< 1 month';
 }
 
 fetchAnak();

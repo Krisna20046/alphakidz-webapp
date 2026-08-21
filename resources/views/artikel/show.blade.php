@@ -2,7 +2,7 @@
 
 @php
     $activeNav = 'artikel';
-    $titlePost = $post['title']['rendered'] ?? 'Artikel';
+    $titlePost = $post['title']['rendered'] ?? 'Article';
 @endphp
 
 @section('title', $titlePost)

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Nanny Anda')
+@section('title', 'Your Nanny')
 
 @push('styles')
 <style>
@@ -31,7 +31,7 @@
             <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
         </a>
         <div>
-            <span class="text-white text-[17px] font-extrabold tracking-wide">List Nanny</span>
+            <span class="text-white text-[17px] font-extrabold tracking-wide">Nanny List</span>
             <p class="text-white/60 text-xs font-medium mt-0.5">List Of Nannies On Duty</p>
         </div>
     </div>
@@ -151,7 +151,7 @@
                                     <ion-icon name="person" style="font-size:10px;color:#8B46D3;"></ion-icon>
                                 </div>
                                 @endif
-                                <span class="text-[#8B46D3] text-[10px] font-bold truncate">Konsultan: {{ $item['konsultan_name'] }}</span>
+                                <span class="text-[#8B46D3] text-[10px] font-bold truncate">Consultant: {{ $item['konsultan_name'] }}</span>
                             </div>
                         </div>
                         @endif
@@ -168,14 +168,14 @@
             <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-5">
                 <ion-icon name="search-outline" style="font-size:44px;color:#C4B5FD;"></ion-icon>
             </div>
-            <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">Nanny tidak ditemukan</h3>
+            <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">Nanny not found</h3>
             <p class="text-[#9CA3AF] text-sm text-center leading-relaxed">
-                Tidak ada nanny sesuai pencarian
+                No nannies match your search
                 "<span class="font-semibold text-[#8B46D3]">{{ request('search') }}</span>"
             </p>
             <a href="{{ route('majikan-nanny') }}"
                class="mt-6 bg-[#8B46D3] text-white text-sm font-bold px-6 py-3 rounded-2xl shadow-[0_8px_18px_rgba(139,70,211,0.35)]">
-                Lihat Semua Nanny
+                View All Nannies
             </a>
         </div>
 
@@ -185,9 +185,9 @@
             <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-5">
                 <ion-icon name="people-outline" style="font-size:44px;color:#C4B5FD;"></ion-icon>
             </div>
-            <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">Belum ada nanny aktif</h3>
+            <h3 class="text-[#1E1B2E] font-bold text-lg mb-2">No active nannies yet</h3>
             <p class="text-[#9CA3AF] text-sm text-center leading-relaxed">
-                Anda belum memiliki nanny yang sedang bertugas saat ini
+                You have no nannies on duty right now
             </p>
         </div>
         @endif

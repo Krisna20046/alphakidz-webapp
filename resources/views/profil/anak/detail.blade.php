@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Detail Anak</title>
+    <title>Child Details</title>
     @include('partials.pwa-head')
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -179,7 +179,7 @@
                 </div>
                 <div>
                     <p class="text-[#8B86A5] text-[13px] font-extrabold uppercase tracking-[1.8px]">Gender</p>
-                    <p class="text-[#1E1B2E] text-[14px] font-semibold leading-relaxed mt-1">{{ $anak['gender'] === 'L' ? 'Laki-laki' : 'Perempuan' }}</p>
+                    <p class="text-[#1E1B2E] text-[18px] font-semibold leading-relaxed mt-1">{{ $anak['gender'] === 'L' ? 'Male' : 'Female' }}</p>
                 </div>
             </div>
 
@@ -272,22 +272,22 @@
                             <div class="med-body">
                                 <div class="med-row" style="margin-top:0;">
                                     <ion-icon name="business-outline"></ion-icon>
-                                    <span><span class="lbl">Nama Rumah Sakit:</span> <strong style="color:#1E1B2E;">{{ $rs['nama_rs'] }}</strong></span>
+                                    <span><span class="lbl">Hospital Name:</span> <strong style="color:#1E1B2E;">{{ $rs['nama_rs'] }}</strong></span>
                                 </div>
                                 <div class="med-row">
                                     <ion-icon name="pricetag-outline"></ion-icon>
-                                    <span><span class="lbl">Kategori:</span> {{ ['rs' => 'Rumah Sakit', 'klinik' => 'Klinik', 'puskesmas' => 'Puskesmas'][$rs['kategori'] ?? 'rs'] ?? ucfirst($rs['kategori']) }}</span>
+                                    <span><span class="lbl">Category:</span> {{ ['rs' => 'Hospital', 'klinik' => 'Clinic', 'puskesmas' => 'Health Center'][$rs['kategori'] ?? 'rs'] ?? ucfirst($rs['kategori']) }}</span>
                                 </div>
                                 @if($rs['alamat'] ?? null)
                                 <div class="med-row">
                                     <ion-icon name="location-outline"></ion-icon>
-                                    <span><span class="lbl">Alamat:</span> {{ $rs['alamat'] }}</span>
+                                    <span><span class="lbl">Address:</span> {{ $rs['alamat'] }}</span>
                                 </div>
                                 @endif
                                 @if($rs['no_telp'] ?? null)
                                 <div class="med-row">
                                     <ion-icon name="call-outline"></ion-icon>
-                                    <span><span class="lbl">No. Telepon:</span> {{ $rs['no_telp'] }}</span>
+                                    <span><span class="lbl">Phone Number:</span> {{ $rs['no_telp'] }}</span>
                                 </div>
                                 @endif
                             </div>
@@ -295,7 +295,7 @@
                         @empty
                         <div class="med-empty">
                             <ion-icon name="business-outline"></ion-icon>
-                            <p>Belum ada data rumah sakit.</p>
+                            <p>No hospital data yet.</p>
                         </div>
                         @endforelse
                     </div>
@@ -312,22 +312,22 @@
                             <div class="med-body">
                                 <div class="med-row" style="margin-top:0;">
                                     <ion-icon name="person-outline"></ion-icon>
-                                    <span><span class="lbl">Nama Dokter:</span> <strong style="color:#1E1B2E;">{{ $d['nama_dokter'] }}</strong></span>
+                                    <span><span class="lbl">Doctor Name:</span> <strong style="color:#1E1B2E;">{{ $d['nama_dokter'] }}</strong></span>
                                 </div>
                                 <div class="med-row">
                                     <ion-icon name="pricetag-outline"></ion-icon>
-                                    <span><span class="lbl">Spesialisasi:</span> {{ $d['spesialisasi'] ?? 'Umum' }}</span>
+                                    <span><span class="lbl">Specialization:</span> {{ $d['spesialisasi'] ?? 'General' }}</span>
                                 </div>
                                 @if($d['no_telp'] ?? null)
                                 <div class="med-row">
                                     <ion-icon name="call-outline"></ion-icon>
-                                    <span><span class="lbl">No. Telepon:</span> {{ $d['no_telp'] }}</span>
+                                    <span><span class="lbl">Phone Number:</span> {{ $d['no_telp'] }}</span>
                                 </div>
                                 @endif
                                 @if($d['alamat_praktek'] ?? null)
                                 <div class="med-row">
                                     <ion-icon name="location-outline"></ion-icon>
-                                    <span><span class="lbl">Alamat Praktek:</span> {{ $d['alamat_praktek'] }}</span>
+                                    <span><span class="lbl">Practice Address:</span> {{ $d['alamat_praktek'] }}</span>
                                 </div>
                                 @endif
                             </div>
@@ -335,7 +335,7 @@
                         @empty
                         <div class="med-empty">
                             <ion-icon name="medkit-outline"></ion-icon>
-                            <p>Belum ada data dokter.</p>
+                            <p>No doctor data yet.</p>
                         </div>
                         @endforelse
                     </div>
@@ -352,33 +352,33 @@
                             <div class="med-body">
                                 <div class="med-row" style="margin-top:0;">
                                     <ion-icon name="shield-checkmark-outline"></ion-icon>
-                                    <span><span class="lbl">Nama Vaksin:</span> <strong style="color:#1E1B2E;">{{ $v['nama_vaksin'] }}</strong></span>
+                                    <span><span class="lbl">Vaccine Name:</span> <strong style="color:#1E1B2E;">{{ $v['nama_vaksin'] }}</strong></span>
                                 </div>
                                 <div class="med-row">
                                     <ion-icon name="calendar-outline"></ion-icon>
-                                    <span><span class="lbl">Tanggal:</span> {{ $v['tanggal_vaksin'] ? \Illuminate\Support\Str::substr($v['tanggal_vaksin'], 0, 10) : '-' }}</span>
+                                    <span><span class="lbl">Date:</span> {{ $v['tanggal_vaksin'] ? \Illuminate\Support\Str::substr($v['tanggal_vaksin'], 0, 10) : '-' }}</span>
                                 </div>
                                 @if($v['tempat_vaksin'] ?? null)
                                 <div class="med-row">
                                     <ion-icon name="location-outline"></ion-icon>
-                                    <span><span class="lbl">Tempat:</span> {{ $v['tempat_vaksin'] }}</span>
+                                    <span><span class="lbl">Location:</span> {{ $v['tempat_vaksin'] }}</span>
                                 </div>
                                 @endif
                                 @if($v['dokter_pemberi'] ?? null)
                                 <div class="med-row">
                                     <ion-icon name="person-outline"></ion-icon>
-                                    <span><span class="lbl">Dokter Pemberi:</span> {{ $v['dokter_pemberi'] }}</span>
+                                    <span><span class="lbl">Administering Doctor:</span> {{ $v['dokter_pemberi'] }}</span>
                                 </div>
                                 @endif
                                 @if($v['catatan'] ?? null)
-                                <div class="med-note"><span class="lbl">Catatan:</span> {{ $v['catatan'] }}</div>
+                                <div class="med-note"><span class="lbl">Notes:</span> {{ $v['catatan'] }}</div>
                                 @endif
                             </div>
                         </div>
                         @empty
                         <div class="med-empty">
                             <ion-icon name="shield-checkmark-outline"></ion-icon>
-                            <p>Belum ada data vaksin.</p>
+                            <p>No vaccine data yet.</p>
                         </div>
                         @endforelse
                     </div>
@@ -413,20 +413,20 @@
             <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-4">
                 <ion-icon name="trash-outline" style="font-size:30px;color:#ef4444;"></ion-icon>
             </div>
-            <h3 class="text-[#1E1B2E] text-lg font-extrabold mb-1">Hapus Data Anak?</h3>
-            <p class="text-[#6B6589] text-sm leading-relaxed">Tindakan ini tidak dapat dibatalkan. Data anak <strong class="text-[#1E1B2E]">{{ $anak['nama'] }}</strong> akan dihapus permanen.</p>
+            <h3 class="text-[#1E1B2E] text-lg font-extrabold mb-1">Delete Child Data?</h3>
+            <p class="text-[#6B6589] text-sm leading-relaxed">This action cannot be undone. The child's data <strong class="text-[#1E1B2E]">{{ $anak['nama'] }}</strong> will be permanently deleted.</p>
         </div>
         <div class="flex gap-3">
             <button onclick="hideDeleteModal()"
                     class="flex-1 py-3.5 rounded-2xl border-2 border-[#E9E3FB] text-[#8B46D3] font-bold text-sm">
-                Batal
+                Cancel
             </button>
             <form method="POST" action="{{ route('profil.anak.hapus', $anak['id']) }}" class="flex-1">
                 @csrf
                 @method('DELETE')
                 <button type="submit" id="deleteSubmitBtn"
                         class="w-full py-3.5 rounded-2xl bg-red-500 text-white font-bold text-sm active:bg-red-600 transition-all flex items-center justify-center gap-2">
-                    <span>Ya, Hapus</span>
+                    <span>Yes, Delete</span>
                 </button>
             </form>
         </div>

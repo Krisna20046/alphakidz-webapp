@@ -2,7 +2,7 @@
 
 @php $activeNav = 'home' @endphp
 
-@section('title', 'Pesan')
+@section('title', 'Messages')
 
 @push('styles')
 <style>
@@ -85,9 +85,9 @@
             <div class="float-anim w-24 h-24 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-6">
                 <ion-icon id="emptyIcon" name="chatbubble-ellipses-outline" style="font-size:48px;color:#C4B5FD;"></ion-icon>
             </div>
-            <h3 id="emptyTitle" class="text-[#1E1B2E] font-bold text-lg mb-2 text-center">Belum ada percakapan</h3>
+            <h3 id="emptyTitle" class="text-[#1E1B2E] font-bold text-lg mb-2 text-center">No conversations yet</h3>
             <p id="emptyDesc" class="text-[#9CA3AF] text-sm text-center leading-relaxed">
-                Mulai percakapan baru dengan mengirim pesan pertama
+                Start a new conversation by sending your first message
             </p>
         </div>
     </div>
@@ -147,8 +147,8 @@ function processChatData(raw) {
     return raw.map(c => ({
         id          : c.id,
         otherUserId : c.id_penerima,
-        name        : c.nama_penerima || 'Pengguna',
-        role        : c.role_penerima || 'Lainnya',
+        name        : c.nama_penerima || 'User',
+        role        : c.role_penerima || 'Other',
         avatar      : c.foto || null,
         lastMessage : c.pesan_terakhir || '',
         timestamp   : c.created_at,
@@ -196,7 +196,7 @@ function buildChatItemHTML(chat, idx) {
             </div>
 
             <div class="flex items-center justify-between gap-2 mt-0.5">
-                <p class="text-[#4B5563] text-[13px] font-semibold truncate">${chat.lastMessage||'Belum ada pesan'}</p>
+                <p class="text-[#4B5563] text-[13px] font-semibold truncate">${chat.lastMessage||'No messages yet'}</p>
                 ${unreadBadge}
             </div>
         </div>
@@ -258,8 +258,8 @@ function applyFilters() {
     if (filtered.length === 0) {
         const isSearch = !!q;
         document.getElementById('emptyIcon').setAttribute('name', isSearch ? 'search-outline' : 'chatbubble-ellipses-outline');
-        document.getElementById('emptyTitle').textContent = isSearch ? 'Percakapan tidak ditemukan' : 'Belum ada percakapan';
-        document.getElementById('emptyDesc').textContent = isSearch ? `Tidak ada yang cocok dengan "${q}"` : 'Mulai percakapan baru dengan mengirim pesan pertama';
+        document.getElementById('emptyTitle').textContent = isSearch ? 'No conversation found' : 'No conversations yet';
+        document.getElementById('emptyDesc').textContent = isSearch ? `Nothing matches "${q}"` : 'Start a new conversation by sending your first message';
         renderChats([]);
     } else {
         renderChats(filtered);
@@ -328,8 +328,8 @@ fetchChatList();
         } else {
             allChats.unshift({
                 id: chat.id, otherUserId: chat.id_pengirim,
-                name: chat.nama_pengirim || 'Pengguna',
-                role: chat.role_pengirim || 'Lainnya',
+                name: chat.nama_pengirim || 'User',
+                role: chat.role_pengirim || 'Other',
                 avatar: chat.foto_pengirim || null,
                 lastMessage: chat.pesan,
                 timestamp: chat.created_at,

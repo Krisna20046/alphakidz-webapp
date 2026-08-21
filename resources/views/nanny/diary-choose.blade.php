@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Pilih Diary Anak')
+@section('title', 'Select Child Diary')
 
 @push('styles')
 <style>
@@ -30,8 +30,8 @@
              style="width:64px;height:64px;">
             <ion-icon name="book" style="font-size:30px;color:#8B46D3;"></ion-icon>
         </div>
-        <h1 class="font-bold text-white mb-1" style="font-size:24px;letter-spacing:0.5px;">Pilih Diary Anak</h1>
-        <p style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;">Pilih anak untuk mencatat diary</p>
+        <h1 class="font-bold text-white mb-1" style="font-size:24px;letter-spacing:0.5px;">Select Child Diary</h1>
+        <p style="font-size:14px;color:rgba(255,255,255,0.8);font-weight:500;">Select a child to record the diary</p>
     </div>
 </div>
 
@@ -52,7 +52,7 @@
                 <ion-icon name="briefcase" style="font-size:20px;color:#8B46D3;"></ion-icon>
             </div>
             <div class="flex-1 min-w-0">
-                <p class="text-[11px] font-semibold text-[#8B86A5] mb-0.5">Penugasan dengan</p>
+                <p class="text-[11px] font-semibold text-[#8B86A5] mb-0.5">Assignment with</p>
                 <p class="text-[15px] font-extrabold text-[#1E1B2E] truncate mb-0.5">{{ $majikan ?? '-' }}</p>
                 <div class="flex items-center gap-1">
                     <ion-icon name="calendar-outline" style="font-size:12px;color:#8B46D3;flex-shrink:0;"></ion-icon>
@@ -64,7 +64,7 @@
 
     {{-- List header --}}
     <div class="flex items-center justify-between anim delay-2 mb-3">
-        <span class="text-[18px] font-extrabold text-[#1E1B2E]">Daftar Anak</span>
+        <span class="text-[18px] font-extrabold text-[#1E1B2E]">Child List</span>
         <span class="bg-[#EDE9FE] px-3 py-1 rounded-full text-[12px] font-extrabold text-[#8B46D3]">
             {{ count($anak) }}
         </span>
@@ -76,7 +76,7 @@
         @php
             $lahir  = new DateTime($child['tanggal_lahir'] ?? 'now');
             $diff   = $lahir->diff(new DateTime());
-            $umur   = ($diff->y > 0 ? $diff->y.' tahun ' : '') . $diff->m . ' bulan';
+            $umur   = ($diff->y > 0 ? $diff->y.' years ' : '') . $diff->m . ' months';
             $isMale = ($child['gender'] ?? '') === 'L';
         @endphp
         <a href="{{ route('nanny-diary', ['id_anak' => $child['id']]) }}"
@@ -111,7 +111,7 @@
                     </div>
                     <div class="flex items-center gap-1">
                         <ion-icon name="{{ $isMale ? 'male' : 'female' }}" style="font-size:13px;color:#8B46D3;flex-shrink:0;"></ion-icon>
-                        <span class="text-[13px] font-semibold text-[#8B86A5]">{{ $isMale ? 'Laki-laki' : 'Perempuan' }}</span>
+                        <span class="text-[13px] font-semibold text-[#8B86A5]">{{ $isMale ? 'Male' : 'Female' }}</span>
                     </div>
                 </div>
             </div>
@@ -132,13 +132,13 @@
              style="width:120px;height:120px;border-radius:60px;background:#EDE9FE;margin-bottom:24px;">
             <ion-icon name="body-outline" style="font-size:60px;color:#C4B5FD;"></ion-icon>
         </div>
-        <p class="text-center text-[18px] font-extrabold text-[#1E1B2E] mb-2">Belum ada data anak</p>
+        <p class="text-center text-[18px] font-extrabold text-[#1E1B2E] mb-2">No child data yet</p>
         <p class="text-center text-[14px] font-semibold text-[#8B86A5] leading-relaxed">
             @if($assignmentData)
-                Penugasan dengan {{ $assignmentData['majikan_name'] ?? '' }}<br>
+                Assignment with {{ $assignmentData['majikan_name'] ?? '' }}<br>
                 {{ $assignmentData['tanggal_mulai'] ?? '' }} – {{ $assignmentData['tanggal_selesai'] ?? '' }}
             @else
-                Tidak ada penugasan aktif saat ini
+                No active assignment right now
             @endif
         </p>
     </div>

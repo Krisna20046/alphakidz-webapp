@@ -53,7 +53,7 @@
         </div>
 
         <h1 class="anim delay-2 text-[#1E1B2E] text-[22px] font-extrabold leading-tight mb-[6px]">
-            {{ session('user')['name'] ?? 'Pengguna' }}
+            {{ session('user')['name'] ?? 'User' }}
         </h1>
 
         <div class="anim delay-2 flex items-center gap-[6px] mb-[4px]">
@@ -133,26 +133,26 @@
             <div class="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mb-4">
                 <ion-icon name="log-out-outline" style="font-size:32px;color:#ef4444;"></ion-icon>
             </div>
-            <h3 class="text-[#1E1B2E] text-lg font-extrabold mb-1">Keluar dari Akun?</h3>
-            <p class="text-[#9CA3AF] text-sm leading-relaxed">Pilih cara keluar dari aplikasi.</p>
+            <h3 class="text-[#1E1B2E] text-lg font-extrabold mb-1">Log out of your account?</h3>
+            <p class="text-[#9CA3AF] text-sm leading-relaxed">Choose how you want to log out of the application.</p>
         </div>
         <div class="flex flex-col gap-2">
             <form method="POST" action="{{ route('logout') }}" id="logoutForm">
                 @csrf
                 <button type="button" onclick="doLogout()"
                     class="w-full py-[14px] rounded-2xl bg-red-500 text-white font-bold text-sm active:bg-red-600 transition-all flex items-center justify-center gap-2">
-                    <ion-icon name="log-out-outline"></ion-icon> Keluar Perangkat Ini
+                    <ion-icon name="log-out-outline"></ion-icon> Log Out of This Device
                 </button>
             </form>
             <form method="POST" action="{{ route('logout-all') }}" id="logoutAllForm">
                 @csrf
                 <button type="button" onclick="doLogoutAll()"
                     class="w-full py-[14px] rounded-2xl border-2 border-red-200 text-red-600 font-bold text-sm active:bg-red-50 transition-all flex items-center justify-center gap-2">
-                    <ion-icon name="phone-portrait-outline"></ion-icon> Keluar Semua Perangkat
+                    <ion-icon name="phone-portrait-outline"></ion-icon> Log Out of All Devices
                 </button>
             </form>
             <button onclick="hideLogoutModal()"
-                class="w-full py-[14px] rounded-2xl border-2 border-[#EDE9FE] text-[#8B46D3] font-bold text-sm active:bg-[#EDE9FE] transition-all">Batal</button>
+                class="w-full py-[14px] rounded-2xl border-2 border-[#EDE9FE] text-[#8B46D3] font-bold text-sm active:bg-[#EDE9FE] transition-all">Cancel</button>
         </div>
     </div>
 </div>

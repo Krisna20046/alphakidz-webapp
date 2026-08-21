@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Reset Password - Aplikasi')
+@section('title', 'Reset Password - App')
 
 @push('styles')
 @include('components.styles')
@@ -287,11 +287,11 @@ document.getElementById('resetForm').addEventListener('submit', async (e) => {
     const password             = document.getElementById('password').value;
     const password_confirmation = document.getElementById('password_confirmation').value;
 
-    if (!password)             { showToast('Password baru wajib diisi!'); return; }
-    if (password.length < 8)   { showToast('Password minimal 8 karakter.'); return; }
-    if (!password_confirmation) { showToast('Konfirmasi password wajib diisi!'); return; }
-    if (password !== password_confirmation) { showToast('Password dan konfirmasi tidak cocok.'); return; }
-    if (!token || !email)       { showToast('Link reset tidak valid. Minta ulang email reset.'); return; }
+    if (!password)             { showToast('New password is required!'); return; }
+    if (password.length < 8)   { showToast('Password must be at least 8 characters.'); return; }
+    if (!password_confirmation) { showToast('Password confirmation is required!'); return; }
+    if (password !== password_confirmation) { showToast('Passwords do not match.'); return; }
+    if (!token || !email)       { showToast('Invalid reset link. Request a new reset email.'); return; }
 
     setLoading(true);
 
@@ -311,10 +311,10 @@ document.getElementById('resetForm').addEventListener('submit', async (e) => {
             document.getElementById('formState').classList.add('hidden');
             document.getElementById('successState').classList.remove('hidden');
         } else {
-            showToast(data.message || 'Gagal mereset password. Coba lagi.');
+            showToast(data.message || 'Failed to reset password. Please try again.');
         }
     } catch (err) {
-        showToast('Terjadi kesalahan. Coba lagi.');
+        showToast('Something went wrong. Please try again.');
     } finally {
         setLoading(false);
     }

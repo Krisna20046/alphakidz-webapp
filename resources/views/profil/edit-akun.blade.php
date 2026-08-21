@@ -2,7 +2,7 @@
 
 @php $activeNav = 'profil' @endphp
 
-@section('title', 'Edit Akun')
+@section('title', 'Edit Account')
 
 @push('styles')
 <style>
@@ -150,7 +150,7 @@
 
         <div class="anim delay-2 mb-5">
             <p class="text-[11px] font-extrabold uppercase tracking-[0.12em] text-[#9CA3AF] mb-2">Change Password</p>
-            <p class="text-[#8B46D3] text-[12px] font-semibold">Optional — Leave Blank If You Don't Want To Change The Password</p>
+            <p class="text-[#8B46D3] text-[12px] font-semibold">Optional â€” Leave Blank If You Don't Want To Change The Password</p>
         </div>
 
         @php
@@ -247,7 +247,7 @@
         <div class="btn-in w-full z-10">
             <a href="{{ route('dashboard') }}"
                class="flex items-center justify-center gap-2 w-full bg-[#8B46D3] text-white font-extrabold py-[15px] rounded-full text-[14px] tracking-wide shadow-[0_4px_20px_rgba(139,70,211,0.32)] transition-transform duration-150 active:scale-[0.97]">
-                Browse Home <span class="text-base leading-none">→</span>
+                Browse Home <span class="text-base leading-none">â†’</span>
             </a>
         </div>
 
@@ -305,10 +305,10 @@ function checkMatch() {
     if (!pwConfirm.value) { hint.classList.add('hidden'); return; }
     hint.classList.remove('hidden');
     if (pwBaru.value === pwConfirm.value) {
-        hint.textContent = '✓ Password cocok';
+        hint.textContent = 'âœ“ Passwords match';
         hint.className = 'text-xs font-semibold text-green-600 anim delay-4 mb-4';
     } else {
-        hint.textContent = '✗ Password tidak cocok';
+        hint.textContent = 'âœ— Passwords do not match';
         hint.className = 'text-xs font-semibold text-red-500 anim delay-4 mb-4';
     }
 }
@@ -343,7 +343,7 @@ function setLoading(v) {
     const btnIcon = document.getElementById('btnIcon');
     const spinner = document.getElementById('btnSpinner');
     btn.disabled = v;
-    btnText.textContent = v ? 'Menyimpan...' : 'Save Change';
+    btnText.textContent = v ? 'Saving...' : 'Save Change';
     if (v) { btnIcon.style.display = 'none'; spinner.classList.remove('hidden'); }
     else   { btnIcon.style.display = ''; spinner.classList.add('hidden'); }
 }
@@ -359,16 +359,16 @@ if (form) {
         const confirm = document.getElementById('passwordConfirm')?.value;
 
         // --- Validasi ---
-        if (!email) return showToast('Email wajib diisi.');
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast('Format email tidak valid.');
+        if (!email) return showToast('Email is required.');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast('Invalid email format.');
 
         // Validasi password hanya jika salah satu field diisi
         const wantsChangePassword = lama || baru || confirm;
         if (wantsChangePassword) {
-            if (!lama)            return showToast('Password lama wajib diisi untuk mengubah password.');
-            if (!baru)            return showToast('Password baru wajib diisi.');
-            if (baru.length < 6) return showToast('Password baru minimal 6 karakter.');
-            if (baru !== confirm) return showToast('Konfirmasi password tidak cocok.');
+            if (!lama)            return showToast('Old password is required to change the password.');
+            if (!baru)            return showToast('New password is required.');
+            if (baru.length < 6) return showToast('New password must be at least 6 characters.');
+            if (baru !== confirm) return showToast('Password confirmation does not match.');
         }
 
         // --- Bangun payload secara manual ---
@@ -401,10 +401,10 @@ if (form) {
                 showSuccessModal();
             } else {
                 const err = data.errors ? Object.values(data.errors)[0] : data.message;
-                showToast(Array.isArray(err) ? err[0] : (err || 'Gagal menyimpan.'));
+                showToast(Array.isArray(err) ? err[0] : (err || 'Failed to save.'));
             }
         } catch (err) {
-            showToast('Terjadi kesalahan. Coba lagi.');
+            showToast('An error occurred. Try again.');
         } finally {
             setLoading(false);
         }

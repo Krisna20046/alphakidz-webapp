@@ -30,8 +30,8 @@ class NannyController extends Controller
 
     private function tanggalIndo(string $ymd): string
     {
-        $bulan = ['','Januari','Februari','Maret','April','Mei','Juni',
-                  'Juli','Agustus','September','Oktober','November','Desember'];
+        $bulan = ['','January','February','March','April','May','June',
+                  'July','August','September','October','November','December'];
         try {
             $d = new \DateTime($ymd);
             return $d->format('j') . ' ' . $bulan[(int)$d->format('n')] . ' ' . $d->format('Y');
@@ -281,7 +281,7 @@ class NannyController extends Controller
         ->asMultipart()
         ->post($this->apiUrl('/diary'), $multipart);
 
-        $data = $res->json() ?? ['status' => 'error', 'message' => 'Tidak ada respon dari server'];
+        $data = $res->json() ?? ['status' => 'error', 'message' => 'No response from the server'];
         return response()->json($data);
     }
 
@@ -492,8 +492,8 @@ class NannyController extends Controller
 
     private function formatTanggalIndo(string $tanggal): string
     {
-        $months = ['','Januari','Februari','Maret','April','Mei','Juni',
-                       'Juli','Agustus','September','Oktober','November','Desember'];
+        $months = ['','January','February','March','April','May','June',
+                       'July','August','September','October','November','December'];
         try {
             $d = new \DateTime($tanggal);
             return $d->format('j') . ' ' . $months[(int)$d->format('n')] . ' ' . $d->format('Y');
@@ -514,7 +514,7 @@ private function formatAktivitas(array $a): array
     $a['jam_mulai_fmt']   = $jamMulai   ? date('H:i', strtotime($jamMulai))   : '-';
     $a['jam_selesai_fmt'] = $jamSelesai ? date('H:i', strtotime($jamSelesai)) : '-';
 
-    // 2. Format Durasi (Output: "X jam Y menit" atau "Y menit")
+    // 2. Format Durasi (Output: "X hr Y min" atau "Y min")
     $durasi = $a['durasi'] ?? [];
     
     // Pastikan $durasi adalah array sebelum mengakses key-nya
@@ -525,8 +525,8 @@ private function formatAktivitas(array $a): array
         if ($jam == 0 && $menit == 0) {
             $a['durasi_fmt'] = '-';
         } else {
-            $jamStr = $jam > 0 ? "{$jam} jam " : '';
-            $a['durasi_fmt'] = "{$jamStr}{$menit} menit";
+            $jamStr = $jam > 0 ? "{$jam} hr " : '';
+            $a['durasi_fmt'] = "{$jamStr}{$menit} min";
         }
     } else {
         // Jika durasi bukan array (misal integer/string), gunakan nilai aslinya atau fallback

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Beranda')
+@section('title', 'Home')
 
 @push('styles')
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -141,7 +141,7 @@
             </div>
             <div>
                 <p class="text-white/80 text-xs font-semibold mb-0.5" id="greetText">Good Morning,</p>
-                <h1 class="text-white text-lg font-extrabold leading-tight">{{ session('user')['name'] ?? 'Pengguna' }}</h1>
+                <h1 class="text-white text-lg font-extrabold leading-tight">{{ session('user')['name'] ?? 'User' }}</h1>
                 <p class="text-white/70 text-xs font-medium mt-0.5">Ready to find the best care?</p>
             </div>
         </div>
@@ -216,7 +216,7 @@
                         </div>
                         <div>
                             <h3 class="text-[#1E1B2E] text-[15px] font-extrabold leading-tight">Nanny Live Location</h3>
-                            <p id="gpsStatusText" class="text-[#9CA3AF] text-[10px] font-semibold">Memuat lokasi...</p>
+                            <p id="gpsStatusText" class="text-[#9CA3AF] text-[10px] font-semibold">Loading location...</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-1.5">
@@ -250,7 +250,7 @@
                     <div class="w-14 h-14 rounded-full bg-[#EDE9FE] flex items-center justify-center mb-2">
                         <ion-icon name="locate-outline" style="font-size:28px;color:#C4B5FD;"></ion-icon>
                     </div>
-                    <p class="text-[#9CA3AF] text-[12px] font-bold">Belum ada nanny yang ditugaskan</p>
+                    <p class="text-[#9CA3AF] text-[12px] font-bold">No nanny assigned yet</p>
                 </div>
             </div>
         </div>
@@ -286,7 +286,7 @@
                         </div>
                         <div>
                             <h3 class="text-[#1E1B2E] text-[15px] font-extrabold leading-tight">Share My Location</h3>
-                            <p id="nannyGpsStatus" class="text-[#9CA3AF] text-[10px] font-semibold">Mulai bagikan lokasi Anda</p>
+                            <p id="nannyGpsStatus" class="text-[#9CA3AF] text-[10px] font-semibold">Start sharing your location</p>
                         </div>
                     </div>
                     {{-- Toggle Switch --}}
@@ -349,9 +349,9 @@
                 <div class="w-[72px] h-[72px] rounded-full bg-[#EDE9FE] flex items-center justify-center mb-[14px] text-3xl">
                     📋
                 </div>
-                <h3 class="text-[#1E1B2E] text-sm font-extrabold mb-1.5">Tidak ada menu</h3>
+                <h3 class="text-[#1E1B2E] text-sm font-extrabold mb-1.5">No menu</h3>
                 <p class="text-[#9CA3AF] text-xs text-center leading-relaxed">
-                    Hubungi administrator<br>untuk akses menu
+                    Contact the administrator<br>to get menu access
                 </p>
             </div>
             @endif
@@ -376,7 +376,7 @@
                         <div class="w-full h-[110px] flex items-center justify-center text-4xl bg-gradient-to-br from-[#EDE9FE] to-[#FDF2F8]">📖</div>
                     @endif
                     <div class="p-3 flex-1">
-                        <span class="inline-block px-2.5 py-[3px] rounded-full bg-[#FDF2F8] text-[#EC4899] text-[9px] font-bold mb-2">{{ $artikel['kategori'] ?? 'Artikel' }}</span>
+                        <span class="inline-block px-2.5 py-[3px] rounded-full bg-[#FDF2F8] text-[#EC4899] text-[9px] font-bold mb-2">{{ $artikel['kategori'] ?? 'Article' }}</span>
                         <p class="text-xs font-bold text-[#1E1B2E] leading-relaxed line-clamp-3">{{ $artikel['judul'] }}</p>
                         <div class="flex items-center gap-2.5 mt-2">
                             <span class="flex items-center gap-[3px] text-[9px] text-[#9CA3AF] font-semibold">
@@ -631,7 +631,7 @@ const CSRF           = "{{ csrf_token() }}";
                 headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN }
             });
             const partner = assignment.role === 'nanny' ? assignment.majikan : assignment.nanny;
-            const partnerName = partner?.name || (assignment.role === 'nanny' ? 'Majikan' : 'Nanny');
+            const partnerName = partner?.name || (assignment.role === 'nanny' ? 'Employer' : 'Nanny');
 
             const items = (sharedData.data || []).filter(item =>
                 item.low_stock_alert &&
@@ -804,7 +804,7 @@ function buildGpsPopup(n) {
         </p>
         <p style="font-size:10px;margin:0 0 2px;color:#9CA3AF;">📍 ${coords}</p>
         <p style="font-size:10px;margin:0 0 4px;color:#9CA3AF;">🕐 ${n.last_update ? getTimeAgo(n.last_update) : '-'}</p>
-        ${mapsLink ? `<a href="${mapsLink}" target="_blank" style="display:inline-block;margin-top:4px;padding:6px 14px;background:#8B46D3;color:white;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;">📍 Buka Google Maps</a>` : ''}
+        ${mapsLink ? `<a href="${mapsLink}" target="_blank" style="display:inline-block;margin-top:4px;padding:6px 14px;background:#8B46D3;color:white;border-radius:8px;font-size:11px;font-weight:700;text-decoration:none;">📍 Open in Google Maps</a>` : ''}
     </div>`;
 }
 
@@ -896,7 +896,7 @@ async function refreshGpsLocations() {
                         <span class="gps-live-dot ${!isLive ? 'offline' : ''}"></span>
                     </div>
                     <p class="text-[#9CA3AF] text-[10px] font-semibold mt-0.5 truncate">
-                        ${hasLoc ? (n.address || `${lat.toFixed(6)}, ${lng.toFixed(6)}`) : 'Lokasi tidak tersedia'}
+                        ${hasLoc ? (n.address || `${lat.toFixed(6)}, ${lng.toFixed(6)}`) : 'Location unavailable'}
                     </p>
                 </div>
                 <div class="text-right shrink-0">
@@ -985,7 +985,7 @@ async function toggleNannyGps() {
     if (toggle.checked) {
         if (!navigator.geolocation) {
             toggle.checked = false;
-            alert('GPS tidak didukung oleh browser ini.');
+            alert('GPS is not supported by this browser.');
             return;
         }
         if (window.startNannyGps) await window.startNannyGps(true);
@@ -999,7 +999,7 @@ async function toggleNannyGps() {
         document.getElementById('nannyGpsLastUpdate')?.classList.remove('hidden');
         document.getElementById('nannyGpsAddress')?.classList.remove('hidden');
         const nannyStatus = document.getElementById('nannyGpsStatus');
-        if (nannyStatus) nannyStatus.textContent = 'Mendapatkan lokasi...';
+        if (nannyStatus) nannyStatus.textContent = 'Getting location...';
 
     } else {
         if (window.stopNannyGps) await window.stopNannyGps(true);
@@ -1013,7 +1013,7 @@ async function toggleNannyGps() {
         document.getElementById('nannyGpsLastUpdate')?.classList.add('hidden');
         document.getElementById('nannyGpsAddress')?.classList.add('hidden');
         const nannyStatus = document.getElementById('nannyGpsStatus');
-        if (nannyStatus) nannyStatus.textContent = 'Mulai bagikan lokasi Anda';
+        if (nannyStatus) nannyStatus.textContent = 'Start sharing your location';
     }
 }
 

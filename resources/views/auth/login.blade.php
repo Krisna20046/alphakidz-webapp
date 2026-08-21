@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Masuk - Aplikasi')
+@section('title', 'Sign In - App')
 
 @push('styles')
 @include('components.styles')
@@ -219,7 +219,7 @@ function setLoading(loading) {
     const btnArrow   = document.getElementById('btnArrow');
     const btnSpinner = document.getElementById('btnSpinner');
     btn.disabled = loading;
-    btnText.textContent = loading ? 'Memproses...' : 'Sign In';
+    btnText.textContent = loading ? 'Processing...' : 'Sign In';
     btnArrow.classList.toggle('hidden', loading);
     btnSpinner.classList.toggle('hidden', !loading);
     btn.style.opacity = loading ? '0.75' : '1';
@@ -231,7 +231,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     const email    = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
 
-    if (!email || !password) { showToast('Email dan password wajib diisi!'); return; }
+    if (!email || !password) { showToast('Email and password are required!'); return; }
     setLoading(true);
 
     try {
@@ -248,10 +248,10 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         if (data.success) {
             window.location.href = data.redirect || '{{ route("dashboard") }}';
         } else {
-            showToast(data.message || 'Email atau password salah.');
+            showToast(data.message || 'Invalid email or password.');
         }
     } catch (err) {
-        showToast('Terjadi kesalahan. Coba lagi.');
+        showToast('Something went wrong. Please try again.');
     } finally {
         setLoading(false);
     }
@@ -271,17 +271,17 @@ document.getElementById('googleBtn').addEventListener('click', async () => {
             headers: { 'Accept': 'application/json' },
         });
 
-        if (!res.ok) throw new Error('Gagal menghubungi server.');
+        if (!res.ok) throw new Error('Failed to reach the server.');
 
         const data = await res.json();
 
         if (data.status === 'success' && data.url) {
             window.location.href = data.url;
         } else {
-            throw new Error('URL redirect tidak ditemukan.');
+            throw new Error('Redirect URL not found.');
         }
     } catch (err) {
-        showToast('Login Google gagal. Coba lagi.');
+        showToast('Google sign-in failed. Please try again.');
         btn.disabled = false;
         btn.classList.remove('loading');
     }
@@ -289,7 +289,7 @@ document.getElementById('googleBtn').addEventListener('click', async () => {
 </script>
 
 <script>
-// ── Tampilkan flash message dari server (force-logout, dll) ──
+// ── Show server flash message (force-logout, etc) ──
 (function() {
     const flashMsg = @json(session('auth_flash'));
     const flashStorage = sessionStorage.getItem('auth_flash');
