@@ -424,7 +424,7 @@
                         <div class="w-full h-[110px] flex items-center justify-center text-4xl bg-gradient-to-br from-[#EDE9FE] to-[#FDF2F8]">📖</div>
                     @endif
                     <div class="p-3 flex-1">
-            <span class="inline-block px-2.5 py-[3px] rounded-full bg-[#FDF2F8] text-[#EC4899] text-[9px] font-bold mb-2">{{ $artikel['kategori'] ?? 'Article' }}</span>
+                        <span class="inline-block px-2.5 py-[3px] rounded-full bg-[#FDF2F8] text-[#EC4899] text-[9px] font-bold mb-2">{{ $artikel['kategori'] ?? 'Artikel' }}</span>
                         <p class="text-xs font-bold text-[#1E1B2E] leading-relaxed line-clamp-3">{{ $artikel['judul'] }}</p>
                         <div class="flex items-center gap-2.5 mt-2">
                             <span class="flex items-center gap-[3px] text-[9px] text-[#9CA3AF] font-semibold">

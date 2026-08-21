@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Diary Nanny')
+@section('title', "Child's Diary")
 
 @push('styles')
 <style>
@@ -256,7 +256,7 @@
             <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
         </a>
         <div>
-            <span class="text-white text-[17px] font-extrabold tracking-wide">Diary Nanny</span>
+            <span class="text-white text-[17px] font-extrabold tracking-wide">Child's Diary</span>
         </div>
     </div>
 </div>
