@@ -1,7 +1,50 @@
 # SUMMARY.md — Progress Academic Task, Task Progress, Parent Approval & Learning Progress
 
-Tanggal: 2026-08-08
-Status: Fungsional — Backend (API) ✅ + Frontend Nanny (input) ✅ + Frontend Majikan (tracking & approval) ✅ + Modul 7 (Diary AI Summary) ✅ + Modul 5 (Learning Progress) ✅ + Modul 9 (Task Reminder) ✅ + Modul 6 (Assistant Notes) ✅
+Tanggal: 2026-08-21
+Status: Fungsional — Backend (API) ✅ + Frontend Nanny (input) ✅ + Frontend Majikan (tracking & approval) ✅ + Modul 7 (Diary AI Summary) ✅ + Modul 5 (Learning Progress) ✅ + Modul 9 (Task Reminder) ✅ + Modul 6 (Assistant Notes) ✅ + Modul 8 (Weekly Report PDF, fullstack) ✅
+
+---
+
+## 0f. Modul 8 — Weekly Report PDF (fullstack, 2026-08-21)
+
+Fitur **laporan mingguan PDF** (AI summary + generate/regenerate + lihat di aplikasi + download) end-to-end
+(`AlphaKidz-Backend` API + `Laravel_Web_App` UI):
+
+| Lapisan | Status | Lokasi |
+|---------|--------|--------|
+| Model `WeeklyReport` (tabel existing, NO migration) | ✅ | `AlphaKidz-Backend/app/Models/WeeklyReport.php` |
+| `PdfGeneratorService` (PDF raw minimal, tanpa library) | ✅ | `AlphaKidz-Backend/app/Services/PdfGeneratorService.php` |
+| `WeeklyReportService` (aggregate + Gemini + konsistensi diary/Note For Nanny + save PDF) | ✅ | `AlphaKidz-Backend/app/Services/WeeklyReportService.php` |
+| `GenerateWeeklyReportJob` + `weekly:report` command + scheduler (sabtu 01:00) | ✅ | `AlphaKidz-Backend/app/Jobs/` + `app/Console/Commands/` + `Kernel.php` |
+| Controller + Form Request + API Resource | ✅ | `AlphaKidz-Backend/app/Http/.../WeeklyReport/` |
+| Routes (generate / regenerate / download / getByChild) | ✅ | `AlphaKidz-Backend/routes/api.php` |
+| Storage folder `weekly_reports` | ✅ | `AlphaKidz-Backend/storage/app/public/weekly_reports` |
+| SQL contoh (tanpa skema ubah, tabel sudah ada) + menu 24/25 | ✅ | `database/migration_sql/alphakidz-21agustus2026_weekly_report_*` |
+| Proxy controller + routes web (nanny & majikan) | ✅ | `Laravel_Web_App/app/Http/Controllers/WeeklyReportController.php` + `routes/web.php` |
+| Frontend Nanny (pilih anak, generate, riwayat, Lihat PDF, Download, regenerate) | ✅ | `Laravel_Web_App/resources/views/nanny/weekly-report/` |
+| Frontend Majikan (pilih anak, riwayat read-only, Lihat PDF, Download) | ✅ | `Laravel_Web_App/resources/views/majikan/weekly-report/` |
+| Modal tutorial shared (`wrTutorial*`) | ✅ | `Laravel_Web_App/resources/views/weekly-report/_tutorial.blade.php` |
+
+Detail lengkap di `vibe_note/module8-weekly-report.md`.
+
+Catatan penting:
+- **Data minggu** = diary aktivitas + academic task + learning progress (Modul 5), di-filter deadline/recorded_date di lebar minggu (Monday–Sunday).
+- **Upsert**: 1 baris per (anak, week_start); regenerate meng-update baris sama + PDF replace (stale deleted).
+- **PDF raw generator**: no library di-install. `PdfGeneratorService` bangun PDF 1.4 (Helvetica, text blocks).
+  **Fix 2026-08-21** (PDF tampil putih): text origin digeser ke kiri-atas (`1 0 0 1 50 791.89 Tm`), Page
+  mendapat `/Contents` + `/Resources << /Font << /F1 3 0 R >> >>` (obj 3 = Helvetica). Self-test kini
+  `11/11 PASS` (struktur + origin + Contents + font).
+- **AI + konsistensi diary (2026-08-21)**: prompt menghitung hari diary terisi dari 7 hari; bila <6 hari,
+  AI menulis **paragraf terpisah "Note For Nanny: "** (jumlah hari kosong + imbauan isi harian), tidak
+  dicampur narasi. `buildPdfBlocks` memecah summary jadi 2 blok body.
+- **Lihat PDF dalam aplikasi**: tombol Lihat → modal `<iframe>` → route proxy `view` (inline), token tetap
+  server-side. Loader "Memuat PDF…" di modal.
+- **Download**: route proxy me-stream `attachment`; filename dari header backend (`$response->header()`).
+- **Akses role**: read = 1,2,3,4; generate/regenerate = 1,3 (Admin/Nanny). Child-access pola sama modul lain.
+- **Scheduler command**: `weekly:report` weeklyOn Saturday 01:00 (bila cron ada). Fallback: POST on-demand.
+- **Bugs frontend fixed (2026-08-21)**: `$response->headers()->get()` on array → `header()`; `wrOpenPdf`
+  vs `wrPdfOpen`; `confirm()` → modal in-app; 405 regenerate (URL ter-reset) → simpan var lokal; loader
+  terperangkap stacking-context → pindah top-level `z-[90]`; "0 report" → `$meta = $json['meta']` (top-level).
 
 ---
 

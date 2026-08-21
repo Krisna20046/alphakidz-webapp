@@ -21,6 +21,7 @@ use App\Http\Controllers\MajikanTrackingController;
 use App\Http\Controllers\MajikanParentCommentController;
 use App\Http\Controllers\LearningProgressController;
 use App\Http\Controllers\AssistantNoteController;
+use App\Http\Controllers\WeeklyReportController;
 
 
 // â”€â”€â”€ Guest Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -185,6 +186,13 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/assistant-notes',               [AssistantNoteController::class, 'majikanIndex'])->name('majikan-notes');
         Route::get('/assistant-notes/{id_anak}',     [AssistantNoteController::class, 'majikanShow'] )->name('majikan-notes-show');
         Route::get('/assistant-notes/{id_anak}/history', [AssistantNoteController::class, 'majikanHistory'])->name('majikan-notes-history');
+
+        // Module 8 — Weekly Report PDF (read-only)
+        Route::get('/weekly-report',               [WeeklyReportController::class, 'majikanIndex'])->name('majikan-weekly-report');
+        Route::get('/weekly-report/{id_anak}',     [WeeklyReportController::class, 'majikanShow'] )->name('majikan-weekly-report-show');
+        Route::get('/weekly-report/{id_anak}/history', [WeeklyReportController::class, 'majikanHistory'])->name('majikan-weekly-report-history');
+        Route::get('/weekly-report/{id}/download', [WeeklyReportController::class, 'majikanDownload'])->name('majikan-weekly-report-download');
+        Route::get('/weekly-report/{id}/view',     [WeeklyReportController::class, 'majikanViewPdf'])->name('majikan-weekly-report-view');
     });
 
     Route::prefix('nanny')->group(function () {
@@ -215,6 +223,15 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/assistant-notes/{id_anak}/add', [AssistantNoteController::class, 'nannyCreate'])->name('nanny-notes-create');
         Route::post('/assistant-notes',              [AssistantNoteController::class, 'store']    )->name('nanny-notes-store');
         Route::delete('/assistant-notes/{id}',       [AssistantNoteController::class, 'destroy']  )->name('nanny-notes-destroy');
+
+        // Module 8 — Weekly Report PDF (generate/regenerate)
+        Route::get('/weekly-report',               [WeeklyReportController::class, 'nannyIndex'])->name('nanny-weekly-report');
+        Route::get('/weekly-report/{id_anak}',     [WeeklyReportController::class, 'nannyShow'] )->name('nanny-weekly-report-show');
+        Route::get('/weekly-report/{id_anak}/history', [WeeklyReportController::class, 'nannyHistory'])->name('nanny-weekly-report-history');
+        Route::post('/weekly-report/generate',     [WeeklyReportController::class, 'generate'] )->name('nanny-weekly-report-generate');
+        Route::post('/weekly-report/{id}/regenerate', [WeeklyReportController::class, 'regenerate'])->name('nanny-weekly-report-regenerate');
+        Route::get('/weekly-report/{id}/download', [WeeklyReportController::class, 'download'] )->name('nanny-weekly-report-download');
+        Route::get('/weekly-report/{id}/view',     [WeeklyReportController::class, 'viewPdf'] )->name('nanny-weekly-report-view');
     });
 
     Route::prefix('admin/kelola-akun')->group(function () {
