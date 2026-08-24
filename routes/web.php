@@ -23,6 +23,7 @@ use App\Http\Controllers\LearningProgressController;
 use App\Http\Controllers\AssistantNoteController;
 use App\Http\Controllers\WeeklyReportController;
 use App\Http\Controllers\AssistantAttendanceController;
+use App\Http\Controllers\EmergencyContactController;
 
 
 // â”€â”€â”€ Guest Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -199,6 +200,11 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/attendance',              [AssistantAttendanceController::class, 'majikanIndex'] )->name('majikan-attendance');
         Route::get('/attendance/{id_anak}',    [AssistantAttendanceController::class, 'majikanShow']  )->name('majikan-attendance-show');
         Route::get('/attendance/{id_anak}/history', [AssistantAttendanceController::class, 'majikanHistory'])->name('majikan-attendance-history');
+
+        // Module 18 — Emergency Contact (read-only + tap-to-call)
+        Route::get('/emergency-contacts',               [EmergencyContactController::class, 'majikanIndex'])->name('majikan-emergency-contacts');
+        Route::get('/emergency-contacts/{id_anak}',     [EmergencyContactController::class, 'majikanShow'] )->name('majikan-emergency-contacts-show');
+        Route::get('/emergency-contacts/{id_anak}/history', [EmergencyContactController::class, 'majikanHistory'])->name('majikan-emergency-contacts-history');
     });
 
     Route::prefix('nanny')->group(function () {
@@ -239,11 +245,21 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/weekly-report/{id}/download', [WeeklyReportController::class, 'download'] )->name('nanny-weekly-report-download');
         Route::get('/weekly-report/{id}/view',     [WeeklyReportController::class, 'viewPdf'] )->name('nanny-weekly-report-view');
 
-        // Module 10 — Assistant Attendance (nanny = 1 majikan / 1 anak → tanpa pilih anak)
+        // Module 10 — Attendance (nanny only = 1 majikan / 1 anak → tanpa pilih anak)
         Route::get('/attendance',                     [AssistantAttendanceController::class, 'nannyIndex'] )->name('nanny-attendance');
         Route::get('/attendance/history',             [AssistantAttendanceController::class, 'nannyHistory'])->name('nanny-attendance-history');
         Route::post('/attendance/check-in',           [AssistantAttendanceController::class, 'checkIn'] )->name('nanny-attendance-checkin');
         Route::post('/attendance/check-out',          [AssistantAttendanceController::class, 'checkOut'])->name('nanny-attendance-checkout');
+
+        // Module 18 — Emergency Contact (CRUD kontakti kurgensi anak)
+        Route::get('/emergency-contacts',                  [EmergencyContactController::class, 'nannyIndex'] )->name('nanny-emergency-contacts');
+        Route::get('/emergency-contacts/{id_anak}',      [EmergencyContactController::class, 'nannyShow']  )->name('nanny-emergency-contacts-show');
+        Route::get('/emergency-contacts/{id_anak}/history', [EmergencyContactController::class, 'nannyHistory'])->name('nanny-emergency-contacts-history');
+        Route::get('/emergency-contacts/{id_anak}/add', [EmergencyContactController::class, 'nannyCreate'])->name('nanny-emergency-contacts-create');
+        Route::get('/emergency-contacts/{id_anak}/edit/{id}', [EmergencyContactController::class, 'nannyEdit'])->name('nanny-emergency-contacts-edit');
+        Route::post('/emergency-contacts',                 [EmergencyContactController::class, 'store']  )->name('nanny-emergency-contacts-store');
+        Route::post('/emergency-contacts/{id}/update',     [EmergencyContactController::class, 'update'] )->name('nanny-emergency-contacts-update');
+        Route::delete('/emergency-contacts/{id}',          [EmergencyContactController::class, 'destroy'])->name('nanny-emergency-contacts-destroy');
     });
 
     Route::prefix('admin/kelola-akun')->group(function () {

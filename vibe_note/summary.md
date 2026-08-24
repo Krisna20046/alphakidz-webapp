@@ -1,7 +1,36 @@
 # SUMMARY.md — Progress Academic Task, Task Progress, Parent Approval & Learning Progress
 
-Tanggal: 2026-08-21
-Status: Fungsional — Backend (API) ✅ + Frontend Nanny (input) ✅ + Frontend Majikan (tracking & approval) ✅ + Modul 7 (Diary AI Summary) ✅ + Modul 5 (Learning Progress) ✅ + Modul 9 (Task Reminder) ✅ + Modul 6 (Assistant Notes) ✅ + Modul 8 (Weekly Report PDF, fullstack) ✅ + Modul 10 (Assistant Attendance, fullstack) ✅
+Tanggal: 2026-08-24
+Status: Fungsional — Backend (API) ✅ + Frontend Nanny (input) ✅ + Frontend Majikan (tracking & approval) ✅ + Modul 7 (Diary AI Summary) ✅ + Modul 5 (Learning Progress) ✅ + Modul 9 (Task Reminder) ✅ + Modul 6 (Assistant Notes) ✅ + Modul 8 (Weekly Report PDF, fullstack) ✅ + Modul 10 (Assistant Attendance, fullstack) ✅ + Modul 18 (Emergency Contact, fullstack) ✅
+
+---
+
+## 0h. Modul 18 — Emergency Contact (frontend, 2026-08-24)
+
+Fitur **kontakti kurgensi anak** (nama, relasi, telefono, urutan darurat) end-to-end
+(backend sudah siap `AlphaKidz-Backend` Modul 18; ini frontend `Laravel_Web_App`):
+
+| Lapisan | Status | Lokasi |
+|---------|--------|--------|
+| Proxy controller `EmergencyContactController` (nanny & majikan) | ✅ | `app/Http/Controllers/EmergencyContactController.php` |
+| Routes web (nanny CRUD + majikan read-only tap-to-call) | ✅ | `routes/web.php` |
+| Frontend Nanny (pilih anak, daftar urut priority, add/edit/hapus, Call Now) | ✅ | `resources/views/nanny/emergency-contact/` |
+| Frontend Majikan (pilih anak, daftar read-only, Call Now) | ✅ | `resources/views/majikan/emergency-contact/` |
+| Partial daftar bersama (`_history.blade.php`, flag `canEdit`) | ✅ | `resources/views/nanny/emergency-contact/_history.blade.php` |
+| Menu SQL (role 2 & 3) | ✅ | `AlphaKidz-Backend/database/migration_sql/alphakidz-24agustus2026_emergency_contact_menu.sql` |
+
+Catatan penting:
+- **Data**: `emergency_contacts` (id_anak, name, relationship, phone, priority_order). Backend sortir
+  dari `priority_order` (1 = most urgent). Tabel SUDAH ada → tanpa migration.
+- **Akses role**: Nanny (CRUD), Majikan (read-only). Backend read role 1-5, write role 1 & 3.
+- **Tap-to-call**: tiap kartu punya tombol `Call Now` (`tel:` link) — begitu juga untuk Majikan.
+- **Priority urutan**: badge berwarna (`1` merah → `5` abu). Store auto-set `priority_order = max+1`
+  bila dikosongkan (backend).
+- **Majikan read-only**: tanpa tombol Add/Edit/Delete — partial memakai `canEdit=false` sehingga
+  tombol aksi tak dirender, tapi `Call Now` tetap jalan.
+- **Pagination history**: partial `_history.blade.php` (AJAX swap `#contactList`), pola sama modul lain.
+- **Menu SQL** `_menu.sql` **belum di-run** user (mode DEVELOPMENT RULES: SQL disiapkan, user run manual).
+  Id menu 33 (Majikan) & 34 (Nanny). Perhatian: sesuaikan id bila bentrok.
 
 ---
 
