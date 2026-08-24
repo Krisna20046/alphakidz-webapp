@@ -1268,7 +1268,7 @@ async function toggleNannyGps() {
     if (toggle.checked) {
         if (!navigator.geolocation) {
             toggle.checked = false;
-            alert('GPS is not supported by this browser.');
+            showAppAlert('GPS is not supported by this browser.');
             return;
         }
         if (window.startNannyGps) await window.startNannyGps(true);

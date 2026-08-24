@@ -130,7 +130,7 @@ function loadTasks(page) {
         url.searchParams.set('page', page);
         window.history.pushState({}, '', url);
     })
-    .catch(() => alert('Failed to load tasks.'))
+    .catch(() => showAppAlert('Failed to load tasks.'))
     .finally(() => document.getElementById('pageLoader')?.classList.add('hidden'));
 }
 

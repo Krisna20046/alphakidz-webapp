@@ -22,6 +22,7 @@ use App\Http\Controllers\MajikanParentCommentController;
 use App\Http\Controllers\LearningProgressController;
 use App\Http\Controllers\AssistantNoteController;
 use App\Http\Controllers\WeeklyReportController;
+use App\Http\Controllers\AssistantAttendanceController;
 
 
 // â”€â”€â”€ Guest Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -193,6 +194,11 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/weekly-report/{id_anak}/history', [WeeklyReportController::class, 'majikanHistory'])->name('majikan-weekly-report-history');
         Route::get('/weekly-report/{id}/download', [WeeklyReportController::class, 'majikanDownload'])->name('majikan-weekly-report-download');
         Route::get('/weekly-report/{id}/view',     [WeeklyReportController::class, 'majikanViewPdf'])->name('majikan-weekly-report-view');
+
+        // Module 10 — Assistant Attendance (read-only today + history)
+        Route::get('/attendance',              [AssistantAttendanceController::class, 'majikanIndex'] )->name('majikan-attendance');
+        Route::get('/attendance/{id_anak}',    [AssistantAttendanceController::class, 'majikanShow']  )->name('majikan-attendance-show');
+        Route::get('/attendance/{id_anak}/history', [AssistantAttendanceController::class, 'majikanHistory'])->name('majikan-attendance-history');
     });
 
     Route::prefix('nanny')->group(function () {
@@ -232,6 +238,12 @@ Route::middleware('auth.api')->group(function () {
         Route::post('/weekly-report/{id}/regenerate', [WeeklyReportController::class, 'regenerate'])->name('nanny-weekly-report-regenerate');
         Route::get('/weekly-report/{id}/download', [WeeklyReportController::class, 'download'] )->name('nanny-weekly-report-download');
         Route::get('/weekly-report/{id}/view',     [WeeklyReportController::class, 'viewPdf'] )->name('nanny-weekly-report-view');
+
+        // Module 10 — Assistant Attendance (nanny = 1 majikan / 1 anak → tanpa pilih anak)
+        Route::get('/attendance',                     [AssistantAttendanceController::class, 'nannyIndex'] )->name('nanny-attendance');
+        Route::get('/attendance/history',             [AssistantAttendanceController::class, 'nannyHistory'])->name('nanny-attendance-history');
+        Route::post('/attendance/check-in',           [AssistantAttendanceController::class, 'checkIn'] )->name('nanny-attendance-checkin');
+        Route::post('/attendance/check-out',          [AssistantAttendanceController::class, 'checkOut'])->name('nanny-attendance-checkout');
     });
 
     Route::prefix('admin/kelola-akun')->group(function () {

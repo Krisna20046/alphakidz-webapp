@@ -405,10 +405,10 @@ async function claimQuestion(id) {
             headers: { 'Authorization': 'Bearer {{ session("token") }}', 'Accept': 'application/json' }
         });
         const json = await res.json();
-        if (!res.ok) { alert(json.message || 'Failed to claim'); return; }
+        if (!res.ok) { showAppAlert(json.message || 'Failed to claim'); return; }
         loadQuestions();
     } catch (e) {
-        alert('Failed to claim the question');
+        showAppAlert('Failed to claim the question');
     }
 }
 </script>

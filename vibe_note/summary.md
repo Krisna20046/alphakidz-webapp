@@ -1,7 +1,41 @@
 # SUMMARY.md — Progress Academic Task, Task Progress, Parent Approval & Learning Progress
 
 Tanggal: 2026-08-21
-Status: Fungsional — Backend (API) ✅ + Frontend Nanny (input) ✅ + Frontend Majikan (tracking & approval) ✅ + Modul 7 (Diary AI Summary) ✅ + Modul 5 (Learning Progress) ✅ + Modul 9 (Task Reminder) ✅ + Modul 6 (Assistant Notes) ✅ + Modul 8 (Weekly Report PDF, fullstack) ✅
+Status: Fungsional — Backend (API) ✅ + Frontend Nanny (input) ✅ + Frontend Majikan (tracking & approval) ✅ + Modul 7 (Diary AI Summary) ✅ + Modul 5 (Learning Progress) ✅ + Modul 9 (Task Reminder) ✅ + Modul 6 (Assistant Notes) ✅ + Modul 8 (Weekly Report PDF, fullstack) ✅ + Modul 10 (Assistant Attendance, fullstack) ✅
+
+---
+
+## 0g. Modul 10 — Assistant Attendance (frontend, 2026-08-21)
+
+Fitur **kehadiran asisten harian** (check-in/out + GPS + foto bukti + riwayat) end-to-end
+(backend sudah siap `AlphaKidz-Backend` Modul 10; ini frontend `Laravel_Web_App`):
+
+| Lapisan | Status | Lokasi |
+|---------|--------|--------|
+| Proxy controller `AssistantAttendanceController` (nanny & majikan) | ✅ | `app/Http/Controllers/AssistantAttendanceController.php` |
+| Routes web (check-in/out/today/history Nanny + read-only Majikan) | ✅ | `routes/web.php` |
+| Frontend Nanny (pilih anak, today, Detect Location GPS, Check-in/out + foto, riwayat) | ✅ | `resources/views/nanny/attendance/` |
+| Frontend Majikan (pilih anak, today + riwayat read-only) | ✅ | `resources/views/majikan/attendance/` |
+| Tutorial modal shared (`atTutorial*`, 4 langkah) | ✅ | `resources/views/attendance/_tutorial.blade.php` |
+
+Catatan penting:
+- **Nanny tanpa pilih anak (keputusan 2026-08-22)**: nanny punya 1 majikan → 1 assignment aktif → 1 anak.
+  Halaman Attendance Nanny langsung ke halaman kehadirannya (tanpa selector `Choose Child`); check-in memakai
+  `id_assignment` dari assignment aktif pertama (`/nanny-assignments-anak-for-nanny`). `index.blade.php` nanny
+  dihapus; rute `nanny-attendance-show/{id_anak}` diganti `nanny-attendance-history` (tanpa anak).
+- **Majikan tetap per anak** (bisa >1 nanny): flow pilih anak (`majikan-attendance/show/{id_anak}`) tidak berubah.
+- **GPS wajib** check-in (`lat`/`lng`); tombol **Detect Location** + foto bukti optional
+  (`location_photo`/`checkout_photo`) di-proxy multipart pola sama upload modul lain.
+- **State today**: check-in open (tanpa checkout) / checked-out; status present/late/absent badge.
+- **Majikan read-only**: lihat today + riwayat (pagination AJAX `_history` partial swap), tanpa tombol aksi.
+- **Akses role**: Nanny (buat), Majikan (lihat), pattern proxy sama modul sebelum (token session, axoriy.
+- **Pagination history**: `_history.blade.php` partial (AJAX swap `#historyList`), pola sama learning-progress.
+- **Fix menu DB (2026-08-22)**: role 2 (Majikan) belum punya menu Attendance di DB (hanya role 3).
+  Patch `AlphaKidz-Backend/database/migration_sql/alphakidz-22agustus2026_assistant_attendance_majikan_menu_fix.sql`
+  menambah `menus.id=32` (route `majikan-attendance`) + `role_menu` (role 2, can_view=1). Sudah di-run.
+  DB aktual: id 31 = nanny-attendance, id 32 = majikan-attendance.
+
+> Fitur **Check-in/out pakai GPS + foto** = Modul 10 backend siap (2026-08-21). Frontend kini fullstack.
 
 ---
 

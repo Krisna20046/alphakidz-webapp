@@ -425,7 +425,7 @@ function downloadPreview() {
     const scr = document.createElement('script');
     scr.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
     scr.onload = capture;
-    scr.onerror = () => { done(); alert('Failed to load the library needed to download the image.'); };
+    scr.onerror = () => { done(); showAppAlert('Failed to load the library needed to download the image.'); };
     document.head.appendChild(scr);
 }
 document.getElementById('previewModal').addEventListener('click', function(e) {
@@ -490,7 +490,7 @@ function loadSchedules(day, page) {
         window.history.pushState({}, '', url);
     })
     .catch(() => {
-        alert('Failed to load schedules.');
+        showAppAlert('Failed to load schedules.');
     })
     .finally(() => showPageLoader(false));
 }
