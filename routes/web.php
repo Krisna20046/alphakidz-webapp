@@ -24,6 +24,7 @@ use App\Http\Controllers\AssistantNoteController;
 use App\Http\Controllers\WeeklyReportController;
 use App\Http\Controllers\AssistantAttendanceController;
 use App\Http\Controllers\EmergencyContactController;
+use App\Http\Controllers\DailyChecklistController;
 
 
 // â”€â”€â”€ Guest Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -260,6 +261,16 @@ Route::middleware('auth.api')->group(function () {
         Route::post('/emergency-contacts',                 [EmergencyContactController::class, 'store']  )->name('nanny-emergency-contacts-store');
         Route::post('/emergency-contacts/{id}/update',     [EmergencyContactController::class, 'update'] )->name('nanny-emergency-contacts-update');
         Route::delete('/emergency-contacts/{id}',          [EmergencyContactController::class, 'destroy'])->name('nanny-emergency-contacts-destroy');
+
+        // Module 13 — Daily Checklist (Senin–Minggu, tanpa tanggal)
+        Route::get('/daily-checklists',                             [DailyChecklistController::class, 'nannyIndex'] )->name('nanny-daily-checklists');
+        Route::get('/daily-checklists/{id_anak}',                   [DailyChecklistController::class, 'nannyShow']  )->name('nanny-daily-checklists-show');
+        Route::get('/daily-checklists/{id_anak}/add',               [DailyChecklistController::class, 'nannyCreate'])->name('nanny-daily-checklists-create');
+        Route::get('/daily-checklists/{id_anak}/edit/{id}',         [DailyChecklistController::class, 'nannyEdit']  )->name('nanny-daily-checklists-edit');
+        Route::post('/daily-checklists',                            [DailyChecklistController::class, 'store']      )->name('nanny-daily-checklists-store');
+        Route::post('/daily-checklists/{id}/update',                [DailyChecklistController::class, 'update']     )->name('nanny-daily-checklists-update');
+        Route::delete('/daily-checklists/{id}',                     [DailyChecklistController::class, 'destroy']    )->name('nanny-daily-checklists-destroy');
+        Route::post('/daily-checklists/{item}/toggle-item',         [DailyChecklistController::class, 'toggleItem'] )->name('nanny-daily-checklists-toggle');
     });
 
     Route::prefix('admin/kelola-akun')->group(function () {
