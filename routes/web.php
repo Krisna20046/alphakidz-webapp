@@ -25,6 +25,7 @@ use App\Http\Controllers\WeeklyReportController;
 use App\Http\Controllers\AssistantAttendanceController;
 use App\Http\Controllers\EmergencyContactController;
 use App\Http\Controllers\DailyChecklistController;
+use App\Http\Controllers\ActivityTimelineController;
 
 
 // â”€â”€â”€ Guest Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -206,6 +207,16 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/emergency-contacts',               [EmergencyContactController::class, 'majikanIndex'])->name('majikan-emergency-contacts');
         Route::get('/emergency-contacts/{id_anak}',     [EmergencyContactController::class, 'majikanShow'] )->name('majikan-emergency-contacts-show');
         Route::get('/emergency-contacts/{id_anak}/history', [EmergencyContactController::class, 'majikanHistory'])->name('majikan-emergency-contacts-history');
+
+        // Module 14 — Activity Timeline (read-only)
+        Route::get('/activity-timeline',               [ActivityTimelineController::class, 'majikanIndex'])->name('majikan-activity-timeline');
+        Route::get('/activity-timeline/{id_anak}',     [ActivityTimelineController::class, 'majikanShow'] )->name('majikan-activity-timeline-show');
+        Route::get('/activity-timeline/{id_anak}/history', [ActivityTimelineController::class, 'majikanHistory'])->name('majikan-activity-timeline-history');
+
+        // Module 14 — Activity Timeline (read-only)
+        Route::get('/activity-timeline',                    [ActivityTimelineController::class, 'majikanIndex'] )->name('majikan-activity-timeline');
+        Route::get('/activity-timeline/{id_anak}',          [ActivityTimelineController::class, 'majikanShow']  )->name('majikan-activity-timeline-show');
+        Route::get('/activity-timeline/{id_anak}/history',  [ActivityTimelineController::class, 'majikanHistory'])->name('majikan-activity-timeline-history');
     });
 
     Route::prefix('nanny')->group(function () {
@@ -271,6 +282,16 @@ Route::middleware('auth.api')->group(function () {
         Route::post('/daily-checklists/{id}/update',                [DailyChecklistController::class, 'update']     )->name('nanny-daily-checklists-update');
         Route::delete('/daily-checklists/{id}',                     [DailyChecklistController::class, 'destroy']    )->name('nanny-daily-checklists-destroy');
         Route::post('/daily-checklists/{item}/toggle-item',         [DailyChecklistController::class, 'toggleItem'] )->name('nanny-daily-checklists-toggle');
+
+        // Module 14 — Activity Timeline
+        Route::get('/activity-timeline',               [ActivityTimelineController::class, 'nannyIndex'])->name('nanny-activity-timeline');
+        Route::get('/activity-timeline/{id_anak}',     [ActivityTimelineController::class, 'nannyShow'] )->name('nanny-activity-timeline-show');
+        Route::get('/activity-timeline/{id_anak}/history', [ActivityTimelineController::class, 'nannyHistory'])->name('nanny-activity-timeline-history');
+
+        // Module 14 — Activity Timeline (view merged history per child)
+        Route::get('/activity-timeline',               [ActivityTimelineController::class, 'nannyIndex'])->name('nanny-activity-timeline');
+        Route::get('/activity-timeline/{id_anak}',     [ActivityTimelineController::class, 'nannyShow'] )->name('nanny-activity-timeline-show');
+        Route::get('/activity-timeline/{id_anak}/history', [ActivityTimelineController::class, 'nannyHistory'])->name('nanny-activity-timeline-history');
     });
 
     Route::prefix('admin/kelola-akun')->group(function () {
