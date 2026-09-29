@@ -26,6 +26,7 @@ use App\Http\Controllers\AssistantAttendanceController;
 use App\Http\Controllers\EmergencyContactController;
 use App\Http\Controllers\DailyChecklistController;
 use App\Http\Controllers\ActivityTimelineController;
+use App\Http\Controllers\TeacherNoteController;
 
 
 // â”€â”€â”€ Guest Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -191,6 +192,11 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/assistant-notes/{id_anak}',     [AssistantNoteController::class, 'majikanShow'] )->name('majikan-notes-show');
         Route::get('/assistant-notes/{id_anak}/history', [AssistantNoteController::class, 'majikanHistory'])->name('majikan-notes-history');
 
+        // Module 12 — Teacher Notes (read-only)
+        Route::get('/teacher-notes',               [TeacherNoteController::class, 'majikanIndex'])->name('majikan-teacher-notes');
+        Route::get('/teacher-notes/{id_anak}',     [TeacherNoteController::class, 'majikanShow'] )->name('majikan-teacher-notes-show');
+        Route::get('/teacher-notes/{id_anak}/history', [TeacherNoteController::class, 'majikanHistory'])->name('majikan-teacher-notes-history');
+
         // Module 8 — Weekly Report PDF (read-only)
         Route::get('/weekly-report',               [WeeklyReportController::class, 'majikanIndex'])->name('majikan-weekly-report');
         Route::get('/weekly-report/{id_anak}',     [WeeklyReportController::class, 'majikanShow'] )->name('majikan-weekly-report-show');
@@ -247,6 +253,14 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/assistant-notes/{id_anak}/add', [AssistantNoteController::class, 'nannyCreate'])->name('nanny-notes-create');
         Route::post('/assistant-notes',              [AssistantNoteController::class, 'store']    )->name('nanny-notes-store');
         Route::delete('/assistant-notes/{id}',       [AssistantNoteController::class, 'destroy']  )->name('nanny-notes-destroy');
+
+        // Module 12 — Teacher Notes (input catatan guru + lihat riwayat)
+        Route::get('/teacher-notes',               [TeacherNoteController::class, 'nannyIndex'])->name('nanny-teacher-notes');
+        Route::get('/teacher-notes/{id_anak}',     [TeacherNoteController::class, 'nannyShow'] )->name('nanny-teacher-notes-show');
+        Route::get('/teacher-notes/{id_anak}/history', [TeacherNoteController::class, 'nannyHistory'])->name('nanny-teacher-notes-history');
+        Route::get('/teacher-notes/{id_anak}/add', [TeacherNoteController::class, 'nannyCreate'])->name('nanny-teacher-notes-create');
+        Route::post('/teacher-notes',              [TeacherNoteController::class, 'store']    )->name('nanny-teacher-notes-store');
+        Route::delete('/teacher-notes/{id}',       [TeacherNoteController::class, 'destroy']  )->name('nanny-teacher-notes-destroy');
 
         // Module 8 — Weekly Report PDF (generate/regenerate)
         Route::get('/weekly-report',               [WeeklyReportController::class, 'nannyIndex'])->name('nanny-weekly-report');
