@@ -100,12 +100,6 @@
     .gps-mini-map .leaflet-control-zoom a.leaflet-control-zoom-in {
         border-bottom: 1px solid #EDE9FE !important;
     }
-    .gps-mini-map .leaflet-control-attribution {
-        font-size: 9px;
-        background: rgba(255,255,255,0.85);
-        padding: 2px 6px;
-        border-radius: 4px 0 0 0;
-    }
     @keyframes marker-pulse {
         0% { box-shadow: 0 0 0 0 rgba(139,70,211,0.5); }
         70% { box-shadow: 0 0 0 14px rgba(139,70,211,0); }
@@ -750,7 +744,7 @@ let gpsNanniesData = []; // stored nanny data for popups
 function createGpsMap(containerId, showControls = true) {
     const map = L.map(containerId, {
         zoomControl: showControls,
-        attributionControl: true,
+        attributionControl: false,
         dragging: true,
         scrollWheelZoom: true,
         touchZoom: true,
@@ -759,10 +753,10 @@ function createGpsMap(containerId, showControls = true) {
         keyboard: true,
     }).setView([-6.2088, 106.8456], 12);
 
-    // Tile: CartoDB Voyager — lebih modern, jalan detail, seperti Google Maps
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-        maxZoom: 20,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+    // Tile: OpenStreetMap — gratis tanpa API key (CARTO mulai mewajibkan API key)
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
 
     return map;
