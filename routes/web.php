@@ -27,6 +27,7 @@ use App\Http\Controllers\EmergencyContactController;
 use App\Http\Controllers\DailyChecklistController;
 use App\Http\Controllers\ActivityTimelineController;
 use App\Http\Controllers\TeacherNoteController;
+use App\Http\Controllers\AppointmentController;
 
 
 // â”€â”€â”€ Guest Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -197,6 +198,11 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/teacher-notes/{id_anak}',     [TeacherNoteController::class, 'majikanShow'] )->name('majikan-teacher-notes-show');
         Route::get('/teacher-notes/{id_anak}/history', [TeacherNoteController::class, 'majikanHistory'])->name('majikan-teacher-notes-history');
 
+        // Module 15 — Appointment & Extracurricular (read-only)
+        Route::get('/appointments',                  [AppointmentController::class, 'majikanIndex'])->name('majikan-appointment');
+        Route::get('/appointments/{id_anak}',        [AppointmentController::class, 'majikanShow'] )->name('majikan-appointment-show');
+        Route::get('/appointments/{id_anak}/history',[AppointmentController::class, 'majikanHistory'])->name('majikan-appointment-history');
+
         // Module 8 — Weekly Report PDF (read-only)
         Route::get('/weekly-report',               [WeeklyReportController::class, 'majikanIndex'])->name('majikan-weekly-report');
         Route::get('/weekly-report/{id_anak}',     [WeeklyReportController::class, 'majikanShow'] )->name('majikan-weekly-report-show');
@@ -261,6 +267,16 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/teacher-notes/{id_anak}/add', [TeacherNoteController::class, 'nannyCreate'])->name('nanny-teacher-notes-create');
         Route::post('/teacher-notes',              [TeacherNoteController::class, 'store']    )->name('nanny-teacher-notes-store');
         Route::delete('/teacher-notes/{id}',       [TeacherNoteController::class, 'destroy']  )->name('nanny-teacher-notes-destroy');
+
+        // Module 15 — Appointment & Extracurricular (CRUD jadwal anak)
+        Route::get('/appointments',                       [AppointmentController::class, 'nannyIndex'] )->name('nanny-appointment');
+        Route::get('/appointments/{id_anak}',             [AppointmentController::class, 'nannyShow']  )->name('nanny-appointment-show');
+        Route::get('/appointments/{id_anak}/history',     [AppointmentController::class, 'nannyHistory'])->name('nanny-appointment-history');
+        Route::get('/appointments/{id_anak}/add',         [AppointmentController::class, 'nannyCreate'])->name('nanny-appointment-create');
+        Route::get('/appointments/{id_anak}/edit/{id}',   [AppointmentController::class, 'nannyEdit']  )->name('nanny-appointment-edit');
+        Route::post('/appointments',                      [AppointmentController::class, 'store']      )->name('nanny-appointment-store');
+        Route::post('/appointments/{id}/update',          [AppointmentController::class, 'update']     )->name('nanny-appointment-update');
+        Route::delete('/appointments/{id}',               [AppointmentController::class, 'destroy']    )->name('nanny-appointment-destroy');
 
         // Module 8 — Weekly Report PDF (generate/regenerate)
         Route::get('/weekly-report',               [WeeklyReportController::class, 'nannyIndex'])->name('nanny-weekly-report');
