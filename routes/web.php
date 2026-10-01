@@ -22,6 +22,7 @@ use App\Http\Controllers\MajikanParentCommentController;
 use App\Http\Controllers\LearningProgressController;
 use App\Http\Controllers\AssistantNoteController;
 use App\Http\Controllers\WeeklyReportController;
+use App\Http\Controllers\AiLearningInsightController;
 use App\Http\Controllers\AssistantAttendanceController;
 use App\Http\Controllers\EmergencyContactController;
 use App\Http\Controllers\DailyChecklistController;
@@ -210,6 +211,12 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/weekly-report/{id}/download', [WeeklyReportController::class, 'majikanDownload'])->name('majikan-weekly-report-download');
         Route::get('/weekly-report/{id}/view',     [WeeklyReportController::class, 'majikanViewPdf'])->name('majikan-weekly-report-view');
 
+        // Module 16 — AI Learning Insight (read-only)
+        Route::get('/ai-learning-insights',                [AiLearningInsightController::class, 'majikanIndex'] )->name('majikan-ai-learning-insights');
+        Route::get('/ai-learning-insights/{id_anak}',      [AiLearningInsightController::class, 'majikanShow']  )->name('majikan-ai-learning-insights-show');
+        Route::get('/ai-learning-insights/{id_anak}/history', [AiLearningInsightController::class, 'majikanHistory'])->name('majikan-ai-learning-insights-history');
+        Route::get('/ai-learning-insights/{id}/detail', [AiLearningInsightController::class, 'majikanDetail'])->name('majikan-ai-learning-insights-detail');
+
         // Module 10 — Assistant Attendance (read-only today + history)
         Route::get('/attendance',              [AssistantAttendanceController::class, 'majikanIndex'] )->name('majikan-attendance');
         Route::get('/attendance/{id_anak}',    [AssistantAttendanceController::class, 'majikanShow']  )->name('majikan-attendance-show');
@@ -286,6 +293,14 @@ Route::middleware('auth.api')->group(function () {
         Route::post('/weekly-report/{id}/regenerate', [WeeklyReportController::class, 'regenerate'])->name('nanny-weekly-report-regenerate');
         Route::get('/weekly-report/{id}/download', [WeeklyReportController::class, 'download'] )->name('nanny-weekly-report-download');
         Route::get('/weekly-report/{id}/view',     [WeeklyReportController::class, 'viewPdf'] )->name('nanny-weekly-report-view');
+
+        // Module 16 — AI Learning Insight (generate/regenerate)
+        Route::get('/ai-learning-insights',                [AiLearningInsightController::class, 'nannyIndex'] )->name('nanny-ai-learning-insights');
+        Route::get('/ai-learning-insights/{id_anak}',      [AiLearningInsightController::class, 'nannyShow']  )->name('nanny-ai-learning-insights-show');
+        Route::get('/ai-learning-insights/{id_anak}/history', [AiLearningInsightController::class, 'nannyHistory'])->name('nanny-ai-learning-insights-history');
+        Route::post('/ai-learning-insights/generate',      [AiLearningInsightController::class, 'generate']    )->name('nanny-ai-learning-insights-generate');
+        Route::post('/ai-learning-insights/{id}/regenerate', [AiLearningInsightController::class, 'regenerate'])->name('nanny-ai-learning-insights-regenerate');
+        Route::get('/ai-learning-insights/{id}/detail', [AiLearningInsightController::class, 'nannyDetail'])->name('nanny-ai-learning-insights-detail');
 
         // Module 10 — Attendance (nanny only = 1 majikan / 1 anak → tanpa pilih anak)
         Route::get('/attendance',                     [AssistantAttendanceController::class, 'nannyIndex'] )->name('nanny-attendance');
