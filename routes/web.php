@@ -24,6 +24,7 @@ use App\Http\Controllers\AssistantNoteController;
 use App\Http\Controllers\WeeklyReportController;
 use App\Http\Controllers\AiLearningInsightController;
 use App\Http\Controllers\BehaviorSummaryController;
+use App\Http\Controllers\DashboardSummaryController;
 use App\Http\Controllers\AssistantAttendanceController;
 use App\Http\Controllers\EmergencyContactController;
 use App\Http\Controllers\DailyChecklistController;
@@ -224,6 +225,10 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/behavior-summaries/{id_anak}/history', [BehaviorSummaryController::class, 'majikanHistory'])->name('majikan-behavior-summaries-history');
         Route::get('/behavior-summaries/{id}/detail',    [BehaviorSummaryController::class, 'majikanDetail']) ->name('majikan-behavior-summaries-detail');
 
+        // Module 20 — Dashboard Summary (read-only)
+        Route::get('/dashboard-summary',              [DashboardSummaryController::class, 'majikanIndex'])->name('majikan-dashboard-summary');
+        Route::get('/dashboard-summary/{id_anak}',    [DashboardSummaryController::class, 'majikanShow'] )->name('majikan-dashboard-summary-show');
+
         // Module 10 — Assistant Attendance (read-only today + history)
         Route::get('/attendance',              [AssistantAttendanceController::class, 'majikanIndex'] )->name('majikan-attendance');
         Route::get('/attendance/{id_anak}',    [AssistantAttendanceController::class, 'majikanShow']  )->name('majikan-attendance-show');
@@ -316,6 +321,14 @@ Route::middleware('auth.api')->group(function () {
         Route::post('/behavior-summaries/generate',      [BehaviorSummaryController::class, 'generate'])    ->name('nanny-behavior-summaries-generate');
         Route::post('/behavior-summaries/{id}/regenerate', [BehaviorSummaryController::class, 'regenerate'])->name('nanny-behavior-summaries-regenerate');
         Route::get('/behavior-summaries/{id}/detail',    [BehaviorSummaryController::class, 'nannyDetail']) ->name('nanny-behavior-summaries-detail');
+
+        // Module 20 — Dashboard Summary (panel asisten)
+        Route::get('/dashboard-summary',              [DashboardSummaryController::class, 'nannyIndex'])->name('nanny-dashboard-summary');
+        Route::get('/dashboard-summary/{id_anak}',    [DashboardSummaryController::class, 'nannyShow'] )->name('nanny-dashboard-summary-show');
+
+        // Module 20 — Dashboard Summary (read-only)
+        Route::get('/dashboard-summary',              [DashboardSummaryController::class, 'nannyIndex'])->name('nanny-dashboard-summary');
+        Route::get('/dashboard-summary/{id_anak}',    [DashboardSummaryController::class, 'nannyShow'] )->name('nanny-dashboard-summary-show');
 
         // Module 10 — Attendance (nanny only = 1 majikan / 1 anak → tanpa pilih anak)
         Route::get('/attendance',                     [AssistantAttendanceController::class, 'nannyIndex'] )->name('nanny-attendance');
