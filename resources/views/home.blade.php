@@ -373,23 +373,41 @@
                 ];
             @endphp
 
-            <div class="grid grid-cols-2 gap-3">
-                @foreach($menus as $i => $menu)
+            @php
+                $visibleMenus = array_slice($menus, 0, 8);
+                $hiddenMenus  = array_slice($menus, 8);
+                $hasMoreMenus = count($menus) > 8;
+            @endphp
+
+            @foreach(['visible' => $visibleMenus, 'hidden' => $hiddenMenus] as $part => $list)
+            @if(!empty($list))
+            <div class="grid grid-cols-4 gap-2 {{ $part === 'hidden' ? 'hidden mt-2' : '' }}" id="menu{{ ucfirst($part) }}">
+                @foreach($list as $i => $menu)
                 @php
                     try { $menuUrl = $menu['route'] ? route($menu['route']) : '#'; }
                     catch (\Exception $e) { $menuUrl = '#'; }
                     $variant = $menuVariants[$i % count($menuVariants)];
                 @endphp
                 <a href="{{ $menuUrl }}"
-                   class="bg-white rounded-[15px] p-[18px_14px] flex flex-col items-center justify-center gap-2.5 cursor-pointer no-underline transition-transform duration-150 ease-in-out hover:scale-[0.96] active:scale-[0.94] shadow-[0_2px_12px_rgba(0,0,0,0.07)]"
-                   style="animation: slideUp 0.35s ease {{ $i * 0.06 }}s both;">
-                    <div class="w-[52px] h-[52px] rounded-2xl flex items-center justify-center {{ $variant['iconBg'] }}">
-                        <ion-icon name="{{ $menu['icon'] ?? 'apps-outline' }}" style="font-size:26px;color:{{ $variant['icon'] }};"></ion-icon>
+                   class="bg-white rounded-[12px] py-2.5 px-1 flex flex-col items-center justify-center gap-1.5 cursor-pointer no-underline transition-transform duration-150 ease-in-out hover:scale-[0.96] active:scale-[0.94] shadow-[0_2px_10px_rgba(0,0,0,0.06)]"
+                   style="animation: slideUp 0.35s ease {{ $i * 0.05 }}s both;">
+                    <div class="w-10 h-10 rounded-[12px] flex items-center justify-center {{ $variant['iconBg'] }}">
+                        <ion-icon name="{{ $menu['icon'] ?? 'apps-outline' }}" style="font-size:20px;color:{{ $variant['icon'] }};"></ion-icon>
                     </div>
-                    <span class="text-xs font-bold text-center leading-tight {{ $variant['text'] }}">{{ $menu['nama'] }}</span>
+                    <span class="text-[9.5px] font-bold text-center leading-tight {{ $variant['text'] }}">{{ $menu['nama'] }}</span>
                 </a>
                 @endforeach
             </div>
+            @endif
+            @endforeach
+
+            @if($hasMoreMenus)
+            <button type="button" id="menuExpandBtn" onclick="toggleMoreMenus()"
+                class="mt-3 mx-auto flex items-center gap-1.5 bg-white rounded-full px-4 py-2 border-0 shadow-[0_2px_10px_rgba(0,0,0,0.07)] cursor-pointer no-underline">
+                <span id="menuExpandLabel" class="text-[#8B46D3] text-[11px] font-extrabold">Show More</span>
+                <ion-icon name="chevron-down" id="menuExpandIcon" style="font-size:14px;color:#8B46D3;"></ion-icon>
+            </button>
+            @endif
 
             @else
             <!-- Empty state -->
@@ -622,6 +640,19 @@ const RISKY_TASKS    = @json($riskyTasks ?? []);
     const el = document.getElementById('greetText');
     if (el) el.textContent = greeting;
 })();
+
+// ── Main Menu: show/hide extra menus (max 8 shown) ──────────────
+let menuExpanded = false;
+function toggleMoreMenus() {
+    const hidden = document.getElementById('menuHidden');
+    if (!hidden) return;
+    menuExpanded = !menuExpanded;
+    hidden.classList.toggle('hidden', !menuExpanded);
+    const label = document.getElementById('menuExpandLabel');
+    const icon  = document.getElementById('menuExpandIcon');
+    if (label) label.textContent = menuExpanded ? 'Show Less' : 'Show More';
+    if (icon)  icon.name = menuExpanded ? 'chevron-up' : 'chevron-down';
+}
 
 // Auto Slider
 (function initSlider() {
