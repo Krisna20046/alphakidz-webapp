@@ -12,6 +12,7 @@ use App\Http\Controllers\NannyController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\KonsultanController;
 use App\Http\Controllers\NexusController;
+use App\Http\Controllers\NexusSupervisionController;
 use App\Http\Controllers\KonsultanTugaskanController;
 use App\Http\Controllers\ArtikelController;
 use App\Http\Controllers\SchoolSubjectController;
@@ -127,7 +128,15 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/',           [NexusController::class, 'index'] )->name('nexus-index');
         Route::get('/create',     [NexusController::class, 'create'])->name('create');
         Route::post('/',          [NexusController::class, 'store'] )->name('store');
-        Route::get('/{id}',       [NexusController::class, 'show']  )->name('show');
+        Route::get('/{id}',       [NexusController::class, 'show']  )->name('show')->whereNumber('id');
+    });
+
+    // Modul 21 - Nexus Supervision (read-only, role 5). Route name `nexus-supervision`
+    // dicocokkan dengan kolom `route` di tabel menus (seeder modul 21).
+    Route::prefix('nexus/supervision')->group(function () {
+        Route::get('/',                                    [NexusSupervisionController::class, 'dashboard']        )->name('nexus-supervision');
+        Route::get('/nanny/{idNanny}',                     [NexusSupervisionController::class, 'nannyDetail']       )->name('nexus-supervision-nanny');
+        Route::get('/nanny/{idNanny}/attendance',          [NexusSupervisionController::class, 'attendanceHistory'])->name('nexus-supervision-nanny-attendance');
     });
 
     // â”€â”€ Profil â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
