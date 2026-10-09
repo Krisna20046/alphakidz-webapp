@@ -139,6 +139,20 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/nanny/{idNanny}/attendance',          [NexusSupervisionController::class, 'attendanceHistory'])->name('nexus-supervision-nanny-attendance');
     });
 
+    // Modul Nexus Diary Monitoring (role 5+1). Name dicocokkan dengan kolom
+    // `route` di tabel menus (seeder nexus diary). `{id}` Q&A di atas
+    // whereNumber sehingga tidak menangkap URI ini.
+    Route::prefix('nexus')->group(function () {
+        Route::get('/diary', fn() => view('nexus.diary-nanny-list'))
+            ->name('nexus-diary-nanny-list');
+
+        Route::get('/diary/{id_nanny}', fn() => view('nexus.diary'))
+            ->name('nexus-diary');
+
+        Route::get('/rekap-diary', fn() => view('nexus.rekap-diary'))
+            ->name('nexus-rekap-diary-nanny-list');
+    });
+
     // â”€â”€ Profil â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     Route::prefix('profil')->name('profil.')->group(function () {
         Route::get('/',               [ProfileController::class, 'index']    )->name('index');
