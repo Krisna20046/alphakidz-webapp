@@ -172,10 +172,28 @@
                 </button>
             </div>
 
+            <div class="mb-5">
+                <label class="block text-[#8B86A5] text-xs font-bold mb-2 uppercase tracking-wider">
+                    Format
+                </label>
+                <div class="grid grid-cols-2 gap-2">
+                    <button type="button" onclick="setExportFormat('excel')" id="fmtExcel"
+                            class="fmt-btn flex items-center justify-center gap-2 border-2 rounded-xl px-4 py-3 transition-colors">
+                        <ion-icon name="grid-outline" style="font-size:16px;"></ion-icon>
+                        <span class="text-sm font-bold">Excel</span>
+                    </button>
+                    <button type="button" onclick="setExportFormat('pdf')" id="fmtPdf"
+                            class="fmt-btn flex items-center justify-center gap-2 border-2 rounded-xl px-4 py-3 transition-colors">
+                        <ion-icon name="document-text-outline" style="font-size:16px;"></ion-icon>
+                        <span class="text-sm font-bold">PDF</span>
+                    </button>
+                </div>
+            </div>
+
             <div class="flex items-start gap-3 bg-blue-50 rounded-xl p-3 border border-blue-100">
                 <ion-icon name="information-circle" style="font-size:20px;color:#3B82F6;" class="mt-0.5 flex-shrink-0"></ion-icon>
                 <p class="text-blue-700 text-xs font-medium leading-relaxed">
-                    The report will be exported in <strong>Excel (.xlsx)</strong> format and downloaded automatically
+                    The report will be exported in <strong id="formatInfo">Excel (.xlsx)</strong> format and downloaded automatically
                 </p>
             </div>
         </div>
@@ -307,6 +325,7 @@ const API_BASE_URL = "{{ rtrim(env('API_BASE_URL', ''), '/') }}";
 let allNanny      = [];
 let selectedNanny = null;
 let selectedKategori = '';
+let selectedFormat = 'excel';
 let dpTarget      = 'start';
 let dpYear, dpMonth, dpDay;
 
@@ -665,6 +684,19 @@ function selectKategori(val) {
     closeKategoriModal();
 }
 
+function setExportFormat(fmt) {
+    selectedFormat = fmt === 'pdf' ? 'pdf' : 'excel';
+    const active   = 'border-[#8B46D3] bg-[#8B46D3] text-white shadow-lg shadow-[#8B46D3]/25';
+    const inactive = 'border-[#EDE9FE] bg-[#F8F7FF] text-[#1E1B2E] hover:border-[#8B46D3]';
+
+    const btnExcel = document.getElementById('fmtExcel');
+    const btnPdf   = document.getElementById('fmtPdf');
+    btnExcel.className = 'fmt-btn flex items-center justify-center gap-2 border-2 rounded-xl px-4 py-3 transition-colors ' + (selectedFormat === 'excel' ? active : inactive);
+    btnPdf.className   = 'fmt-btn flex items-center justify-center gap-2 border-2 rounded-xl px-4 py-3 transition-colors ' + (selectedFormat === 'pdf' ? active : inactive);
+
+    document.getElementById('formatInfo').textContent = selectedFormat === 'pdf' ? 'PDF (.pdf)' : 'Excel (.xlsx)';
+}
+
 function validateForm() {
     let valid = true;
     const start = document.getElementById('startDate').value;
@@ -719,7 +751,7 @@ async function handleGenerate() {
         fd.append('id_nanny',        selectedNanny.id);
         fd.append('tanggal_mulai',   document.getElementById('startDate').value);
         fd.append('tanggal_selesai', document.getElementById('endDate').value);
-        fd.append('export',          'excel');
+        fd.append('export',          selectedFormat);
         if (selectedKategori) fd.append('kategori', selectedKategori);
 
         const res  = await fetch(`${API_BASE_URL}/diary-for-nexus`, {
@@ -735,7 +767,8 @@ async function handleGenerate() {
         if (data.status === 'success' && data.data?.download_url) {
             setTimeout(() => {
                 hideLoading();
-                downloadFile(data.data.download_url, data.data.filename || 'rekap-diary.xlsx');
+                const fallback = selectedFormat === 'pdf' ? 'rekap-diary.pdf' : 'rekap-diary.xlsx';
+                downloadFile(data.data.download_url, data.data.filename || fallback);
             }, 500);
         } else {
             hideLoading();
@@ -768,6 +801,7 @@ function downloadFile(url, filename) {
     }, 1200);
 }
 
+setExportFormat('excel');
 fetchNanny();
 </script>
 @endpush
