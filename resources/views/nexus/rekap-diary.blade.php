@@ -341,6 +341,7 @@ const KATEGORI_OPTIONS = [
     { value: 'minum',   label: 'Drink',          icon: 'water-outline'   },
     { value: 'bab',     label: 'BAB',            icon: 'happy-outline'   },
     { value: 'bak',     label: 'BAK',            icon: 'happy-outline'   },
+    { value: 'other',   label: 'Other',           icon: 'ellipsis-horizontal-circle-outline' },
 ];
 
 function showToast(type, title, msg) {

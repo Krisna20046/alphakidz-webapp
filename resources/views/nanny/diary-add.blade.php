@@ -272,6 +272,7 @@
                     ['value'=>'mandi',   'label'=>'Take A Bath','icon'=>'water',          'bg'=>'#EEF7FF', 'color'=>'#7BB4F0'],
                     ['value'=>'bab',     'label'=>'BAB',        'icon'=>'ellipse',        'bg'=>'#EFEBE9', 'color'=>'#5D4037'],
                     ['value'=>'bak',     'label'=>'BAK',        'icon'=>'ellipse',        'bg'=>'#FFF8E1', 'color'=>'#F9A825'],
+                    ['value'=>'other',   'label'=>'Other',      'icon'=>'ellipsis-horizontal-circle', 'bg'=>'#F3F4F6', 'color'=>'#6B7280'],
                 ];
             @endphp
             @foreach($katOptions as $k)
@@ -662,6 +663,7 @@ const KAT_DURASI = {
     mandi:   15,
     bab:     10,
     bak:     2,
+    other:   30,
 };
 
 function pad(n){ return String(n).padStart(2,'0'); }

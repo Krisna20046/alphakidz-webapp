@@ -330,6 +330,7 @@
                     ['value'=>'mandi','label'=>'🛁 Bath'],
                     ['value'=>'bab','label'=>'🟤 BAB'],
                     ['value'=>'bak','label'=>'💧 BAK'],
+                    ['value'=>'other','label'=>'📎 Other'],
                 ];
             @endphp
             @foreach($kats as $kat)
@@ -451,6 +452,7 @@
                 'mandi'   => ['bg'=>'#FFF0F7','border'=>'#FFB4D6','dot'=>'#FFB4D6','icon'=>'🛁'],
                 'bab'     => ['bg'=>'#EFEBE9','border'=>'#8D6E63','dot'=>'#5D4037','icon'=>'🟤'],
                 'bak'     => ['bg'=>'#FFF8E1','border'=>'#F9A825','dot'=>'#F9A825','icon'=>'💧'],
+                'other'   => ['bg'=>'#F3F4F6','border'=>'#9CA3AF','dot'=>'#6B7280','icon'=>'📋'],
             ];
             $warnaColors = [
                 'coklat'=>'#6D4C41','hijau'=>'#2E7D32','kuning'=>'#F9A825',
@@ -844,10 +846,10 @@ function applyMonthYear(){
 document.getElementById('btnMonthYear').addEventListener('click',openMonthYearModal);
 document.getElementById('modalMonthYear').addEventListener('click',e=>{ if(e.target.id==='modalMonthYear') closeMonthYearModal(); });
 
-function getKatColor(k){ return{makan:'#FF9A6C',tidur:'#7BB4F0',main:'#FFD93D',belajar:'#9BB8FF',mandi:'#FFB4D6',bab:'#8D6E63',bak:'#F9A825'}[k]||'#8B46D3'; }
-function getKatIcon(k) { return{makan:'restaurant',tidur:'moon',main:'football',belajar:'book',mandi:'water',bab:'ellipse',bak:'water'}[k]||'calendar'; }
+function getKatColor(k){ return{makan:'#FF9A6C',tidur:'#7BB4F0',main:'#FFD93D',belajar:'#9BB8FF',mandi:'#FFB4D6',bab:'#8D6E63',bak:'#F9A825',other:'#9CA3AF'}[k]||'#8B46D3'; }
+function getKatIcon(k) { return{makan:'restaurant',tidur:'moon',main:'football',belajar:'book',mandi:'water',bab:'ellipse',bak:'water',other:'ellipsis-horizontal-circle'}[k]||'calendar'; }
 function getMoodEmoji(m){ return{senang:'😊',sedih:'😢',marah:'😠',biasa:'😐'}[m]||'😊'; }
-function getKatBg(k)   { return{makan:'#FFF4EC',tidur:'#EEF4FF',main:'#FFFBEE',belajar:'#F0F2FF',mandi:'#FFF0F7',bab:'#EFEBE9',bak:'#FFF8E1'}[k]||'#F0EDFB'; }
+function getKatBg(k)   { return{makan:'#FFF4EC',tidur:'#EEF4FF',main:'#FFFBEE',belajar:'#F0F2FF',mandi:'#FFF0F7',bab:'#EFEBE9',bak:'#FFF8E1',other:'#F3F4F6'}[k]||'#F0EDFB'; }
 const WARNA_COLORS = {coklat:'#6D4C41',hijau:'#2E7D32',kuning:'#F9A825',hitam:'#212121',merah:'#C62828',jernih:'#CFD8DC',keruh:'#8D6E63'};
 
 function detailRow(iconName,label,value,isLast){

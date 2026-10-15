@@ -442,6 +442,7 @@ const KAT_META = {
     minum:   { bg:'#EAF6FF', border:'#7FC4F5', dot:'#7FC4F5', icon:'🥛', label:'🥛 Drink'  },
     bab:     { bg:'#F6F1EA', border:'#C4A484', dot:'#C4A484', icon:'🟤', label:'🟤 Poop'   },
     bak:     { bg:'#E8F4FF', border:'#6BA8D9', dot:'#6BA8D9', icon:'💧', label:'💧 Pee'    },
+    other:   { bg:'#F3F4F6', border:'#9CA3AF', dot:'#6B7280', icon:'📋', label:'📎 Other'  },
 };
 const KAT_DEFAULT = { bg:'#F0EDFB', border:'#C4B5FD', dot:'#8B46D3', icon:'📅' };
 
