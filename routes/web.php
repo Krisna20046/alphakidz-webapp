@@ -13,6 +13,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\KonsultanController;
 use App\Http\Controllers\NexusController;
 use App\Http\Controllers\NexusSupervisionController;
+use App\Http\Controllers\NexusKelolaAkunController;
+use App\Http\Controllers\NexusKonsultanController;
 use App\Http\Controllers\KonsultanTugaskanController;
 use App\Http\Controllers\ArtikelController;
 use App\Http\Controllers\SchoolSubjectController;
@@ -137,6 +139,35 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/',                                    [NexusSupervisionController::class, 'dashboard']        )->name('nexus-supervision');
         Route::get('/nanny/{idNanny}',                     [NexusSupervisionController::class, 'nannyDetail']       )->name('nexus-supervision-nanny');
         Route::get('/nanny/{idNanny}/attendance',          [NexusSupervisionController::class, 'attendanceHistory'])->name('nexus-supervision-nanny-attendance');
+    });
+
+    // Nexus Kelola Akun (role 5, mirror AdminController). Route name dicocokkan
+    // dengan kolom `route` di tabel menus (seeder nexus kelola-akun).
+    Route::prefix('nexus/kelola-akun')->group(function () {
+        Route::get('/',             [NexusKelolaAkunController::class, 'index']        )->name('nexus-kelola-akun');
+        Route::get('/create',       [NexusKelolaAkunController::class, 'create']       )->name('nexus-kelola-akun.create');
+        Route::post('/',            [NexusKelolaAkunController::class, 'store']        )->name('nexus-kelola-akun.store');
+        Route::get('/{id}',         [NexusKelolaAkunController::class, 'show']         )->name('nexus-kelola-akun.show');
+        Route::get('/{id}/edit',    [NexusKelolaAkunController::class, 'edit']         )->name('nexus-kelola-akun.edit');
+        Route::put('/{id}',         [NexusKelolaAkunController::class, 'update']       )->name('nexus-kelola-akun.update');
+        Route::post('/{id}/status', [NexusKelolaAkunController::class, 'updateStatus'] )->name('nexus-kelola-akun.status');
+        Route::delete('/{id}',      [NexusKelolaAkunController::class, 'destroy']      )->name('nexus-kelola-akun.destroy');
+    });
+
+    // Nexus kaitkan nanny↔konsultan + assignment nanny-anak majikan (role 5).
+    Route::prefix('nexus')->group(function () {
+        Route::get('/nanny',                 [NexusKonsultanController::class, 'indexNanny']    )->name('nexus-nanny-list');
+        Route::get('/nanny/{id}',            [NexusKonsultanController::class, 'showNanny']     )->name('nexus-nanny-detail');
+        Route::post('/nanny/add',            [NexusKonsultanController::class, 'addNanny']      )->name('nexus-nanny-add');
+        Route::get('/nanny-anda',            [NexusKonsultanController::class, 'indexNannyAnda'])->name('nexus-nanny-anda');
+        Route::get('/nanny-anda/{id}',       [NexusKonsultanController::class, 'showNannyAnda'] )->name('nexus-nanny-anda-detail');
+        Route::post('/nanny-anda/update-status', [NexusKonsultanController::class, 'updateStatusNanny'])->name('nexus-nanny-update-status');
+        Route::post('/nanny-anda/unlink',    [NexusKonsultanController::class, 'unlinkNanny']   )->name('nexus-nanny-unlink');
+        Route::get('/majikan-nanny',         [NexusKonsultanController::class, 'indexMajikanNanny'])->name('nexus-majikan-nanny');
+        Route::get('/majikan-nanny/{id}',    [NexusKonsultanController::class, 'showMajikanNanny'])->name('nexus-majikan-nanny-detail');
+        Route::get('/tugaskan-nanny',                      fn()=>view('nexus.tugaskan-nanny'))->name('nexus-tugaskan-nanny');
+        Route::get('/tugaskan-nanny/{id}/tambah',          fn()=>view('nexus.tugaskan-nanny-tambah'));
+        Route::get('/tugaskan-nanny/assignment/{id}/ubah', fn()=>view('nexus.tugaskan-nanny-ubah'));
     });
 
     // Modul Nexus Diary Monitoring (role 5+1). Name dicocokkan dengan kolom
