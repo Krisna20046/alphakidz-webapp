@@ -13,6 +13,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\KonsultanController;
 use App\Http\Controllers\NexusController;
 use App\Http\Controllers\NexusSupervisionController;
+use App\Http\Controllers\NexusMonthlyReportController;
 use App\Http\Controllers\NexusKelolaAkunController;
 use App\Http\Controllers\NexusKonsultanController;
 use App\Http\Controllers\KonsultanTugaskanController;
@@ -141,6 +142,17 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/nanny/{idNanny}/attendance',          [NexusSupervisionController::class, 'attendanceHistory'])->name('nexus-supervision-nanny-attendance');
     });
 
+    // Modul 22 — Nexus Monthly Report (PDF manual dari tim Nexus, role 5).
+    // Route name dicocokkan dengan kolom `route` di tabel menus (seeder modul 22).
+    Route::prefix('nexus/monthly-reports')->group(function () {
+        Route::get('/',                       [NexusMonthlyReportController::class, 'nexusIndex']  )->name('nexus-monthly-reports');
+        Route::post('/',                      [NexusMonthlyReportController::class, 'nexusStore']  )->name('nexus-monthly-reports.store');
+        Route::post('/{id}/resend',           [NexusMonthlyReportController::class, 'nexusResend'])->name('nexus-monthly-reports.resend');
+        Route::delete('/{id}',                [NexusMonthlyReportController::class, 'nexusDestroy'])->name('nexus-monthly-reports.destroy');
+        Route::get('/{id}/download',          [NexusMonthlyReportController::class, 'majikanDownload'])->name('nexus-monthly-reports.download');
+        Route::get('/{id}/view',              [NexusMonthlyReportController::class, 'majikanViewPdf'])->name('nexus-monthly-reports.view');
+    });
+
     // Nexus Kelola Akun (role 5, mirror AdminController). Route name dicocokkan
     // dengan kolom `route` di tabel menus (seeder nexus kelola-akun).
     Route::prefix('nexus/kelola-akun')->group(function () {
@@ -267,6 +279,13 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/weekly-report/{id}/download', [WeeklyReportController::class, 'majikanDownload'])->name('majikan-weekly-report-download');
         Route::get('/weekly-report/{id}/view',     [WeeklyReportController::class, 'majikanViewPdf'])->name('majikan-weekly-report-view');
 
+        // Module 22 — Nexus Monthly Report PDF (read-only)
+        Route::get('/monthly-reports',                  [NexusMonthlyReportController::class, 'majikanIndex'] )->name('majikan-monthly-reports');
+        Route::get('/monthly-reports/{id_anak}',        [NexusMonthlyReportController::class, 'majikanShow']  )->name('majikan-monthly-reports-show');
+        Route::get('/monthly-reports/{id_anak}/history', [NexusMonthlyReportController::class, 'majikanHistory'])->name('majikan-monthly-reports-history');
+        Route::get('/monthly-reports/{id}/download',    [NexusMonthlyReportController::class, 'majikanDownload'])->name('majikan-monthly-reports-download');
+        Route::get('/monthly-reports/{id}/view',        [NexusMonthlyReportController::class, 'majikanViewPdf'])->name('majikan-monthly-reports-view');
+
         // Module 16 — AI Learning Insight (read-only)
         Route::get('/ai-learning-insights',                [AiLearningInsightController::class, 'majikanIndex'] )->name('majikan-ai-learning-insights');
         Route::get('/ai-learning-insights/{id_anak}',      [AiLearningInsightController::class, 'majikanShow']  )->name('majikan-ai-learning-insights-show');
@@ -359,6 +378,13 @@ Route::middleware('auth.api')->group(function () {
         Route::post('/weekly-report/{id}/regenerate', [WeeklyReportController::class, 'regenerate'])->name('nanny-weekly-report-regenerate');
         Route::get('/weekly-report/{id}/download', [WeeklyReportController::class, 'download'] )->name('nanny-weekly-report-download');
         Route::get('/weekly-report/{id}/view',     [WeeklyReportController::class, 'viewPdf'] )->name('nanny-weekly-report-view');
+
+        // Module 22 — Nexus Monthly Report PDF (read-only)
+        Route::get('/monthly-reports',                  [NexusMonthlyReportController::class, 'nannyIndex'] )->name('nanny-monthly-reports');
+        Route::get('/monthly-reports/{id_anak}',        [NexusMonthlyReportController::class, 'nannyShow']  )->name('nanny-monthly-reports-show');
+        Route::get('/monthly-reports/{id_anak}/history', [NexusMonthlyReportController::class, 'nannyHistory'])->name('nanny-monthly-reports-history');
+        Route::get('/monthly-reports/{id}/download',    [NexusMonthlyReportController::class, 'nannyDownload'])->name('nanny-monthly-reports-download');
+        Route::get('/monthly-reports/{id}/view',        [NexusMonthlyReportController::class, 'nannyViewPdf'])->name('nanny-monthly-reports-view');
 
         // Module 16 — AI Learning Insight (generate/regenerate)
         Route::get('/ai-learning-insights',                [AiLearningInsightController::class, 'nannyIndex'] )->name('nanny-ai-learning-insights');
