@@ -14,6 +14,7 @@ use App\Http\Controllers\KonsultanController;
 use App\Http\Controllers\NexusController;
 use App\Http\Controllers\NexusSupervisionController;
 use App\Http\Controllers\NexusMonthlyReportController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\NexusKelolaAkunController;
 use App\Http\Controllers\NexusKonsultanController;
 use App\Http\Controllers\KonsultanTugaskanController;
@@ -126,6 +127,9 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/artikel', [ArtikelController::class, 'index'])->name('artikel.index');
     Route::get('/artikel/{id}', [ArtikelController::class, 'show'])->name('artikel.show');
 
+    // Modul 23 — Detail event (kartu "Events & Info" di home; semua role login).
+    Route::get('/events/{id}', [EventController::class, 'show'])->name('event-detail')->whereNumber('id');
+
     // â”€â”€ Nexus â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     Route::prefix('nexus')->name('nexus.')->group(function () {
         Route::get('/',           [NexusController::class, 'index'] )->name('nexus-index');
@@ -151,6 +155,16 @@ Route::middleware('auth.api')->group(function () {
         Route::delete('/{id}',                [NexusMonthlyReportController::class, 'nexusDestroy'])->name('nexus-monthly-reports.destroy');
         Route::get('/{id}/download',          [NexusMonthlyReportController::class, 'majikanDownload'])->name('nexus-monthly-reports.download');
         Route::get('/{id}/view',              [NexusMonthlyReportController::class, 'majikanViewPdf'])->name('nexus-monthly-reports.view');
+    });
+
+    // Modul 23 — Event Manage (konten fleksibel tim Nexus, slider home semua role).
+    // Route name dicocokkan dengan kolom `route` di tabel menus (seeder modul 23).
+    // Update pakai POST /{id} (bukan PUT) agar form multipart tanpa method-spoofing.
+    Route::prefix('nexus/events')->group(function () {
+        Route::get('/',    [EventController::class, 'nexusIndex']  )->name('nexus-events');
+        Route::post('/',   [EventController::class, 'nexusStore']  )->name('nexus-events.store');
+        Route::post('/{id}', [EventController::class, 'nexusUpdate'])->name('nexus-events.update');
+        Route::delete('/{id}', [EventController::class, 'nexusDestroy'])->name('nexus-events.destroy');
     });
 
     // Nexus Kelola Akun (role 5, mirror AdminController). Route name dicocokkan

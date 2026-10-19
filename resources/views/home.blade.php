@@ -417,6 +417,44 @@
             @endif
         </div>
 
+        <!-- EVENTS & INFO (Modul 23) — card seperti article, klik → detail event -->
+        @if(count($events ?? []) > 0)
+        <div class="anim delay-4">
+            <div class="flex items-center justify-between mb-[14px]">
+                <span class="text-[#1E1B2E] text-[17px] font-extrabold">Events &amp; Info</span>
+            </div>
+
+            <div class="flex gap-3 overflow-x-auto pb-1 hide-scrollbar">
+                @foreach($events as $ev)
+                <a class="w-[200px] bg-white rounded-[15px] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.07)] flex-shrink-0 no-underline flex flex-col transition-transform duration-150 ease-in-out active:scale-[0.96]"
+                   href="{{ route('event-detail', $ev['id']) }}">
+                    @if(!empty($ev['banner_url']))
+                        <img class="w-full h-[110px] object-cover"
+                             src="{{ $ev['banner_url'] }}"
+                             alt="{{ $ev['title'] }}"
+                             loading="lazy">
+                    @else
+                        <div class="w-full h-[110px] flex items-center justify-center text-4xl bg-gradient-to-br from-[#EDE9FE] to-[#FDF2F8]">🎉</div>
+                    @endif
+                    <div class="p-3 flex-1">
+                        @if(!empty($ev['type']))
+                        <span class="inline-block px-2.5 py-[3px] rounded-full bg-[#FDF2F8] text-[#EC4899] text-[9px] font-bold mb-2">{{ $ev['type'] }}</span>
+                        @endif
+                        <p class="text-xs font-bold text-[#1E1B2E] leading-relaxed line-clamp-3">{{ $ev['title'] }}</p>
+                        <p class="text-[10px] font-semibold text-[#9CA3AF] mt-1.5 line-clamp-2">
+                            @if(!empty($ev['event_start_at']))
+                                {{ \Carbon\Carbon::parse($ev['event_start_at'])->format('d M Y') }}@if(!empty($ev['location'])) · {{ $ev['location'] }}@endif
+                            @elseif(!empty($ev['subtitle']))
+                                {{ $ev['subtitle'] }}
+                            @endif
+                        </p>
+                    </div>
+                </a>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         <!-- PARENTING ARTICLES -->
         <div class="anim delay-4">
             <div class="flex items-center justify-between mb-[14px]">

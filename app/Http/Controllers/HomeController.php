@@ -42,7 +42,10 @@ class HomeController extends Controller
         // Modul 9 — Reminder tugas/exam (task berisiko utk dashboard)
         $riskyTasks = $this->riskyTaskList();
 
-        return view('home', compact('menus', 'artikels', 'riskyTasks'));
+        // Modul 23 — Event aktif utk slider home (semua role)
+        $events = $this->fetchActiveEvents();
+
+        return view('home', compact('menus', 'artikels', 'riskyTasks', 'events'));
     }
 
     /**
@@ -205,6 +208,42 @@ class HomeController extends Controller
         } catch (\Exception $e) {
             Log::error('HomeController@fetchUserData - ' . $e->getMessage());
             return [null, []];
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // MODUL 23 — Event aktif utk slider home
+    // ─────────────────────────────────────────────────────────────────────────
+
+    /**
+     * Ambil event aktif (GET /events/active) utk slider home semua role.
+     * Best-effort: gagal → [] (slider fallback banner statis di view).
+     *
+     * @return array<int, array>
+     */
+    private function fetchActiveEvents(): array
+    {
+        $token = session('token');
+        if (!$token) {
+            return [];
+        }
+
+        try {
+            $response = Http::withToken($token)->acceptJson()->timeout(8)
+                ->get("{$this->apiBaseUrl}/events/active", ['limit' => 10]);
+
+            if (!$response->successful()) {
+                return [];
+            }
+            $json = $response->json();
+            if (($json['success'] ?? false) !== true) {
+                return [];
+            }
+            $data = $json['data'] ?? [];
+            return is_array($data) ? $data : [];
+        } catch (\Exception $e) {
+            Log::warning('HomeController@fetchActiveEvents - ' . $e->getMessage());
+            return [];
         }
     }
 
