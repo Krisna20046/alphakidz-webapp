@@ -257,5 +257,33 @@
 
 @include('partials.auth-guard')
 
+{{-- FCM foreground global: banner in-app saat notifikasi masuk (sudah login). --}}
+<script>
+    window.FIREBASE_API_KEY             = @json(env('FIREBASE_API_KEY'));
+    window.FIREBASE_AUTH_DOMAIN         = @json(env('FIREBASE_AUTH_DOMAIN'));
+    window.FIREBASE_PROJECT_ID          = @json(env('FIREBASE_PROJECT_ID'));
+    window.FIREBASE_STORAGE_BUCKET      = @json(env('FIREBASE_STORAGE_BUCKET'));
+    window.FIREBASE_MESSAGING_SENDER_ID = @json(env('FIREBASE_MESSAGING_SENDER_ID'));
+    window.FIREBASE_APP_ID              = @json(env('FIREBASE_APP_ID'));
+    window.FIREBASE_VAPID_KEY           = @json(env('FIREBASE_VAPID_KEY'));
+    window.CSRF_TOKEN                   = @json(csrf_token());
+</script>
+<script type="module">
+import { initFCM } from '/js/fcmService.js';
+
+const NOTIF_TYPES = ['diary_created', 'diary_updated', 'attendance', 'task_progress', 'assistant_note', 'appointment'];
+
+initFCM(window.CSRF_TOKEN, function (data) {
+    const type = data?.type || '';
+    if (NOTIF_TYPES.includes(type)) {
+        const title = data?.title || 'Notifikasi Baru';
+        const body  = data?.body  || '';
+        window.showAppAlert?.(body ? title + ' — ' + body : title, 'ok');
+        // Halaman notifikasi terbuka → refresh list
+        if (typeof window.fetchNotif === 'function') window.fetchNotif();
+    }
+});
+</script>
+
 </body>
 </html>

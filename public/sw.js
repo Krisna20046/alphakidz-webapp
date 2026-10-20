@@ -1,5 +1,5 @@
 // public/sw.js
-// Service Worker - NannyApp PWA
+// Service Worker - AlphaKidz PWA
 // Strategy:
 //   - App shell (HTML halaman)    → Network First, fallback offline page
 //   - Static assets (CSS/JS/font) → Cache First
@@ -325,10 +325,10 @@ self.addEventListener('push', event => {
     if (!event.data) return;
 
     let data = {};
-    try { data = event.data.json(); } catch (_) { data = { title: 'NannyApp', body: event.data.text() }; }
+    try { data = event.data.json(); } catch (_) { data = { title: 'AlphaKidz', body: event.data.text() }; }
 
     event.waitUntil(
-        self.registration.showNotification(data.title || 'NannyApp', {
+        self.registration.showNotification(data.title || 'AlphaKidz', {
             body   : data.body   || '',
             icon   : '/icons/icon-192x192.png',
             badge  : '/icons/icon-72x72.png',

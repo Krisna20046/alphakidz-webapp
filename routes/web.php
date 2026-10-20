@@ -208,6 +208,10 @@ Route::middleware('auth.api')->group(function () {
 
         Route::get('/rekap-diary', fn() => view('nexus.rekap-diary'))
             ->name('nexus-rekap-diary-nanny-list');
+
+        // Inbox notifikasi team nexus (diary + aktivitas nanny lain).
+        Route::get('/notifications', fn() => view('nexus.notifications.index'))
+            ->name('nexus-notifications');
     });
 
     // â”€â”€ Profil â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
