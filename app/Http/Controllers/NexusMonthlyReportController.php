@@ -193,6 +193,14 @@ class NexusMonthlyReportController extends Controller
 
     public function nexusIndex(Request $request)
     {
+        $role = (int) (session('user')['id_role'] ?? 0);
+        if ($role === 2) {
+            return redirect()->route('majikan-monthly-reports');
+        }
+        if ($role === 3) {
+            return redirect()->route('nanny-monthly-reports');
+        }
+
         $page  = max(1, (int) $request->input('page', 1));
         $month = $request->filled('report_month') ? (string) $request->input('report_month') : null;
 

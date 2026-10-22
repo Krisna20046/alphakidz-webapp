@@ -14,6 +14,7 @@ use App\Http\Controllers\KonsultanController;
 use App\Http\Controllers\NexusController;
 use App\Http\Controllers\NexusSupervisionController;
 use App\Http\Controllers\NexusMonthlyReportController;
+use App\Http\Controllers\RoleMenuController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\NexusKelolaAkunController;
 use App\Http\Controllers\NexusKonsultanController;
@@ -463,6 +464,15 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/activity-timeline',               [ActivityTimelineController::class, 'nannyIndex'])->name('nanny-activity-timeline');
         Route::get('/activity-timeline/{id_anak}',     [ActivityTimelineController::class, 'nannyShow'] )->name('nanny-activity-timeline-show');
         Route::get('/activity-timeline/{id_anak}/history', [ActivityTimelineController::class, 'nannyHistory'])->name('nanny-activity-timeline-history');
+    });
+
+    // Modul 22 — Role Menu Management (Admin only, role 1).
+    // Prefix literal ditulis sebelum `/{id}` agar tidak tertangkap route parameter.
+    Route::prefix('admin/role-menu')->group(function () {
+        Route::get('/',                       [RoleMenuController::class, 'index']        )->name('admin-role-menu');
+        Route::post('/menu',                  [RoleMenuController::class, 'storeMenu']    )->name('admin-role-menu.store-menu');
+        Route::post('/role-menu',             [RoleMenuController::class, 'storeRoleMenu'])->name('admin-role-menu.store-role-menu');
+        Route::put('/{id}',                   [RoleMenuController::class, 'update']       )->name('admin-role-menu.update');
     });
 
     Route::prefix('admin/kelola-akun')->group(function () {
