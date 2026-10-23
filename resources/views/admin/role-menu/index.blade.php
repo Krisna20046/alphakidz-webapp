@@ -166,6 +166,11 @@
                     value="{{ old('route') }}">
             </div>
             <div class="input-group">
+                <label for="menuCategory">Kategori</label>
+                <input id="menuCategory" name="category" type="text" maxlength="50"
+                    placeholder="Contoh: Sekolah" value="{{ old('category') }}">
+            </div>
+            <div class="input-group">
                 <label>Urutan</label>
                 <input name="urutan" type="number" placeholder="0" required
                     value="{{ old('urutan', 0) }}">
@@ -226,6 +231,7 @@
                         <div class="menu-meta">
                             <div class="menu-nama">{{ $m['nama'] ?? '-' }}</div>
                             <div class="menu-route">{{ $m['route'] ?? '-' }}</div>
+                            <div class="menu-route">Kategori: {{ $m['category'] ?? 'Lainnya' }}</div>
                         </div>
                         <span class="{{ $m['is_active'] ? 'badge-active' : 'badge-inactive' }}">
                             {{ $m['is_active'] ? 'Aktif' : 'Nonaktif' }}

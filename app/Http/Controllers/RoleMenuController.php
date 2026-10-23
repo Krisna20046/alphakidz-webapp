@@ -194,6 +194,7 @@ class RoleMenuController extends Controller
         $request->validate([
             'parent_id' => 'nullable|integer',
             'nama'      => 'required|string|max:255',
+            'category'  => 'nullable|string|max:50',
             'icon'      => 'nullable|string|max:255',
             'route'     => 'nullable|string|max:255',
             'urutan'    => 'required|integer',
@@ -203,6 +204,7 @@ class RoleMenuController extends Controller
         $data = [
             'parent_id' => $request->filled('parent_id') ? (int) $request->parent_id : null,
             'nama'      => $request->nama,
+            'category'  => $request->category,
             'icon'      => $request->icon,
             'route'     => $request->route,
             'urutan'    => (int) $request->urutan,

@@ -368,15 +368,22 @@
             @endphp
 
             @php
-                $visibleMenus = array_slice($menus, 0, 8);
-                $hiddenMenus  = array_slice($menus, 8);
-                $hasMoreMenus = count($menus) > 8;
+                $menuGroups = collect($menus)->sortBy('urutan')->groupBy(
+                    fn ($menu) => trim($menu['category'] ?? '') ?: 'Lainnya'
+                );
             @endphp
 
-            @foreach(['visible' => $visibleMenus, 'hidden' => $hiddenMenus] as $part => $list)
-            @if(!empty($list))
-            <div class="grid grid-cols-4 gap-2 {{ $part === 'hidden' ? 'hidden mt-2' : '' }}" id="menu{{ ucfirst($part) }}">
-                @foreach($list as $i => $menu)
+            @foreach($menuGroups as $category => $list)
+            <details name="menu-categories" class="group mb-2 rounded-xl bg-white/60"
+                @if($category === 'Utama' || (!$menuGroups->has('Utama') && $loop->first)) open @endif>
+                <summary class="flex items-center gap-2 p-3 cursor-pointer list-none rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#8B46D3] [&::-webkit-details-marker]:hidden">
+                    <span class="text-[#1E1B2E] text-sm font-extrabold flex-1">{{ $category }}</span>
+                    <span class="text-[#8B46D3] text-xs font-bold bg-[#EDE9FE] rounded-full px-2 py-0.5">{{ $list->count() }}</span>
+                    <ion-icon name="chevron-down-outline" aria-hidden="true"
+                        class="text-[#8B46D3] transition-transform group-open:rotate-180"></ion-icon>
+                </summary>
+                <div class="grid grid-cols-4 gap-2 px-2 pb-2">
+                @foreach($list->values() as $i => $menu)
                 @php
                     try { $menuUrl = $menu['route'] ? route($menu['route']) : '#'; }
                     catch (\Exception $e) { $menuUrl = '#'; }
@@ -391,17 +398,9 @@
                     <span class="text-[9.5px] font-bold text-center leading-tight {{ $variant['text'] }}">{{ $menu['nama'] }}</span>
                 </a>
                 @endforeach
-            </div>
-            @endif
+                </div>
+            </details>
             @endforeach
-
-            @if($hasMoreMenus)
-            <button type="button" id="menuExpandBtn" onclick="toggleMoreMenus()"
-                class="mt-3 mx-auto flex items-center gap-1.5 bg-white rounded-full px-4 py-2 border-0 shadow-[0_2px_10px_rgba(0,0,0,0.07)] cursor-pointer no-underline">
-                <span id="menuExpandLabel" class="text-[#8B46D3] text-[11px] font-extrabold">Show More</span>
-                <ion-icon name="chevron-down" id="menuExpandIcon" style="font-size:14px;color:#8B46D3;"></ion-icon>
-            </button>
-            @endif
 
             @else
             <!-- Empty state -->
@@ -672,19 +671,6 @@ const RISKY_TASKS    = @json($riskyTasks ?? []);
     const el = document.getElementById('greetText');
     if (el) el.textContent = greeting;
 })();
-
-// ── Main Menu: show/hide extra menus (max 8 shown) ──────────────
-let menuExpanded = false;
-function toggleMoreMenus() {
-    const hidden = document.getElementById('menuHidden');
-    if (!hidden) return;
-    menuExpanded = !menuExpanded;
-    hidden.classList.toggle('hidden', !menuExpanded);
-    const label = document.getElementById('menuExpandLabel');
-    const icon  = document.getElementById('menuExpandIcon');
-    if (label) label.textContent = menuExpanded ? 'Show Less' : 'Show More';
-    if (icon)  icon.name = menuExpanded ? 'chevron-up' : 'chevron-down';
-}
 
 // Auto Slider
 (function initSlider() {
