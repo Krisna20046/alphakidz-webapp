@@ -351,6 +351,20 @@
             </div>
         </div>
 
+        @if((int) session('user.id_role') === 1)
+        <a href="{{ route('admin-feedback') }}"
+           class="anim delay-3 flex items-center gap-3 bg-white rounded-[16px] px-[14px] py-[13px] mb-[10px] shadow-[0_2px_12px_rgba(0,0,0,0.07)] transition-transform duration-150 active:scale-[0.97]">
+            <div class="w-[48px] h-[48px] rounded-[14px] flex items-center justify-center shrink-0 bg-[#FEF2F2]">
+                <ion-icon name="chatbubbles-outline" style="font-size:22px;color:#DC2626;"></ion-icon>
+            </div>
+            <div class="flex-1 min-w-0">
+                <p class="text-[#1E1B2E] text-[14px] font-bold leading-tight">Feedback & Bug Report</p>
+                <p class="text-[#9CA3AF] text-[11px] font-medium mt-[3px] leading-snug">Baca dan kelola laporan pengguna</p>
+            </div>
+            <ion-icon name="chevron-forward" style="font-size:16px;color:#C4B5FD;" class="shrink-0"></ion-icon>
+        </a>
+        @endif
+
         <!-- MAIN MENU -->
         <div class="anim delay-3">
             <div class="flex items-center justify-between mb-[14px]">

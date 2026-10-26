@@ -37,6 +37,7 @@ use App\Http\Controllers\DailyChecklistController;
 use App\Http\Controllers\ActivityTimelineController;
 use App\Http\Controllers\TeacherNoteController;
 use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\FeedbackController;
 
 
 // â”€â”€â”€ Guest Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -92,6 +93,12 @@ Route::get('/auth/google/callback', function () {
 // â”€â”€â”€ Protected Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 Route::middleware('auth.api')->group(function () {
+
+    // Feedback semua akun login; inbox laporan khusus admin.
+    Route::get('/profil/feedback', [FeedbackController::class, 'index'])->name('feedback.index');
+    Route::post('/profil/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+    Route::get('/admin/feedback', [FeedbackController::class, 'adminIndex'])->name('admin-feedback');
+    Route::post('/admin/feedback/{id}/resolve', [FeedbackController::class, 'resolve'])->whereNumber('id')->name('admin-feedback.resolve');
 
     // Home / Dashboard
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
