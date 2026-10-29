@@ -123,6 +123,38 @@
 <style>
 @keyframes modalSlide{from{opacity:0;transform:translateY(50px) scale(0.9)}to{opacity:1;transform:translateY(0) scale(1)}}
 </style>
+<script>
+// Dev mode bypass - check immediately
+(function() {
+    const SECRET = 'alphakids-dev-2024-secure';
+    const DEV_KEY = '_ak_cfg';
+    const EXPIRY_DAYS = 7;
+
+    try {
+        const token = localStorage.getItem(DEV_KEY);
+        if (!token) return;
+
+        const parts = token.split(':');
+        if (parts.length !== 2) return;
+
+        const [timestamp, hash] = parts;
+        const expected = btoa(`${SECRET}:${timestamp}`);
+
+        // Verify hash
+        if (hash !== expected) return;
+
+        // Check expiry
+        const age = Date.now() - parseInt(timestamp);
+        const maxAge = EXPIRY_DAYS * 24 * 60 * 60 * 1000;
+
+        if (age >= 0 && age < maxAge) {
+            // Valid dev mode - hide maintenance
+            const modal = document.getElementById('maintenanceModal');
+            if (modal) modal.remove();
+        }
+    } catch (e) {}
+})();
+</script>
 @endif
 
 {{-- In-app alert toast (global). Pakai showAppAlert(msg, 'ok'|'error') ganti alert() native --}}
@@ -281,6 +313,8 @@
         });
     })();
 </script>
+
+<script src="/js/dev-mode.js"></script>
 
 @stack('scripts')
 
