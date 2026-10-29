@@ -96,6 +96,36 @@
 
 @stack('modals')
 
+@if(env('MAINTENANCE_MODE', false))
+<div id="maintenanceModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,rgba(139,92,246,0.95) 0%,rgba(124,58,237,0.98) 100%);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;">
+    <div style="position:absolute;width:300px;height:300px;background:rgba(255,255,255,0.1);border-radius:50%;top:-150px;right:-100px;"></div>
+    <div style="position:absolute;width:200px;height:200px;background:rgba(255,255,255,0.08);border-radius:50%;bottom:-80px;left:-60px;"></div>
+
+    <div style="background:#fff;border-radius:32px;padding:48px 32px 40px;max-width:360px;width:100%;box-shadow:0 30px 90px rgba(0,0,0,0.3);text-align:center;position:relative;animation:modalSlide 0.5s cubic-bezier(0.34,1.56,0.64,1);">
+        <div style="position:absolute;top:-50px;left:50%;transform:translateX(-50%);width:100px;height:100px;background:linear-gradient(135deg,#7C3AED,#A78BFA);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 40px rgba(124,58,237,0.4);border:6px solid #fff;">
+            <ion-icon name="construct-outline" style="font-size:48px;color:#fff;"></ion-icon>
+        </div>
+
+        <div style="margin-top:60px;">
+            <h2 style="font-family:'Nunito',sans-serif;font-size:26px;font-weight:900;color:#1F2937;margin:0 0 16px;letter-spacing:-0.5px;">Sedang Maintenance</h2>
+            <div style="width:60px;height:4px;background:linear-gradient(90deg,#7C3AED,#A78BFA);border-radius:2px;margin:0 auto 24px;"></div>
+            <p style="font-family:'Nunito',sans-serif;font-size:16px;font-weight:600;color:#6B7280;line-height:1.6;margin:0 0 12px;">Kami sedang melakukan pemeliharaan sistem untuk meningkatkan kualitas layanan Anda.</p>
+            <p style="font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;color:#7C3AED;margin:0;display:flex;align-items:center;justify-content:center;gap:8px;">
+                <ion-icon name="time-outline" style="font-size:20px;"></ion-icon>
+                <span>Akan kembali sebentar lagi</span>
+            </p>
+        </div>
+
+        <div style="margin-top:32px;padding-top:28px;border-top:2px dashed #E5E7EB;">
+            <p style="font-family:'Nunito',sans-serif;font-size:13px;font-weight:600;color:#9CA3AF;margin:0;">Terima kasih atas kesabaran Anda</p>
+        </div>
+    </div>
+</div>
+<style>
+@keyframes modalSlide{from{opacity:0;transform:translateY(50px) scale(0.9)}to{opacity:1;transform:translateY(0) scale(1)}}
+</style>
+@endif
+
 <script>
     // Status bar clock
     (function() {
