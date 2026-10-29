@@ -371,6 +371,7 @@ const KATEGORI_OPTIONS = [
     { value: 'main',    label: 'Play',        short: 'Play',      icon: 'game-controller-outline', bg: '#E8ECFF', color: '#4F46E5' },
     { value: 'belajar', label: 'Study',       short: 'Study',     icon: 'book-outline',            bg: '#FEF3C7', color: '#D97706' },
     { value: 'mandi',   label: 'Take Bath',   short: 'Take Bath', icon: 'water-outline',           bg: '#DCFCE7', color: '#16A34A' },
+    { value: 'other',   label: 'Other',       short: 'Other',     icon: 'ellipsis-horizontal-circle-outline', bg: '#F3F4F6', color: '#6B7280' },
 ];
 
 // ── Toast ─────────────────────────────────────────────────────────────────────

@@ -87,6 +87,7 @@
                 ['route' => 'profil.data-anak', 'icon' => 'happy-outline',  'label' => 'Child Data',       'sub' => "Child's health history and preferences",             'iconBg' => '#E0E7FF', 'iconClr' => '#6366F1', 'role' => 'Majikan'],
                 ['route' => 'reminder.index',   'icon' => 'alarm-outline',  'label' => 'Reminders',        'sub' => 'Reminders for your needs',                           'iconBg' => '#FEF3C7', 'iconClr' => '#F59E0B'],
                 ['route' => 'stock.index',      'icon' => 'pricetag-outline','label' => 'Expense Tracking', 'sub' => "Transparent recording of children's expenses",       'iconBg' => '#DBEAFE', 'iconClr' => '#3B82F6'],
+                ['route' => 'feedback.index',   'icon' => 'chatbubbles-outline','label' => 'Feedback & Bug Report', 'sub' => 'Kirim masukan atau laporan bug', 'iconBg' => '#F3F4FF', 'iconClr' => '#8B46D3', 'role' => null],
             ];
             $delayMs = 280;
         @endphp

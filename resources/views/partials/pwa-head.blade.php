@@ -10,8 +10,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="NannyApp">
-<meta name="application-name" content="NannyApp">
+<meta name="apple-mobile-web-app-title" content="AlphaKidz">
+<meta name="application-name" content="AlphaKidz">
 
 <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
 <link rel="apple-touch-icon" sizes="72x72"   href="/icons/icon-192x192.png">

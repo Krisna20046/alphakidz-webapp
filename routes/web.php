@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
@@ -12,11 +12,35 @@ use App\Http\Controllers\NannyController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\KonsultanController;
 use App\Http\Controllers\NexusController;
+use App\Http\Controllers\NexusSupervisionController;
+use App\Http\Controllers\NexusMonthlyReportController;
+use App\Http\Controllers\RoleMenuController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\NexusKelolaAkunController;
+use App\Http\Controllers\NexusKonsultanController;
 use App\Http\Controllers\KonsultanTugaskanController;
 use App\Http\Controllers\ArtikelController;
+use App\Http\Controllers\SchoolSubjectController;
+use App\Http\Controllers\SchoolScheduleController;
+use App\Http\Controllers\AcademicTaskController;
+use App\Http\Controllers\MajikanTrackingController;
+use App\Http\Controllers\MajikanParentCommentController;
+use App\Http\Controllers\LearningProgressController;
+use App\Http\Controllers\AssistantNoteController;
+use App\Http\Controllers\WeeklyReportController;
+use App\Http\Controllers\AiLearningInsightController;
+use App\Http\Controllers\BehaviorSummaryController;
+use App\Http\Controllers\DashboardSummaryController;
+use App\Http\Controllers\AssistantAttendanceController;
+use App\Http\Controllers\EmergencyContactController;
+use App\Http\Controllers\DailyChecklistController;
+use App\Http\Controllers\ActivityTimelineController;
+use App\Http\Controllers\TeacherNoteController;
+use App\Http\Controllers\AppointmentController;
+use App\Http\Controllers\FeedbackController;
 
 
-// ─── Guest Routes ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Guest Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 Route::middleware('guest.api')->group(function () {
     Route::get( '/login',    [AuthController::class, 'showLogin']   )->name('login');
@@ -66,15 +90,24 @@ Route::get('/auth/google/callback', function () {
     return view('auth.google-callback');
 })->name('google.callback');
 
-// ─── Protected Routes ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Protected Routes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 Route::middleware('auth.api')->group(function () {
+
+    // Feedback semua akun login; inbox laporan khusus admin.
+    Route::get('/profil/feedback', [FeedbackController::class, 'index'])->name('feedback.index');
+    Route::post('/profil/feedback', [FeedbackController::class, 'store'])->name('feedback.store');
+    Route::get('/admin/feedback', [FeedbackController::class, 'adminIndex'])->name('admin-feedback');
+    Route::post('/admin/feedback/{id}/resolve', [FeedbackController::class, 'resolve'])->whereNumber('id')->name('admin-feedback.resolve');
 
     // Home / Dashboard
     Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
 
     // Proxy: unread count (dipanggil JS, agar token tidak exposed ke client)
     Route::get('/api/unread-count', [HomeController::class, 'unreadCount'])->name('api.unread');
+
+    // Proxy Modul 9: trigger reminder tugas/exam (fallback hosting tanpa cron)
+    Route::get('/api/trigger-task-reminders', [HomeController::class, 'triggerTaskReminders'])->name('api.trigger-task-reminders');
 
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -84,16 +117,16 @@ Route::middleware('auth.api')->group(function () {
     Route::post('/fcm/update-token', [FcmController::class, 'updateToken'])->name('fcm.update');
     Route::post('/fcm/remove-token', [FcmController::class, 'removeToken'])->name('fcm.remove');
 
-    // ── Chat ──────────────────────────────────────────────────────────────────
+    // â”€â”€ Chat â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     Route::get('/chat',          [ChatController::class, 'list'] )->name('chat.list');
     Route::get('/chat/{id}',     [ChatController::class, 'room'] )->name('chat.room');
 
-    // ── Chat API Proxy (dipanggil dari JS, token tetap server-side) ───────────
+    // â”€â”€ Chat API Proxy (dipanggil dari JS, token tetap server-side) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     Route::get( '/api/chat-list', [ChatController::class, 'apiChatList'])->name('api.chat.list');
     Route::get( '/api/chat',      [ChatController::class, 'apiGetChat'] )->name('api.chat.get');
     Route::post('/api/chat',      [ChatController::class, 'apiSendChat'])->name('api.chat.send');
 
-    // ── Online Status API Proxy ───────────────────────────────────────────────
+    // â”€â”€ Online Status API Proxy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     Route::post('/api/user/ping',         [ChatController::class, 'apiPing'])->name('api.user.ping');
     Route::post('/api/user/offline',      [ChatController::class, 'apiOffline'])->name('api.user.offline');
     Route::get('/api/user/{id}/status',   [ChatController::class, 'apiUserStatus'])->name('api.user.status');
@@ -102,15 +135,94 @@ Route::middleware('auth.api')->group(function () {
     Route::get('/artikel', [ArtikelController::class, 'index'])->name('artikel.index');
     Route::get('/artikel/{id}', [ArtikelController::class, 'show'])->name('artikel.show');
 
-    // ── Nexus ────────────────────────────────────────────────────────────────
+    // Modul 23 — Detail event (kartu "Events & Info" di home; semua role login).
+    Route::get('/events/{id}', [EventController::class, 'show'])->name('event-detail')->whereNumber('id');
+
+    // â”€â”€ Nexus â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     Route::prefix('nexus')->name('nexus.')->group(function () {
         Route::get('/',           [NexusController::class, 'index'] )->name('nexus-index');
         Route::get('/create',     [NexusController::class, 'create'])->name('create');
         Route::post('/',          [NexusController::class, 'store'] )->name('store');
-        Route::get('/{id}',       [NexusController::class, 'show']  )->name('show');
+        Route::get('/{id}',       [NexusController::class, 'show']  )->name('show')->whereNumber('id');
     });
 
-    // ── Profil ────────────────────────────────────────────────────────────────
+    // Modul 21 - Nexus Supervision (read-only, role 5). Route name `nexus-supervision`
+    // dicocokkan dengan kolom `route` di tabel menus (seeder modul 21).
+    Route::prefix('nexus/supervision')->group(function () {
+        Route::get('/',                                    [NexusSupervisionController::class, 'dashboard']        )->name('nexus-supervision');
+        Route::get('/nanny/{idNanny}',                     [NexusSupervisionController::class, 'nannyDetail']       )->name('nexus-supervision-nanny');
+        Route::get('/nanny/{idNanny}/attendance',          [NexusSupervisionController::class, 'attendanceHistory'])->name('nexus-supervision-nanny-attendance');
+    });
+
+    // Modul 22 — Nexus Monthly Report (PDF manual dari tim Nexus, role 5).
+    // Route name dicocokkan dengan kolom `route` di tabel menus (seeder modul 22).
+    Route::prefix('nexus/monthly-reports')->group(function () {
+        Route::get('/',                       [NexusMonthlyReportController::class, 'nexusIndex']  )->name('nexus-monthly-reports');
+        Route::post('/',                      [NexusMonthlyReportController::class, 'nexusStore']  )->name('nexus-monthly-reports.store');
+        Route::post('/{id}/resend',           [NexusMonthlyReportController::class, 'nexusResend'])->name('nexus-monthly-reports.resend');
+        Route::delete('/{id}',                [NexusMonthlyReportController::class, 'nexusDestroy'])->name('nexus-monthly-reports.destroy');
+        Route::get('/{id}/download',          [NexusMonthlyReportController::class, 'majikanDownload'])->name('nexus-monthly-reports.download');
+        Route::get('/{id}/view',              [NexusMonthlyReportController::class, 'majikanViewPdf'])->name('nexus-monthly-reports.view');
+    });
+
+    // Modul 23 — Event Manage (konten fleksibel tim Nexus, slider home semua role).
+    // Route name dicocokkan dengan kolom `route` di tabel menus (seeder modul 23).
+    // Update pakai POST /{id} (bukan PUT) agar form multipart tanpa method-spoofing.
+    Route::prefix('nexus/events')->group(function () {
+        Route::get('/',    [EventController::class, 'nexusIndex']  )->name('nexus-events');
+        Route::post('/',   [EventController::class, 'nexusStore']  )->name('nexus-events.store');
+        Route::post('/{id}', [EventController::class, 'nexusUpdate'])->name('nexus-events.update');
+        Route::delete('/{id}', [EventController::class, 'nexusDestroy'])->name('nexus-events.destroy');
+    });
+
+    // Nexus Kelola Akun (role 5, mirror AdminController). Route name dicocokkan
+    // dengan kolom `route` di tabel menus (seeder nexus kelola-akun).
+    Route::prefix('nexus/kelola-akun')->group(function () {
+        Route::get('/',             [NexusKelolaAkunController::class, 'index']        )->name('nexus-kelola-akun');
+        Route::get('/create',       [NexusKelolaAkunController::class, 'create']       )->name('nexus-kelola-akun.create');
+        Route::post('/',            [NexusKelolaAkunController::class, 'store']        )->name('nexus-kelola-akun.store');
+        Route::get('/{id}',         [NexusKelolaAkunController::class, 'show']         )->name('nexus-kelola-akun.show');
+        Route::get('/{id}/edit',    [NexusKelolaAkunController::class, 'edit']         )->name('nexus-kelola-akun.edit');
+        Route::put('/{id}',         [NexusKelolaAkunController::class, 'update']       )->name('nexus-kelola-akun.update');
+        Route::post('/{id}/status', [NexusKelolaAkunController::class, 'updateStatus'] )->name('nexus-kelola-akun.status');
+        Route::delete('/{id}',      [NexusKelolaAkunController::class, 'destroy']      )->name('nexus-kelola-akun.destroy');
+    });
+
+    // Nexus kaitkan nanny↔konsultan + assignment nanny-anak majikan (role 5).
+    Route::prefix('nexus')->group(function () {
+        Route::get('/nanny',                 [NexusKonsultanController::class, 'indexNanny']    )->name('nexus-nanny-list');
+        Route::get('/nanny/{id}',            [NexusKonsultanController::class, 'showNanny']     )->name('nexus-nanny-detail');
+        Route::post('/nanny/add',            [NexusKonsultanController::class, 'addNanny']      )->name('nexus-nanny-add');
+        Route::get('/nanny-anda',            [NexusKonsultanController::class, 'indexNannyAnda'])->name('nexus-nanny-anda');
+        Route::get('/nanny-anda/{id}',       [NexusKonsultanController::class, 'showNannyAnda'] )->name('nexus-nanny-anda-detail');
+        Route::post('/nanny-anda/update-status', [NexusKonsultanController::class, 'updateStatusNanny'])->name('nexus-nanny-update-status');
+        Route::post('/nanny-anda/unlink',    [NexusKonsultanController::class, 'unlinkNanny']   )->name('nexus-nanny-unlink');
+        Route::get('/majikan-nanny',         [NexusKonsultanController::class, 'indexMajikanNanny'])->name('nexus-majikan-nanny');
+        Route::get('/majikan-nanny/{id}',    [NexusKonsultanController::class, 'showMajikanNanny'])->name('nexus-majikan-nanny-detail');
+        Route::get('/tugaskan-nanny',                      fn()=>view('nexus.tugaskan-nanny'))->name('nexus-tugaskan-nanny');
+        Route::get('/tugaskan-nanny/{id}/tambah',          fn()=>view('nexus.tugaskan-nanny-tambah'));
+        Route::get('/tugaskan-nanny/assignment/{id}/ubah', fn()=>view('nexus.tugaskan-nanny-ubah'));
+    });
+
+    // Modul Nexus Diary Monitoring (role 5+1). Name dicocokkan dengan kolom
+    // `route` di tabel menus (seeder nexus diary). `{id}` Q&A di atas
+    // whereNumber sehingga tidak menangkap URI ini.
+    Route::prefix('nexus')->group(function () {
+        Route::get('/diary', fn() => view('nexus.diary-nanny-list'))
+            ->name('nexus-diary-nanny-list');
+
+        Route::get('/diary/{id_nanny}', fn() => view('nexus.diary'))
+            ->name('nexus-diary');
+
+        Route::get('/rekap-diary', fn() => view('nexus.rekap-diary'))
+            ->name('nexus-rekap-diary-nanny-list');
+
+        // Inbox notifikasi team nexus (diary + aktivitas nanny lain).
+        Route::get('/notifications', fn() => view('nexus.notifications.index'))
+            ->name('nexus-notifications');
+    });
+
+    // â”€â”€ Profil â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     Route::prefix('profil')->name('profil.')->group(function () {
         Route::get('/',               [ProfileController::class, 'index']    )->name('index');
         Route::get('/detail',         [ProfileController::class, 'detail']   )->name('detail');
@@ -125,7 +237,7 @@ Route::middleware('auth.api')->group(function () {
         Route::post('/data-anak/update',    [AnakController::class, 'update'] )->name('anak.update');
         Route::delete('/data-anak/{id}',    [AnakController::class, 'hapus']  )->name('anak.hapus');
 
-        // Medical CRUD (RS, Dokter, Vaksin) — proxy via AnakController
+        // Medical CRUD (RS, Dokter, Vaksin) â€” proxy via AnakController
         Route::post('/data-anak/medical/{type}',                [AnakController::class, 'medicalStore'])->name('anak.medical.store');
         Route::post('/data-anak/medical/{type}/update',         [AnakController::class, 'medicalUpdate'])->name('anak.medical.update');
         Route::post('/data-anak/medical/{type}/delete',         [AnakController::class, 'medicalDelete'])->name('anak.medical.delete');
@@ -152,11 +264,96 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/nanny-anda/{id}', [MajikanController::class, 'showNannyAnda'] )->name('majikan-nanny-anda-detail');
         Route::get('/diary',        [MajikanController::class, 'chooseDiary'])->name('majikan-diary-choose');
         Route::get('/diary/{id}',   [MajikanController::class, 'showDiary']  )->name('majikan-diary');
+        Route::get('/diary/{id}/summary',        [MajikanController::class, 'fetchSummary'])  ->name('majikan-diary-summary');
+        Route::post('/diary/summary/generate',   [MajikanController::class, 'generateSummary'])->name('majikan-diary-summary-generate');
+
+        // Tracking (monitor tasks & schedule yg diisi nanny)
+        Route::get('/monitoring',        [MajikanTrackingController::class, 'index'])->name('majikan-tracking');
+        Route::get('/monitoring/{id_anak}', [MajikanTrackingController::class, 'show'])->name('majikan-tracking-show');
+
+        // Module 11 — Parent Approval (approve/reject/comment tugas akademik anak)
+        Route::get('/approval',              [MajikanParentCommentController::class, 'index'])->name('majikan-approval');
+        Route::get('/approval/{id_anak}',    [MajikanParentCommentController::class, 'show'] )->name('majikan-approval-show');
+        Route::post('/approval/approve',     [MajikanParentCommentController::class, 'approve'])->name('majikan-approval-approve');
+        Route::post('/approval/reject',      [MajikanParentCommentController::class, 'reject'] )->name('majikan-approval-reject');
+        Route::post('/approval/comment',     [MajikanParentCommentController::class, 'comment'])->name('majikan-approval-comment');
+
+        // Module 5 — Learning Progress (read-only chart)
+        Route::get('/learning-progress',            [LearningProgressController::class, 'majikanIndex'])->name('majikan-learning');
+        Route::get('/learning-progress/{id_anak}',  [LearningProgressController::class, 'majikanShow'] )->name('majikan-learning-show');
+        Route::get('/learning-progress/{id_anak}/history', [LearningProgressController::class, 'majikanHistory'])->name('majikan-learning-history');
+
+        // Module 6 — Assistant Notes (read-only)
+        Route::get('/assistant-notes',               [AssistantNoteController::class, 'majikanIndex'])->name('majikan-notes');
+        Route::get('/assistant-notes/{id_anak}',     [AssistantNoteController::class, 'majikanShow'] )->name('majikan-notes-show');
+        Route::get('/assistant-notes/{id_anak}/history', [AssistantNoteController::class, 'majikanHistory'])->name('majikan-notes-history');
+
+        // Module 12 — Teacher Notes (read-only)
+        Route::get('/teacher-notes',               [TeacherNoteController::class, 'majikanIndex'])->name('majikan-teacher-notes');
+        Route::get('/teacher-notes/{id_anak}',     [TeacherNoteController::class, 'majikanShow'] )->name('majikan-teacher-notes-show');
+        Route::get('/teacher-notes/{id_anak}/history', [TeacherNoteController::class, 'majikanHistory'])->name('majikan-teacher-notes-history');
+
+        // Module 15 — Appointment & Extracurricular (read-only)
+        Route::get('/appointments',                  [AppointmentController::class, 'majikanIndex'])->name('majikan-appointment');
+        Route::get('/appointments/{id_anak}',        [AppointmentController::class, 'majikanShow'] )->name('majikan-appointment-show');
+        Route::get('/appointments/{id_anak}/history',[AppointmentController::class, 'majikanHistory'])->name('majikan-appointment-history');
+
+        // Module 8 — Weekly Report PDF (read-only)
+        Route::get('/weekly-report',               [WeeklyReportController::class, 'majikanIndex'])->name('majikan-weekly-report');
+        Route::get('/weekly-report/{id_anak}',     [WeeklyReportController::class, 'majikanShow'] )->name('majikan-weekly-report-show');
+        Route::get('/weekly-report/{id_anak}/history', [WeeklyReportController::class, 'majikanHistory'])->name('majikan-weekly-report-history');
+        Route::get('/weekly-report/{id}/download', [WeeklyReportController::class, 'majikanDownload'])->name('majikan-weekly-report-download');
+        Route::get('/weekly-report/{id}/view',     [WeeklyReportController::class, 'majikanViewPdf'])->name('majikan-weekly-report-view');
+
+        // Module 22 — Nexus Monthly Report PDF (read-only)
+        Route::get('/monthly-reports',                  [NexusMonthlyReportController::class, 'majikanIndex'] )->name('majikan-monthly-reports');
+        Route::get('/monthly-reports/{id_anak}',        [NexusMonthlyReportController::class, 'majikanShow']  )->name('majikan-monthly-reports-show');
+        Route::get('/monthly-reports/{id_anak}/history', [NexusMonthlyReportController::class, 'majikanHistory'])->name('majikan-monthly-reports-history');
+        Route::get('/monthly-reports/{id}/download',    [NexusMonthlyReportController::class, 'majikanDownload'])->name('majikan-monthly-reports-download');
+        Route::get('/monthly-reports/{id}/view',        [NexusMonthlyReportController::class, 'majikanViewPdf'])->name('majikan-monthly-reports-view');
+
+        // Module 16 — AI Learning Insight (read-only)
+        Route::get('/ai-learning-insights',                [AiLearningInsightController::class, 'majikanIndex'] )->name('majikan-ai-learning-insights');
+        Route::get('/ai-learning-insights/{id_anak}',      [AiLearningInsightController::class, 'majikanShow']  )->name('majikan-ai-learning-insights-show');
+        Route::get('/ai-learning-insights/{id_anak}/history', [AiLearningInsightController::class, 'majikanHistory'])->name('majikan-ai-learning-insights-history');
+        Route::get('/ai-learning-insights/{id}/detail', [AiLearningInsightController::class, 'majikanDetail'])->name('majikan-ai-learning-insights-detail');
+
+        // Module 17 — Auto Behavior Summary (read-only)
+        Route::get('/behavior-summaries',                [BehaviorSummaryController::class, 'majikanIndex'])  ->name('majikan-behavior-summaries');
+        Route::get('/behavior-summaries/{id_anak}',      [BehaviorSummaryController::class, 'majikanShow'])   ->name('majikan-behavior-summaries-show');
+        Route::get('/behavior-summaries/{id_anak}/history', [BehaviorSummaryController::class, 'majikanHistory'])->name('majikan-behavior-summaries-history');
+        Route::get('/behavior-summaries/{id}/detail',    [BehaviorSummaryController::class, 'majikanDetail']) ->name('majikan-behavior-summaries-detail');
+
+        // Module 20 — Dashboard Summary (read-only)
+        Route::get('/dashboard-summary',              [DashboardSummaryController::class, 'majikanIndex'])->name('majikan-dashboard-summary');
+        Route::get('/dashboard-summary/{id_anak}',    [DashboardSummaryController::class, 'majikanShow'] )->name('majikan-dashboard-summary-show');
+
+        // Module 10 — Assistant Attendance (read-only today + history)
+        Route::get('/attendance',              [AssistantAttendanceController::class, 'majikanIndex'] )->name('majikan-attendance');
+        Route::get('/attendance/{id_anak}',    [AssistantAttendanceController::class, 'majikanShow']  )->name('majikan-attendance-show');
+        Route::get('/attendance/{id_anak}/history', [AssistantAttendanceController::class, 'majikanHistory'])->name('majikan-attendance-history');
+
+        // Module 18 — Emergency Contact (read-only + tap-to-call)
+        Route::get('/emergency-contacts',               [EmergencyContactController::class, 'majikanIndex'])->name('majikan-emergency-contacts');
+        Route::get('/emergency-contacts/{id_anak}',     [EmergencyContactController::class, 'majikanShow'] )->name('majikan-emergency-contacts-show');
+        Route::get('/emergency-contacts/{id_anak}/history', [EmergencyContactController::class, 'majikanHistory'])->name('majikan-emergency-contacts-history');
+
+        // Module 14 — Activity Timeline (read-only)
+        Route::get('/activity-timeline',               [ActivityTimelineController::class, 'majikanIndex'])->name('majikan-activity-timeline');
+        Route::get('/activity-timeline/{id_anak}',     [ActivityTimelineController::class, 'majikanShow'] )->name('majikan-activity-timeline-show');
+        Route::get('/activity-timeline/{id_anak}/history', [ActivityTimelineController::class, 'majikanHistory'])->name('majikan-activity-timeline-history');
+
+        // Module 14 — Activity Timeline (read-only)
+        Route::get('/activity-timeline',                    [ActivityTimelineController::class, 'majikanIndex'] )->name('majikan-activity-timeline');
+        Route::get('/activity-timeline/{id_anak}',          [ActivityTimelineController::class, 'majikanShow']  )->name('majikan-activity-timeline-show');
+        Route::get('/activity-timeline/{id_anak}/history',  [ActivityTimelineController::class, 'majikanHistory'])->name('majikan-activity-timeline-history');
     });
 
     Route::prefix('nanny')->group(function () {
         Route::get('/diary', [NannyController::class, 'chooseDiary'])->name('nanny-diary-choose');
         Route::get('/diary/{id_anak}', [NannyController::class, 'showDiary'])->name('nanny-diary');
+        Route::get('/diary/{id_anak}/summary',        [NannyController::class, 'fetchSummary'])  ->name('nanny-diary-summary');
+        Route::post('/diary/summary/generate',        [NannyController::class, 'generateSummary'])->name('nanny-diary-summary-generate');
         Route::get('/diary/{id_anak}/tambah', [NannyController::class, 'showAdd'])->name('nanny-diary-add');
         Route::get('/diary/{id_anak}/edit/{id}', [NannyController::class, 'edit'])->name('nanny-diary-edit');
         Route::post('/diary/store', [NannyController::class, 'store'])->name('nanny-diary-store');
@@ -164,6 +361,125 @@ Route::middleware('auth.api')->group(function () {
         Route::get('/data-anak',  [NannyController::class, 'dataAnak'])->name('nanny-anak-list');
         Route::get('/konsultan',  [NannyController::class, 'konsultan'])->name('nanny-konsultan');
         Route::get('/majikan',    [NannyController::class, 'majikan'])->name('nanny-majikan');
+
+        // Module 5 — Learning Progress (input skor + lihat chart)
+        Route::get('/learning-progress',            [LearningProgressController::class, 'nannyIndex'])->name('nanny-learning');
+        Route::get('/learning-progress/{id_anak}',  [LearningProgressController::class, 'nannyShow'] )->name('nanny-learning-show');
+        Route::get('/learning-progress/{id_anak}/history', [LearningProgressController::class, 'nannyHistory'])->name('nanny-learning-history');
+        Route::get('/learning-progress/{id_anak}/add', [LearningProgressController::class, 'nannyCreate'])->name('nanny-learning-create');
+        Route::post('/learning-progress',           [LearningProgressController::class, 'store']    )->name('nanny-learning-store');
+        Route::delete('/learning-progress/{id}',    [LearningProgressController::class, 'destroy']  )->name('nanny-learning-destroy');
+
+        // Module 6 — Assistant Notes (input catatan harian + lihat riwayat)
+        Route::get('/assistant-notes',               [AssistantNoteController::class, 'nannyIndex'])->name('nanny-notes');
+        Route::get('/assistant-notes/{id_anak}',     [AssistantNoteController::class, 'nannyShow'] )->name('nanny-notes-show');
+        Route::get('/assistant-notes/{id_anak}/history', [AssistantNoteController::class, 'nannyHistory'])->name('nanny-notes-history');
+        Route::get('/assistant-notes/{id_anak}/add', [AssistantNoteController::class, 'nannyCreate'])->name('nanny-notes-create');
+        Route::post('/assistant-notes',              [AssistantNoteController::class, 'store']    )->name('nanny-notes-store');
+        Route::delete('/assistant-notes/{id}',       [AssistantNoteController::class, 'destroy']  )->name('nanny-notes-destroy');
+
+        // Module 12 — Teacher Notes (input catatan guru + lihat riwayat)
+        Route::get('/teacher-notes',               [TeacherNoteController::class, 'nannyIndex'])->name('nanny-teacher-notes');
+        Route::get('/teacher-notes/{id_anak}',     [TeacherNoteController::class, 'nannyShow'] )->name('nanny-teacher-notes-show');
+        Route::get('/teacher-notes/{id_anak}/history', [TeacherNoteController::class, 'nannyHistory'])->name('nanny-teacher-notes-history');
+        Route::get('/teacher-notes/{id_anak}/add', [TeacherNoteController::class, 'nannyCreate'])->name('nanny-teacher-notes-create');
+        Route::post('/teacher-notes',              [TeacherNoteController::class, 'store']    )->name('nanny-teacher-notes-store');
+        Route::delete('/teacher-notes/{id}',       [TeacherNoteController::class, 'destroy']  )->name('nanny-teacher-notes-destroy');
+
+        // Module 15 — Appointment & Extracurricular (CRUD jadwal anak)
+        Route::get('/appointments',                       [AppointmentController::class, 'nannyIndex'] )->name('nanny-appointment');
+        Route::get('/appointments/{id_anak}',             [AppointmentController::class, 'nannyShow']  )->name('nanny-appointment-show');
+        Route::get('/appointments/{id_anak}/history',     [AppointmentController::class, 'nannyHistory'])->name('nanny-appointment-history');
+        Route::get('/appointments/{id_anak}/add',         [AppointmentController::class, 'nannyCreate'])->name('nanny-appointment-create');
+        Route::get('/appointments/{id_anak}/edit/{id}',   [AppointmentController::class, 'nannyEdit']  )->name('nanny-appointment-edit');
+        Route::post('/appointments',                      [AppointmentController::class, 'store']      )->name('nanny-appointment-store');
+        Route::post('/appointments/{id}/update',          [AppointmentController::class, 'update']     )->name('nanny-appointment-update');
+        Route::delete('/appointments/{id}',               [AppointmentController::class, 'destroy']    )->name('nanny-appointment-destroy');
+
+        // Module 8 — Weekly Report PDF (generate/regenerate)
+        Route::get('/weekly-report',               [WeeklyReportController::class, 'nannyIndex'])->name('nanny-weekly-report');
+        Route::get('/weekly-report/{id_anak}',     [WeeklyReportController::class, 'nannyShow'] )->name('nanny-weekly-report-show');
+        Route::get('/weekly-report/{id_anak}/history', [WeeklyReportController::class, 'nannyHistory'])->name('nanny-weekly-report-history');
+        Route::post('/weekly-report/generate',     [WeeklyReportController::class, 'generate'] )->name('nanny-weekly-report-generate');
+        Route::post('/weekly-report/{id}/regenerate', [WeeklyReportController::class, 'regenerate'])->name('nanny-weekly-report-regenerate');
+        Route::get('/weekly-report/{id}/download', [WeeklyReportController::class, 'download'] )->name('nanny-weekly-report-download');
+        Route::get('/weekly-report/{id}/view',     [WeeklyReportController::class, 'viewPdf'] )->name('nanny-weekly-report-view');
+
+        // Module 22 — Nexus Monthly Report PDF (read-only)
+        Route::get('/monthly-reports',                  [NexusMonthlyReportController::class, 'nannyIndex'] )->name('nanny-monthly-reports');
+        Route::get('/monthly-reports/{id_anak}',        [NexusMonthlyReportController::class, 'nannyShow']  )->name('nanny-monthly-reports-show');
+        Route::get('/monthly-reports/{id_anak}/history', [NexusMonthlyReportController::class, 'nannyHistory'])->name('nanny-monthly-reports-history');
+        Route::get('/monthly-reports/{id}/download',    [NexusMonthlyReportController::class, 'nannyDownload'])->name('nanny-monthly-reports-download');
+        Route::get('/monthly-reports/{id}/view',        [NexusMonthlyReportController::class, 'nannyViewPdf'])->name('nanny-monthly-reports-view');
+
+        // Module 16 — AI Learning Insight (generate/regenerate)
+        Route::get('/ai-learning-insights',                [AiLearningInsightController::class, 'nannyIndex'] )->name('nanny-ai-learning-insights');
+        Route::get('/ai-learning-insights/{id_anak}',      [AiLearningInsightController::class, 'nannyShow']  )->name('nanny-ai-learning-insights-show');
+        Route::get('/ai-learning-insights/{id_anak}/history', [AiLearningInsightController::class, 'nannyHistory'])->name('nanny-ai-learning-insights-history');
+        Route::post('/ai-learning-insights/generate',      [AiLearningInsightController::class, 'generate']    )->name('nanny-ai-learning-insights-generate');
+        Route::post('/ai-learning-insights/{id}/regenerate', [AiLearningInsightController::class, 'regenerate'])->name('nanny-ai-learning-insights-regenerate');
+        Route::get('/ai-learning-insights/{id}/detail', [AiLearningInsightController::class, 'nannyDetail'])->name('nanny-ai-learning-insights-detail');
+
+        // Module 17 — Auto Behavior Summary (generate/regenerate)
+        Route::get('/behavior-summaries',                [BehaviorSummaryController::class, 'nannyIndex'])  ->name('nanny-behavior-summaries');
+        Route::get('/behavior-summaries/{id_anak}',      [BehaviorSummaryController::class, 'nannyShow'])   ->name('nanny-behavior-summaries-show');
+        Route::get('/behavior-summaries/{id_anak}/history', [BehaviorSummaryController::class, 'nannyHistory'])->name('nanny-behavior-summaries-history');
+        Route::post('/behavior-summaries/generate',      [BehaviorSummaryController::class, 'generate'])    ->name('nanny-behavior-summaries-generate');
+        Route::post('/behavior-summaries/{id}/regenerate', [BehaviorSummaryController::class, 'regenerate'])->name('nanny-behavior-summaries-regenerate');
+        Route::get('/behavior-summaries/{id}/detail',    [BehaviorSummaryController::class, 'nannyDetail']) ->name('nanny-behavior-summaries-detail');
+
+        // Module 20 — Dashboard Summary (panel asisten)
+        Route::get('/dashboard-summary',              [DashboardSummaryController::class, 'nannyIndex'])->name('nanny-dashboard-summary');
+        Route::get('/dashboard-summary/{id_anak}',    [DashboardSummaryController::class, 'nannyShow'] )->name('nanny-dashboard-summary-show');
+
+        // Module 20 — Dashboard Summary (read-only)
+        Route::get('/dashboard-summary',              [DashboardSummaryController::class, 'nannyIndex'])->name('nanny-dashboard-summary');
+        Route::get('/dashboard-summary/{id_anak}',    [DashboardSummaryController::class, 'nannyShow'] )->name('nanny-dashboard-summary-show');
+
+        // Module 10 — Attendance (nanny only = 1 majikan / 1 anak → tanpa pilih anak)
+        Route::get('/attendance',                     [AssistantAttendanceController::class, 'nannyIndex'] )->name('nanny-attendance');
+        Route::get('/attendance/history',             [AssistantAttendanceController::class, 'nannyHistory'])->name('nanny-attendance-history');
+        Route::post('/attendance/check-in',           [AssistantAttendanceController::class, 'checkIn'] )->name('nanny-attendance-checkin');
+        Route::post('/attendance/check-out',          [AssistantAttendanceController::class, 'checkOut'])->name('nanny-attendance-checkout');
+
+        // Module 18 — Emergency Contact (CRUD kontakti kurgensi anak)
+        Route::get('/emergency-contacts',                  [EmergencyContactController::class, 'nannyIndex'] )->name('nanny-emergency-contacts');
+        Route::get('/emergency-contacts/{id_anak}',      [EmergencyContactController::class, 'nannyShow']  )->name('nanny-emergency-contacts-show');
+        Route::get('/emergency-contacts/{id_anak}/history', [EmergencyContactController::class, 'nannyHistory'])->name('nanny-emergency-contacts-history');
+        Route::get('/emergency-contacts/{id_anak}/add', [EmergencyContactController::class, 'nannyCreate'])->name('nanny-emergency-contacts-create');
+        Route::get('/emergency-contacts/{id_anak}/edit/{id}', [EmergencyContactController::class, 'nannyEdit'])->name('nanny-emergency-contacts-edit');
+        Route::post('/emergency-contacts',                 [EmergencyContactController::class, 'store']  )->name('nanny-emergency-contacts-store');
+        Route::post('/emergency-contacts/{id}/update',     [EmergencyContactController::class, 'update'] )->name('nanny-emergency-contacts-update');
+        Route::delete('/emergency-contacts/{id}',          [EmergencyContactController::class, 'destroy'])->name('nanny-emergency-contacts-destroy');
+
+        // Module 13 — Daily Checklist (Senin–Minggu, tanpa tanggal)
+        Route::get('/daily-checklists',                             [DailyChecklistController::class, 'nannyIndex'] )->name('nanny-daily-checklists');
+        Route::get('/daily-checklists/{id_anak}',                   [DailyChecklistController::class, 'nannyShow']  )->name('nanny-daily-checklists-show');
+        Route::get('/daily-checklists/{id_anak}/add',               [DailyChecklistController::class, 'nannyCreate'])->name('nanny-daily-checklists-create');
+        Route::get('/daily-checklists/{id_anak}/edit/{id}',         [DailyChecklistController::class, 'nannyEdit']  )->name('nanny-daily-checklists-edit');
+        Route::post('/daily-checklists',                            [DailyChecklistController::class, 'store']      )->name('nanny-daily-checklists-store');
+        Route::post('/daily-checklists/{id}/update',                [DailyChecklistController::class, 'update']     )->name('nanny-daily-checklists-update');
+        Route::delete('/daily-checklists/{id}',                     [DailyChecklistController::class, 'destroy']    )->name('nanny-daily-checklists-destroy');
+        Route::post('/daily-checklists/{item}/toggle-item',         [DailyChecklistController::class, 'toggleItem'] )->name('nanny-daily-checklists-toggle');
+
+        // Module 14 — Activity Timeline
+        Route::get('/activity-timeline',               [ActivityTimelineController::class, 'nannyIndex'])->name('nanny-activity-timeline');
+        Route::get('/activity-timeline/{id_anak}',     [ActivityTimelineController::class, 'nannyShow'] )->name('nanny-activity-timeline-show');
+        Route::get('/activity-timeline/{id_anak}/history', [ActivityTimelineController::class, 'nannyHistory'])->name('nanny-activity-timeline-history');
+
+        // Module 14 — Activity Timeline (view merged history per child)
+        Route::get('/activity-timeline',               [ActivityTimelineController::class, 'nannyIndex'])->name('nanny-activity-timeline');
+        Route::get('/activity-timeline/{id_anak}',     [ActivityTimelineController::class, 'nannyShow'] )->name('nanny-activity-timeline-show');
+        Route::get('/activity-timeline/{id_anak}/history', [ActivityTimelineController::class, 'nannyHistory'])->name('nanny-activity-timeline-history');
+    });
+
+    // Modul 22 — Role Menu Management (Admin only, role 1).
+    // Prefix literal ditulis sebelum `/{id}` agar tidak tertangkap route parameter.
+    Route::prefix('admin/role-menu')->group(function () {
+        Route::get('/',                       [RoleMenuController::class, 'index']        )->name('admin-role-menu');
+        Route::post('/menu',                  [RoleMenuController::class, 'storeMenu']    )->name('admin-role-menu.store-menu');
+        Route::post('/role-menu',             [RoleMenuController::class, 'storeRoleMenu'])->name('admin-role-menu.store-role-menu');
+        Route::put('/{id}',                   [RoleMenuController::class, 'update']       )->name('admin-role-menu.update');
     });
 
     Route::prefix('admin/kelola-akun')->group(function () {
@@ -175,6 +491,41 @@ Route::middleware('auth.api')->group(function () {
         Route::put('/{id}',        [AdminController::class, 'update']       )->name('admin-kelola-akun.update');
         Route::post('/{id}/status',[AdminController::class, 'updateStatus'] )->name('admin-kelola-akun.status');
         Route::delete('/{id}',     [AdminController::class, 'destroy']      )->name('admin-kelola-akun.destroy');
+    });
+
+    Route::prefix('admin/school-subject')->group(function () {
+        Route::get('/',            [SchoolSubjectController::class, 'index']  )->name('admin-school-subject');
+        Route::get('/create',      [SchoolSubjectController::class, 'create'] )->name('admin-school-subject.create');
+        Route::post('/',           [SchoolSubjectController::class, 'store']  )->name('admin-school-subject.store');
+        Route::get('/{id}',        [SchoolSubjectController::class, 'show']   )->name('admin-school-subject.show');
+        Route::get('/{id}/edit',   [SchoolSubjectController::class, 'edit']   )->name('admin-school-subject.edit');
+        Route::put('/{id}',        [SchoolSubjectController::class, 'update'] )->name('admin-school-subject.update');
+        Route::delete('/{id}',     [SchoolSubjectController::class, 'destroy'])->name('admin-school-subject.destroy');
+    });
+
+    // Module 2 — School Schedule (role Nanny untuk sekarang)
+    Route::prefix('school-schedule')->name('school-schedule.')->group(function () {
+        Route::get('/',            [SchoolScheduleController::class, 'index']  )->name('index');
+        Route::get('/create',      [SchoolScheduleController::class, 'create'] )->name('create');
+        Route::post('/',           [SchoolScheduleController::class, 'store']  )->name('store');
+        Route::get('/{id}',        [SchoolScheduleController::class, 'show']   )->name('show');
+        Route::get('/{id}/edit',   [SchoolScheduleController::class, 'edit']   )->name('edit');
+        Route::put('/{id}',        [SchoolScheduleController::class, 'update'] )->name('update');
+        Route::delete('/{id}',     [SchoolScheduleController::class, 'destroy'])->name('destroy');
+    });
+
+    // Module 3 & 4 — Academic Task + Task Progress (role Nanny)
+    Route::prefix('academic-task')->name('academic-task.')->group(function () {
+        Route::get('/',                [AcademicTaskController::class, 'index']        )->name('index');
+        Route::get('/create',          [AcademicTaskController::class, 'create']       )->name('create');
+        Route::post('/',               [AcademicTaskController::class, 'store']        )->name('store');
+        Route::get('/{id}',            [AcademicTaskController::class, 'show']         )->name('show');
+        Route::get('/{id}/edit',       [AcademicTaskController::class, 'edit']         )->name('edit');
+        Route::post('/{id}/update',    [AcademicTaskController::class, 'update']       )->name('update');
+        Route::delete('/{id}',         [AcademicTaskController::class, 'destroy']      )->name('destroy');
+        Route::post('/{id}/status',    [AcademicTaskController::class, 'updateStatus'] )->name('update-status');
+        Route::post('/{id}/complete',  [AcademicTaskController::class, 'markComplete'] )->name('complete');
+        Route::post('/{id}/progress',  [AcademicTaskController::class, 'storeProgress'])->name('progress');
     });
 
     Route::prefix('admin')->group(function () {
@@ -211,7 +562,7 @@ Route::middleware('auth.api')->group(function () {
     });
 });
 
-// ─── Broadcasting Auth (Pusher private channel) ───────────────────────────────
+// â”€â”€â”€ Broadcasting Auth (Pusher private channel) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 Route::post('/broadcasting/auth', function (\Illuminate\Http\Request $request) {
     $token = session('token');
@@ -240,3 +591,4 @@ Route::post('/broadcasting/auth', function (\Illuminate\Http\Request $request) {
 
 // Root
 Route::get('/', fn() => redirect()->route('login'));
+

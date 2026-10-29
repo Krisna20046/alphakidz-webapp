@@ -81,21 +81,20 @@
 <body class="font-['Nunito'] bg-[#E5E2F5]">
 
 <div class="phone-wrapper">
-<div id="phoneFrame" class="phone-frame bg-[#F0EDFB] min-h-screen flex flex-col relative">
+    <div id="phoneFrame" class="phone-frame bg-[#F0EDFB] min-h-screen flex flex-col relative">
 
-    @include('components.status-bar')
+        @include('components.status-bar')
 
-    @yield('content')
+        @yield('content')
 
-    @if(!isset($hideBottomNav) || !$hideBottomNav)
-        @include('partials.bottom-nav', ['active' => $activeNav ?? 'home'])
-    @endif
+        @if(!isset($hideBottomNav) || !$hideBottomNav)
+            @include('partials.bottom-nav', ['active' => $activeNav ?? 'home'])
+        @endif
 
-</div>
+    </div>
 </div>
 
 @stack('modals')
-
 @if(env('MAINTENANCE_MODE', false))
 <div id="maintenanceModal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,rgba(139,92,246,0.95) 0%,rgba(124,58,237,0.98) 100%);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;">
     <div style="position:absolute;width:300px;height:300px;background:rgba(255,255,255,0.1);border-radius:50%;top:-150px;right:-100px;"></div>
@@ -125,6 +124,86 @@
 @keyframes modalSlide{from{opacity:0;transform:translateY(50px) scale(0.9)}to{opacity:1;transform:translateY(0) scale(1)}}
 </style>
 @endif
+
+{{-- In-app alert toast (global). Pakai showAppAlert(msg, 'ok'|'error') ganti alert() native --}}
+<div id="appAlertMount" style="display:none;position:fixed;top:14px;left:16px;right:16px;z-index:90;justify-content:center;pointer-events:none;">
+    <div id="appAlertBox" style="display:flex;align-items:flex-start;gap:10px;width:100%;max-width:380px;padding:13px 14px;border-radius:16px;background:#fff;border:1px solid #FEE2E2;box-shadow:0 10px 30px rgba(30,27,46,.18);transition:transform .25s ease,opacity .25s ease;transform:translateY(-10px);opacity:0;">
+        <ion-icon id="appAlertIcon" name="alert-circle-outline" style="font-size:20px;flex-shrink:0;color:#DC2626;margin-top:1px;"></ion-icon>
+        <div id="appAlertText" style="flex:1;font-size:13px;font-weight:700;color:#1E1B2E;line-height:1.5;word-break:break-word;"></div>
+        <button id="appAlertClose" type="button" aria-label="Tutup" style="flex-shrink:0;background:none;border:none;cursor:pointer;padding:2px;color:#9CA3AF;line-height:0;">
+            <ion-icon name="close" style="font-size:16px;"></ion-icon>
+        </button>
+    </div>
+</div>
+
+<script>
+    // ── Reverse geocode: tampilkan nama tempat dari koordinat ──────────────
+    // Elemen dengan data-geo="lat,lng" menampilkan nama tempat (fallback: koordinat).
+    // Pakai cache agar tidak memanggil Nominatim berulang utk koordinat sama.
+    (function () {
+        const cache = {};   // "lat,lng" -> nama tempat (string)
+        let inflight = {};  // "lat,lng" -> [handlers]
+
+        function resolve(lat, lng, cb) {
+            const key = lat.toFixed(6) + ',' + lng.toFixed(6);
+            if (cache[key]) { cb(cache[key]); return; }
+            (inflight[key] = inflight[key] || []).push(cb);
+            fetch('https://nominatim.openstreetmap.org/reverse?format=json&lat=' + lat + '&lon=' + lng + '&zoom=16', {
+                headers: { 'Accept-Language': 'id' }
+            }).then(r => r.json()).then(geo => {
+                const name = (geo && geo.display_name) || key;
+                cache[key] = name;
+                (inflight[key] || []).forEach(f => f(name));
+                delete inflight[key];
+            }).catch(() => {
+                cache[key] = key;
+                (inflight[key] || []).forEach(f => f(key));
+                delete inflight[key];
+            });
+        }
+
+        // Ganti konten semua [data-geo="lat,lng"] di dalam container (default document).
+        window.resolveGeoPlaces = function (container) {
+            (container || document).querySelectorAll('[data-geo]').forEach(el => {
+                const raw = (el.getAttribute('data-geo') || '').split(',');
+                const lat = parseFloat(raw[0]), lng = parseFloat(raw[1]);
+                if (isNaN(lat) || isNaN(lng) || (lat === 0 && lng === 0)) { el.textContent = '—'; return; }
+                el.textContent = 'Mencari lokasi…';
+                resolve(lat, lng, name => { el.textContent = name; });
+            });
+        };
+    })();
+
+    // Auto-resolve setelah DOM siap.
+    document.addEventListener('DOMContentLoaded', function () { window.resolveGeoPlaces(); });
+</script>
+
+<script>
+    // Global in-app alert (pengganti alert() native). type: 'ok' (hijau) | 'error' (merah, default).
+    window.showAppAlert = function (msg, type) {
+        const mount = document.getElementById('appAlertMount');
+        if (!mount) return;
+        const box   = document.getElementById('appAlertBox');
+        const icon  = document.getElementById('appAlertIcon');
+        const text  = document.getElementById('appAlertText');
+        const ok    = type === 'ok';
+
+        box.style.borderColor = ok ? '#BBF7D0' : '#FEE2E2';
+        icon.setAttribute('name', ok ? 'checkmark-circle-outline' : 'alert-circle-outline');
+        icon.style.color = ok ? '#16A34A' : '#DC2626';
+        text.textContent = msg;
+
+        mount.style.display = 'flex';
+        requestAnimationFrame(() => { box.style.transform = 'translateY(0)'; box.style.opacity = '1'; });
+
+        const autoClose = () => { box.style.transform = 'translateY(-10px)'; box.style.opacity = '0'; setTimeout(() => { mount.style.display = 'none'; }, 260); };
+        const timer = setTimeout(autoClose, 4000);
+
+        const closeBtn = document.getElementById('appAlertClose');
+        closeBtn.onclick = null; // reset listener
+        closeBtn.onclick = () => { clearTimeout(timer); autoClose(); };
+    };
+</script>
 
 <script>
     // Status bar clock
@@ -206,6 +285,34 @@
 @stack('scripts')
 
 @include('partials.auth-guard')
+
+{{-- FCM foreground global: banner in-app saat notifikasi masuk (sudah login). --}}
+<script>
+    window.FIREBASE_API_KEY             = @json(env('FIREBASE_API_KEY'));
+    window.FIREBASE_AUTH_DOMAIN         = @json(env('FIREBASE_AUTH_DOMAIN'));
+    window.FIREBASE_PROJECT_ID          = @json(env('FIREBASE_PROJECT_ID'));
+    window.FIREBASE_STORAGE_BUCKET      = @json(env('FIREBASE_STORAGE_BUCKET'));
+    window.FIREBASE_MESSAGING_SENDER_ID = @json(env('FIREBASE_MESSAGING_SENDER_ID'));
+    window.FIREBASE_APP_ID              = @json(env('FIREBASE_APP_ID'));
+    window.FIREBASE_VAPID_KEY           = @json(env('FIREBASE_VAPID_KEY'));
+    window.CSRF_TOKEN                   = @json(csrf_token());
+</script>
+<script type="module">
+import { initFCM } from '/js/fcmService.js';
+
+const NOTIF_TYPES = ['diary_created', 'diary_updated', 'attendance', 'task_progress', 'assistant_note', 'appointment'];
+
+initFCM(window.CSRF_TOKEN, function (data) {
+    const type = data?.type || '';
+    if (NOTIF_TYPES.includes(type)) {
+        const title = data?.title || 'Notifikasi Baru';
+        const body  = data?.body  || '';
+        window.showAppAlert?.(body ? title + ' — ' + body : title, 'ok');
+        // Halaman notifikasi terbuka → refresh list
+        if (typeof window.fetchNotif === 'function') window.fetchNotif();
+    }
+});
+</script>
 
 </body>
 </html>

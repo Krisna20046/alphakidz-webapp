@@ -484,7 +484,7 @@ function updateCountBadge(count) {
 }
 
 function selectNanny(id) {
-    selectedNanny = allNanny.find(n => n.id === id);
+    selectedNanny = allNanny.find(n => String(n.id) === String(id));
     if (!selectedNanny) return;
     showStep2();
 }

@@ -89,12 +89,20 @@
            class="w-10 h-10 rounded-full bg-white/20 border-[1.5px] border-white/30 flex items-center justify-center shrink-0">
             <ion-icon name="arrow-back" class="text-white" style="font-size:18px;"></ion-icon>
         </a>
-        <div>
+        <div class="flex-1">
             <span class="text-white text-[17px] font-extrabold tracking-wide">
                 @if($isNexus) Nexus Dashboard @else My Questions @endif
             </span>
             <p id="headerSubtitle" class="text-white/70 text-xs font-semibold mt-0.5">Loading...</p>
         </div>
+        @if($isNexus)
+        <a href="{{ route('nexus-notifications') }}"
+           class="relative w-10 h-10 rounded-full bg-white/20 border-[1.5px] border-white/30 flex items-center justify-center shrink-0">
+            <ion-icon name="notifications" class="text-white" style="font-size:18px;"></ion-icon>
+            <span id="nexusBellBadge" class="hidden absolute items-center justify-center"
+                  style="top:-4px; right:-4px; min-width:18px; height:18px; padding:0 4px; border-radius:9px; background:#DC2626; color:#fff; font-size:10px; font-weight:800;">0</span>
+        </a>
+        @endif
     </div>
 </div>
 
@@ -382,6 +390,30 @@ async function loadQuestions() {
 
 loadQuestions();
 
+// ── Unread notifikasi badge (khusus Nexus) ──
+async function loadNexusBellBadge() {
+    if (!isNexus) return;
+    try {
+        const res = await fetch(`${API_BASE}/notifications/unread-count`, {
+            headers: { 'Authorization': 'Bearer {{ session("token") }}', 'Accept': 'application/json' }
+        });
+        if (!res.ok) return;
+        const json = await res.json();
+        const count = json.data?.unread_count ?? 0;
+        const badge = document.getElementById('nexusBellBadge');
+        if (!badge) return;
+        if (count > 0) {
+            badge.textContent = count > 99 ? '99+' : count;
+            badge.classList.remove('hidden');
+            badge.classList.add('flex');
+        } else {
+            badge.classList.add('hidden');
+            badge.classList.remove('flex');
+        }
+    } catch (e) { /* abaikan */ }
+}
+loadNexusBellBadge();
+
 // ── Modal wait ──
 function showWaitModal(e) {
     if (e) e.stopPropagation();
@@ -405,10 +437,10 @@ async function claimQuestion(id) {
             headers: { 'Authorization': 'Bearer {{ session("token") }}', 'Accept': 'application/json' }
         });
         const json = await res.json();
-        if (!res.ok) { alert(json.message || 'Failed to claim'); return; }
+        if (!res.ok) { showAppAlert(json.message || 'Failed to claim'); return; }
         loadQuestions();
     } catch (e) {
-        alert('Failed to claim the question');
+        showAppAlert('Failed to claim the question');
     }
 }
 </script>

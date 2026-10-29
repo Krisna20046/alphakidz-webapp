@@ -326,6 +326,7 @@
                     ['value'=>'mandi','label'=>'🛁 Bath'],
                     ['value'=>'bab','label'=>'🟤 Poop'],
                     ['value'=>'bak','label'=>'💧 Pee'],
+                    ['value'=>'other','label'=>'📎 Other'],
                 ];
             @endphp
             @foreach($kats as $kat)
@@ -374,8 +375,9 @@
                 'main'    => ['bg'=>'#FFFBEE','border'=>'#FFD93D','dot'=>'#FFD93D','icon'=>'⚽'],
                 'belajar' => ['bg'=>'#F0F2FF','border'=>'#9BB8FF','dot'=>'#9BB8FF','icon'=>'📖'],
                 'mandi'   => ['bg'=>'#FFF0F7','border'=>'#FFB4D6','dot'=>'#FFB4D6','icon'=>'🛁'],
+                'other'   => ['bg'=>'#F3F4F6','border'=>'#9CA3AF','dot'=>'#6B7280','icon'=>'📋'],
             ];
-            $katIcons = ['makan'=>'restaurant','tidur'=>'moon','main'=>'football','belajar'=>'book','mandi'=>'water'];
+            $katIcons = ['makan'=>'restaurant','tidur'=>'moon','main'=>'football','belajar'=>'book','mandi'=>'water','other'=>'ellipsis-horizontal-circle'];
         @endphp
 
         @if(isset($aktivitas) && count($aktivitas) > 0)

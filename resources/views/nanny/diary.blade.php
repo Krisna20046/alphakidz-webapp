@@ -4,6 +4,26 @@
 
 @push('styles')
 <style>
+    .ai-summary-card { background:#fff; border-radius:18px; padding:18px; box-shadow:0 2px 14px rgba(139,70,211,.08); margin-bottom:8px; }
+    .ai-summary-card .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+    .ai-summary-card .section-title { font-size:15px; font-weight:900; color:#1E1B2E; }
+    .ai-summary-card .section-date { font-size:12px; font-weight:700; color:rgba(30,27,46,.5); }
+    .ai-summary-toggle { cursor:pointer; user-select:none; }
+    .ai-summary-count { font-size:11px; font-weight:700; color:rgba(30,27,46,.4); }
+    .ai-chevron { font-size:14px; color:#8B46D3; transition:transform .2s; }
+    .ai-summary-body p.ai-summary-text { font-size:14px; line-height:1.65; color:#3B3652; margin:0 0 8px; }
+    .ai-summary-body .ai-head { font-weight:900; color:#1E1B2E; margin-top:4px; }
+    .ai-summary-body .ai-head strong { font-weight:900; }
+    .ai-summary-body .ai-item { margin-left:8px; }
+    .ai-summary-placeholder { font-size:13px; color:rgba(30,27,46,.45); margin:0 0 12px; }
+    .ai-summary-error { font-size:13px; color:#C62828; margin:0 0 12px; }
+    .ai-summary-btn {
+        width:100%; margin-top:6px; padding:12px; border:none; border-radius:14px;
+        background:linear-gradient(135deg,#8B46D3,#6D28D9); color:#fff;
+        font-size:14px; font-weight:800; font-family:'Nunito',sans-serif; cursor:pointer;
+        box-shadow:0 6px 16px rgba(109,40,217,.25);
+    }
+    .ai-summary-btn:disabled { opacity:.6; cursor:wait; }
     .nanny-scroll { display:flex; gap:14px; overflow-x:auto;}
     .nanny-scroll::-webkit-scrollbar { display:none; }
     .nanny-scroll { -ms-overflow-style:none; scrollbar-width:none; }
@@ -310,6 +330,7 @@
                     ['value'=>'mandi','label'=>'🛁 Bath'],
                     ['value'=>'bab','label'=>'🟤 BAB'],
                     ['value'=>'bak','label'=>'💧 BAK'],
+                    ['value'=>'other','label'=>'📎 Other'],
                 ];
             @endphp
             @foreach($kats as $kat)
@@ -337,6 +358,79 @@
         <div class="days-grid" id="calGrid"></div>
     </div>
 
+    {{-- Daily AI Summary (Modul 7) --}}
+    @if($idAnak ?? false)
+    <div class="anim d2 ai-summary-card" id="aiSummaryCard" data-anak="{{ $idAnak }}" data-tanggal="{{ $tanggal ?? date('Y-m-d') }}">
+        <div class="section-header ai-summary-toggle" onclick="toggleSummary()">
+            <span class="section-title">📝 Ringkasan AI <span class="ai-summary-count" id="aiSummaryCount"></span></span>
+            <span class="ai-chevron" id="aiChevron">▾</span>
+        </div>
+        <div class="ai-summary-collapse" id="aiSummaryCollapse">
+            <div class="ai-summary-body" id="aiSummaryBody">
+                <p class="ai-summary-placeholder">Belum ada ringkasan. Tekan tombol di bawah untuk membuat ringkasan dari diary hari ini.</p>
+            </div>
+            <button class="ai-summary-btn" id="btnGenSummary" onclick="genSummary()">✨ Generate Ringkasan</button>
+        </div>
+    </div>
+
+    @push('scripts')
+    <script>
+    function setCount(n) { const c = document.getElementById('aiSummaryCount'); if (c) c.textContent = n ? '(' + n + ' kata)' : ''; }
+    function mdInline(s){ return s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>'); }
+    function toggleSummary() {
+        const col = document.getElementById('aiSummaryCollapse'), ch = document.getElementById('aiChevron');
+        if (!col) return;
+        const closed = col.style.display === 'none';
+        col.style.display = closed ? 'block' : 'none';
+        if (ch) ch.textContent = closed ? '▾' : '▸';
+    }
+    async function loadSummary() {
+        const card = document.getElementById('aiSummaryCard');
+        if (!card) return;
+        const anak = card.dataset.anak, tgl = card.dataset.tanggal;
+        try {
+            const r = await fetch(`{{ route('nanny-diary-summary', ['id_anak' => $idAnak]) }}?tanggal=${tgl}`);
+            const j = await r.json();
+            if (j.success && Array.isArray(j.data) && j.data[0]) { renderSummary(j.data[0].ai_summary); setCount((j.data[0].ai_summary||'').trim().split(/\s+/).filter(Boolean).length); }
+        } catch (e) {}
+    }
+    function renderSummary(text) {
+        const body = document.getElementById('aiSummaryBody');
+        if (!body) return;
+        if (!text) { body.innerHTML = '<p class="ai-summary-placeholder">Belum ada ringkasan untuk tanggal ini.</p>'; return; }
+        let html = '';
+        text.split(/\n/).forEach(line => {
+            const l = line.trim();
+            if (!l) return;
+            if (/^#{1,3}\s/.test(l)) html += `<p class="ai-summary-text ai-head">${mdInline(l.replace(/^#{1,3}\s*/, ''))}</p>`;
+            else if (/^\d+[.)]\s/.test(l)) html += `<p class="ai-summary-text ai-item">${mdInline(l.replace(/^\d+[.)]\s*/, ''))}</p>`;
+            else if (/^[-*•]\s/.test(l)) html += `<p class="ai-summary-text ai-item">▪ ${mdInline(l.replace(/^[-*•]\s*/, ''))}</p>`;
+            else html += `<p class="ai-summary-text">${mdInline(l)}</p>`;
+        });
+        body.innerHTML = html;
+    }
+    async function genSummary() {
+        const btn = document.getElementById('btnGenSummary');
+        const card = document.getElementById('aiSummaryCard');
+        if (!btn || !card) return;
+        btn.disabled = true; btn.textContent = '⏳ Membuat ringkasan...';
+        try {
+            const r = await fetch('{{ route('nanny-diary-summary-generate') }}', {
+                method:'POST',
+                headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}'},
+                body: JSON.stringify({id_anak: card.dataset.anak, summary_date: card.dataset.tanggal})
+            });
+            const j = await r.json();
+            if (j.success && j.data) { renderSummary(j.data.ai_summary); setCount((j.data.ai_summary||'').trim().split(/\s+/).filter(Boolean).length); const col=document.getElementById('aiSummaryCollapse'); if(col) col.style.display='block'; const ch=document.getElementById('aiChevron'); if(ch) ch.textContent='▾'; }
+            else if (j.message) { const b = document.getElementById('aiSummaryBody'); if(b) b.innerHTML = `<p class="ai-summary-error">⚠️ ${j.message}</p>`; }
+        } catch(e) {}
+        btn.disabled = false; btn.textContent = '✨ Generate Ringkasan';
+    }
+    document.addEventListener('DOMContentLoaded', loadSummary);
+    </script>
+    @endpush
+    @endif
+
     {{-- Timeline header --}}
     <div class="anim d3" style="padding:20px 0px 12px;">
         <div class="section-header">
@@ -358,6 +452,7 @@
                 'mandi'   => ['bg'=>'#FFF0F7','border'=>'#FFB4D6','dot'=>'#FFB4D6','icon'=>'🛁'],
                 'bab'     => ['bg'=>'#EFEBE9','border'=>'#8D6E63','dot'=>'#5D4037','icon'=>'🟤'],
                 'bak'     => ['bg'=>'#FFF8E1','border'=>'#F9A825','dot'=>'#F9A825','icon'=>'💧'],
+                'other'   => ['bg'=>'#F3F4F6','border'=>'#9CA3AF','dot'=>'#6B7280','icon'=>'📋'],
             ];
             $warnaColors = [
                 'coklat'=>'#6D4C41','hijau'=>'#2E7D32','kuning'=>'#F9A825',
@@ -751,10 +846,10 @@ function applyMonthYear(){
 document.getElementById('btnMonthYear').addEventListener('click',openMonthYearModal);
 document.getElementById('modalMonthYear').addEventListener('click',e=>{ if(e.target.id==='modalMonthYear') closeMonthYearModal(); });
 
-function getKatColor(k){ return{makan:'#FF9A6C',tidur:'#7BB4F0',main:'#FFD93D',belajar:'#9BB8FF',mandi:'#FFB4D6',bab:'#8D6E63',bak:'#F9A825'}[k]||'#8B46D3'; }
-function getKatIcon(k) { return{makan:'restaurant',tidur:'moon',main:'football',belajar:'book',mandi:'water',bab:'ellipse',bak:'water'}[k]||'calendar'; }
+function getKatColor(k){ return{makan:'#FF9A6C',tidur:'#7BB4F0',main:'#FFD93D',belajar:'#9BB8FF',mandi:'#FFB4D6',bab:'#8D6E63',bak:'#F9A825',other:'#9CA3AF'}[k]||'#8B46D3'; }
+function getKatIcon(k) { return{makan:'restaurant',tidur:'moon',main:'football',belajar:'book',mandi:'water',bab:'ellipse',bak:'water',other:'ellipsis-horizontal-circle'}[k]||'calendar'; }
 function getMoodEmoji(m){ return{senang:'😊',sedih:'😢',marah:'😠',biasa:'😐'}[m]||'😊'; }
-function getKatBg(k)   { return{makan:'#FFF4EC',tidur:'#EEF4FF',main:'#FFFBEE',belajar:'#F0F2FF',mandi:'#FFF0F7',bab:'#EFEBE9',bak:'#FFF8E1'}[k]||'#F0EDFB'; }
+function getKatBg(k)   { return{makan:'#FFF4EC',tidur:'#EEF4FF',main:'#FFFBEE',belajar:'#F0F2FF',mandi:'#FFF0F7',bab:'#EFEBE9',bak:'#FFF8E1',other:'#F3F4F6'}[k]||'#F0EDFB'; }
 const WARNA_COLORS = {coklat:'#6D4C41',hijau:'#2E7D32',kuning:'#F9A825',hitam:'#212121',merah:'#C62828',jernih:'#CFD8DC',keruh:'#8D6E63'};
 
 function detailRow(iconName,label,value,isLast){

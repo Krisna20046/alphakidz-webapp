@@ -86,6 +86,10 @@
                 style="padding:8px 16px; border-radius:20px; font-size:13px; border:2px solid #EDE9FE; background:#fff; font-weight:600; color:#8B46D3; flex-shrink:0;">
             🛁 Bath
         </button>
+        <button class="filter-chip" data-kat="other" onclick="setKategori(this)"
+                style="padding:8px 16px; border-radius:20px; font-size:13px; border:2px solid #EDE9FE; background:#fff; font-weight:600; color:#8B46D3; flex-shrink:0;">
+            📎 Other
+        </button>
     </div>
 
     <!-- DATE SELECTOR -->
@@ -194,8 +198,8 @@
 var API_BASE_URL = '{{ env("API_BASE_URL") }}';
 var API_TOKEN    = '{{ session("token") }}';
 var MONTHS_ID    = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-var KAT_COLOR    = { makan:'#FF6B6B', tidur:'#4ECDC4', main:'#FFD93D', belajar:'#6BCB77', mandi:'#95B8D1' };
-var KAT_ICON     = { makan:'restaurant', tidur:'bed', main:'football', belajar:'school', mandi:'water' };
+var KAT_COLOR    = { makan:'#FF6B6B', tidur:'#4ECDC4', main:'#FFD93D', belajar:'#6BCB77', mandi:'#95B8D1', other:'#9CA3AF' };
+var KAT_ICON     = { makan:'restaurant', tidur:'bed', main:'football', belajar:'school', mandi:'water', other:'ellipsis-horizontal-circle' };
 
 // ── Parse URL: /admin/diary/{id_nanny}/anak/{id_anak} ──────────────────────
 var _parts   = window.location.pathname.split('/').filter(Boolean);

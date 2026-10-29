@@ -18,24 +18,25 @@ messaging.onBackgroundMessage(function (payload) {
 
     const title     = data.title     || notification.title || 'Pesan Baru - AlphaKidz';
     const body      = data.body      || notification.body  || 'You have a new message';
-    const senderId  = data.sender_id || '';
-    const chatUrl   = data.url
+    const notifType = data.type || 'msg';
+    const openUrl   = data.url
         ? data.url
         : (data.sender_id
             ? '/chat/' + data.sender_id + '?nama=' + encodeURIComponent(data.sender_name || title)
             : '/chat');
+    const isChat    = notifType === 'chat';
 
     return self.registration.showNotification(title, {
         body               : body,
         icon               : '/icons/icon-192x192.png',
         badge              : '/icons/icon-192x192.png',
-        tag                : 'chat-' + (senderId || 'msg'),
+        tag                : 'notif-' + (notifType || 'msg'),
         renotify           : true,
         requireInteraction : true,
         vibrate            : [200, 100, 200],
-        data               : { url: chatUrl },
+        data               : { url: openUrl },
         actions            : [
-            { action: 'open',    title: 'Buka Chat' },
+            { action: 'open',    title: isChat ? 'Buka Chat' : 'Lihat' },
             { action: 'dismiss', title: 'Tutup'     },
         ],
     });

@@ -215,6 +215,40 @@ class MajikanController extends Controller
         ) + ['idAnak' => $id]);
     }
 
+    // ── Daily AI Summary (Modul 7) ─────────────────────────────────────────────
+
+    private function majApiUrl(string $path): string
+    {
+        return rtrim($this->apiUrl, '/') . '/' . ltrim($path, '/');
+    }
+
+    /** Proxy: ambil summary AI utk anak+tanggal. */
+    public function fetchSummary(Request $request, int $id)
+    {
+        $tanggal = $request->get('tanggal', date('Y-m-d'));
+        $res = Http::withToken(session('token'))
+            ->get($this->majApiUrl('/daily-ai-summaries'), [
+                'id_anak'      => $id,
+                'summary_date' => $tanggal,
+            ]);
+        return response()->json($res->json() ?? ['success' => false, 'message' => 'No response']);
+    }
+
+    /** Proxy: generate summary diary (on-demand). */
+    public function generateSummary(Request $request)
+    {
+        $request->validate([
+            'id_anak'      => 'required|integer',
+            'summary_date' => 'required|date_format:Y-m-d',
+        ]);
+        $res = Http::withToken(session('token'))
+            ->post($this->majApiUrl('/daily-ai-summaries/generate'), [
+                'id_anak'      => $request->id_anak,
+                'summary_date' => $request->summary_date,
+            ]);
+        return response()->json($res->json() ?? ['success' => false, 'message' => 'No response']);
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private function hitungUmur(?string $tanggalLahir): string
