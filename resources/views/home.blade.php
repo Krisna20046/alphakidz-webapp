@@ -221,9 +221,9 @@
 
                     @php
                         $banners = [
-                            ['src' => asset('image/banner1.jpg'), 'title' => 'The First Five Years',     'sub' => 'Only happen once.'],
-                            ['src' => asset('image/banner2.jpg'), 'title' => 'Beyond Babysitting',     'sub' => 'Why modern families need a professional nanny service.'],
-                            ['src' => asset('image/banner3.jpg'), 'title' => 'Luxury Isn\'t About Having a Nanny',         'sub' => 'It\'s about having the right one.'],
+                            ['src' => asset('image/banner1.webp'), 'title' => 'Professional Nanny Standards:',     'sub' => 'How to Assess Quality Before Making a Choice'],
+                            ['src' => asset('image/banner2.webp'), 'title' => 'Is My Nanny Really',     'sub' => 'Caring for My Child?'],
+                            ['src' => asset('image/banner3.webp'), 'title' => 'The Hidden Cost of',         'sub' => 'Choosing the Wrong Nanny'],
                         ];
                     @endphp
 
