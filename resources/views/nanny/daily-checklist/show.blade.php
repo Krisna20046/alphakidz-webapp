@@ -215,13 +215,28 @@ function dcDeleteClose() {
         if (bar) bar.style.width = pct + '%';
     }
 
+    // The PUT in flush() is a full-state replace: the backend deletes any item
+    // whose id is missing from the payload. Seed the checklist's entire item
+    // set from the DOM on first touch so a single tap never wipes the rest.
+    function ensureState(cid) {
+        if (state[cid]) return state[cid];
+        const map = {};
+        document.querySelectorAll(`.dc-toggle[data-checklist-id="${cid}"]`).forEach(b => {
+            map[+b.dataset.itemId] = {
+                name: b.dataset.itemName,
+                completed: b.dataset.on === '1',
+            };
+        });
+        state[cid] = map;
+        return map;
+    }
+
     function dctoggle(btn) {
         const cid = +btn.dataset.checklistId;
         const iid = +btn.dataset.itemId;
         if (!cid || !iid) return;
-        const s = (state[cid] || (state[cid] = {}))[iid] || (
-            (state[cid][iid] = { name: btn.dataset.itemName, completed: btn.dataset.on === '1' })
-        );
+        const s = ensureState(cid)[iid];
+        if (!s) return;
         if (!(good[cid] || (good[cid] = {}))[iid]) {
             good[cid][iid] = { name: s.name, completed: s.completed }; // snapshot before flip
         }
@@ -240,6 +255,7 @@ function dcDeleteClose() {
         for (const cid of Object.keys(dirty)) {
             try {
                 const card = document.querySelector(`[data-checklist-id="${cid}"]`);
+                ensureState(cid);
                 const items = Object.keys(state[cid]).map(iid => ({
                     id: +iid,
                     item_name: state[cid][iid].name,
